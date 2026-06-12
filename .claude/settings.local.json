@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(node node_modules/esbuild/install.js)",
+      "Bash(npm run *)",
+      "Bash(node node_modules/vite/bin/vite.js build)",
+      "PowerShell(npm run *)",
+      "PowerShell(node node_modules/vite/bin/vite.js build 2>&1 | Select-Object -Last 40)",
+      "PowerShell(node -e \"try { require\\('./node_modules/vite/dist/node/index.js'\\).build\\(\\).then\\(\\(\\)=>console.log\\('OK'\\)\\).catch\\(e=>{console.error\\('CAUGHT:', e.message\\); console.error\\(e.stack\\)}\\) } catch\\(e\\) { console.error\\('OUTER:', e.message\\); console.error\\(e.stack\\) }\" 2>&1 | Select-Object -Last 50)",
+      "PowerShell(Test-Path build.log; if \\(Test-Path build.log\\) { \\(Get-Item build.log\\).Length })",
+      "PowerShell(node -e \"console.log\\('hello'\\); console.log\\(process.cwd\\(\\)\\)\" 2>&1)",
+      "PowerShell(node -e \"const v = require\\('vite'\\); console.log\\('vite ver:', v.version || 'unknown'\\); console.log\\('keys:', Object.keys\\(v\\).slice\\(0,10\\)\\)\" 2>&1)",
+      "PowerShell(node --trace-warnings -e \"try { require\\('vite'\\); console.log\\('loaded'\\); } catch\\(e\\){ console.error\\(e.message\\) }\" 2>&1)",
+      "PowerShell(node -e \"import\\('vite'\\).then\\(v => console.log\\('loaded', !!v.build\\)\\).catch\\(e => console.error\\('ERR:', e.message\\)\\)\" 2>&1)",
+      "PowerShell(node -e \"import\\('esbuild'\\).then\\(v => console.log\\('OK'\\)\\).catch\\(e => console.error\\('ERR:', e.message\\)\\)\" 2>&1)",
+      "PowerShell(& \"node_modules\\\\@esbuild\\\\win32-x64\\\\esbuild.exe\" --version 2>&1)",
+      "PowerShell(npm *)",
+      "PowerShell($env:ESBUILD_BINARY_PATH = \\(Resolve-Path \"node_modules\\\\@esbuild\\\\win32-x64\\\\esbuild.exe\"\\).Path; node -e \"import\\('esbuild'\\).then\\(v => console.log\\('OK', !!v.build\\)\\).catch\\(e => console.error\\('ERR:', e.message, e.stack\\)\\)\" 2>&1)",
+      "PowerShell(node --abort-on-uncaught-exception -e \"process.on\\('uncaughtException', e => { console.error\\('UNCAUGHT:', e\\); process.exit\\(11\\) }\\); import\\('esbuild'\\).then\\(v => console.log\\('OK'\\)\\).catch\\(e => console.error\\('ERR:', e\\)\\)\" 2>&1)",
+      "PowerShell(node --experimental-vm-modules -e \"import\\('esbuild'\\).then\\(v=>console.log\\('OK'\\)\\).catch\\(e=>console.error\\('ERR',e\\)\\)\" 2>&1; echo \"---LASTEXIT $LASTEXITCODE---\")",
+      "PowerShell($fso = New-Object -ComObject Scripting.FileSystemObject; $sp = $fso.GetFolder\\(\\(Get-Location\\).Path\\).ShortPath; Write-Host \"Short:\" $sp)",
+      "PowerShell(node -e \"const e = require\\('esbuild'\\); console.log\\('OK', typeof e.build\\)\" 2>&1; echo \"exit: $LASTEXITCODE\")",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:5173/\" -UseBasicParsing -TimeoutSec 10; \"Status: $\\($r.StatusCode\\)\"; \"Length: $\\($r.Content.Length\\)\" } catch { \"ERROR: $_\" })",
+      "PowerShell(node -e \"import\\('@resvg/resvg-js'\\).then\\(m=>console.log\\('resvg OK', typeof m.Resvg\\)\\).catch\\(e=>console.log\\('FAIL', e.message\\)\\)\")",
+      "Bash(node -e \"const e=require\\('./src/data/events.json'\\); const x=e[33]; console.log\\(JSON.stringify\\({id:x.id,number:x.number,cover:x.cover,photos:x.photos,venue:x.venue},null,0\\)\\); console.log\\('has cover field on all:', e.every\\(o=>'cover' in o\\)\\)\")",
+      "Bash(node --input-type=module -e ' *)",
+      "Bash(node -e \"const e=require\\('./src/data/events.json'\\); console.log\\('keys:', Object.keys\\(e[0]\\).join\\(', '\\)\\); console.log\\('all have city/cover/ticketUrl/organizer:', e.every\\(o=>'city' in o && 'cover' in o && 'ticketUrl' in o && 'organizer' in o\\)\\)\")",
+      "Bash(git add *)",
+      "Bash(git commit -q -m ' *)"
+    ]
+  }
+}

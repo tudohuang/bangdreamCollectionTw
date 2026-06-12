@@ -1,0 +1,239 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* 乾淨靛藍（淺色） */
+    --c-bg: 246 248 252;
+    --c-ink: 30 41 59;
+    --c-sub: 71 85 105;
+    --c-faint: 148 163 184;
+    --c-line: 226 232 240;
+    --modal-bg: rgba(255, 255, 255, 0.96);
+  }
+
+  .dark {
+    /* 深色（藍石板） */
+    --c-bg: 15 23 42;
+    --c-ink: 226 232 240;
+    --c-sub: 148 163 184;
+    --c-faint: 100 116 139;
+    --c-line: 51 65 85;
+    --modal-bg: rgba(20, 28, 46, 0.96);
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply font-sans text-dream-ink;
+    font-feature-settings: 'palt' 1;
+    /* 樸素版：乾淨純色淡底 */
+    background-color: rgb(var(--c-bg));
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background-color: rgba(167, 139, 250, 0.35);
+    color: rgb(var(--c-ink));
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display;
+    letter-spacing: 0.005em;
+  }
+
+  /* #16 鍵盤可達性：聚焦發光環 */
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9), 0 0 0 5px rgba(79, 70, 229, 0.6);
+    border-radius: 10px;
+  }
+  .dark :focus-visible {
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.9), 0 0 0 5px rgba(99, 102, 241, 0.8);
+  }
+
+  /* #17 尊重「減少動態」偏好 */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* ---------- 純白扁平卡（更樸素） ---------- */
+  .glass {
+    @apply relative rounded-md border border-dream-line bg-white;
+  }
+  .glass-soft {
+    @apply relative rounded-md border border-dream-line bg-white;
+  }
+
+  /* 活動卡 — 用 CSS 變數帶入樂團色（只留一條細色條） */
+  .event-card {
+    @apply relative rounded-md border border-dream-line overflow-hidden cursor-pointer text-left w-full bg-white;
+    transition: border-color 0.12s ease, background-color 0.12s ease;
+  }
+  .event-card:hover {
+    border-color: rgba(var(--band), 0.6);
+    background-color: #f8fafc;
+  }
+  /* 卡片左側一條樂團色細線 */
+  .event-card::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: rgba(var(--band), 0.9);
+    pointer-events: none;
+  }
+
+  /* ---------- 按鈕 / 標籤（方角樸素） ---------- */
+  .pill {
+    @apply inline-flex items-center gap-1.5 rounded px-3 py-1.5 text-[13px] font-medium transition-colors duration-150;
+    background: #fff;
+    border: 1px solid theme('colors.dream.line');
+    color: theme('colors.dream.sub');
+  }
+  .pill:hover {
+    background: #f1f5f9;
+    color: theme('colors.dream.ink');
+  }
+  .pill-active {
+    background: #4f46e5;
+    color: #fff;
+    border-color: #4f46e5;
+  }
+  .pill-active:hover { color: #fff; background: #4338ca; }
+
+  /* 樂團小色票 */
+  .band-dot {
+    @apply inline-block w-2.5 h-2.5 rounded-full shrink-0;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.7), 0 0 10px 0 rgba(var(--dot), 0.6);
+  }
+
+  .band-chip {
+    @apply inline-flex items-center gap-1.5 rounded-full pl-1.5 pr-3 py-1 text-[12.5px] font-medium;
+    background: rgba(var(--dot), 0.12);
+    color: var(--dotText);
+    border: 1px solid rgba(var(--dot), 0.28);
+  }
+
+  /* 類別小標 */
+  .badge {
+    @apply inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11.5px] font-semibold;
+  }
+  .badge-core {
+    background: theme('colors.bloom.indigo');
+    color: #fff;
+  }
+  .badge-side {
+    background: #fff;
+    color: theme('colors.dream.faint');
+    border: 1px solid theme('colors.dream.line');
+  }
+  .badge-full {
+    background: #e0e7ff;
+    color: #4338ca;
+  }
+
+  /* 區塊小標題 */
+  .eyebrow {
+    @apply inline-flex items-center gap-1.5 text-[12px] font-semibold text-dream-faint;
+  }
+  .section-h {
+    @apply font-display text-2xl sm:text-3xl font-bold text-dream-ink leading-tight;
+  }
+
+  /* 樸素版：純色標題（不漸層） */
+  .text-gradient {
+    color: theme('colors.bloom.indigo');
+  }
+
+  /* 輸入框 */
+  .dream-input {
+    @apply w-full rounded-md px-4 py-2.5 text-[15px] text-dream-ink transition-colors;
+    background: #fff;
+    border: 1px solid theme('colors.dream.line');
+  }
+  .dream-input::placeholder { color: theme('colors.dream.faint'); }
+  .dream-input:focus {
+    outline: none;
+    border-color: theme('colors.bloom.indigo');
+  }
+}
+
+@layer components {
+  /* ---------- 深色（夜間偶像）覆寫 ---------- */
+  .dark .glass {
+    background: rgba(40, 32, 70, 0.50);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 32px -12px rgba(0, 0, 0, 0.55), inset 0 1px 0 0 rgba(255, 255, 255, 0.10);
+  }
+  .dark .glass-soft {
+    background: rgba(40, 32, 70, 0.40);
+    border-color: rgba(255, 255, 255, 0.10);
+  }
+  .dark .event-card {
+    background: rgba(44, 34, 76, 0.52);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 30px -14px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  }
+  .dark .event-card:hover {
+    border-color: rgba(var(--band), 0.7);
+    box-shadow: 0 22px 50px -18px rgba(var(--band), 0.6), 0 0 0 1px rgba(var(--band), 0.35);
+  }
+  .dark .event-card::before {
+    background:
+      radial-gradient(120% 130% at 0% 0%, rgba(var(--band), 0.40) 0, transparent 60%),
+      linear-gradient(180deg, rgba(var(--band), 0.22) 0%, transparent 100%);
+  }
+  .dark .pill {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.14);
+    color: rgb(var(--c-sub));
+  }
+  .dark .pill:hover {
+    background: rgba(255, 255, 255, 0.16);
+    color: rgb(var(--c-ink));
+  }
+  .dark .dream-input {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.14);
+  }
+  .dark .dream-input:focus {
+    background: rgba(255, 255, 255, 0.14);
+  }
+  .dark .badge-side {
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255, 255, 255, 0.16);
+  }
+  /* 導覽列等用到的 bg-white/* 半透明在深色下換成淡白玻璃 */
+  .dark .bg-white\/55,
+  .dark .bg-white\/60,
+  .dark .bg-white\/70 { background-color: rgba(255, 255, 255, 0.08) !important; }
+}
+
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar { height: 8px; width: 8px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #818cf8, #4f46e5);
+    border-radius: 999px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+  .scrollbar-none { scrollbar-width: none; }
+
+  .glow-text {
+    text-shadow: 0 2px 18px rgba(167, 139, 250, 0.35);
+  }
+}
