@@ -35,7 +35,3 @@ npm run build      # 產出 dist/
 送 PR 前請確認 `npm run validate`、`npm test`、`npm run build` 都通過
 （CI 也會自動檢查）。
 
-## 注意
-
-本站非官方、非營利。官方宣傳圖等有版權，請優先使用自己拍攝的照片，
-或於 `來源` 標註出處。
