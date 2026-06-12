@@ -63,5 +63,5 @@
 
 ## 授權與致謝
 
-由台灣 BanG Dream! fandom 整理，非營利、非官方紀錄。
+由Tudo Huang 整理，非營利、非官方紀錄。
 資料如有錯漏歡迎開 issue 或 PR。
