@@ -42,10 +42,12 @@ export function parseCsvToEvents(text) {
   const header = rows[0].map(h => h.trim())
   const col = (name) => header.indexOf(name)
   const idx = {
+    number: col('編號') >= 0 ? col('編號') : col('number'),
     year: col('年份'), start: col('開始日期'), end: col('結束日期'), month: col('月份'),
     title: col('活動名稱'), type: col('類型'), people: col('人物'),
     groups: col('團體／關聯'), category: col('本體／擦邊'), full: col('全團'),
     count: col('人次'),
+    notes: col('備註') >= 0 ? col('備註') : col('notes'),
     venue: col('地點') >= 0 ? col('地點') : col('venue'),
     city: col('城市') >= 0 ? col('城市') : col('city'),
     photos: col('照片') >= 0 ? col('照片') : col('photos'),
@@ -58,8 +60,11 @@ export function parseCsvToEvents(text) {
   }
 
   return rows.slice(1).map((r, i) => {
-    const number = i + 1
     const get = (k) => (idx[k] >= 0 ? (r[idx[k]] || '').trim() : '')
+    // 編號優先用 Sheet 明確的「編號」欄（穩定 key，插入/排序/刪列都不會錯位）；
+    // 沒這欄才退回用列位置。id 也跟著編號走，照片/心得才綁得住。
+    const explicit = Number(get('number'))
+    const number = Number.isFinite(explicit) && explicit > 0 ? explicit : i + 1
     return {
       id: `evt-${String(number).padStart(3, '0')}`,
       number,
@@ -83,6 +88,7 @@ export function parseCsvToEvents(text) {
       description: get('description'),
       impression: get('impression'),
       sources: splitMedia(get('sources')),
+      notes: get('notes'),
     }
   })
 }

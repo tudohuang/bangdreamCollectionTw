@@ -2,11 +2,18 @@ import { useEffect, useMemo, useState, lazy, Suspense } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import { useEvents } from './hooks/useEvents.js'
 import Hero from './components/Hero.jsx'
+import OnThisDay from './components/OnThisDay.jsx'
 import Upcoming from './components/Upcoming.jsx'
+import LatestAdded from './components/LatestAdded.jsx'
+import ProfilePage from './components/ProfilePage.jsx'
 import YearChapterMap from './components/YearChapterMap.jsx'
 import FilterPanel from './components/FilterPanel.jsx'
 import EventWall from './components/EventWall.jsx'
 import StatsPanel from './components/StatsPanel.jsx'
+import YearReview from './components/YearReview.jsx'
+import Contribute from './components/Contribute.jsx'
+import CommandPalette from './components/CommandPalette.jsx'
+import Reveal from './components/Reveal.jsx'
 import Footer from './components/Footer.jsx'
 import Icon from './components/Icon.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
@@ -90,6 +97,8 @@ export default function App() {
   const { events, source, updatedAt, retry } = useEvents()
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const [detailId, setDetailId] = useState(null)
+  const [profile, setProfile] = useState(null)  // {kind:'person'|'band', value} | null
+  const [paletteOpen, setPaletteOpen] = useState(false)
   const [attended, setAttended] = useState(() => getAttended())
   const [dark, setDark] = useState(() =>
     typeof document !== 'undefined' && document.documentElement.classList.contains('dark'))
@@ -98,24 +107,24 @@ export default function App() {
     const sync = () => {
       const h = readHash()
       if (h.route === 'event') {
-        setDetailId(h.id)
+        setDetailId(h.id)   // 詳情用浮層蓋在現有頁面上，不動 profile
       } else if (h.route === 'year') {
-        setDetailId(null)
+        setDetailId(null); setProfile(null)
         setFilters(f => ({ ...f, year: String(h.year) }))
         scrollToWall()
       } else if (h.route === 'person') {
         setDetailId(null)
-        setFilters({ ...DEFAULT_FILTERS, people: [h.value] })
-        scrollToWall()
+        setProfile({ kind: 'person', value: h.value })
+        scrollToTop()
       } else if (h.route === 'band') {
         setDetailId(null)
-        setFilters({ ...DEFAULT_FILTERS, groups: [h.value] })
-        scrollToWall()
+        setProfile({ kind: 'band', value: h.value })
+        scrollToTop()
       } else if (h.route === 'filter') {
-        setDetailId(null)
+        setDetailId(null); setProfile(null)
         setFilters({ ...DEFAULT_FILTERS, ...paramsToFilters(h.params) })
       } else {
-        setDetailId(null)
+        setDetailId(null); setProfile(null)
       }
     }
     sync()
@@ -162,10 +171,32 @@ export default function App() {
       : `${base} · Taiwan BanG Dream! Event Collection`
   }, [detailEvent])
 
+  // ⌘K / Ctrl+K 開啟快速搜尋
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault(); setPaletteOpen(o => !o)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
   const handleOpenDetail = (id) => { setDetailId(id); writeHash('event', { id }) }
+  const handleRandom = () => {
+    if (!events.length) return
+    handleOpenDetail(events[Math.floor(Math.random() * events.length)].id)
+  }
   const handleCloseDetail = () => {
     setDetailId(null)
-    if (window.location.hash.startsWith('#/event/')) history.pushState(null, '', '#/')
+    // 從某個圖鑑頁點開的，關閉後回到那一頁；否則回首頁
+    if (profile) writeHash(profile.kind, { value: profile.value })
+    else if (window.location.hash.startsWith('#/event/')) history.pushState(null, '', '#/')
+  }
+  const handleCloseProfile = () => {
+    setProfile(null)
+    history.pushState(null, '', '#/')
+    scrollToTop()
   }
   const handleYearJump = (year) => {
     setFilters(f => ({ ...f, year: year === 'all' ? 'all' : String(year) }))
@@ -202,6 +233,15 @@ export default function App() {
             <a href="#chapters" className="hover:text-dream-ink hover:underline transition-colors hidden sm:block">章節</a>
             <a href="#wall" className="hover:text-dream-ink hover:underline transition-colors hidden sm:block">圖鑑</a>
             <a href="#stats" className="hover:text-dream-ink hover:underline transition-colors hidden sm:block">收藏</a>
+            <a href="#review" className="hover:text-dream-ink hover:underline transition-colors hidden sm:block">回顧</a>
+            <button
+              onClick={() => setPaletteOpen(true)}
+              aria-label="快速搜尋"
+              className="inline-flex items-center gap-2 rounded border border-dream-line px-2.5 h-8 text-dream-sub hover:text-dream-ink transition-colors"
+            >
+              <Icon n="magnifying-glass" className="text-[12px]" />
+              <kbd className="hidden sm:inline text-[11px] text-dream-faint">⌘K</kbd>
+            </button>
             <button
               onClick={toggleDark}
               aria-label="切換深淺色"
@@ -214,42 +254,76 @@ export default function App() {
       </header>
 
       <main className="relative z-10 max-w-6xl w-full mx-auto px-4 sm:px-8 pt-8 sm:pt-12 pb-24 flex-1">
-        <Hero events={events} />
-        <ErrorBoundary><Upcoming events={events} onSelect={handleOpenDetail} /></ErrorBoundary>
-
-        <section id="chapters" className="mt-16 sm:mt-24 scroll-mt-20">
+        {profile ? (
           <ErrorBoundary>
-            <YearChapterMap events={events} activeYear={filters.year} onSelectYear={handleYearJump} />
-          </ErrorBoundary>
-        </section>
-
-        <section id="wall" className="mt-16 sm:mt-24 scroll-mt-20">
-          <ErrorBoundary>
-            <FilterPanel
+            <ProfilePage
+              kind={profile.kind}
+              value={profile.value}
               events={events}
-              filters={filters}
-              onChange={updateFilters}
-              onReset={resetFilters}
-              resultCount={filtered.length}
-            />
-            <EventWall
-              events={filtered}
-              view={filters.view}
               attended={attended}
               onToggleAttended={toggleAttended}
               onSelect={handleOpenDetail}
+              onClose={handleCloseProfile}
             />
           </ErrorBoundary>
-        </section>
+        ) : (
+          <>
+            <Hero events={events} onSelect={handleOpenDetail} />
+            <Reveal><ErrorBoundary><OnThisDay events={events} onSelect={handleOpenDetail} /></ErrorBoundary></Reveal>
+            <Reveal><ErrorBoundary><Upcoming events={events} onSelect={handleOpenDetail} /></ErrorBoundary></Reveal>
+            <Reveal><ErrorBoundary><LatestAdded events={events} onSelect={handleOpenDetail} /></ErrorBoundary></Reveal>
 
-        <section id="stats" className="mt-20 sm:mt-28 scroll-mt-20">
-          <ErrorBoundary><StatsPanel events={events} /></ErrorBoundary>
-        </section>
+            <Reveal as="section" id="chapters" className="mt-16 sm:mt-24 scroll-mt-20">
+              <ErrorBoundary>
+                <YearChapterMap events={events} activeYear={filters.year} onSelectYear={handleYearJump} />
+              </ErrorBoundary>
+            </Reveal>
+
+            <Reveal as="section" id="wall" className="mt-16 sm:mt-24 scroll-mt-20">
+              <ErrorBoundary>
+                <FilterPanel
+                  events={events}
+                  filters={filters}
+                  onChange={updateFilters}
+                  onReset={resetFilters}
+                  resultCount={filtered.length}
+                />
+                <EventWall
+                  events={filtered}
+                  view={filters.view}
+                  attended={attended}
+                  onToggleAttended={toggleAttended}
+                  onSelect={handleOpenDetail}
+                />
+              </ErrorBoundary>
+            </Reveal>
+
+            <Reveal as="section" id="stats" className="mt-20 sm:mt-28 scroll-mt-20">
+              <ErrorBoundary><StatsPanel events={events} /></ErrorBoundary>
+            </Reveal>
+
+            <Reveal as="section" id="review" className="mt-20 sm:mt-28 scroll-mt-20">
+              <ErrorBoundary><YearReview events={events} /></ErrorBoundary>
+            </Reveal>
+
+            <Reveal as="section" className="mt-20 sm:mt-28">
+              <ErrorBoundary><Contribute /></ErrorBoundary>
+            </Reveal>
+          </>
+        )}
       </main>
 
       <Footer source={source} updatedAt={updatedAt} onRetry={retry} />
+      <RandomButton onClick={handleRandom} />
       <BackToTop />
       <Analytics />
+
+      <CommandPalette
+        open={paletteOpen}
+        onClose={() => setPaletteOpen(false)}
+        events={events}
+        onSelectEvent={handleOpenDetail}
+      />
 
       {detailEvent && (
         <Suspense fallback={null}>
@@ -273,6 +347,10 @@ function scrollToWall() {
   requestAnimationFrame(() => {
     document.getElementById('wall')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   })
+}
+
+function scrollToTop() {
+  requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'smooth' }))
 }
 
 function ScrollProgress() {
@@ -306,9 +384,23 @@ function BackToTop() {
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       aria-label="回到頂部"
-      className="fixed bottom-6 right-6 z-40 grid place-items-center w-11 h-11 rounded-md text-white bg-bloom-indigo hover:bg-bloom-violet transition-colors"
+      className="fixed bottom-20 right-6 z-40 grid place-items-center w-11 h-11 rounded-md text-white bg-bloom-indigo hover:bg-bloom-violet transition-colors"
     >
       <Icon n="arrow-up" />
+    </button>
+  )
+}
+
+// 抽一張回憶：隨機跳一場活動，轉蛋感
+function RandomButton({ onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label="抽一張回憶"
+      title="抽一張回憶"
+      className="group fixed bottom-6 right-6 z-40 grid place-items-center w-11 h-11 rounded-md bg-white border border-dream-line text-bloom-indigo hover:text-white hover:bg-bloom-indigo transition-colors dark:bg-white/10"
+    >
+      <Icon n="wand-magic-sparkles" className="transition-transform group-hover:rotate-12 group-active:scale-90" />
     </button>
   )
 }

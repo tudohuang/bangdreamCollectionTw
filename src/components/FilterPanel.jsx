@@ -7,7 +7,7 @@ function uniq(arr) { return [...new Set(arr)] }
 
 const TIMEFRAMES = [['全部', 'all'], ['即將', 'upcoming'], ['已結束', 'past'], ['今年', 'thisYear'], ['本月', 'thisMonth']]
 const ORDERS = [['日期↑', 'date-asc'], ['日期↓', 'date-desc'], ['人次', 'attendance'], ['編號', 'number']]
-const VIEWS = [['卡片', 'cards'], ['時間軸', 'timeline'], ['年份', 'year'], ['月曆', 'calendar'], ['總表', 'table']]
+const VIEWS = [['卡片', 'cards'], ['回憶牆', 'gallery'], ['時間軸', 'timeline'], ['年份', 'year'], ['月曆', 'calendar'], ['總表', 'table']]
 
 export default function FilterPanel({ events, filters, onChange, onReset, resultCount }) {
   const [open, setOpen] = useState(false)

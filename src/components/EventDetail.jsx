@@ -1,20 +1,22 @@
 import { useEffect, useRef, useState } from 'react'
 import { buildSummary, copyText, formatDateRange } from '../utils/share.js'
 import { primaryMeta, bandMeta, parseGroup, isPersonal, rootGroup } from '../utils/bands.js'
-import { photoUrl } from '../utils/media.js'
+import { photoUrl, coverOf } from '../utils/media.js'
 import { eventStatus, daysUntil, weekday, STATUS_LABEL } from '../utils/datetime.js'
 import { downloadShareImage } from '../utils/shareImage.js'
 import Icon from './Icon.jsx'
+import Img from './Img.jsx'
 
 export default function EventDetail({ event, allEvents = [], attended, onToggleAttended, onClose, prevId, nextId, onNavigate }) {
   const [toast, setToast] = useState('')
   const [lightbox, setLightbox] = useState(null)
+  const [coverOk, setCoverOk] = useState(true)
   const panelRef = useRef(null)
   const meta = primaryMeta(event)
   const personal = isPersonal(event)
   const isAttended = attended?.has(event.id)
 
-  useEffect(() => { setLightbox(null) }, [event.id])
+  useEffect(() => { setLightbox(null); setCoverOk(true) }, [event.id])
 
   useEffect(() => {
     const onKey = (e) => {
@@ -54,6 +56,9 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
   const groups = event.relatedGroups || []
   const people = event.people || []
   const photos = event.photos || []
+  const cover = coverOk ? coverOf(event) : null
+  // 封面已做成上方 banner，照片牆就別重複它
+  const galleryPhotos = cover ? photos.filter(p => photoUrl(p) !== cover) : photos
   const roles = groups.flatMap(g => parseGroup(g).parts)
   const status = eventStatus(event)
   const dleft = status === 'upcoming' ? daysUntil(event.startDate) : null
@@ -97,7 +102,20 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
           </div>
         </div>
 
-        <div className="px-5 sm:px-8 py-6 sm:py-7">
+        {cover && (
+          <button
+            onClick={() => setLightbox(cover)}
+            aria-label="放大封面"
+            className="block w-full relative overflow-hidden group/cover"
+          >
+            <Img src={cover} onError={() => setCoverOk(false)}
+                 className="w-full h-44 sm:h-60 object-cover group-hover/cover:scale-105 motion-reduce:transform-none" />
+            <div className="absolute inset-0 pointer-events-none"
+                 style={{ background: 'linear-gradient(to top, var(--modal-bg) 2%, transparent 55%)' }} />
+          </button>
+        )}
+
+        <div className={`px-5 sm:px-8 pb-6 sm:pb-7 ${cover ? 'pt-3 sm:pt-4 -mt-6 relative' : 'pt-6 sm:pt-7'}`}>
           <div className="flex items-center gap-2 mb-2 flex-wrap">
             <span className={`badge ${status === 'past' ? 'badge-side' : 'badge-core'}`}>{STATUS_LABEL[status]}</span>
             {dleft != null && <span className="text-[12px] font-bold text-bloom-indigo">{dleft === 0 ? '就是今天' : `還有 ${dleft} 天`}</span>}
@@ -163,10 +181,10 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
           {event.description && <Section title="活動簡介" color={meta.color}><p className="text-[14px] leading-7 text-dream-sub whitespace-pre-line">{event.description}</p></Section>}
           {event.impression && <Section title="個人心得" color={meta.color}><p className="text-[14px] leading-7 text-dream-sub whitespace-pre-line">{event.impression}</p></Section>}
 
-          {photos.length > 0 && (
+          {galleryPhotos.length > 0 && (
             <Section title="活動照片" color={meta.color}>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {photos.map((p, i) => {
+                {galleryPhotos.map((p, i) => {
                   const url = photoUrl(p)
                   return (
                     <button key={i} onClick={() => setLightbox(url)}

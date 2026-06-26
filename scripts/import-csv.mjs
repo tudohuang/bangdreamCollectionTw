@@ -54,7 +54,7 @@ const events = parsed.map(e => {
     description: pick(e.description, prev.description),
     impression: pick(e.impression, prev.impression),
     sources: pickArr(e.sources, prev.sources),
-    notes: prev.notes || '',
+    notes: pick(e.notes, prev.notes),
     lastUpdated: today,
   }
 })

@@ -27,7 +27,12 @@
       "Bash(node --input-type=module -e ' *)",
       "Bash(node -e \"const e=require\\('./src/data/events.json'\\); console.log\\('keys:', Object.keys\\(e[0]\\).join\\(', '\\)\\); console.log\\('all have city/cover/ticketUrl/organizer:', e.every\\(o=>'city' in o && 'cover' in o && 'ticketUrl' in o && 'organizer' in o\\)\\)\")",
       "Bash(git add *)",
-      "Bash(git commit -q -m ' *)"
+      "Bash(git commit -q -m ' *)",
+      "Bash(npx hyperframes:*)",
+      "PowerShell(npx hyperframes:*)",
+      "PowerShell(npx --yes hyperframes:*)",
+      "Read(//c/Users/Tudo/.claude/plugins/cache/brag/brag/0.1.0/skills/**)",
+      "Read(//c/Users/Tudo/.claude/plugins/cache/**)"
     ]
   }
 }

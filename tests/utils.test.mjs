@@ -2,6 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { bandKey, parseGroup, rootGroup, isPersonal } from '../src/utils/bands.js'
 import { parseCsvToEvents, mergeWithBundled } from '../src/utils/parseEvents.js'
+import { normalizeImageUrl } from '../src/utils/media.js'
 import { eventStatus, daysUntil, weekday } from '../src/utils/datetime.js'
 import { detectCity, eventCharacters, buildRoster } from '../src/utils/derive.js'
 import { matchSearch } from '../src/utils/search.js'
@@ -33,6 +34,29 @@ test('parseCsvToEvents 正規化 ASCII 斜線並拆清單', () => {
   assert.equal(ev[0].relatedGroups[0], 'Afterglow／上原緋瑪麗') // ASCII / → 全形／
   assert.deepEqual(ev[1].people, ['前島亞美', '工藤晴香'])
   assert.deepEqual(ev[1].relatedGroups, ['Pastel＊Palettes', 'Hello, Happy World!', 'Roselia']) // 半形逗號不拆
+})
+
+test('parseCsvToEvents 用「編號」欄當穩定 key（插列不錯位）', () => {
+  const csv = '編號,年份,活動名稱,本體／擦邊,備註\n' +
+    '5,2023,第五場,本體,測試備註\n' +
+    '2,2018,第二場,本體,'
+  const ev = parseCsvToEvents(csv)
+  assert.equal(ev[0].number, 5)
+  assert.equal(ev[0].id, 'evt-005')
+  assert.equal(ev[0].notes, '測試備註')
+  assert.equal(ev[1].number, 2)
+  assert.equal(ev[1].id, 'evt-002')
+})
+
+test('normalizeImageUrl 轉換 Drive / Dropbox 分享連結', () => {
+  const id = '1AbCdEfGhIjKlMnOpQrStUvWxYz12345'
+  assert.equal(normalizeImageUrl(`https://drive.google.com/file/d/${id}/view?usp=sharing`),
+    `https://drive.google.com/thumbnail?id=${id}&sz=w2000`)
+  assert.equal(normalizeImageUrl(`https://drive.google.com/open?id=${id}`),
+    `https://drive.google.com/thumbnail?id=${id}&sz=w2000`)
+  assert.equal(normalizeImageUrl('https://www.dropbox.com/s/abc/pic.jpg?dl=0'),
+    'https://dl.dropboxusercontent.com/s/abc/pic.jpg')
+  assert.equal(normalizeImageUrl('https://i.imgur.com/x.jpg'), 'https://i.imgur.com/x.jpg')
 })
 
 test('mergeWithBundled 保留手動欄位', () => {

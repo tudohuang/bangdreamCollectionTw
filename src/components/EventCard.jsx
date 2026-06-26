@@ -5,6 +5,7 @@ import { coverOf } from '../utils/media.js'
 import { eventStatus, daysUntil, weekday } from '../utils/datetime.js'
 import { detectCity } from '../utils/derive.js'
 import Icon from './Icon.jsx'
+import Img from './Img.jsx'
 
 export default function EventCard({ event, attended, onToggleAttended, onClick }) {
   const [imgOk, setImgOk] = useState(true)
@@ -31,9 +32,10 @@ export default function EventCard({ event, attended, onToggleAttended, onClick }
       aria-label={`${dex} ${event.title}`}
     >
       {cover && (
-        <div className="-mx-5 -mt-6 mb-1 overflow-hidden" style={{ borderBottom: `2px solid ${meta.color}` }}>
-          <img src={cover} alt="" loading="lazy" onError={() => setImgOk(false)}
-               className="w-full h-36 object-cover" />
+        <div className="-mx-5 -mt-6 mb-1 overflow-hidden relative h-36" style={{ borderBottom: `2px solid ${meta.color}` }}>
+          <Img src={cover} onError={() => setImgOk(false)}
+               className="w-full h-36 object-cover group-hover:scale-105 motion-reduce:transform-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none z-10" />
         </div>
       )}
 
