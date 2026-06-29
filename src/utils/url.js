@@ -27,7 +27,9 @@ export function readHash() {
   return { route: 'home', params }
 }
 
-export function writeHash(route, opts = {}) {
+// replace=true 用 replaceState（給即時輸入類，例如搜尋邊打字邊更新網址，
+// 不該每個按鍵都塞一筆瀏覽器歷史）。
+export function writeHash(route, opts = {}, { replace = false } = {}) {
   let hash = '#/'
   if (route === 'event') hash = `#/event/${opts.id}`
   else if (route === 'year') hash = `#/year/${opts.year}`
@@ -38,7 +40,7 @@ export function writeHash(route, opts = {}) {
     hash = qs ? `#/filter?${qs}` : '#/'
   }
   if (window.location.hash !== hash) {
-    history.pushState(null, '', hash)
+    history[replace ? 'replaceState' : 'pushState'](null, '', hash)
   }
 }
 

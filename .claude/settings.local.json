@@ -32,7 +32,8 @@
       "PowerShell(npx hyperframes:*)",
       "PowerShell(npx --yes hyperframes:*)",
       "Read(//c/Users/Tudo/.claude/plugins/cache/brag/brag/0.1.0/skills/**)",
-      "Read(//c/Users/Tudo/.claude/plugins/cache/**)"
+      "Read(//c/Users/Tudo/.claude/plugins/cache/**)",
+      "Bash(node -e ' *)"
     ]
   }
 }

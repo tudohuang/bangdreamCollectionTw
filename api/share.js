@@ -1,11 +1,20 @@
 // Vercel serverless function：/e/<id> 即時抓 Sheet → 回正確 OG 標題/描述 → 轉址回 App。
 // （純附加；GitHub Pages 部署不會用到這支，改用建置時的靜態 stub。）
+import { readFileSync } from 'node:fs'
 import { SHEET_CSV_URL } from '../src/config.js'
 import { parseCsvToEvents } from '../src/utils/parseEvents.js'
 import { bandKey, BAND_META } from '../src/utils/bands.js'
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
+
+// 只有「內建」活動在 build 時產過 /og/<id>.png；Sheet 之後新增的場次沒有對應圖檔，
+// 退回品牌預設圖，避免 og:image 指到 404。
+let BUNDLED_IDS = new Set()
+try {
+  BUNDLED_IDS = new Set(
+    JSON.parse(readFileSync(new URL('../src/data/events.json', import.meta.url), 'utf8')).map(e => e.id))
+} catch { /* 讀不到就一律走預設圖 */ }
 
 export default async function handler(req, res) {
   const id = String((req.query && req.query.id) || '')
@@ -35,7 +44,7 @@ export default async function handler(req, res) {
   const date = event.startDate === event.endDate ? event.startDate : `${event.startDate} → ${event.endDate}`
   const desc = [date, event.type, event.category === '擦邊' ? '個人來台' : meta.name, (event.people || []).join('、')]
     .filter(Boolean).join(' · ')
-  const img = `${origin}/og/${id}.png`
+  const img = BUNDLED_IDS.has(id) ? `${origin}/og/${id}.png` : `${origin}/og-default.png`
 
   res.status(200).send(`<!doctype html><html lang="zh-Hant"><head>
 <meta charset="UTF-8"/>

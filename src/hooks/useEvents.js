@@ -4,12 +4,16 @@ import { SHEET_CSV_URL } from '../config.js'
 import { parseCsvToEvents, mergeWithBundled } from '../utils/parseEvents.js'
 
 const CACHE_KEY = 'bdtw-events-cache'
+const CACHE_VERSION = 2          // 欄位 schema 改了就 +1，舊快取自動失效
+const CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000  // 7 天，超過視為過期
 
 function readCache() {
   try {
     const raw = localStorage.getItem(CACHE_KEY)
     if (!raw) return null
-    const { events, ts } = JSON.parse(raw)
+    const { v, events, ts } = JSON.parse(raw)
+    if (v !== CACHE_VERSION) return null
+    if (!ts || Date.now() - ts > CACHE_MAX_AGE) return null
     if (Array.isArray(events) && events.length) return { events, ts }
   } catch {}
   return null
@@ -37,7 +41,7 @@ export function useEvents() {
         const ts = Date.now()
         if (!alive) return
         setEvents(merged); setSource('sheet'); setUpdatedAt(ts)
-        try { localStorage.setItem(CACHE_KEY, JSON.stringify({ events: merged, ts })) } catch {}
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify({ v: CACHE_VERSION, events: merged, ts })) } catch {}
       })
       .catch((e) => {
         console.warn('[useEvents] 即時抓取失敗：', e.message)

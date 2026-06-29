@@ -5,6 +5,7 @@ import EventTable from './EventTable.jsx'
 import Icon from './Icon.jsx'
 import { primaryMeta, isPersonal } from '../utils/bands.js'
 import { coverOf } from '../utils/media.js'
+import Img from './Img.jsx'
 
 const Calendar = lazy(() => import('./Calendar.jsx'))
 
@@ -58,22 +59,23 @@ export default function EventWall({ events, view, attended, onToggleAttended, on
   return <Grid events={events} attended={attended} onToggleAttended={onToggleAttended} onSelect={onSelect} />
 }
 
-// 照片回憶牆：瀑布流，封面為主，沒封面的用樂團色塊＋標題
+// 照片回憶牆：統一直幅卡牆（封面為主，沒封面的用樂團色塊＋圖示）。
+// 固定 3:4 版位＝載入時不位移（無 CLS），並能顯示骨架/載入失敗兜底。
 function Gallery({ events, onSelect }) {
   return (
-    <div className="columns-2 sm:columns-3 lg:columns-4 gap-3 sm:gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
       {events.map(e => {
         const m = primaryMeta(e)
         const cover = coverOf(e)
         return (
           <button key={e.id} onClick={() => onSelect(e.id)}
-            className="group relative mb-3 sm:mb-4 block w-full break-inside-avoid overflow-hidden rounded-md border border-dream-line text-left"
+            className="group relative block w-full aspect-[3/4] overflow-hidden rounded-md border border-dream-line text-left"
             style={{ '--band': m.glow }}>
             {cover ? (
-              <img src={cover} alt="" loading="lazy"
-                className="w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transform-none" />
+              <Img src={cover}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transform-none" />
             ) : (
-              <div className="w-full aspect-[4/3] grid place-items-center text-2xl"
+              <div className="absolute inset-0 grid place-items-center text-2xl"
                 style={{ background: `rgba(${m.glow},0.12)`, color: m.color }}>
                 <Icon n={isPersonal(e) ? 'user' : m.icon} />
               </div>

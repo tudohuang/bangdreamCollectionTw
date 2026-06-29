@@ -42,6 +42,8 @@ function drawCover(x, img, px, py, pw, ph) {
 
 export async function downloadShareImage(event, meta, personal) {
   const W = 1200, H = 630
+  // 等字體就緒，否則 Noto Sans TC 還沒載入會 fallback 成系統字，產出的圖字體不一致
+  try { await document.fonts?.ready } catch {}
   const cover = await loadCover(coverOf(event))
   const cw = cover ? 460 : 0          // 右側封面欄寬
   const contentW = W - cw             // 左側文字區寬

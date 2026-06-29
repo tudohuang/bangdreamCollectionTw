@@ -5,4 +5,4 @@ dist
 .vite
 .env
 .env.local
-brag-output/
+brag-output*/

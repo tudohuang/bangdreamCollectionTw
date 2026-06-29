@@ -35,6 +35,10 @@ const splitMedia = (v) =>
 // 樂團字串正規化：ASCII 斜線 → 全形「／」
 const normGroup = (g) => g.trim().replace(/\s*\/\s*/g, '／')
 
+// 已知的人名錯字修正（Sheet 端常打成異體字，這裡統一成正確漢字）
+const NAME_FIX = { '上坂堇': '上坂菫' }
+const fixName = (p) => NAME_FIX[p] || p
+
 // rows（含表頭）→ 活動陣列（不含手動欄位的合併，交給呼叫端）
 export function parseCsvToEvents(text) {
   const rows = parseCSV(text)
@@ -74,7 +78,7 @@ export function parseCsvToEvents(text) {
       month: Number(get('month')) || null,
       title: get('title'),
       type: get('type'),
-      people: splitList(get('people')),
+      people: splitList(get('people')).map(fixName),
       relatedGroups: splitList(get('groups')).map(normGroup),
       category: get('category') || '本體',
       isFullBand: get('full') === '是',

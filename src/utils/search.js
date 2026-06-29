@@ -7,7 +7,7 @@ const ALIASES = {
   '伊藤美來': ['ito miku', 'miku'],
   '相羽あいな': ['aina', 'aiba'],
   '工藤晴香': ['kudo haruka'],
-  '上坂堇': ['uesaka sumire', 'sumipe'],
+  '上坂菫': ['uesaka sumire', 'sumipe'],
   '小原莉子': ['kohara riko'],
   '佐佐木李子': ['sasaki riko'],
   '米澤茜': ['yonezawa akane'],

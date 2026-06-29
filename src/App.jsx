@@ -66,12 +66,21 @@ function applyFilters(events, f, attended) {
   })
 }
 
+// 無日期的活動（如「日期未定」）一律排到最後，不要因空字串頂到列表最前
+const byDate = (dir) => (x, y) => {
+  const dx = x.startDate || '', dy = y.startDate || ''
+  if (!dx && !dy) return 0
+  if (!dx) return 1
+  if (!dy) return -1
+  return dir === 'desc' ? dy.localeCompare(dx) : dx.localeCompare(dy)
+}
+
 function orderEvents(events, order) {
   const a = [...events]
-  if (order === 'date-desc') a.sort((x, y) => (y.startDate || '').localeCompare(x.startDate || ''))
+  if (order === 'date-desc') a.sort(byDate('desc'))
   else if (order === 'attendance') a.sort((x, y) => (y.attendanceCount || 0) - (x.attendanceCount || 0))
   else if (order === 'number') a.sort((x, y) => (x.number || 0) - (y.number || 0))
-  else a.sort((x, y) => (x.startDate || '').localeCompare(y.startDate || ''))
+  else a.sort(byDate('asc'))
   return a
 }
 
@@ -204,13 +213,17 @@ export default function App() {
   }
 
   const updateFilters = (patch) => {
+    // 搜尋是即時輸入：用 replaceState，避免每打一個字就塞一筆瀏覽器歷史
+    const replace = 'search' in patch
     setFilters(f => {
       const next = { ...f, ...patch }
       const params = filtersToParams(next)
       if (Object.keys(params).length === 0) {
-        if (window.location.hash !== '' && window.location.hash !== '#/') history.pushState(null, '', '#/')
+        if (window.location.hash !== '' && window.location.hash !== '#/') {
+          history[replace ? 'replaceState' : 'pushState'](null, '', '#/')
+        }
       } else {
-        writeHash('filter', { params })
+        writeHash('filter', { params }, { replace })
       }
       return next
     })

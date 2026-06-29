@@ -48,6 +48,7 @@ const MAP = {
 }
 
 export default function Icon({ n, className, style, fixedWidth }) {
+  if (import.meta.env?.DEV && n && !MAP[n]) console.warn(`[Icon] 未知圖示名「${n}」，已 fallback 成 star`)
   const icon = MAP[n] || faStar
   return <FontAwesomeIcon icon={icon} className={className} style={style} fixedWidth={fixedWidth} />
 }

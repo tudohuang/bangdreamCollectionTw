@@ -15,7 +15,11 @@ import { BAND_META, bandKey } from '../src/utils/bands.js'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
 const DIST = join(ROOT, 'dist')
-const SITE_URL = (process.env.SITE_URL || '').replace(/\/$/, '')
+// 優先用明確的 SITE_URL；在 Vercel 上自動退回正式網域，讓 og:image / og:url 成為絕對網址
+const SITE_URL = (
+  process.env.SITE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : '')
+).replace(/\/$/, '')
 
 if (!existsSync(DIST)) {
   console.log('（跳過 OG：尚未 build，找不到 dist/）')
