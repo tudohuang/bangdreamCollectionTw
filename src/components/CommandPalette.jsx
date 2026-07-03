@@ -53,8 +53,8 @@ export default function CommandPalette({ open, onClose, events, onSelectEvent })
   }
 
   return (
-    <div className="fixed inset-0 z-[80] flex items-start justify-center pt-[12vh] px-4 bg-dream-ink/50" onClick={onClose}>
-      <div className="w-full max-w-xl rounded-xl border border-dream-line shadow-glassHover overflow-hidden dark:border-white/15"
+    <div className="fixed inset-0 z-[80] flex items-start justify-center pt-[12vh] px-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
+      <div className="w-full max-w-xl rounded-2xl border border-dream-line overflow-hidden dark:border-white/15 shadow-[0_24px_70px_-24px_rgba(139,92,246,0.5)]"
         style={{ background: 'var(--modal-bg)' }} onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-3 px-4 border-b border-dream-line">
           <Icon n="magnifying-glass" className="text-dream-faint" />
@@ -84,7 +84,7 @@ export default function CommandPalette({ open, onClose, events, onSelectEvent })
                     ? { background: `${r.color}22`, color: r.color }
                     : r.type === 'event'
                       ? { background: `rgba(${primaryMeta(r.event).glow},0.14)`, color: primaryMeta(r.event).color }
-                      : { background: 'rgba(99,102,241,0.12)', color: '#6366f1' }}>
+                      : { background: 'rgba(139,92,246,0.15)', color: '#8b5cf6' }}>
                   <Icon n={r.type === 'person' ? 'microphone' : r.type === 'band' ? 'guitar' : (isPersonal(r.event) ? 'user' : 'calendar')} />
                 </span>
                 <span className="min-w-0 flex-1">

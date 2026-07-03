@@ -6,7 +6,8 @@ import {
   faMasksTheater, faWandMagicSparkles, faCompactDisc, faMicrophone,
   faMagnifyingGlass, faUsers, faUser, faLocationDot, faNoteSticky, faLink,
   faXmark, faChevronDown, faChevronLeft, faChevronRight, faArrowRotateLeft,
-  faArrowUp, faHeart, faCircleCheck, faBullseye, faMoon, faSun, faClock, faUserGroup,
+  faArrowUp, faArrowRight, faHeart, faCircleCheck, faBullseye, faMoon, faSun, faClock, faUserGroup,
+  faTableCellsLarge, faImages, faBarsStaggered, faLayerGroup, faCalendarDays, faTable,
 } from '@fortawesome/free-solid-svg-icons'
 import { faCalendar, faClipboard } from '@fortawesome/free-regular-svg-icons'
 
@@ -36,6 +37,13 @@ const MAP = {
   'chevron-right': faChevronRight,
   'arrow-rotate-left': faArrowRotateLeft,
   'arrow-up': faArrowUp,
+  'arrow-right': faArrowRight,
+  grid: faTableCellsLarge,
+  images: faImages,
+  'bars-staggered': faBarsStaggered,
+  'layer-group': faLayerGroup,
+  'calendar-days': faCalendarDays,
+  table: faTable,
   heart: faHeart,
   'circle-check': faCircleCheck,
   bullseye: faBullseye,

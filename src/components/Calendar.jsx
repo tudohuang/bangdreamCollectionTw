@@ -78,7 +78,7 @@ export default function Calendar({ events, onSelect }) {
                       key={e.id}
                       onClick={() => onSelect(e.id)}
                       className="block w-full text-left truncate text-[11px] px-1 py-0.5 rounded text-white"
-                      style={{ background: isPersonal(e) ? '#6366f1' : m.color }}
+                      style={{ background: isPersonal(e) ? '#8b5cf6' : m.color }}
                       title={e.title}
                     >{e.title}</button>
                   )

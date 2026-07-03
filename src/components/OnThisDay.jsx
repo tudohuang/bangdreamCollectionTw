@@ -27,11 +27,13 @@ export default function OnThisDay({ events, onSelect }) {
   const personal = isPersonal(e)
 
   return (
-    <div className="mt-10 sm:mt-14">
-      <div className="flex items-center gap-2 mb-4">
-        <Icon n="clock" className="text-bloom-rose" />
-        <h2 className="font-display font-bold text-lg text-dream-ink">那年今天</h2>
-        <span className="text-[12px] text-dream-faint">{Number(mmdd.slice(0, 2))} 月 {Number(mmdd.slice(3))} 日</span>
+    <div className="mt-14 sm:mt-20">
+      <div className="mb-5">
+        <div className="eyebrow"><Icon n="heart" className="text-[10px]" /> Rewind</div>
+        <h2 className="font-display font-bold text-xl sm:text-2xl text-dream-ink mt-1.5">
+          那年今天
+          <span className="ml-2 text-[13px] font-normal text-dream-faint">{Number(mmdd.slice(0, 2))} 月 {Number(mmdd.slice(3))} 日</span>
+        </h2>
       </div>
 
       <button onClick={() => onSelect(e.id)}

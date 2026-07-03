@@ -7,7 +7,14 @@ function uniq(arr) { return [...new Set(arr)] }
 
 const TIMEFRAMES = [['全部', 'all'], ['即將', 'upcoming'], ['已結束', 'past'], ['今年', 'thisYear'], ['本月', 'thisMonth']]
 const ORDERS = [['日期↑', 'date-asc'], ['日期↓', 'date-desc'], ['人次', 'attendance'], ['編號', 'number']]
-const VIEWS = [['卡片', 'cards'], ['回憶牆', 'gallery'], ['時間軸', 'timeline'], ['年份', 'year'], ['月曆', 'calendar'], ['總表', 'table']]
+const VIEWS = [
+  ['卡片', 'cards', 'grid'],
+  ['回憶牆', 'gallery', 'images'],
+  ['時間軸', 'timeline', 'bars-staggered'],
+  ['年份', 'year', 'layer-group'],
+  ['月曆', 'calendar', 'calendar-days'],
+  ['總表', 'table', 'table'],
+]
 
 export default function FilterPanel({ events, filters, onChange, onReset, resultCount }) {
   const [open, setOpen] = useState(false)
@@ -35,10 +42,11 @@ export default function FilterPanel({ events, filters, onChange, onReset, result
     <div className="mb-8">
       <div className="flex items-end justify-between gap-4 mb-5">
         <div>
-          <div className="eyebrow"><Icon n="star" className="text-[10px]" /> Collection</div>
+          <div className="eyebrow"><Icon n="grid" className="text-[10px]" /> Collection</div>
           <h2 className="section-h mt-1.5">活動圖鑑牆</h2>
+          <p className="mt-2 text-[13px] text-dream-sub">六種看法隨你切換；打勾記下你去過的場次，做成自己的收藏。</p>
         </div>
-        <div className="text-right shrink-0">
+        <div className="text-right shrink-0" aria-live="polite">
           <div className="font-display text-2xl font-bold text-bloom-indigo leading-none">{resultCount}</div>
           <div className="text-[11px] text-dream-faint mt-1">筆結果</div>
         </div>
@@ -183,12 +191,17 @@ function ChipGroup({ options, value, onChange, values, onToggle, colored, single
 
 function Segmented({ value, onChange, options }) {
   return (
-    <div className="flex p-0.5 rounded-md bg-white border border-dream-line overflow-x-auto scrollbar-none max-w-full">
-      {options.map(([l, v]) => (
+    <div className="flex p-1 rounded-full bg-white border border-dream-line overflow-x-auto scrollbar-none max-w-full dark:bg-white/[.06] dark:border-white/15">
+      {options.map(([l, v, icon]) => (
         <button key={v}
-          className={`shrink-0 whitespace-nowrap px-3 py-1.5 rounded text-[13px] font-medium transition-colors ${
-            value === v ? 'bg-bloom-indigo text-white' : 'text-dream-sub hover:text-dream-ink'}`}
-          onClick={() => onChange(v)}>{l}</button>
+          className={`shrink-0 whitespace-nowrap inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-medium transition-colors ${
+            value === v
+              ? 'bg-bloom-indigo text-white shadow-sm'
+              : 'text-dream-sub hover:text-dream-ink hover:bg-dream-line/50 dark:hover:bg-white/10'}`}
+          onClick={() => onChange(v)}>
+          {icon && <Icon n={icon} className="text-[11px] opacity-80" />}
+          {l}
+        </button>
       ))}
     </div>
   )

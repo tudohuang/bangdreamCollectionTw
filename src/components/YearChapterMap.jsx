@@ -17,33 +17,33 @@ function representative(arr) {
     (e.category === '本體' ? 8 : 0) +
     (e.isFullBand ? 4 : 0) +
     Math.min(e.attendanceCount || 0, 10) / 10
-  return [...arr].sort((a, b) => score(b) - score(a)).slice(0, 3)
+  return [...arr].sort((a, b) => score(b) - score(a)).slice(0, 2)
 }
 
+// 設歌單版型：一年一列，巨型年份 + 密度譜 + 代表場次
 export default function YearChapterMap({ events, activeYear, onSelectYear }) {
   const years = useMemo(() => groupByYear(events), [events])
-  const maxCount = useMemo(() => Math.max(...years.map(([, a]) => a.length)), [years])
 
   return (
     <div>
       <div className="flex items-end justify-between gap-4 mb-7">
         <div>
-          <div className="eyebrow"><Icon n="star" className="text-[10px]" /> Chapters</div>
-          <h2 className="section-h mt-2">沿著年份翻閱</h2>
+          <div className="eyebrow"><Icon n="bars-staggered" className="text-[10px]" /> Setlist</div>
+          <h2 className="section-h mt-2">一年一章，逐年翻閱</h2>
+          <p className="mt-2 text-[13px] text-dream-sub">點任何一年，圖鑑牆就只留下那一年的場次。</p>
         </div>
         <button
-          className={`pill ${activeYear === 'all' ? 'pill-active' : ''}`}
+          className={`pill shrink-0 ${activeYear === 'all' ? 'pill-active' : ''}`}
           onClick={() => onSelectYear('all')}
         >
           全部年份
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+      <div className="space-y-3">
         {years.map(([year, arr], idx) => {
           const isActive = String(activeYear) === String(year)
           const reps = representative(arr)
-          const density = Math.round((arr.length / maxCount) * 100)
           // 該年最常出現的樂團當主色
           const tally = {}
           for (const e of arr) for (const g of (e.relatedGroups || [])) tally[bandKey(g)] = (tally[bandKey(g)] || 0) + 1
@@ -55,61 +55,52 @@ export default function YearChapterMap({ events, activeYear, onSelectYear }) {
               key={year}
               onClick={() => onSelectYear(year)}
               aria-pressed={isActive}
-              className="event-card group p-6 text-left flex flex-col"
+              className="event-card group w-full p-5 sm:p-6 text-left flex items-center gap-5 sm:gap-8"
               style={{ '--band': meta.glow }}
             >
-              {/* 年份大字 */}
-              <div className="relative flex items-start justify-between">
-                <div>
-                  <div className="text-[11px] font-round font-bold tracking-[0.2em] uppercase text-dream-faint">
-                    Chapter {String(idx + 1).padStart(2, '0')}
-                  </div>
-                  <div className="font-display font-extrabold text-[46px] leading-none mt-1" style={{ color: meta.color }}>
-                    {year}
-                  </div>
+              {/* 巨型年份 */}
+              <div className="shrink-0 w-[104px] sm:w-[150px]">
+                <div className="text-[10px] font-round font-bold tracking-[0.28em] uppercase text-dream-faint">
+                  Chapter {String(idx + 1).padStart(2, '0')}
                 </div>
-                <span className="font-round font-bold text-[13px] text-dream-sub bg-white/60 rounded-full px-2.5 py-1">
-                  {arr.length} 場
-                </span>
+                <div
+                  className={`font-display font-extrabold leading-none mt-1 text-[38px] sm:text-[54px] transition-colors group-hover:text-[rgb(var(--band))] ${isActive ? 'text-[rgb(var(--band))]' : 'text-dream-ink'}`}>
+                  {year}
+                </div>
               </div>
 
-              {/* 樂團色票密度條 */}
-              <div className="mt-5 flex items-end gap-[3px] h-8">
-                {arr.slice(0, 26).map((e, i) => {
-                  const m = primaryMeta(e)
-                  return (
-                    <span
-                      key={i}
-                      className="flex-1 rounded-full min-w-[3px]"
-                      style={{
-                        height: `${36 + Math.min(e.attendanceCount, 10) * 6.4}%`,
-                        background: m.color,
-                        opacity: e.category === '本體' ? 1 : 0.5,
-                      }}
-                    />
-                  )
-                })}
+              {/* 密度譜 + 代表場次 */}
+              <div className="min-w-0 flex-1 overflow-hidden">
+                <div className="flex items-end gap-[3px] h-9">
+                  {arr.slice(0, 40).map((e, i) => {
+                    const m = primaryMeta(e)
+                    return (
+                      <span
+                        key={i}
+                        className="flex-1 rounded-full max-w-[10px]"
+                        style={{
+                          height: `${36 + Math.min(e.attendanceCount, 10) * 6.4}%`,
+                          background: m.color,
+                          opacity: e.category === '本體' ? 1 : 0.45,
+                        }}
+                      />
+                    )
+                  })}
+                </div>
+                <div className="mt-2.5 text-[13px] text-dream-sub truncate">
+                  {reps.map(e => e.title).join('　·　')}
+                </div>
               </div>
 
-              {/* 代表活動 */}
-              <ul className="mt-5 space-y-2 text-[13px]">
-                {reps.map(e => {
-                  const m = primaryMeta(e)
-                  return (
-                    <li key={e.id} className="flex gap-2 items-start text-dream-sub">
-                      <span className="mt-1.5 w-2 h-2 rounded-full shrink-0" style={{ background: m.color }} />
-                      <span className="truncate">{e.title}</span>
-                    </li>
-                  )
-                })}
-              </ul>
-
-              {/* 進度條 */}
-              <div className="mt-5 flex items-center gap-2.5">
-                <div className="flex-1 h-2 rounded-full bg-white/55 overflow-hidden">
-                  <span className="block h-full rounded-full" style={{ width: `${density}%`, background: meta.color }} />
+              {/* 場次數 + 前往 */}
+              <div className="shrink-0 flex items-center gap-3 sm:gap-5">
+                <div className="text-right">
+                  <div className="font-display font-extrabold text-xl sm:text-2xl leading-none" style={{ color: meta.color }}>
+                    {arr.length}
+                  </div>
+                  <div className="text-[11px] text-dream-faint mt-1">場</div>
                 </div>
-                <span className="text-[11px] font-round font-bold text-dream-faint">{density}%</span>
+                <Icon n="chevron-right" className="text-dream-faint group-hover:translate-x-0.5 transition-transform" style={{ color: isActive ? meta.color : undefined }} />
               </div>
             </button>
           )

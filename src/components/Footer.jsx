@@ -10,25 +10,44 @@ function sourceText(source, updatedAt) {
   return ''
 }
 
+const NAV = [['#chapters', '年份'], ['#wall', '圖鑑'], ['#stats', '數據'], ['#review', '回顧']]
+
 export default function Footer({ source = 'bundled', updatedAt, onRetry }) {
   const txt = sourceText(source, updatedAt)
   return (
     <footer className="relative z-10 mt-8">
       <div className="max-w-6xl mx-auto px-4 sm:px-8 pb-10">
-        <div className="glass-soft px-6 sm:px-8 py-7 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <span className="grid place-items-center w-8 h-8 rounded-md bg-bloom-indigo text-white text-[13px]"><Icon n="music" /></span>
-            <div>
-              <div className="font-display font-bold text-[15px] text-dream-ink">邦邦來台圖鑑</div>
-              <div className="text-[11px] text-dream-faint">Taiwan BanG Dream! Collection</div>
+        <div className="glass-soft px-6 sm:px-8 py-7">
+          <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="grid place-items-center w-9 h-9 rounded-lg bg-gradient-to-br from-bloom-rose to-bloom-indigo text-white text-[14px] shadow-sm dark:shadow-[0_0_14px_-2px_rgba(217,70,239,0.6)]"><Icon n="music" /></span>
+              <div>
+                <div className="font-display font-bold text-[15px] text-dream-ink">邦邦來台圖鑑</div>
+                <div className="text-[11px] text-dream-faint">Taiwan BanG Dream! Collection</div>
+              </div>
             </div>
+            <nav className="flex items-center gap-1 text-[13px] text-dream-sub">
+              {NAV.map(([href, label]) => (
+                <a key={href} href={href}
+                  className="rounded-full px-3 py-1.5 hover:text-dream-ink hover:bg-dream-line/60 transition-colors dark:hover:bg-white/10">
+                  {label}
+                </a>
+              ))}
+              {REPORT_URL && (
+                <a href={REPORT_URL} target="_blank" rel="noopener noreferrer"
+                  className="ml-1 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[12.5px] font-bold text-bloom-indigo bg-bloom-indigo/10 hover:bg-bloom-indigo hover:text-white transition-colors">
+                  <Icon n="heart" className="text-[10px]" /> 資料回報
+                </a>
+              )}
+            </nav>
           </div>
-          <div className="text-[12.5px] text-dream-sub leading-relaxed sm:text-right">
-            由台灣 fandom 用愛整理 <Icon n="heart" className="text-bloom-rose text-[11px]" /> 非營利、非官方<br className="hidden sm:block" />
-            資料如有錯漏，歡迎一起補完這本圖鑑
-            {REPORT_URL && <> ・ <a href={REPORT_URL} className="underline hover:text-dream-ink" target="_blank" rel="noopener noreferrer">資料回報</a></>}
+
+          <div className="mt-5 pt-4 border-t border-dream-line/70 dark:border-white/10 flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between text-[12px] text-dream-faint">
+            <span>
+              由台灣 fandom 用愛整理 <Icon n="heart" className="text-bloom-rose text-[10px]" /> 非營利、非官方 · 每一場都算數，錯漏歡迎一起補完
+            </span>
             {txt && (
-              <span className="block mt-1 text-[11px] text-dream-faint">
+              <span>
                 {txt}
                 {(source === 'error' || source === 'cached') && onRetry && (
                   <button onClick={onRetry} className="ml-2 underline hover:text-dream-ink">重試</button>

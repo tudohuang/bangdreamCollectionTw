@@ -234,32 +234,35 @@ export default function App() {
     <div className="relative min-h-screen flex flex-col overflow-x-clip">
       <ScrollProgress />
 
-      <header className="sticky top-0 z-30 bg-white border-b border-dream-line dark:bg-[#16122b]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-8 h-14 flex items-center justify-between">
-          <a href="#/" className="flex items-center gap-2.5 group">
-            <span className="grid place-items-center w-7 h-7 rounded bg-bloom-indigo text-white text-[12px]"><Icon n="music" /></span>
+      <a href="#wall"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:rounded-full focus:bg-bloom-indigo focus:text-white focus:text-[13px]">
+        跳到活動圖鑑
+      </a>
+
+      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-dream-line/70 dark:bg-[#0b0a24]/75 dark:border-white/10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 h-14 flex items-center justify-between gap-3">
+          <a href="#/" className="flex items-center gap-2.5 group shrink-0">
+            <span className="grid place-items-center w-8 h-8 rounded-lg bg-gradient-to-br from-bloom-rose to-bloom-indigo text-white text-[13px] shadow-sm dark:shadow-[0_0_14px_-2px_rgba(217,70,239,0.6)]"><Icon n="music" /></span>
             <span className="font-display font-bold text-[16px] text-dream-ink group-hover:text-bloom-indigo transition-colors">
               邦邦來台圖鑑
             </span>
           </a>
-          <nav className="flex items-center gap-3 text-[13px] text-dream-sub">
-            <a href="#chapters" className="hover:text-dream-ink hover:underline transition-colors hidden sm:block">章節</a>
-            <a href="#wall" className="hover:text-dream-ink hover:underline transition-colors hidden sm:block">圖鑑</a>
-            <a href="#stats" className="hover:text-dream-ink hover:underline transition-colors hidden sm:block">收藏</a>
-            <a href="#review" className="hover:text-dream-ink hover:underline transition-colors hidden sm:block">回顧</a>
+          <nav className="flex items-center gap-1.5 sm:gap-2 text-[13px] text-dream-sub min-w-0">
+            {[['#chapters', '年份'], ['#wall', '圖鑑'], ['#stats', '數據'], ['#review', '回顧']].map(([href, label]) => (
+              <a key={href} href={href}
+                className="hidden min-[480px]:block rounded-full px-2.5 py-1 hover:text-dream-ink hover:bg-dream-line/60 transition-colors dark:hover:bg-white/10">
+                {label}
+              </a>
+            ))}
             <button
               onClick={() => setPaletteOpen(true)}
               aria-label="快速搜尋"
-              className="inline-flex items-center gap-2 rounded border border-dream-line px-2.5 h-8 text-dream-sub hover:text-dream-ink transition-colors"
+              className="inline-flex items-center justify-center gap-2 h-9 w-9 sm:w-auto sm:px-3.5 rounded-full border border-dream-line bg-white/60 text-dream-sub hover:text-dream-ink hover:border-bloom-sky hover:bg-white transition-colors dark:bg-white/[.06] dark:border-white/15 dark:hover:bg-white/10"
             >
               <Icon n="magnifying-glass" className="text-[12px]" />
-              <kbd className="hidden sm:inline text-[11px] text-dream-faint">⌘K</kbd>
+              <kbd className="hidden sm:inline text-[11px] text-dream-faint font-sans">⌘K</kbd>
             </button>
-            <button
-              onClick={toggleDark}
-              aria-label="切換深淺色"
-              className="grid place-items-center w-8 h-8 rounded border border-dream-line text-dream-sub hover:text-dream-ink transition-colors"
-            >
+            <button onClick={toggleDark} aria-label="切換深淺色" className="icon-btn">
               <Icon n={dark ? 'sun' : 'moon'} />
             </button>
           </nav>
@@ -282,8 +285,8 @@ export default function App() {
         ) : (
           <>
             <Hero events={events} onSelect={handleOpenDetail} />
-            <Reveal><ErrorBoundary><OnThisDay events={events} onSelect={handleOpenDetail} /></ErrorBoundary></Reveal>
             <Reveal><ErrorBoundary><Upcoming events={events} onSelect={handleOpenDetail} /></ErrorBoundary></Reveal>
+            <Reveal><ErrorBoundary><OnThisDay events={events} onSelect={handleOpenDetail} /></ErrorBoundary></Reveal>
             <Reveal><ErrorBoundary><LatestAdded events={events} onSelect={handleOpenDetail} /></ErrorBoundary></Reveal>
 
             <Reveal as="section" id="chapters" className="mt-16 sm:mt-24 scroll-mt-20">
@@ -307,6 +310,7 @@ export default function App() {
                   attended={attended}
                   onToggleAttended={toggleAttended}
                   onSelect={handleOpenDetail}
+                  onReset={resetFilters}
                 />
               </ErrorBoundary>
             </Reveal>
@@ -379,8 +383,9 @@ function ScrollProgress() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
   return (
-    <div className="fixed top-0 left-0 right-0 z-40 h-1 pointer-events-none">
-      <div className="h-full bg-bloom-indigo transition-[width] duration-100" style={{ width: `${p}%` }} />
+    <div className="fixed top-0 left-0 right-0 z-40 h-[3px] pointer-events-none">
+      <div className="h-full bg-gradient-to-r from-bloom-sky via-bloom-indigo to-bloom-rose transition-[width] duration-100"
+        style={{ width: `${p}%` }} />
     </div>
   )
 }
@@ -397,7 +402,7 @@ function BackToTop() {
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       aria-label="回到頂部"
-      className="fixed bottom-20 right-6 z-40 grid place-items-center w-11 h-11 rounded-md text-white bg-bloom-indigo hover:bg-bloom-violet transition-colors"
+      className="fixed bottom-[76px] right-5 sm:right-6 z-40 grid place-items-center w-11 h-11 rounded-full text-white bg-bloom-indigo hover:bg-bloom-violet transition-colors shadow-lg shadow-bloom-indigo/30 animate-pop"
     >
       <Icon n="arrow-up" />
     </button>
@@ -411,7 +416,7 @@ function RandomButton({ onClick }) {
       onClick={onClick}
       aria-label="抽一張回憶"
       title="抽一張回憶"
-      className="group fixed bottom-6 right-6 z-40 grid place-items-center w-11 h-11 rounded-md bg-white border border-dream-line text-bloom-indigo hover:text-white hover:bg-bloom-indigo transition-colors dark:bg-white/10"
+      className="group fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 grid place-items-center w-11 h-11 rounded-full bg-white border border-dream-line text-bloom-indigo shadow-lg shadow-bloom-indigo/15 hover:text-white hover:bg-bloom-indigo hover:border-bloom-indigo transition-colors dark:bg-white/10 dark:border-white/15"
     >
       <Icon n="wand-magic-sparkles" className="transition-transform group-hover:rotate-12 group-active:scale-90" />
     </button>

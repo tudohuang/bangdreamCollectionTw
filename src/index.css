@@ -2,43 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   夜場 LIVE 主題 — 深色為主體：舞台聚光、星塵、樂團色霓虹
+   淺色為副主題：暖白粉彩，同一套紫粉主色
+   ============================================================ */
+
 @layer base {
   :root {
-    /* 乾淨靛藍（淺色） */
-    --c-bg: 246 248 252;
-    --c-ink: 30 41 59;
-    --c-sub: 71 85 105;
-    --c-faint: 148 163 184;
-    --c-line: 226 232 240;
-    --modal-bg: rgba(255, 255, 255, 0.96);
+    /* 淺色（副主題）：暖白偏粉紫 */
+    --c-bg: 253 250 255;
+    --c-ink: 42 36 66;
+    --c-sub: 96 88 130;
+    --c-faint: 156 148 190;
+    --c-line: 238 230 248;
+    --modal-bg: rgba(255, 253, 255, 0.97);
   }
 
   .dark {
-    /* 深色（藍石板） */
-    --c-bg: 15 23 42;
-    --c-ink: 226 232 240;
-    --c-sub: 148 163 184;
-    --c-faint: 100 116 139;
-    --c-line: 51 65 85;
-    --modal-bg: rgba(20, 28, 46, 0.96);
+    /* 深色（主主題）：夜場深靛黑 */
+    --c-bg: 8 8 24;
+    --c-ink: 238 234 254;
+    --c-sub: 168 162 200;
+    --c-faint: 114 108 154;
+    --c-line: 48 44 84;
+    --modal-bg: rgba(15, 13, 36, 0.97);
   }
 
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
   }
 
   body {
     @apply font-sans text-dream-ink;
     font-feature-settings: 'palt' 1;
-    /* 樸素版：乾淨純色淡底 */
     background-color: rgb(var(--c-bg));
+    background-image:
+      radial-gradient(920px 620px at 88% -6%, rgba(236, 72, 153, 0.09), transparent 60%),
+      radial-gradient(780px 580px at 4% 106%, rgba(139, 92, 246, 0.10), transparent 60%),
+      radial-gradient(680px 520px at 50% 40%, rgba(34, 211, 238, 0.05), transparent 65%);
+    background-attachment: fixed;
     min-height: 100vh;
   }
 
+  /* 深色：舞台 — 頂部聚光燈 + 斜射光束 + 底部冷光 */
+  .dark body {
+    background-color: #07071a;
+    background-image:
+      linear-gradient(115deg, transparent 40%, rgba(139, 92, 246, 0.07) 46%, transparent 54%),
+      linear-gradient(62deg, transparent 38%, rgba(236, 72, 153, 0.05) 46%, transparent 54%),
+      radial-gradient(1000px 700px at 76% -12%, rgba(139, 92, 246, 0.24), transparent 60%),
+      radial-gradient(900px 640px at 10% -8%, rgba(236, 72, 153, 0.17), transparent 60%),
+      radial-gradient(820px 620px at 50% 115%, rgba(34, 211, 238, 0.10), transparent 60%);
+  }
+
+  /* 深色：星塵層（固定在視窗、內容之下） */
+  .dark body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(1px 1px at 12% 22%, rgba(255, 255, 255, 0.55), transparent),
+      radial-gradient(1px 1px at 38% 8%, rgba(255, 255, 255, 0.35), transparent),
+      radial-gradient(1.5px 1.5px at 64% 16%, rgba(240, 171, 252, 0.55), transparent),
+      radial-gradient(1px 1px at 82% 30%, rgba(255, 255, 255, 0.40), transparent),
+      radial-gradient(1px 1px at 51% 42%, rgba(165, 243, 252, 0.45), transparent),
+      radial-gradient(1.5px 1.5px at 92% 62%, rgba(255, 255, 255, 0.30), transparent),
+      radial-gradient(1px 1px at 8% 68%, rgba(255, 255, 255, 0.30), transparent),
+      radial-gradient(1px 1px at 73% 84%, rgba(240, 171, 252, 0.40), transparent),
+      radial-gradient(1px 1px at 28% 92%, rgba(165, 243, 252, 0.30), transparent);
+    background-size: 940px 940px;
+    background-repeat: repeat;
+  }
+
   ::selection {
-    background-color: rgba(167, 139, 250, 0.35);
+    background-color: rgba(217, 70, 239, 0.35);
     color: rgb(var(--c-ink));
   }
 
@@ -50,11 +92,11 @@
   /* #16 鍵盤可達性：聚焦發光環 */
   :focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9), 0 0 0 5px rgba(79, 70, 229, 0.6);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9), 0 0 0 5px rgba(139, 92, 246, 0.65);
     border-radius: 10px;
   }
   .dark :focus-visible {
-    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.9), 0 0 0 5px rgba(99, 102, 241, 0.8);
+    box-shadow: 0 0 0 3px rgba(7, 7, 26, 0.9), 0 0 0 5px rgba(217, 70, 239, 0.8);
   }
 
   /* #17 尊重「減少動態」偏好 */
@@ -69,50 +111,93 @@
 }
 
 @layer components {
-  /* ---------- 純白扁平卡（更樸素） ---------- */
+  /* ---------- 卡片容器 ---------- */
   .glass {
-    @apply relative rounded-md border border-dream-line bg-white;
+    @apply relative rounded-2xl border border-dream-line bg-white;
+    box-shadow: 0 6px 22px -14px rgba(120, 80, 160, 0.22);
   }
   .glass-soft {
-    @apply relative rounded-md border border-dream-line bg-white;
+    @apply relative rounded-2xl border border-dream-line bg-white;
   }
 
-  /* 活動卡 — 用 CSS 變數帶入樂團色（只留一條細色條） */
+  /* 活動卡 — 淺色：暖白帶樂團色淡暈；深色：霓虹玻璃（見下方覆寫） */
   .event-card {
-    @apply relative rounded-md border border-dream-line overflow-hidden cursor-pointer text-left w-full bg-white;
-    transition: border-color 0.12s ease, background-color 0.12s ease;
+    @apply relative rounded-2xl border border-dream-line overflow-hidden cursor-pointer text-left w-full;
+    background: linear-gradient(180deg, rgba(var(--band), 0.06), #ffffff 56%);
+    box-shadow: 0 5px 18px -10px rgba(120, 80, 160, 0.22);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
   }
   .event-card:hover {
-    border-color: rgba(var(--band), 0.6);
-    background-color: #f8fafc;
+    transform: translateY(-3px);
+    border-color: rgba(var(--band), 0.5);
+    box-shadow: 0 16px 34px -14px rgba(var(--band), 0.5), 0 4px 14px -10px rgba(120, 80, 160, 0.25);
   }
-  /* 卡片左側一條樂團色細線 */
+  /* 卡片左側一條樂團色霓虹細線 */
   .event-card::before {
     content: '';
     position: absolute;
     inset: 0 auto 0 0;
-    width: 3px;
-    background: rgba(var(--band), 0.9);
+    width: 4px;
+    background: linear-gradient(180deg, rgba(var(--band), 0.95), rgba(var(--band), 0.45));
     pointer-events: none;
+    z-index: 1;
   }
 
-  /* ---------- 按鈕 / 標籤（方角樸素） ---------- */
+  /* ---------- 按鈕 / 標籤 ---------- */
   .pill {
-    @apply inline-flex items-center gap-1.5 rounded px-3 py-1.5 text-[13px] font-medium transition-colors duration-150;
+    @apply inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-150;
     background: #fff;
     border: 1px solid theme('colors.dream.line');
     color: theme('colors.dream.sub');
   }
   .pill:hover {
-    background: #f1f5f9;
+    background: #faf5ff;
     color: theme('colors.dream.ink');
   }
   .pill-active {
-    background: #4f46e5;
+    background: linear-gradient(135deg, #ec4899, #8b5cf6);
     color: #fff;
-    border-color: #4f46e5;
+    border-color: transparent;
+    box-shadow: 0 4px 14px -4px rgba(168, 85, 247, 0.6);
   }
-  .pill-active:hover { color: #fff; background: #4338ca; }
+  .pill-active:hover {
+    color: #fff;
+    background: linear-gradient(135deg, #db2777, #7c3aed);
+  }
+
+  /* 主要／次要按鈕 */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 h-11 text-[14px] font-bold text-white transition-all duration-150;
+    background: linear-gradient(135deg, #ec4899, #8b5cf6);
+    box-shadow: 0 10px 26px -10px rgba(217, 70, 239, 0.7);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, #db2777, #7c3aed);
+    box-shadow: 0 14px 30px -10px rgba(217, 70, 239, 0.8);
+  }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 h-11 text-[14px] font-bold transition-colors duration-150;
+    background: #fff;
+    border: 1px solid theme('colors.dream.line');
+    color: theme('colors.dream.sub');
+  }
+  .btn-ghost:hover {
+    color: theme('colors.dream.ink');
+    border-color: theme('colors.bloom.violet');
+  }
+
+  /* 頁首／浮動圓形圖示鈕 */
+  .icon-btn {
+    @apply grid place-items-center w-9 h-9 rounded-full border border-dream-line text-dream-sub transition-colors;
+    background: rgba(255, 255, 255, 0.6);
+  }
+  .icon-btn:hover {
+    color: theme('colors.dream.ink');
+    border-color: theme('colors.bloom.violet');
+    background: #fff;
+  }
 
   /* 樂團小色票 */
   .band-dot {
@@ -129,10 +214,10 @@
 
   /* 類別小標 */
   .badge {
-    @apply inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11.5px] font-semibold;
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11.5px] font-semibold;
   }
   .badge-core {
-    background: theme('colors.bloom.indigo');
+    background: linear-gradient(135deg, #ec4899, #8b5cf6);
     color: #fff;
   }
   .badge-side {
@@ -141,80 +226,128 @@
     border: 1px solid theme('colors.dream.line');
   }
   .badge-full {
-    background: #e0e7ff;
-    color: #4338ca;
+    background: #f3e8ff;
+    color: #7c3aed;
   }
 
   /* 區塊小標題 */
   .eyebrow {
-    @apply inline-flex items-center gap-1.5 text-[12px] font-semibold text-dream-faint;
+    @apply inline-flex items-center gap-1.5 text-[12px] font-bold text-dream-faint tracking-[0.18em] uppercase;
   }
   .section-h {
     @apply font-display text-2xl sm:text-3xl font-bold text-dream-ink leading-tight;
   }
 
-  /* 樸素版：純色標題（不漸層） */
+  /* 重點字漸層 */
   .text-gradient {
-    color: theme('colors.bloom.indigo');
+    background: linear-gradient(120deg, #db2777 5%, #a855f7 55%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .dark .text-gradient {
+    background: linear-gradient(120deg, #f9a8d4 5%, #d8b4fe 50%, #67e8f9 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
   }
 
   /* 輸入框 */
   .dream-input {
-    @apply w-full rounded-md px-4 py-2.5 text-[15px] text-dream-ink transition-colors;
+    @apply w-full rounded-xl px-4 py-2.5 text-[15px] text-dream-ink transition-colors;
     background: #fff;
     border: 1px solid theme('colors.dream.line');
   }
   .dream-input::placeholder { color: theme('colors.dream.faint'); }
   .dream-input:focus {
     outline: none;
-    border-color: theme('colors.bloom.indigo');
+    border-color: theme('colors.bloom.violet');
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
   }
 }
 
 @layer components {
-  /* ---------- 深色（夜間偶像）覆寫 ---------- */
+  /* ---------- 深色（夜場 LIVE）覆寫 ---------- */
   .dark .glass {
-    background: rgba(40, 32, 70, 0.50);
-    border-color: rgba(255, 255, 255, 0.12);
-    box-shadow: 0 8px 32px -12px rgba(0, 0, 0, 0.55), inset 0 1px 0 0 rgba(255, 255, 255, 0.10);
+    background: rgba(22, 18, 48, 0.55);
+    border-color: rgba(255, 255, 255, 0.10);
+    box-shadow: 0 8px 32px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
   .dark .glass-soft {
-    background: rgba(40, 32, 70, 0.40);
-    border-color: rgba(255, 255, 255, 0.10);
+    background: rgba(22, 18, 48, 0.42);
+    border-color: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
   .dark .event-card {
-    background: rgba(44, 34, 76, 0.52);
-    border-color: rgba(255, 255, 255, 0.12);
-    box-shadow: 0 8px 30px -14px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+    background: rgba(24, 19, 52, 0.55);
+    border-color: rgba(255, 255, 255, 0.10);
+    box-shadow: 0 8px 30px -14px rgba(0, 0, 0, 0.65), inset 0 1px 0 0 rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
   .dark .event-card:hover {
-    border-color: rgba(var(--band), 0.7);
-    box-shadow: 0 22px 50px -18px rgba(var(--band), 0.6), 0 0 0 1px rgba(var(--band), 0.35);
+    border-color: rgba(var(--band), 0.75);
+    box-shadow:
+      0 22px 52px -18px rgba(var(--band), 0.65),
+      0 0 24px -6px rgba(var(--band), 0.35),
+      0 0 0 1px rgba(var(--band), 0.4);
   }
+  /* 深色卡片：左上角樂團色光暈 + 霓虹左線 */
   .dark .event-card::before {
     background:
-      radial-gradient(120% 130% at 0% 0%, rgba(var(--band), 0.40) 0, transparent 60%),
-      linear-gradient(180deg, rgba(var(--band), 0.22) 0%, transparent 100%);
+      radial-gradient(130% 140% at 0% 0%, rgba(var(--band), 0.45) 0, transparent 60%),
+      linear-gradient(180deg, rgba(var(--band), 0.25) 0%, transparent 100%);
+    box-shadow: 0 0 12px 0 rgba(var(--band), 0.5);
   }
   .dark .pill {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.13);
     color: rgb(var(--c-sub));
   }
   .dark .pill:hover {
-    background: rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.14);
     color: rgb(var(--c-ink));
   }
-  .dark .dream-input {
-    background: rgba(255, 255, 255, 0.08);
+  .dark .pill-active {
+    background: linear-gradient(135deg, #ec4899, #8b5cf6);
+    color: #fff;
+    box-shadow: 0 4px 18px -4px rgba(217, 70, 239, 0.7), 0 0 14px -2px rgba(168, 85, 247, 0.45);
+  }
+  .dark .btn-ghost {
+    background: rgba(255, 255, 255, 0.07);
     border-color: rgba(255, 255, 255, 0.14);
+    color: rgb(var(--c-sub));
+  }
+  .dark .btn-ghost:hover {
+    color: rgb(var(--c-ink));
+    border-color: rgba(216, 180, 254, 0.6);
+  }
+  .dark .icon-btn {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.13);
+  }
+  .dark .icon-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(216, 180, 254, 0.6);
+  }
+  .dark .dream-input {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.13);
   }
   .dark .dream-input:focus {
-    background: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(216, 180, 254, 0.55);
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.25);
   }
   .dark .badge-side {
     background: rgba(255, 255, 255, 0.10);
     border-color: rgba(255, 255, 255, 0.16);
+  }
+  .dark .badge-full {
+    background: rgba(168, 85, 247, 0.22);
+    color: #d8b4fe;
   }
   /* 導覽列等用到的 bg-white/* 半透明在深色下換成淡白玻璃 */
   .dark .bg-white\/55,
@@ -223,9 +356,30 @@
 }
 
 @layer utilities {
+  /* 無縫跑馬燈（Marquee.jsx） */
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marqueeX var(--marquee-dur, 48s) linear infinite;
+  }
+  .marquee:hover .marquee-track { animation-play-state: paused; }
+  @keyframes marqueeX { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track { animation: none; }
+  }
+
+  /* 巨型描邊字（海報水印） */
+  .text-outline {
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(139, 92, 246, 0.30);
+  }
+  .dark .text-outline {
+    -webkit-text-stroke-color: rgba(216, 180, 254, 0.20);
+  }
+
   .scrollbar-thin::-webkit-scrollbar { height: 8px; width: 8px; }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #818cf8, #4f46e5);
+    background: linear-gradient(180deg, #ec4899, #8b5cf6);
     border-radius: 999px;
   }
   .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
@@ -234,7 +388,10 @@
   .scrollbar-none { scrollbar-width: none; }
 
   .glow-text {
-    text-shadow: 0 2px 18px rgba(167, 139, 250, 0.35);
+    text-shadow: 0 2px 22px rgba(217, 70, 239, 0.45);
+  }
+  .dark .glow-text {
+    text-shadow: 0 0 28px rgba(217, 70, 239, 0.55), 0 2px 18px rgba(139, 92, 246, 0.5);
   }
 
   /* 滾動進場 */
@@ -247,9 +404,9 @@
   /* 圖片載入骨架微光 */
   .skeleton {
     background: linear-gradient(100deg,
-      rgba(148, 163, 184, 0.12) 30%,
-      rgba(148, 163, 184, 0.28) 50%,
-      rgba(148, 163, 184, 0.12) 70%);
+      rgba(168, 162, 200, 0.12) 30%,
+      rgba(168, 162, 200, 0.28) 50%,
+      rgba(168, 162, 200, 0.12) 70%);
     background-size: 200% 100%;
     animation: shimmer 1.4s linear infinite;
   }

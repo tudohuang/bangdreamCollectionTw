@@ -9,17 +9,16 @@ export default function YearReview({ events }) {
   const active = year ?? years[0]
   const s = useMemo(() => (active ? yearSummary(events, active) : null), [events, active])
   if (!s || !s.total) return null
-  const accent = s.topBands[0]?.color || '#4f46e5'
+  const accent = s.topBands[0]?.color || '#8b5cf6'
 
   return (
     <div>
       <div className="flex items-end justify-between gap-4 mb-6">
         <div>
-          <div className="eyebrow"><Icon n="star" className="text-[10px]" /> Wrapped</div>
+          <div className="eyebrow"><Icon n="wand-magic-sparkles" className="text-[10px]" /> Encore</div>
           <h2 className="section-h mt-2">年度回顧</h2>
         </div>
-        <button onClick={() => downloadWrapped(events, active)}
-          className="inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-[14px] font-bold text-white bg-bloom-indigo hover:bg-bloom-violet transition-colors shrink-0">
+        <button onClick={() => downloadWrapped(events, active)} className="btn-primary shrink-0">
           <Icon n="star" /> 存成回顧卡
         </button>
       </div>

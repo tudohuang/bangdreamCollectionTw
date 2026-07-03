@@ -13,20 +13,20 @@ export default {
           faint: 'rgb(var(--c-faint) / <alpha-value>)',
           line: 'rgb(var(--c-line) / <alpha-value>)',
         },
-        // 主題色：乾淨靛藍（單色系 chrome，讓樂團色跳出）
+        // 主題色：夜場霓虹 — 粉→紫為主旋律，青為冷光點綴
         bloom: {
-          pink: '#a5b4fc',
-          rose: '#6366f1',
-          violet: '#6366f1',
-          indigo: '#4f46e5',
-          sky: '#818cf8',
+          pink: '#f472b6',
+          rose: '#ec4899',
+          violet: '#a855f7',
+          indigo: '#8b5cf6',
+          sky: '#22d3ee',
         },
       },
       fontFamily: {
-        // 樸素版：統一用一般黑體，不用圓潤可愛字
-        display: ['"Noto Sans TC"', 'system-ui', 'sans-serif'],
+        // 標題／數字：英數用 Outfit（幾何感），中文自動退回 Noto Sans TC
+        display: ['Outfit', '"Noto Sans TC"', 'system-ui', 'sans-serif'],
         sans: ['"Noto Sans TC"', 'system-ui', 'sans-serif'],
-        round: ['"Noto Sans TC"', 'system-ui', 'sans-serif'],
+        round: ['Outfit', '"Noto Sans TC"', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
         glass: 'none',

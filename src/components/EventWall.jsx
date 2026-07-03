@@ -18,13 +18,20 @@ function groupByYear(events) {
   return [...map.entries()].sort((a, b) => a[0] - b[0])
 }
 
-export default function EventWall({ events, view, attended, onToggleAttended, onSelect }) {
+export default function EventWall({ events, view, attended, onToggleAttended, onSelect, onReset }) {
   if (events.length === 0) {
     return (
       <div className="glass px-6 py-24 text-center">
-        <div className="text-bloom-indigo text-4xl mb-4"><Icon n="magnifying-glass" /></div>
+        <div className="mx-auto mb-5 grid place-items-center w-16 h-16 rounded-full bg-bloom-indigo/10 text-bloom-indigo text-2xl">
+          <Icon n="magnifying-glass" />
+        </div>
         <div className="font-display font-bold text-xl text-dream-ink">沒有符合的條目</div>
-        <div className="text-[14px] text-dream-sub mt-3">試試清除部分篩選</div>
+        <div className="text-[14px] text-dream-sub mt-2">換個關鍵字，或放寬一點篩選條件試試</div>
+        {onReset && (
+          <button onClick={onReset} className="btn-primary mt-6">
+            <Icon n="arrow-rotate-left" className="text-[12px]" /> 清除全部篩選
+          </button>
+        )}
       </div>
     )
   }
@@ -81,7 +88,8 @@ function Gallery({ events, onSelect }) {
               </div>
             )}
             <span className="absolute inset-x-0 bottom-0 h-1" style={{ background: m.color }} />
-            <div className="absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+            {/* 手機沒有 hover：標題直接常駐，桌面才做 hover 浮現 */}
+            <div className="absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
               <div className="text-[11px] font-round font-bold text-white/80">#{String(e.number ?? 0).padStart(3, '0')} · {e.year}</div>
               <div className="text-[13px] font-bold text-white line-clamp-2 leading-snug">{e.title}</div>
             </div>

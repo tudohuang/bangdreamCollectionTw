@@ -5,6 +5,7 @@ import { eventStatus, daysUntil, weekday, todayStr } from '../utils/datetime.js'
 import { formatMonthDay } from '../utils/share.js'
 import Icon from './Icon.jsx'
 import Img from './Img.jsx'
+import Marquee from './Marquee.jsx'
 
 function computeStats(events) {
   const years = events.map(e => e.year).filter(Boolean)
@@ -44,15 +45,6 @@ function useCountUp(target) {
   return val
 }
 
-const Stat = ({ value, label, sub, href }) => (
-  <a href={href}
-     className="flex-1 min-w-[80px] text-center px-3 py-3.5 rounded-md transition-colors hover:bg-bloom-indigo/5">
-    <div className="font-display text-2xl font-bold text-dream-ink leading-none">{value}</div>
-    <div className="mt-1.5 text-[12px] text-dream-sub">{label}</div>
-    {sub && <div className="text-[11px] text-dream-faint mt-0.5">{sub}</div>}
-  </a>
-)
-
 // 下一場（沒有未來場次就退回最近一場）
 function pickHighlight(events) {
   const today = todayStr()
@@ -66,7 +58,8 @@ function pickHighlight(events) {
   return past.length ? { event: past[0], upcoming: false } : null
 }
 
-function Countdown({ events, onSelect }) {
+// 票根式倒數卡：左邊撕票區倒數，右邊場次資訊
+function TicketCountdown({ events, onSelect }) {
   const hl = useMemo(() => pickHighlight(events), [events])
   if (!hl) return null
   const { event: e, upcoming } = hl
@@ -74,69 +67,84 @@ function Countdown({ events, onSelect }) {
   const d = daysUntil(e.startDate)
   const status = eventStatus(e)
   const big = upcoming
-    ? (status === 'ongoing' ? '進行中' : d === 0 ? '就是今天' : `${d}`)
-    : '最近'
-  const bigUnit = upcoming && status !== 'ongoing' && d > 0 ? '天後' : ''
+    ? (status === 'ongoing' ? 'ON AIR' : d === 0 ? 'TODAY' : `${d}`)
+    : 'REPLAY'
+  const unit = upcoming && status !== 'ongoing' && d > 0 ? '天後開演' : ''
 
   return (
     <button onClick={() => onSelect?.(e.id)}
-      className="event-card group mt-7 w-full text-left p-4 sm:p-5 flex items-center gap-4 sm:gap-5"
+      className="event-card group w-full text-left flex items-stretch"
       style={{ '--band': m.glow }}>
-      <div className="shrink-0 text-center px-2 sm:px-3 border-r border-dream-line pr-4 sm:pr-5">
-        <div className="text-[11px] font-bold tracking-wide" style={{ color: m.color }}>
-          {upcoming ? '下一場' : '最近一場'}
-        </div>
-        <div className="font-display font-extrabold leading-none mt-1 text-dream-ink"
-          style={{ fontSize: bigUnit ? 'clamp(28px,5vw,40px)' : 'clamp(18px,3.4vw,24px)' }}>
-          {big}<span className="text-[14px] font-bold text-dream-sub ml-1">{bigUnit}</span>
-        </div>
-      </div>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-1.5 text-[12px] mb-1" style={{ color: m.color }}>
-          <Icon n={isPersonal(e) ? 'user' : m.icon} className="text-[10px]" />
-          {isPersonal(e) ? '個人來台' : m.name}
-        </div>
-        <div className="font-display font-bold text-[15px] text-dream-ink line-clamp-2 group-hover:text-bloom-indigo transition-colors">
-          {e.title}
-        </div>
-        <div className="text-[12px] text-dream-sub mt-1 flex items-center gap-1.5">
-          <Icon n="calendar" className="text-bloom-indigo text-[10px]" />
-          {e.year}.{formatMonthDay(e.startDate).replace(/^\d{4}\./, '')}
-          {weekday(e.startDate) && `（${weekday(e.startDate).replace('週', '')}）`}
-          {e.venue && <span className="text-dream-faint truncate">· {e.venue}</span>}
+      {/* 撕票區 */}
+      <div className="relative shrink-0 w-32 sm:w-40 grid place-items-center px-3 py-6 border-r border-dashed border-dream-line dark:border-white/20">
+        <span aria-hidden className="absolute -right-2 -top-2.5 w-4 h-4 rounded-full bg-dream-bg border border-dream-line dark:border-white/15" />
+        <span aria-hidden className="absolute -right-2 -bottom-2.5 w-4 h-4 rounded-full bg-dream-bg border border-dream-line dark:border-white/15" />
+        <div className="text-center">
+          <div className="text-[10px] font-bold tracking-[0.25em]" style={{ color: m.color }}>
+            {upcoming ? 'UP NEXT' : 'LAST SHOW'}
+          </div>
+          <div className="font-display font-extrabold leading-none mt-1.5 text-dream-ink"
+            style={{ fontSize: unit ? 'clamp(34px,4.5vw,46px)' : 'clamp(19px,2.4vw,26px)' }}>
+            {big}
+          </div>
+          {unit && <div className="text-[12px] font-bold text-dream-sub mt-1">{unit}</div>}
         </div>
       </div>
-      <Icon n="chevron-right" className="shrink-0 text-dream-faint group-hover:text-bloom-indigo transition-colors" />
+      {/* 場次資訊 */}
+      <div className="min-w-0 flex-1 p-4 sm:p-5 flex items-center gap-4">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5 text-[12px] mb-1" style={{ color: m.color }}>
+            <Icon n={isPersonal(e) ? 'user' : m.icon} className="text-[10px]" />
+            {isPersonal(e) ? '個人來台' : m.name}
+          </div>
+          <div className="font-display font-bold text-[15px] sm:text-[16px] text-dream-ink line-clamp-2 group-hover:text-bloom-violet transition-colors">
+            {e.title}
+          </div>
+          <div className="text-[12px] text-dream-sub mt-1.5 flex items-center gap-1.5 flex-wrap">
+            <Icon n="calendar" className="text-bloom-violet text-[10px]" />
+            {e.year}.{formatMonthDay(e.startDate).replace(/^\d{4}\./, '')}
+            {weekday(e.startDate) && `（${weekday(e.startDate).replace('週', '')}）`}
+            {e.venue && <span className="text-dream-faint truncate">· {e.venue}</span>}
+          </div>
+        </div>
+        <Icon n="chevron-right" className="shrink-0 text-dream-faint group-hover:text-bloom-violet transition-colors" />
+      </div>
     </button>
   )
 }
 
-// 右側封面馬賽克：拿有封面的活動拼一面小牆
-function CoverMosaic({ events, onSelect }) {
-  const items = useMemo(() => {
-    return events
+const StatTile = ({ value, label, sub, href }) => (
+  <a href={href} className="glass p-4 sm:p-5 transition-colors hover:border-bloom-violet/60">
+    <div className="font-display text-[24px] sm:text-[28px] font-extrabold text-dream-ink leading-none">{value}</div>
+    <div className="mt-2 text-[12.5px] text-dream-sub">{label}</div>
+    <div className="mt-0.5 text-[10px] font-bold tracking-[0.18em] uppercase text-dream-faint">{sub}</div>
+  </a>
+)
+
+// 全幅封面膠卷：裝飾用（點擊入口在圖鑑牆），hover 暫停慢速滑過
+function CoverFilm({ events }) {
+  const items = useMemo(() =>
+    events
       .map(e => ({ e, cover: coverOf(e) }))
       .filter(x => x.cover)
-      .sort((a, b) => (b.e.startDate || '').localeCompare(a.e.startDate || ''))
-      .slice(0, 9)
-  }, [events])
-  if (items.length < 3) return null
+      .sort((a, b) => (b.e.startDate || '').localeCompare(a.e.startDate || '')),
+    [events])
+  if (items.length < 6) return null
 
   return (
-    <div className="hidden lg:grid grid-cols-3 gap-2 w-[320px] shrink-0">
-      {items.map(({ e, cover }, i) => {
-        const m = primaryMeta(e)
-        return (
-          <button key={e.id} onClick={() => onSelect?.(e.id)}
-            className="relative aspect-square overflow-hidden rounded-md border border-dream-line group animate-pop"
-            style={{ animationDelay: `${i * 45}ms` }}
-            aria-label={e.title}>
-            <Img src={cover} className="w-full h-full object-cover group-hover:scale-110 motion-reduce:transform-none" />
-            <span className="absolute inset-x-0 bottom-0 h-1" style={{ background: m.color }} />
-            <span className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors" />
-          </button>
-        )
-      })}
+    <div aria-hidden className="relative left-1/2 -translate-x-1/2 w-screen mt-12 sm:mt-16 select-none">
+      <Marquee duration={80}>
+        {items.map(({ e, cover }) => {
+          const m = primaryMeta(e)
+          return (
+            <div key={e.id} title={e.title}
+              className="relative mx-1.5 w-40 sm:w-52 aspect-[3/2] overflow-hidden rounded-lg border border-dream-line dark:border-white/10 shrink-0">
+              <Img src={cover} className="w-full h-full object-cover" />
+              <span className="absolute inset-x-0 bottom-0 h-1" style={{ background: m.color }} />
+            </div>
+          )
+        })}
+      </Marquee>
     </div>
   )
 }
@@ -148,41 +156,64 @@ export default function Hero({ events, onSelect }) {
 
   return (
     <section className="relative">
-      {/* 柔和氛圍光暈：淺色淡淡的、深色更明顯，讓 Hero 不會死板 */}
-      <div aria-hidden className="pointer-events-none absolute -z-10 -top-24 -right-16 w-[420px] h-[420px] rounded-full blur-3xl opacity-50 dark:opacity-70"
-        style={{ background: 'radial-gradient(circle at 30% 30%, rgba(99,102,241,0.30), rgba(165,180,252,0.18) 45%, transparent 70%)' }} />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-10 -left-24 w-[320px] h-[320px] rounded-full blur-3xl opacity-40 dark:opacity-60"
-        style={{ background: 'radial-gradient(circle, rgba(255,92,138,0.20), transparent 70%)' }} />
-
-      <div className="flex items-start gap-10">
-        <div className="flex-1 min-w-0">
-          <div className="max-w-2xl">
-            <div className="text-[12px] text-dream-faint">2018 — 2026 · Taiwan Collection</div>
-
-            <h1 className="mt-2 font-display font-bold leading-tight text-[clamp(30px,6vw,48px)]">
-              <span className="text-dream-ink">邦邦來台</span>
-              <span className="text-bloom-indigo">圖鑑</span>
-            </h1>
-
-            <p className="mt-4 max-w-xl text-[15px] leading-8 text-dream-sub">
-              一份收集 BanG Dream! 聲優、樂團與活動在台灣的紀錄。
-              從見面會、LIVE、快閃店到上映會，逐場整理收錄。
-            </p>
-          </div>
-
-          <Countdown events={events} onSelect={onSelect} />
-
-          {/* 統計條（可點跳到對應區塊） */}
-          <div className="mt-7 max-w-2xl glass px-2 sm:px-4 py-1 grid grid-cols-2 sm:flex sm:items-stretch sm:divide-x sm:divide-dream-line">
-            <Stat value={total} label="收錄場次" sub="entries" href="#wall" />
-            <Stat value={bandCount} label="登場樂團" sub="bands" href="#stats" />
-            <Stat value={stats.busiestYear} label="最熱年份" sub={`${stats.busiestCount} 場`} href={`#/year/${stats.busiestYear}`} />
-            <Stat value={stats.yearRange} label="跨越年份" sub="span" href="#chapters" />
-          </div>
-        </div>
-
-        <CoverMosaic events={events} onSelect={onSelect} />
+      {/* 舞台光：紫聚光 + 粉側光 + 青冷光 */}
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-28 -right-20 w-[480px] h-[480px] rounded-full blur-3xl opacity-50 dark:opacity-90"
+        style={{ background: 'radial-gradient(circle at 30% 30%, rgba(168,85,247,0.35), rgba(139,92,246,0.16) 45%, transparent 70%)' }} />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-6 -left-28 w-[380px] h-[380px] rounded-full blur-3xl opacity-45 dark:opacity-75"
+        style={{ background: 'radial-gradient(circle, rgba(236,72,153,0.28), transparent 70%)' }} />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-48 left-1/3 w-[300px] h-[300px] rounded-full blur-3xl opacity-30 dark:opacity-60"
+        style={{ background: 'radial-gradient(circle, rgba(34,211,238,0.22), transparent 70%)' }} />
+      {/* 閃爍星點（僅深色） */}
+      <div aria-hidden className="pointer-events-none absolute -z-10 inset-0 hidden dark:block">
+        {[[8, 12, 0], [22, 4, 1.2], [58, 8, 0.6], [86, 18, 1.8], [70, 40, 0.3], [40, 30, 2.4]].map(([l, t, d], i) => (
+          <span key={i}
+            className="absolute w-1 h-1 rounded-full bg-white animate-twinkle"
+            style={{ left: `${l}%`, top: `${t}%`, animationDelay: `${d}s`, boxShadow: '0 0 6px 1px rgba(240,171,252,0.8)' }} />
+        ))}
       </div>
+      {/* 海報水印描邊大字 */}
+      <div aria-hidden
+        className="pointer-events-none select-none absolute -z-10 right-0 -top-2 hidden lg:block font-display font-extrabold leading-none text-outline text-[120px] xl:text-[150px] tracking-tight">
+        LIVE!
+      </div>
+
+      {/* 海報大字區 */}
+      <div className="pt-2 sm:pt-6">
+        <div className="eyebrow">
+          <span className="w-1.5 h-1.5 rounded-full bg-bloom-rose animate-twinkle" />
+          Taiwan BanG Dream! Event Collection · 2018—2026
+        </div>
+        <h1 className="mt-3 font-display font-extrabold leading-[1.05] text-[clamp(40px,8vw,76px)]">
+          <span className="text-dream-ink">邦邦來台</span>
+          <span className="text-gradient glow-text">圖鑑</span>
+        </h1>
+        <p className="mt-5 max-w-xl text-[15px] leading-8 text-dream-sub">
+          從 2018 年的第一場見面會，到下一次安可——
+          BanG Dream! 聲優與樂團在台灣的每一場足跡，都收進這本由粉絲共同整理的圖鑑。
+        </p>
+        <div className="mt-7 flex flex-wrap items-center gap-3">
+          <a href="#wall" className="btn-primary">
+            翻閱圖鑑 <Icon n="arrow-right" className="text-[12px]" />
+          </a>
+          <a href="#chapters" className="btn-ghost">依年份瀏覽</a>
+        </div>
+      </div>
+
+      {/* Bento 儀表板：票根倒數 + 數據磚 */}
+      <div className="mt-10 sm:mt-12 grid lg:grid-cols-12 gap-4 items-stretch">
+        <div className="lg:col-span-7 flex">
+          <TicketCountdown events={events} onSelect={onSelect} />
+        </div>
+        <div className="lg:col-span-5 grid grid-cols-2 gap-3 sm:gap-4">
+          <StatTile value={total} label="收錄場次" sub="entries" href="#wall" />
+          <StatTile value={bandCount} label="登場樂團" sub="bands" href="#stats" />
+          <StatTile value={stats.busiestYear} label={`最熱年份 · ${stats.busiestCount} 場`} sub="peak year" href={`#/year/${stats.busiestYear}`} />
+          <StatTile value={stats.yearRange} label="跨越年份" sub="span" href="#chapters" />
+        </div>
+      </div>
+
+      {/* 全幅封面膠卷 */}
+      <CoverFilm events={events} />
     </section>
   )
 }

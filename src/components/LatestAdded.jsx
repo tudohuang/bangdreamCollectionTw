@@ -12,11 +12,13 @@ export default function LatestAdded({ events, onSelect }) {
   if (list.length < 4) return null
 
   return (
-    <div className="mt-10 sm:mt-14">
-      <div className="flex items-center gap-2 mb-4">
-        <Icon n="star" className="text-bloom-indigo" />
-        <h2 className="font-display font-bold text-lg text-dream-ink">最新收錄</h2>
-        <span className="text-[12px] text-dream-faint">編號越大＝越晚收進圖鑑</span>
+    <div className="mt-14 sm:mt-20">
+      <div className="mb-5">
+        <div className="eyebrow"><Icon n="star" className="text-[10px]" /> New Arrivals</div>
+        <h2 className="font-display font-bold text-xl sm:text-2xl text-dream-ink mt-1.5">
+          剛收進圖鑑的
+          <span className="ml-2 text-[13px] font-normal text-dream-faint hidden sm:inline">編號越大＝越晚收錄</span>
+        </h2>
       </div>
 
       <div className="flex gap-3 overflow-x-auto scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0 snap-x">

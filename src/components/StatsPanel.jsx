@@ -51,8 +51,8 @@ export default function StatsPanel({ events }) {
     <div>
       <div className="flex items-end justify-between gap-4 mb-7">
         <div>
-          <div className="eyebrow"><Icon n="star" className="text-[10px]" /> Progress</div>
-          <h2 className="section-h mt-2">收藏統計</h2>
+          <div className="eyebrow"><Icon n="bolt" className="text-[10px]" /> Tour Data</div>
+          <h2 className="section-h mt-2">應援數據</h2>
         </div>
         <div className="text-right shrink-0">
           <div className="font-display text-2xl font-bold text-bloom-indigo leading-none">{s.total} 場</div>
@@ -81,7 +81,7 @@ export default function StatsPanel({ events }) {
                       className="absolute inset-y-0 left-0 rounded-full"
                       style={{
                         width: `${pct}%`,
-                        background: isPeak ? '#4f46e5' : '#c7d2fe',
+                        background: isPeak ? '#a855f7' : '#e9d5ff',
                       }}
                     />
                   </span>
@@ -103,7 +103,7 @@ export default function StatsPanel({ events }) {
             </h3>
             <div className="flex h-9 rounded-full overflow-hidden border border-white/60">
               <div className="flex items-center justify-center text-[12px] font-bold text-white"
-                   style={{ width: `${(s.core / s.total) * 100}%`, background: '#4f46e5' }}>
+                   style={{ width: `${(s.core / s.total) * 100}%`, background: 'linear-gradient(135deg, #ec4899, #8b5cf6)' }}>
                 {s.core > 0 && `本體 ${s.core}`}
               </div>
               <div className="flex items-center justify-center text-[12px] font-semibold text-dream-sub bg-white/60"
@@ -153,7 +153,7 @@ export default function StatsPanel({ events }) {
             <div key={p} className="grid grid-cols-[20px_1fr_auto] items-center gap-3">
               <span className="font-round font-extrabold text-[13px] text-bloom-violet text-center">{i + 1}</span>
               <span className="h-7 rounded bg-dream-line/60 overflow-hidden relative flex items-center">
-                <span className="absolute inset-y-0 left-0 rounded" style={{ width: `${(v / maxPerson) * 100}%`, background: '#818cf8' }} />
+                <span className="absolute inset-y-0 left-0 rounded" style={{ width: `${(v / maxPerson) * 100}%`, background: 'rgba(168,85,247,0.55)' }} />
                 <span className="relative px-3 text-[13px] font-medium text-dream-ink truncate">{p}</span>
               </span>
               <span className="text-[13px] font-bold text-dream-sub">{v} 次</span>
@@ -172,7 +172,7 @@ export default function StatsPanel({ events }) {
               <div key={city} className="grid grid-cols-[64px_1fr_auto] items-center gap-3">
                 <span className="text-[13px] font-medium text-dream-ink">{city}</span>
                 <span className="h-2.5 rounded bg-dream-line/60 overflow-hidden">
-                  <span className="block h-full rounded" style={{ width: `${(v / maxCity) * 100}%`, background: '#4f46e5' }} />
+                  <span className="block h-full rounded" style={{ width: `${(v / maxCity) * 100}%`, background: 'linear-gradient(90deg, #ec4899, #8b5cf6)' }} />
                 </span>
                 <span className="text-[13px] font-bold text-dream-sub">{v}</span>
               </div>
@@ -191,7 +191,7 @@ export default function StatsPanel({ events }) {
               <div key={org} className="grid grid-cols-[20px_1fr_auto] items-center gap-3">
                 <span className="font-bold text-[13px] text-bloom-indigo text-center">{i + 1}</span>
                 <span className="h-7 rounded bg-dream-line/60 overflow-hidden relative flex items-center">
-                  <span className="absolute inset-y-0 left-0 rounded" style={{ width: `${(v / maxOrganizer) * 100}%`, background: '#4f46e5' }} />
+                  <span className="absolute inset-y-0 left-0 rounded" style={{ width: `${(v / maxOrganizer) * 100}%`, background: 'rgba(139,92,246,0.5)' }} />
                   <span className="relative px-3 text-[13px] font-medium text-dream-ink truncate">{org}</span>
                 </span>
                 <span className="text-[13px] font-bold text-dream-sub">{v} 場</span>

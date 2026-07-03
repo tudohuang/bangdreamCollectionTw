@@ -71,12 +71,17 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
         <Icon n="chevron-left" className="text-[11px]" /> 回首頁
       </button>
 
-      {/* 主檔頭 */}
-      <div className="glass overflow-hidden">
+      {/* 主檔頭：樂團色舞台光 + 巨型浮水印圖示 */}
+      <div className="glass overflow-hidden relative">
         <div className="h-1.5 w-full" style={{ background: meta.color }} />
-        <div className="p-6 sm:p-8 flex items-start gap-5">
+        <div aria-hidden className="absolute inset-0 pointer-events-none"
+          style={{ background: `radial-gradient(560px 300px at 85% -20%, rgba(${meta.glow},0.22), transparent 65%)` }} />
+        <Icon aria-hidden n={kind === 'person' ? 'microphone' : meta.icon}
+          className="absolute -right-4 -bottom-6 text-[120px] pointer-events-none select-none opacity-[0.06] dark:opacity-[0.1]"
+          style={{ color: meta.color }} />
+        <div className="p-6 sm:p-8 flex items-start gap-5 relative">
           <div className="grid place-items-center w-16 h-16 sm:w-20 sm:h-20 rounded-full shrink-0 text-2xl text-white"
-            style={{ background: meta.color }}>
+            style={{ background: meta.color, boxShadow: `0 0 26px -4px rgba(${meta.glow},0.65)` }}>
             <Icon n={kind === 'person' ? 'microphone' : meta.icon} />
           </div>
           <div className="min-w-0 flex-1">
@@ -100,8 +105,7 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
               {kind === 'person' && <Stat n={related.length} unit="團" label="關聯樂團" color={meta.color} />}
             </div>
             <div className="mt-5 flex gap-2.5">
-              <button onClick={copyLink}
-                className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-[13px] font-bold text-white bg-bloom-indigo hover:bg-bloom-violet transition-colors">
+              <button onClick={copyLink} className="btn-primary !h-10 !px-5 !text-[13px]">
                 <Icon n="link" /> 複製這頁連結
               </button>
             </div>
@@ -173,7 +177,7 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
                     onClick={(ev) => { ev.stopPropagation(); onToggleAttended?.(e.id) }}
                     onKeyDown={(ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.stopPropagation(); onToggleAttended?.(e.id) } }}
                     aria-label={att ? '取消已去過' : '標記我去過'}
-                    className={`grid place-items-center w-7 h-7 rounded shrink-0 ${att ? 'bg-bloom-indigo text-white' : 'border border-dream-line text-dream-faint hover:text-dream-ink'}`}>
+                    className={`grid place-items-center w-7 h-7 rounded-full shrink-0 transition-colors ${att ? 'bg-bloom-indigo text-white shadow-sm' : 'border border-dream-line text-dream-faint hover:text-bloom-indigo hover:border-bloom-sky'}`}>
                     <Icon n="circle-check" className="text-[11px]" />
                   </span>
                 </button>

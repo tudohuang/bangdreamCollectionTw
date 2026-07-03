@@ -31,22 +31,29 @@ export default function EventCard({ event, attended, onToggleAttended, onClick }
       style={{ '--band': meta.glow }}
       aria-label={`${dex} ${event.title}`}
     >
+      {/* 巨型編號水印 */}
+      <span aria-hidden
+        className="absolute -bottom-3 right-1 font-display font-extrabold text-[64px] leading-none pointer-events-none select-none opacity-[0.07] dark:opacity-[0.13]"
+        style={{ color: meta.color }}>
+        {String(event.number ?? 0).padStart(3, '0')}
+      </span>
+
       {cover && (
-        <div className="-mx-5 -mt-6 mb-1 overflow-hidden relative h-36" style={{ borderBottom: `2px solid ${meta.color}` }}>
+        <div className="-mx-5 -mt-6 mb-1 overflow-hidden relative h-40" style={{ borderBottom: `2px solid ${meta.color}` }}>
           <Img src={cover} onError={() => setImgOk(false)}
-               className="w-full h-36 object-cover group-hover:scale-105 motion-reduce:transform-none" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none z-10" />
+               className="w-full h-40 object-cover group-hover:scale-105 motion-reduce:transform-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent pointer-events-none z-10" />
         </div>
       )}
 
       <div className="relative flex items-center justify-between gap-2">
         {personal ? (
-          <span className="inline-flex items-center gap-1.5 rounded px-2.5 py-1 text-[12px] font-bold max-w-full"
+          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-bold max-w-full"
             style={{ background: `rgba(${meta.glow},0.14)`, color: meta.color, border: `1px solid rgba(${meta.glow},0.3)` }}>
             <Icon n="user" className="text-[10px]" /><span className="truncate">個人來台</span>
           </span>
         ) : (
-          <span className="inline-flex items-center gap-2 rounded pl-1 pr-3 py-1 text-[12.5px] font-bold text-white max-w-full"
+          <span className="inline-flex items-center gap-2 rounded-full pl-1 pr-3 py-1 text-[12.5px] font-bold text-white max-w-full"
             style={{ background: meta.color }}>
             <span className="grid place-items-center w-5 h-5 rounded bg-white/25 text-[11px]"><Icon n={meta.icon} /></span>
             <span className="truncate">{meta.name}</span>
@@ -59,7 +66,7 @@ export default function EventCard({ event, attended, onToggleAttended, onClick }
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); onToggleAttended?.(event.id) } }}
             aria-label={attended ? '取消已去過' : '標記我去過'}
             title={attended ? '已標記去過' : '標記我去過'}
-            className={`grid place-items-center w-6 h-6 rounded ${attended ? 'bg-bloom-indigo text-white' : 'border border-dream-line text-dream-faint hover:text-dream-ink'}`}
+            className={`grid place-items-center w-7 h-7 rounded-full transition-colors ${attended ? 'bg-bloom-indigo text-white shadow-sm' : 'border border-dream-line text-dream-faint hover:text-bloom-indigo hover:border-bloom-sky'}`}
           ><Icon n="circle-check" className="text-[11px]" /></span>
           <span className="font-round font-bold text-[14px]" style={{ color: meta.color }}>{dex}</span>
         </div>
@@ -77,7 +84,7 @@ export default function EventCard({ event, attended, onToggleAttended, onClick }
           </span>
         )}
         {dleft != null && (
-          <span className="rounded bg-bloom-indigo text-white px-1.5 py-0.5 text-[11px] font-bold">
+          <span className="rounded-full bg-bloom-indigo text-white px-2 py-0.5 text-[11px] font-bold">
             {dleft === 0 ? '今天' : `${dleft} 天後`}
           </span>
         )}
@@ -92,7 +99,7 @@ export default function EventCard({ event, attended, onToggleAttended, onClick }
       <div className="flex flex-wrap gap-2">
         {personal ? (
           <>
-            <span className="inline-flex items-center gap-1.5 rounded px-2 py-0.5 text-[12px] font-medium"
+            <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[12px] font-medium"
               style={{ background: `rgba(${meta.glow},0.12)`, color: meta.color }}>
               <Icon n={meta.icon} className="text-[10px]" />{meta.name}
             </span>
@@ -122,7 +129,7 @@ export default function EventCard({ event, attended, onToggleAttended, onClick }
           ) : <span className="text-dream-faint">尚無聲優資料</span>}
         </div>
         {event.attendanceCount > 0 && (
-          <span className="shrink-0 inline-flex items-center gap-1 h-6 px-2 rounded text-[12px] font-bold text-white" style={{ background: meta.color }}>
+          <span className="shrink-0 inline-flex items-center gap-1 h-6 px-2.5 rounded-full text-[12px] font-bold text-white" style={{ background: meta.color }}>
             <Icon n="user" className="text-[10px]" />{event.attendanceCount}
           </span>
         )}

@@ -21,7 +21,8 @@ export default function Timeline({ events, onSelect }) {
           <div key={year}>
             {/* 年份節點 */}
             <div className="relative flex items-center gap-3 mb-4 pl-1">
-              <span className="grid place-items-center w-9 h-9 sm:w-[52px] sm:h-[52px] rounded-full bg-bloom-indigo text-white font-display font-bold text-[13px] sm:text-[15px] ring-4 ring-white/70 z-10">
+              <span className="grid place-items-center w-9 h-9 sm:w-[52px] sm:h-[52px] rounded-full text-white font-display font-bold text-[13px] sm:text-[15px] ring-4 ring-white/70 dark:ring-white/10 z-10"
+                style={{ background: 'linear-gradient(135deg, #ec4899, #8b5cf6)' }}>
                 {String(year).slice(2)}
               </span>
               <span className="font-display font-extrabold text-2xl text-dream-ink">{year}</span>
@@ -39,8 +40,8 @@ export default function Timeline({ events, onSelect }) {
                   <li key={e.id} className="relative">
                     {/* 節點圓點 */}
                     <span
-                      className="absolute -left-[34px] sm:-left-[46px] top-4 w-3 h-3 rounded-full ring-4 ring-white/80 z-10"
-                      style={{ background: meta.color }}
+                      className="absolute -left-[34px] sm:-left-[46px] top-4 w-3 h-3 rounded-full ring-4 ring-white/80 dark:ring-white/10 z-10"
+                      style={{ background: meta.color, boxShadow: `0 0 10px 0 ${meta.color}` }}
                     />
                     <button
                       onClick={() => onSelect(e.id)}
