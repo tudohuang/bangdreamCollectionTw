@@ -10,7 +10,7 @@ function sourceText(source, updatedAt) {
   return ''
 }
 
-const NAV = [['#chapters', '年份'], ['#wall', '圖鑑'], ['#stats', '數據'], ['#review', '回顧']]
+const NAV = [['#/collection', '圖鑑'], ['#/people', '聲優'], ['#/stats', '數據'], ['#/me', '我的']]
 
 export default function Footer({ source = 'bundled', updatedAt, onRetry }) {
   const txt = sourceText(source, updatedAt)
@@ -44,7 +44,7 @@ export default function Footer({ source = 'bundled', updatedAt, onRetry }) {
 
           <div className="mt-5 pt-4 border-t border-dream-line/70 dark:border-white/10 flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between text-[12px] text-dream-faint">
             <span>
-              由台灣 fandom 用愛整理 <Icon n="heart" className="text-bloom-rose text-[10px]" /> 非營利、非官方 · 每一場都算數，錯漏歡迎一起補完
+              非官方、非營利的粉絲整理站 · 資料有誤或缺漏歡迎回報
             </span>
             {txt && (
               <span>

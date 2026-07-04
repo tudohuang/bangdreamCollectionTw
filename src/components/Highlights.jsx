@@ -22,12 +22,12 @@ export default function Highlights({ events, onSelect }) {
     <div className="mt-14 sm:mt-20">
       <div className="mb-5 flex items-end justify-between gap-3">
         <div>
-          <div className="eyebrow"><Icon n="images" className="text-[10px]" /> Memories</div>
-          <h2 className="font-display font-bold text-xl sm:text-2xl text-dream-ink mt-1.5">精選回憶</h2>
+          <div className="eyebrow"><Icon n="images" className="text-[10px]" /> Photos</div>
+          <h2 className="font-display font-bold text-xl sm:text-2xl text-dream-ink mt-1.5">近期場次照片</h2>
         </div>
         <a href="#/collection?photos=yes&order=date-desc"
           className="text-[13px] font-semibold text-bloom-indigo hover:underline shrink-0">
-          全部回憶 <Icon n="arrow-right" className="text-[10px]" />
+          看全部 <Icon n="arrow-right" className="text-[10px]" />
         </a>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">

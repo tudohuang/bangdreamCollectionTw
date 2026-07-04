@@ -14,15 +14,14 @@ export default function Contribute() {
             <Icon n="heart" />
           </span>
           <div>
-            <h2 className="font-display font-bold text-xl text-dream-ink">一起補完這本圖鑑</h2>
+            <h2 className="font-display font-bold text-xl text-dream-ink">回報資料</h2>
             <p className="mt-1.5 text-[13.5px] leading-relaxed text-dream-sub max-w-lg">
-              少了哪一場？有現場照片、票根或更正情報？圖鑑的資料庫就是一張大家都能補的
-              Google Sheet——回報之後，很快就會出現在站上。
+              缺場次、有照片、或資料有誤？活動資料就是一張 Google Sheet，回報後很快會更新到站上。
             </p>
           </div>
         </div>
         <a href={REPORT_URL} target="_blank" rel="noopener noreferrer" className="btn-primary shrink-0">
-          <Icon n="link" /> 幫補資料
+          <Icon n="link" /> 回報資料
         </a>
       </div>
     </div>

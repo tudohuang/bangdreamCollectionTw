@@ -41,7 +41,7 @@ export default function PeoplePage({ events }) {
         <div>
           <div className="eyebrow"><Icon n="microphone" className="text-[10px]" /> Voice Actors</div>
           <h2 className="section-h mt-1.5">聲優目錄</h2>
-          <p className="mt-2 text-[13px] text-dream-sub">誰來過台灣、來過幾次——點進去看每個人的完整足跡。</p>
+          <p className="mt-2 text-[13px] text-dream-sub">依來台次數排序；點進去看每個人的所有場次。</p>
         </div>
         <div className="relative w-full sm:w-64">
           <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-dream-faint"><Icon n="magnifying-glass" /></span>
