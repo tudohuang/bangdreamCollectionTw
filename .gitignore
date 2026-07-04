@@ -6,3 +6,4 @@ dist
 .env
 .env.local
 brag-output*/
+reports/

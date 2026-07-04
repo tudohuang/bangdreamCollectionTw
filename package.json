@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "import": "node scripts/import-csv.mjs",
     "validate": "node scripts/validate.mjs",
+    "report": "node scripts/weekly-report.mjs",
     "test": "node --test"
   },
   "dependencies": {
