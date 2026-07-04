@@ -45,6 +45,7 @@ export default function Footer({ source = 'bundled', updatedAt, onRetry }) {
           <div className="mt-5 pt-4 border-t border-dream-line/70 dark:border-white/10 flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between text-[12px] text-dream-faint">
             <span>
               粉絲自主整理的非官方站 · 看到錯漏跟我們說一聲
+              <span className="font-hand text-[12.5px] ml-2 text-dream-faint">（站長手動更新中，通常在半夜）</span>
             </span>
             {txt && (
               <span>

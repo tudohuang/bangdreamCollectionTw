@@ -27,6 +27,8 @@ export default {
         display: ['Outfit', '"Noto Sans TC"', 'system-ui', 'sans-serif'],
         sans: ['"Noto Sans TC"', 'system-ui', 'sans-serif'],
         round: ['Outfit', '"Noto Sans TC"', 'system-ui', 'sans-serif'],
+        // 手寫感：便利貼、站長碎念、塗鴉註記用
+        hand: ['"LXGW WenKai TC"', '"Noto Sans TC"', 'cursive'],
       },
       boxShadow: {
         glass: 'none',

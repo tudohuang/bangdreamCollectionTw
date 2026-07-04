@@ -34,6 +34,9 @@ export default function MonthlyDigest({ events, onSelect }) {
           <h2 className="font-display font-bold text-xl sm:text-2xl text-dream-ink mt-1.5">
             {year} 來台月曆
           </h2>
+          <svg aria-hidden className="mt-1 text-bloom-rose/60" width="148" height="8" viewBox="0 0 148 8" fill="none">
+            <path d="M2 5.5C20 2 35 7 55 4.5S95 2.5 118 5s22-1.5 28-.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+          </svg>
         </div>
         <div className="flex items-center gap-1 text-[13px]">
           <button
@@ -104,7 +107,9 @@ export default function MonthlyDigest({ events, onSelect }) {
                   })}
                 </ul>
               ) : (
-                <div className="text-[12px] text-dream-faint">—</div>
+                <div className="font-hand text-[13px] text-dream-faint">
+                  {['靜悄悄', '存錢月', '休息中'][m % 3]}
+                </div>
               )}
             </div>
           )

@@ -24,29 +24,38 @@ export default function Highlights({ events, onSelect }) {
         <div>
           <div className="eyebrow"><Icon n="images" className="text-[10px]" /> Photos</div>
           <h2 className="font-display font-bold text-xl sm:text-2xl text-dream-ink mt-1.5">最近的現場</h2>
+          <svg aria-hidden className="mt-1 text-bloom-violet/50" width="128" height="8" viewBox="0 0 128 8" fill="none">
+            <path d="M2 5C18 2.5 32 6.5 50 4.5S84 2.5 104 5s18-1.5 22-.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+          </svg>
         </div>
         <a href="#/collection?photos=yes&order=date-desc"
           className="text-[13px] font-semibold text-bloom-indigo hover:underline shrink-0">
           看全部 <Icon n="arrow-right" className="text-[10px]" />
         </a>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-        {picks.map(e => {
+      {/* 拍立得牆：每張歪一點點，像手貼上去的 */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-5">
+        {picks.map((e, i) => {
           const m = primaryMeta(e)
           const cover = coverOf(e)
+          const tilt = ['-rotate-1', 'rotate-[0.8deg]', 'rotate-0', 'rotate-1', '-rotate-[0.6deg]', 'rotate-[1.2deg]'][i % 6]
           return (
             <button key={e.id} onClick={() => onSelect(e.id)}
-              className="group relative block w-full aspect-[3/2] overflow-hidden rounded-xl border border-dream-line text-left dark:border-white/10"
+              className={`group relative block w-full text-left bg-white dark:bg-white/[.07] p-2 pb-2.5 rounded-lg border border-dream-line dark:border-white/10 shadow-[0_10px_28px_-16px_rgba(120,80,160,0.4)] ${tilt} hover:rotate-0 hover:-translate-y-1 transition-transform duration-300`}
               aria-label={e.title}>
-              <Img src={cover}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transform-none" />
-              <span className="absolute inset-x-0 bottom-0 h-1 z-10" style={{ background: m.color }} />
-              <div className="absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-black/70 via-black/10 to-transparent">
-                <div className="text-[11px] font-round font-bold text-white/80 flex items-center gap-1.5">
-                  <Icon n={isPersonal(e) ? 'user' : m.icon} className="text-[9px]" />
-                  {e.year}
+              <span aria-hidden
+                className="absolute -top-2 left-1/2 -translate-x-1/2 rotate-[-3deg] w-14 h-4 bg-white/55 border border-black/[.05] shadow-sm z-20" />
+              <div className="relative w-full aspect-[3/2] overflow-hidden rounded-md">
+                <Img src={cover}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transform-none" />
+                <span className="absolute inset-x-0 bottom-0 h-1 z-10" style={{ background: m.color }} />
+                <div className="absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-black/70 via-black/10 to-transparent">
+                  <div className="text-[11px] font-round font-bold text-white/80 flex items-center gap-1.5">
+                    <Icon n={isPersonal(e) ? 'user' : m.icon} className="text-[9px]" />
+                    {e.year}
+                  </div>
+                  <div className="text-[13px] font-bold text-white line-clamp-2 leading-snug">{e.title}</div>
                 </div>
-                <div className="text-[13px] font-bold text-white line-clamp-2 leading-snug">{e.title}</div>
               </div>
             </button>
           )

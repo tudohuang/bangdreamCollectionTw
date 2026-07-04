@@ -2,7 +2,22 @@ import { useMemo } from 'react'
 import { bandKey, primaryMeta, isPersonal } from '../utils/bands.js'
 import { eventStatus, daysUntil, weekday, todayStr } from '../utils/datetime.js'
 import { formatMonthDay } from '../utils/share.js'
+import { OWNER_NOTE } from '../config.js'
 import Icon from './Icon.jsx'
+
+// 站長便利貼：手寫紙條＋一截膠帶，歪一點才像人貼的
+function StickyNote({ text }) {
+  if (!text) return null
+  return (
+    <div className="relative -rotate-2 self-center shrink-0 max-w-[240px]">
+      <span aria-hidden
+        className="absolute -top-2.5 left-1/2 -translate-x-1/2 rotate-3 w-16 h-4 bg-white/60 border border-black/[.06] shadow-sm" />
+      <div className="bg-[#fff8c4] dark:bg-[#4a4420] px-4 py-3 shadow-[0_6px_16px_-6px_rgba(120,80,20,0.35)] rounded-[3px]">
+        <p className="font-hand text-[15px] leading-6 text-[#5b4a12] dark:text-[#f0e6b0]">{text}</p>
+      </div>
+    </div>
+  )
+}
 
 // 資訊優先的 Hero：一行標題 + 票根倒數 + 數據磚。
 // 3 秒內回答「下一場是誰、幾天後」；裝飾降到最低。
@@ -107,14 +122,17 @@ export default function Hero({ events, onSelect, onYearJump }) {
           <span className="w-1.5 h-1.5 rounded-full bg-bloom-rose" />
           Taiwan BanG Dream! Event Collection
         </div>
-        <div className="mt-2.5 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
-          <h1 className="font-display font-extrabold leading-[1.08] text-[clamp(30px,5vw,44px)]">
-            <span className="text-dream-ink">邦邦來台</span>
-            <span className="text-gradient">圖鑑</span>
-          </h1>
-          <p className="text-[14px] text-dream-sub max-w-md">
-            邦邦聲優與樂團來台的活動紀錄，從 2018 記到現在。
-          </p>
+        <div className="mt-2.5 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+          <div>
+            <h1 className="font-display font-extrabold leading-[1.08] text-[clamp(30px,5vw,44px)]">
+              <span className="text-dream-ink">邦邦來台</span>
+              <span className="text-gradient">圖鑑</span>
+            </h1>
+            <p className="mt-2.5 text-[14px] text-dream-sub max-w-md">
+              邦邦聲優與樂團來台的活動紀錄，從 2018 記到現在。
+            </p>
+          </div>
+          <StickyNote text={OWNER_NOTE} />
         </div>
       </div>
 

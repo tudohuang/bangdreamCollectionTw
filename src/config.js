@@ -18,3 +18,6 @@ export const SHEET_CSV_URL =
 // 可填信箱（mailto:你的信箱）、Google 表單、或 GitHub issues 連結。留空＝不顯示。
 export const REPORT_URL = ''
 
+// 站長便利貼（選填）：首頁標題旁的手寫小紙條，想到什麼寫什麼。留空＝不顯示。
+export const OWNER_NOTE = '8/8 林口見！有看到我記得打招呼'
+
