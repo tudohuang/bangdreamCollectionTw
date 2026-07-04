@@ -2,11 +2,12 @@ import { useEffect, useMemo, useState, lazy, Suspense } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import { useEvents } from './hooks/useEvents.js'
 import Hero from './components/Hero.jsx'
-import OnThisDay from './components/OnThisDay.jsx'
-import Upcoming from './components/Upcoming.jsx'
-import LatestAdded from './components/LatestAdded.jsx'
+import MonthlyDigest from './components/MonthlyDigest.jsx'
+import Highlights from './components/Highlights.jsx'
 import ProfilePage from './components/ProfilePage.jsx'
-import YearChapterMap from './components/YearChapterMap.jsx'
+import PeoplePage from './components/PeoplePage.jsx'
+import MePage from './components/MePage.jsx'
+import OnThisDay from './components/OnThisDay.jsx'
 import FilterPanel from './components/FilterPanel.jsx'
 import EventWall from './components/EventWall.jsx'
 import StatsPanel from './components/StatsPanel.jsx'
@@ -20,11 +21,14 @@ import ErrorBoundary from './components/ErrorBoundary.jsx'
 import { readHash, writeHash } from './utils/url.js'
 import { rootGroup } from './utils/bands.js'
 import { eventCharacters, detectCity } from './utils/derive.js'
+import { coverOf } from './utils/media.js'
 import { matchSearch } from './utils/search.js'
 import { eventStatus, todayStr } from './utils/datetime.js'
 import { getAttended, saveAttended } from './utils/attended.js'
 
 const EventDetail = lazy(() => import('./components/EventDetail.jsx'))
+
+const VIEW_SET = ['cards', 'timeline', 'table']
 
 const DEFAULT_FILTERS = {
   year: 'all',
@@ -32,13 +36,21 @@ const DEFAULT_FILTERS = {
   category: 'all',     // all / 本體 / 擦邊
   fullBand: 'all',     // all / full
   attended: 'all',     // all / yes
+  photos: 'all',       // all / yes（有封面/照片）
   timeframe: 'all',    // all / upcoming / past / thisYear / thisMonth
   search: '',
-  view: 'cards',       // cards / timeline / year / table / calendar
+  view: 'cards',       // cards / timeline / table
   order: 'date-asc',   // date-asc / date-desc / attendance / number
 }
 
 const ARRAY_KEYS = ['groups', 'people', 'characters', 'types', 'venues', 'cities']
+const PAGE_TABS = [
+  ['home', '首頁', 'house'],
+  ['collection', '圖鑑', 'grid'],
+  ['people', '聲優', 'microphone'],
+  ['stats', '數據', 'chart-simple'],
+  ['me', '我的', 'circle-check'],
+]
 
 function applyFilters(events, f, attended) {
   const today = todayStr()
@@ -54,6 +66,7 @@ function applyFilters(events, f, attended) {
     if (f.category !== 'all' && e.category !== f.category) return false
     if (f.fullBand === 'full' && !e.isFullBand) return false
     if (f.attended === 'yes' && !attended.has(e.id)) return false
+    if (f.photos === 'yes' && !coverOf(e)) return false
     if (f.timeframe !== 'all') {
       const st = eventStatus(e, today)
       if (f.timeframe === 'upcoming' && !(st === 'upcoming' || st === 'ongoing')) return false
@@ -88,7 +101,7 @@ function orderEvents(events, order) {
 function filtersToParams(f) {
   const p = {}
   for (const k of ARRAY_KEYS) if (f[k]?.length) p[k] = f[k].join(',')
-  for (const k of ['year', 'category', 'fullBand', 'attended', 'timeframe', 'search', 'view', 'order']) {
+  for (const k of ['year', 'category', 'fullBand', 'attended', 'photos', 'timeframe', 'search', 'view', 'order']) {
     if (f[k] && f[k] !== DEFAULT_FILTERS[k]) p[k] = f[k]
   }
   return p
@@ -96,14 +109,17 @@ function filtersToParams(f) {
 function paramsToFilters(params) {
   const f = {}
   for (const k of ARRAY_KEYS) if (params[k]) f[k] = params[k].split(',').filter(Boolean)
-  for (const k of ['year', 'category', 'fullBand', 'attended', 'timeframe', 'search', 'view', 'order']) {
+  for (const k of ['year', 'category', 'fullBand', 'attended', 'photos', 'timeframe', 'search', 'view', 'order']) {
     if (params[k] != null) f[k] = params[k]
   }
+  // 舊網址的 gallery / year / calendar 檢視已合併，一律退回卡片
+  if (f.view && !VIEW_SET.includes(f.view)) f.view = 'cards'
   return f
 }
 
 export default function App() {
   const { events, source, updatedAt, retry } = useEvents()
+  const [page, setPage] = useState('home')
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const [detailId, setDetailId] = useState(null)
   const [profile, setProfile] = useState(null)  // {kind:'person'|'band', value} | null
@@ -116,24 +132,22 @@ export default function App() {
     const sync = () => {
       const h = readHash()
       if (h.route === 'event') {
-        setDetailId(h.id)   // 詳情用浮層蓋在現有頁面上，不動 profile
-      } else if (h.route === 'year') {
-        setDetailId(null); setProfile(null)
-        setFilters(f => ({ ...f, year: String(h.year) }))
-        scrollToWall()
-      } else if (h.route === 'person') {
+        setDetailId(h.id)   // 詳情用浮層蓋在現有頁面上，不動 page/profile
+      } else if (h.route === 'person' || h.route === 'band') {
         setDetailId(null)
-        setProfile({ kind: 'person', value: h.value })
+        setProfile({ kind: h.route, value: h.value })
         scrollToTop()
-      } else if (h.route === 'band') {
-        setDetailId(null)
-        setProfile({ kind: 'band', value: h.value })
-        scrollToTop()
-      } else if (h.route === 'filter') {
+      } else if (h.route === 'collection') {
         setDetailId(null); setProfile(null)
+        setPage('collection')
         setFilters({ ...DEFAULT_FILTERS, ...paramsToFilters(h.params) })
+      } else if (h.route === 'people' || h.route === 'stats' || h.route === 'me') {
+        setDetailId(null); setProfile(null)
+        setPage(h.route)
+        scrollToTop()
       } else {
         setDetailId(null); setProfile(null)
+        setPage('home')
       }
     }
     sync()
@@ -191,6 +205,15 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
+  const goPage = (p) => {
+    setProfile(null); setDetailId(null)
+    setPage(p)
+    if (p === 'collection') setFilters(DEFAULT_FILTERS)
+    const hash = p === 'home' ? '#/' : `#/${p}`
+    if (window.location.hash !== hash) history.pushState(null, '', hash)
+    scrollToTop()
+  }
+
   const handleOpenDetail = (id) => { setDetailId(id); writeHash('event', { id }) }
   const handleRandom = () => {
     if (!events.length) return
@@ -198,18 +221,22 @@ export default function App() {
   }
   const handleCloseDetail = () => {
     setDetailId(null)
-    // 從某個圖鑑頁點開的，關閉後回到那一頁；否則回首頁
+    // 從某個圖鑑頁點開的，關閉後回到那一頁；否則回原頁
     if (profile) writeHash(profile.kind, { value: profile.value })
-    else if (window.location.hash.startsWith('#/event/')) history.pushState(null, '', '#/')
+    else if (window.location.hash.startsWith('#/event/')) {
+      history.pushState(null, '', page === 'home' ? '#/' : `#/${page}`)
+    }
   }
   const handleCloseProfile = () => {
     setProfile(null)
-    history.pushState(null, '', '#/')
+    history.pushState(null, '', page === 'home' ? '#/' : `#/${page}`)
     scrollToTop()
   }
   const handleYearJump = (year) => {
-    setFilters(f => ({ ...f, year: year === 'all' ? 'all' : String(year) }))
-    writeHash('year', { year })
+    setPage('collection')
+    setFilters({ ...DEFAULT_FILTERS, year: year === 'all' ? 'all' : String(year) })
+    writeHash('collection', { params: year === 'all' ? {} : { year: String(year) } })
+    scrollToTop()
   }
 
   const updateFilters = (patch) => {
@@ -217,18 +244,11 @@ export default function App() {
     const replace = 'search' in patch
     setFilters(f => {
       const next = { ...f, ...patch }
-      const params = filtersToParams(next)
-      if (Object.keys(params).length === 0) {
-        if (window.location.hash !== '' && window.location.hash !== '#/') {
-          history[replace ? 'replaceState' : 'pushState'](null, '', '#/')
-        }
-      } else {
-        writeHash('filter', { params }, { replace })
-      }
+      writeHash('collection', { params: filtersToParams(next) }, { replace })
       return next
     })
   }
-  const resetFilters = () => { setFilters(DEFAULT_FILTERS); history.pushState(null, '', '#/') }
+  const resetFilters = () => { setFilters(DEFAULT_FILTERS); history.pushState(null, '', '#/collection') }
 
   return (
     <div className="relative min-h-screen flex flex-col overflow-x-clip">
@@ -241,19 +261,28 @@ export default function App() {
 
       <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-dream-line/70 dark:bg-[#0b0a24]/75 dark:border-white/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-8 h-14 flex items-center justify-between gap-3">
-          <a href="#/" className="flex items-center gap-2.5 group shrink-0">
+          <a href="#/" onClick={(e) => { e.preventDefault(); goPage('home') }} className="flex items-center gap-2.5 group shrink-0">
             <span className="grid place-items-center w-8 h-8 rounded-lg bg-gradient-to-br from-bloom-rose to-bloom-indigo text-white text-[13px] shadow-sm dark:shadow-[0_0_14px_-2px_rgba(217,70,239,0.6)]"><Icon n="music" /></span>
-            <span className="font-display font-bold text-[16px] text-dream-ink group-hover:text-bloom-indigo transition-colors">
+            <span className="font-display font-bold text-[16px] text-dream-ink group-hover:text-bloom-indigo transition-colors hidden min-[380px]:block">
               邦邦來台圖鑑
             </span>
           </a>
-          <nav className="flex items-center gap-1.5 sm:gap-2 text-[13px] text-dream-sub min-w-0">
-            {[['#chapters', '年份'], ['#wall', '圖鑑'], ['#stats', '數據'], ['#review', '回顧']].map(([href, label]) => (
-              <a key={href} href={href}
-                className="hidden min-[480px]:block rounded-full px-2.5 py-1 hover:text-dream-ink hover:bg-dream-line/60 transition-colors dark:hover:bg-white/10">
-                {label}
-              </a>
-            ))}
+          <nav className="flex items-center gap-1 sm:gap-1.5 text-[13px] min-w-0">
+            <div className="flex items-center gap-0.5 overflow-x-auto scrollbar-none">
+              {PAGE_TABS.map(([p, label, icon]) => {
+                const active = page === p && !profile
+                return (
+                  <button key={p} onClick={() => goPage(p)}
+                    className={`shrink-0 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-medium transition-colors ${
+                      active
+                        ? 'bg-bloom-indigo text-white shadow-sm'
+                        : 'text-dream-sub hover:text-dream-ink hover:bg-dream-line/60 dark:hover:bg-white/10'}`}>
+                    <Icon n={icon} className="text-[11px] hidden sm:inline" />
+                    {label}
+                  </button>
+                )
+              })}
+            </div>
             <button
               onClick={() => setPaletteOpen(true)}
               aria-label="快速搜尋"
@@ -262,14 +291,14 @@ export default function App() {
               <Icon n="magnifying-glass" className="text-[12px]" />
               <kbd className="hidden sm:inline text-[11px] text-dream-faint font-sans">⌘K</kbd>
             </button>
-            <button onClick={toggleDark} aria-label="切換深淺色" className="icon-btn">
+            <button onClick={toggleDark} aria-label="切換夜場模式" title={dark ? '切回淺色' : '夜場模式'} className="icon-btn">
               <Icon n={dark ? 'sun' : 'moon'} />
             </button>
           </nav>
         </div>
       </header>
 
-      <main className="relative z-10 max-w-6xl w-full mx-auto px-4 sm:px-8 pt-8 sm:pt-12 pb-24 flex-1">
+      <main className="relative z-10 max-w-6xl w-full mx-auto px-4 sm:px-8 pt-8 sm:pt-10 pb-24 flex-1">
         {profile ? (
           <ErrorBoundary>
             <ProfilePage
@@ -282,50 +311,52 @@ export default function App() {
               onClose={handleCloseProfile}
             />
           </ErrorBoundary>
-        ) : (
+        ) : page === 'collection' ? (
+          <section id="wall" className="scroll-mt-20">
+            <ErrorBoundary>
+              <FilterPanel
+                events={events}
+                filters={filters}
+                onChange={updateFilters}
+                onReset={resetFilters}
+                resultCount={filtered.length}
+              />
+              <EventWall
+                events={filtered}
+                view={filters.view}
+                attended={attended}
+                onToggleAttended={toggleAttended}
+                onSelect={handleOpenDetail}
+                onReset={resetFilters}
+              />
+            </ErrorBoundary>
+          </section>
+        ) : page === 'people' ? (
+          <ErrorBoundary><PeoplePage events={events} /></ErrorBoundary>
+        ) : page === 'stats' ? (
           <>
-            <Hero events={events} onSelect={handleOpenDetail} />
-            <Reveal><ErrorBoundary><Upcoming events={events} onSelect={handleOpenDetail} /></ErrorBoundary></Reveal>
-            <Reveal><ErrorBoundary><OnThisDay events={events} onSelect={handleOpenDetail} /></ErrorBoundary></Reveal>
-            <Reveal><ErrorBoundary><LatestAdded events={events} onSelect={handleOpenDetail} /></ErrorBoundary></Reveal>
-
-            <Reveal as="section" id="chapters" className="mt-16 sm:mt-24 scroll-mt-20">
-              <ErrorBoundary>
-                <YearChapterMap events={events} activeYear={filters.year} onSelectYear={handleYearJump} />
-              </ErrorBoundary>
-            </Reveal>
-
-            <Reveal as="section" id="wall" className="mt-16 sm:mt-24 scroll-mt-20">
-              <ErrorBoundary>
-                <FilterPanel
-                  events={events}
-                  filters={filters}
-                  onChange={updateFilters}
-                  onReset={resetFilters}
-                  resultCount={filtered.length}
-                />
-                <EventWall
-                  events={filtered}
-                  view={filters.view}
-                  attended={attended}
-                  onToggleAttended={toggleAttended}
-                  onSelect={handleOpenDetail}
-                  onReset={resetFilters}
-                />
-              </ErrorBoundary>
-            </Reveal>
-
-            <Reveal as="section" id="stats" className="mt-20 sm:mt-28 scroll-mt-20">
+            <ErrorBoundary><OnThisDay events={events} onSelect={handleOpenDetail} /></ErrorBoundary>
+            <Reveal as="section" className="mt-14 sm:mt-20">
               <ErrorBoundary><StatsPanel events={events} /></ErrorBoundary>
             </Reveal>
-
-            <Reveal as="section" id="review" className="mt-20 sm:mt-28 scroll-mt-20">
+            <Reveal as="section" className="mt-14 sm:mt-20">
               <ErrorBoundary><YearReview events={events} /></ErrorBoundary>
             </Reveal>
-
-            <Reveal as="section" className="mt-20 sm:mt-28">
+            <Reveal as="section" className="mt-14 sm:mt-20">
               <ErrorBoundary><Contribute /></ErrorBoundary>
             </Reveal>
+          </>
+        ) : page === 'me' ? (
+          <ErrorBoundary>
+            <MePage events={events} attended={attended}
+              onToggleAttended={toggleAttended} onSelect={handleOpenDetail}
+              onBrowse={() => goPage('collection')} />
+          </ErrorBoundary>
+        ) : (
+          <>
+            <Hero events={events} onSelect={handleOpenDetail} onYearJump={handleYearJump} />
+            <ErrorBoundary><MonthlyDigest events={events} onSelect={handleOpenDetail} /></ErrorBoundary>
+            <Reveal><ErrorBoundary><Highlights events={events} onSelect={handleOpenDetail} /></ErrorBoundary></Reveal>
           </>
         )}
       </main>
@@ -358,12 +389,6 @@ export default function App() {
       )}
     </div>
   )
-}
-
-function scrollToWall() {
-  requestAnimationFrame(() => {
-    document.getElementById('wall')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  })
 }
 
 function scrollToTop() {

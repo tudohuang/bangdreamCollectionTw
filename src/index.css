@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 /* ============================================================
-   夜場 LIVE 主題 — 深色為主體：舞台聚光、星塵、樂團色霓虹
-   淺色為副主題：暖白粉彩，同一套紫粉主色
+   淺色為主主題：乾淨暖白，粉紫霓虹只當強調色（與週報 PDF 同語言）
+   深色為「夜場模式」副主題：舞台聚光、星塵、樂團色霓虹
    ============================================================ */
 
 @layer base {
   :root {
-    /* 淺色（副主題）：暖白偏粉紫 */
+    /* 淺色（主主題）：暖白偏粉紫 */
     --c-bg: 253 250 255;
     --c-ink: 42 36 66;
     --c-sub: 96 88 130;
@@ -19,7 +19,7 @@
   }
 
   .dark {
-    /* 深色（主主題）：夜場深靛黑 */
+    /* 深色（夜場模式）：夜場深靛黑 */
     --c-bg: 8 8 24;
     --c-ink: 238 234 254;
     --c-sub: 168 162 200;
@@ -356,27 +356,6 @@
 }
 
 @layer utilities {
-  /* 無縫跑馬燈（Marquee.jsx） */
-  .marquee-track {
-    display: flex;
-    width: max-content;
-    animation: marqueeX var(--marquee-dur, 48s) linear infinite;
-  }
-  .marquee:hover .marquee-track { animation-play-state: paused; }
-  @keyframes marqueeX { to { transform: translateX(-50%); } }
-  @media (prefers-reduced-motion: reduce) {
-    .marquee-track { animation: none; }
-  }
-
-  /* 巨型描邊字（海報水印） */
-  .text-outline {
-    color: transparent;
-    -webkit-text-stroke: 1.5px rgba(139, 92, 246, 0.30);
-  }
-  .dark .text-outline {
-    -webkit-text-stroke-color: rgba(216, 180, 254, 0.20);
-  }
-
   .scrollbar-thin::-webkit-scrollbar { height: 8px; width: 8px; }
   .scrollbar-thin::-webkit-scrollbar-thumb {
     background: linear-gradient(180deg, #ec4899, #8b5cf6);
@@ -386,13 +365,6 @@
 
   .scrollbar-none::-webkit-scrollbar { display: none; }
   .scrollbar-none { scrollbar-width: none; }
-
-  .glow-text {
-    text-shadow: 0 2px 22px rgba(217, 70, 239, 0.45);
-  }
-  .dark .glow-text {
-    text-shadow: 0 0 28px rgba(217, 70, 239, 0.55), 0 2px 18px rgba(139, 92, 246, 0.5);
-  }
 
   /* 滾動進場 */
   .reveal { opacity: 0; transform: translateY(22px); will-change: opacity, transform; }

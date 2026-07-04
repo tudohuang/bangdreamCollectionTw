@@ -74,11 +74,18 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
   const status = eventStatus(event)
   const dleft = status === 'upcoming' ? daysUntil(event.startDate) : null
 
-  // #15 推薦：同樂團其他場
+  // 詳情是 hub 不是死路：同樂團 / 同聲優 / 同場館，看完自然滑進下一場
   const band = rootGroup(groups[0] || '')
   const related = allEvents.filter(o =>
     o.id !== event.id && (o.relatedGroups || []).some(g => rootGroup(g) === band)
   ).slice(0, 5)
+  const relatedIds = new Set(related.map(o => o.id))
+  const samePeople = allEvents.filter(o =>
+    o.id !== event.id && !relatedIds.has(o.id) && (o.people || []).some(p => people.includes(p))
+  ).slice(0, 5)
+  const sameVenue = event.venue
+    ? allEvents.filter(o => o.id !== event.id && o.venue === event.venue).slice(0, 5)
+    : []
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 bg-black/60 backdrop-blur-sm" onClick={onClose}>
@@ -261,25 +268,35 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
 
           {event.sources && event.sources.length > 0 && (
             <Section title="來源連結" color={meta.color}>
-              <ul className="text-[13.5px] space-y-1">
-                {event.sources.map((src, i) => <li key={i}><a className="text-bloom-violet hover:underline break-all" href={src} target="_blank" rel="noopener noreferrer">{src}</a></li>)}
-              </ul>
+              <div className="flex flex-wrap gap-2">
+                {event.sources.map((src, i) => {
+                  let host = src
+                  try { host = new URL(src).hostname.replace(/^www\./, '') } catch {}
+                  return (
+                    <a key={i} href={src} target="_blank" rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 rounded-xl border border-dream-line dark:border-white/10 bg-white/70 dark:bg-white/[.06] px-3 py-2 text-[13px] text-dream-ink hover:border-bloom-violet transition-colors max-w-full">
+                      <Icon n="link" className="text-[10px] shrink-0" style={{ color: meta.color }} />
+                      <span className="truncate font-medium">{host}</span>
+                    </a>
+                  )
+                })}
+              </div>
             </Section>
           )}
 
           {related.length > 0 && (
             <Section title={`${meta.name} 的其他場次`} color={meta.color}>
-              <ul className="space-y-1.5">
-                {related.map(o => (
-                  <li key={o.id}>
-                    <button onClick={() => onNavigate(o.id)} className="w-full text-left flex items-center gap-2 text-[13px] text-dream-sub hover:text-dream-ink py-1">
-                      <span className="font-round font-bold shrink-0" style={{ color: meta.color }}>#{String(o.number).padStart(3, '0')}</span>
-                      <span className="text-dream-faint shrink-0">{o.year}</span>
-                      <span className="truncate">{o.title}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
+              <RelatedList items={related} color={meta.color} onNavigate={onNavigate} />
+            </Section>
+          )}
+          {samePeople.length > 0 && (
+            <Section title="同聲優的其他場次" color={meta.color}>
+              <RelatedList items={samePeople} color={meta.color} onNavigate={onNavigate} />
+            </Section>
+          )}
+          {sameVenue.length > 0 && (
+            <Section title={`也在 ${event.venue}`} color={meta.color}>
+              <RelatedList items={sameVenue} color={meta.color} onNavigate={onNavigate} />
             </Section>
           )}
 
@@ -364,6 +381,23 @@ function InfoLine({ icon, term, color, glow, children }) {
         <div className="text-[14px] text-dream-ink">{children}</div>
       </div>
     </div>
+  )
+}
+
+// 推薦清單：hub 的一節（同樂團 / 同聲優 / 同場館共用）
+function RelatedList({ items, color, onNavigate }) {
+  return (
+    <ul className="space-y-1.5">
+      {items.map(o => (
+        <li key={o.id}>
+          <button onClick={() => onNavigate(o.id)} className="w-full text-left flex items-center gap-2 text-[13px] text-dream-sub hover:text-dream-ink py-1">
+            <span className="font-round font-bold shrink-0" style={{ color }}>#{String(o.number).padStart(3, '0')}</span>
+            <span className="text-dream-faint shrink-0">{o.year}</span>
+            <span className="truncate">{o.title}</span>
+          </button>
+        </li>
+      ))}
+    </ul>
   )
 }
 

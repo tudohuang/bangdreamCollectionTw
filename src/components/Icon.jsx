@@ -8,6 +8,7 @@ import {
   faXmark, faChevronDown, faChevronLeft, faChevronRight, faArrowRotateLeft,
   faArrowUp, faArrowRight, faHeart, faCircleCheck, faBullseye, faMoon, faSun, faClock, faUserGroup,
   faTableCellsLarge, faImages, faBarsStaggered, faLayerGroup, faCalendarDays, faTable,
+  faHouse, faChartSimple, faSliders,
 } from '@fortawesome/free-solid-svg-icons'
 import { faCalendar, faClipboard } from '@fortawesome/free-regular-svg-icons'
 
@@ -50,6 +51,9 @@ const MAP = {
   moon: faMoon,
   sun: faSun,
   clock: faClock,
+  house: faHouse,
+  'chart-simple': faChartSimple,
+  sliders: faSliders,
   // 線框版
   calendar: faCalendar,
   clipboard: faClipboard,

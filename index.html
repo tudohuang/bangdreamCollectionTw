@@ -24,14 +24,12 @@
     <title>邦邦來台圖鑑 · Taiwan BanG Dream! Event Collection</title>
     <script>
       (function () {
-        // 夜場 LIVE：深色是主主題，除非使用者明確選過淺色
+        // 淺色是主主題；深色（夜場模式）只在使用者明確選過時開啟
         try {
-          if (localStorage.getItem('bdtw-theme') !== 'light') {
+          if (localStorage.getItem('bdtw-theme') === 'dark') {
             document.documentElement.classList.add('dark');
           }
-        } catch (e) {
-          document.documentElement.classList.add('dark');
-        }
+        } catch (e) { /* 預設淺色 */ }
       })();
     </script>
   </head>

@@ -17,14 +17,20 @@ export default function CommandPalette({ open, onClose, events, onSelectEvent })
     const nq = norm(q)
     if (!nq) return []
     const out = []
-    // 聲優
+    // 聲優（前往圖鑑頁 / 在圖鑑中篩選）
     const people = [...new Set(events.flatMap(e => e.people || []))]
-      .filter(p => norm(p).includes(nq)).slice(0, 4)
-    for (const p of people) out.push({ type: 'person', label: p, key: 'p:' + p })
+      .filter(p => norm(p).includes(nq)).slice(0, 3)
+    for (const p of people) {
+      out.push({ type: 'person', label: p, key: 'p:' + p })
+      out.push({ type: 'filter', label: p, filterKey: 'people', key: 'fp:' + p })
+    }
     // 樂團
     const bands = [...new Set(events.flatMap(e => (e.relatedGroups || []).map(rootGroup)))]
-      .filter(b => norm(b).includes(nq)).slice(0, 4)
-    for (const b of bands) out.push({ type: 'band', label: b, key: 'b:' + b, color: bandMeta(b).color })
+      .filter(b => norm(b).includes(nq)).slice(0, 3)
+    for (const b of bands) {
+      out.push({ type: 'band', label: b, key: 'b:' + b, color: bandMeta(b).color })
+      out.push({ type: 'filter', label: b, filterKey: 'groups', key: 'fb:' + b, color: bandMeta(b).color })
+    }
     // 活動
     const evs = events.filter(e => matchSearch(e, q)).slice(0, 8)
     for (const e of evs) out.push({ type: 'event', label: e.title, key: 'e:' + e.id, event: e })
@@ -42,6 +48,7 @@ export default function CommandPalette({ open, onClose, events, onSelectEvent })
     if (!r) return
     onClose()
     if (r.type === 'event') onSelectEvent(r.event.id)
+    else if (r.type === 'filter') window.location.hash = `#/collection?${r.filterKey}=${encodeURIComponent(r.label)}`
     else window.location.hash = `#/${r.type}/${encodeURIComponent(r.label)}`
   }
 
@@ -80,17 +87,19 @@ export default function CommandPalette({ open, onClose, events, onSelectEvent })
                 onMouseEnter={() => setActive(i)} onClick={() => go(r)}
                 className={`w-full text-left px-4 py-2.5 flex items-center gap-3 ${isA ? 'bg-bloom-indigo/10' : ''}`}>
                 <span className="grid place-items-center w-7 h-7 rounded shrink-0 text-[12px]"
-                  style={r.type === 'band'
+                  style={(r.type === 'band' || (r.type === 'filter' && r.color))
                     ? { background: `${r.color}22`, color: r.color }
                     : r.type === 'event'
                       ? { background: `rgba(${primaryMeta(r.event).glow},0.14)`, color: primaryMeta(r.event).color }
                       : { background: 'rgba(139,92,246,0.15)', color: '#8b5cf6' }}>
-                  <Icon n={r.type === 'person' ? 'microphone' : r.type === 'band' ? 'guitar' : (isPersonal(r.event) ? 'user' : 'calendar')} />
+                  <Icon n={r.type === 'person' ? 'microphone' : r.type === 'band' ? 'guitar' : r.type === 'filter' ? 'sliders' : (isPersonal(r.event) ? 'user' : 'calendar')} />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-[14px] text-dream-ink truncate">{r.label}</span>
+                  <span className="block text-[14px] text-dream-ink truncate">
+                    {r.type === 'filter' ? <>在圖鑑中篩選：<span className="font-semibold">{r.label}</span></> : r.label}
+                  </span>
                   <span className="block text-[11px] text-dream-faint">
-                    {r.type === 'person' ? '聲優' : r.type === 'band' ? '樂團' : `#${String(r.event.number).padStart(3, '0')} · ${r.event.year}`}
+                    {r.type === 'person' ? '聲優圖鑑頁' : r.type === 'band' ? '樂團圖鑑頁' : r.type === 'filter' ? '套用篩選' : `#${String(r.event.number).padStart(3, '0')} · ${r.event.year}`}
                   </span>
                 </span>
                 {isA && <Icon n="chevron-right" className="text-dream-faint text-[12px] shrink-0" />}
