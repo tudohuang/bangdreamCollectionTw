@@ -23,7 +23,7 @@ export default function Highlights({ events, onSelect }) {
       <div className="mb-5 flex items-end justify-between gap-3">
         <div>
           <div className="eyebrow"><Icon n="images" className="text-[10px]" /> Photos</div>
-          <h2 className="font-display font-bold text-xl sm:text-2xl text-dream-ink mt-1.5">近期場次照片</h2>
+          <h2 className="font-display font-bold text-xl sm:text-2xl text-dream-ink mt-1.5">最近的現場</h2>
         </div>
         <a href="#/collection?photos=yes&order=date-desc"
           className="text-[13px] font-semibold text-bloom-indigo hover:underline shrink-0">

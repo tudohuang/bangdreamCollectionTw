@@ -439,8 +439,8 @@ function RandomButton({ onClick }) {
   return (
     <button
       onClick={onClick}
-      aria-label="隨機看一場"
-      title="隨機看一場"
+      aria-label="隨機抽一場"
+      title="隨機抽一場"
       className="group fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 grid place-items-center w-11 h-11 rounded-full bg-white border border-dream-line text-bloom-indigo shadow-lg shadow-bloom-indigo/15 hover:text-white hover:bg-bloom-indigo hover:border-bloom-indigo transition-colors dark:bg-white/10 dark:border-white/15"
     >
       <Icon n="wand-magic-sparkles" className="transition-transform group-hover:rotate-12 group-active:scale-90" />

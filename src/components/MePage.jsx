@@ -35,7 +35,7 @@ export default function MePage({ events, attended, onToggleAttended, onSelect, o
         </div>
         <div className="font-display font-bold text-xl text-dream-ink">還沒有打卡紀錄</div>
         <p className="text-[14px] text-dream-sub mt-2 max-w-sm mx-auto">
-          在圖鑑把去過的場次打勾，這裡會列出你的參戰紀錄和統計。
+          去圖鑑把你去過的場次打勾，這裡就是你的參戰紀錄。
         </p>
         <button onClick={onBrowse} className="btn-primary mt-6">
           去圖鑑打卡 <Icon n="arrow-right" className="text-[12px]" />

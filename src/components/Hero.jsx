@@ -113,7 +113,7 @@ export default function Hero({ events, onSelect, onYearJump }) {
             <span className="text-gradient">圖鑑</span>
           </h1>
           <p className="text-[14px] text-dream-sub max-w-md">
-            BanG Dream! 相關聲優與樂團的來台活動紀錄（2018–）。
+            邦邦聲優與樂團來台的活動紀錄，從 2018 記到現在。
           </p>
         </div>
       </div>

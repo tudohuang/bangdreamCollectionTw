@@ -44,7 +44,7 @@ export default function Footer({ source = 'bundled', updatedAt, onRetry }) {
 
           <div className="mt-5 pt-4 border-t border-dream-line/70 dark:border-white/10 flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between text-[12px] text-dream-faint">
             <span>
-              非官方、非營利的粉絲整理站 · 資料有誤或缺漏歡迎回報
+              粉絲自主整理的非官方站 · 看到錯漏跟我們說一聲
             </span>
             {txt && (
               <span>
