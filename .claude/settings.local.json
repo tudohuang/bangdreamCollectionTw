@@ -33,7 +33,9 @@
       "PowerShell(npx --yes hyperframes:*)",
       "Read(//c/Users/Tudo/.claude/plugins/cache/brag/brag/0.1.0/skills/**)",
       "Read(//c/Users/Tudo/.claude/plugins/cache/**)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "WebFetch(domain:www.threads.com)",
+      "Bash(node -e \"const e=require\\('./src/data/events.json'\\); const arr=Array.isArray\\(e\\)?e:e.events; console.log\\('count',arr.length\\); console.log\\(JSON.stringify\\(arr[arr.length-1],null,1\\)\\)\")"
     ]
   }
 }
