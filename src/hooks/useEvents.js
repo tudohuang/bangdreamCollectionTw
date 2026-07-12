@@ -4,7 +4,7 @@ import { SHEET_CSV_URL } from '../config.js'
 import { parseCsvToEvents, mergeWithBundled } from '../utils/parseEvents.js'
 
 const CACHE_KEY = 'bdtw-events-cache'
-const CACHE_VERSION = 2          // 欄位 schema 改了就 +1，舊快取自動失效
+const CACHE_VERSION = 3          // 解析邏輯改了就 +1（Sheet 加欄免動：extras 走背景更新自動補上）
 const CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000  // 7 天，超過視為過期
 
 function readCache() {

@@ -245,6 +245,13 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
             {event.notes && <InfoLine icon="note-sticky" term="備註" color={meta.color} glow={meta.glow}>
               <span className="text-[14px] text-dream-sub whitespace-pre-line">{event.notes}</span>
             </InfoLine>}
+            {Object.entries(event.extras || {}).map(([name, value]) => (
+              <InfoLine key={name} icon="tag" term={name} color={meta.color} glow={meta.glow}>
+                {/^https?:\/\//i.test(value)
+                  ? <a className="text-bloom-violet hover:underline break-all text-[13.5px]" target="_blank" rel="noopener noreferrer" href={value}>{value}</a>
+                  : <span className="text-[14px] text-dream-sub whitespace-pre-line">{value}</span>}
+              </InfoLine>
+            ))}
           </div>
 
           {event.description && <Section title="活動簡介" color={meta.color}><p className="text-[14px] leading-7 text-dream-sub whitespace-pre-line">{event.description}</p></Section>}

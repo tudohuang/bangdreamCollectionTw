@@ -39,6 +39,16 @@ const normGroup = (g) => g.trim().replace(/\s*\/\s*/g, '／')
 const NAME_FIX = { '上坂堇': '上坂菫' }
 const fixName = (p) => NAME_FIX[p] || p
 
+// 程式認得的表頭（含中英別名）。不在這清單裡的欄一律進 extras，
+// 表頭名稱直接當網站上的顯示名稱 —— Sheet 加欄免改程式。
+const KNOWN_HEADERS = new Set([
+  '編號', 'number', '年份', '開始日期', '結束日期', '月份',
+  '活動名稱', '類型', '人物', '團體／關聯', '本體／擦邊', '全團', '人次',
+  '備註', 'notes', '地點', 'venue', '城市', 'city', '照片', 'photos',
+  '封面', 'cover', '購票連結', '購票', '主辦', '主辦單位',
+  '簡介', 'description', '心得', 'impression', '來源', 'sources',
+])
+
 // rows（含表頭）→ 活動陣列（不含手動欄位的合併，交給呼叫端）
 export function parseCsvToEvents(text) {
   const rows = parseCSV(text)
@@ -62,9 +72,17 @@ export function parseCsvToEvents(text) {
     impression: col('心得') >= 0 ? col('心得') : col('impression'),
     sources: col('來源') >= 0 ? col('來源') : col('sources'),
   }
+  const extraCols = header
+    .map((h, i) => ({ name: h, i }))
+    .filter(({ name }) => name && !KNOWN_HEADERS.has(name))
 
   return rows.slice(1).map((r, i) => {
     const get = (k) => (idx[k] >= 0 ? (r[idx[k]] || '').trim() : '')
+    const extras = {}
+    for (const { name, i: ci } of extraCols) {
+      const v = (r[ci] || '').trim()
+      if (v) extras[name] = v
+    }
     // 編號優先用 Sheet 明確的「編號」欄（穩定 key，插入/排序/刪列都不會錯位）；
     // 沒這欄才退回用列位置。id 也跟著編號走，照片/心得才綁得住。
     const explicit = Number(get('number'))
@@ -93,6 +111,7 @@ export function parseCsvToEvents(text) {
       impression: get('impression'),
       sources: splitMedia(get('sources')),
       notes: get('notes'),
+      extras,
     }
   })
 }
@@ -112,6 +131,8 @@ export function mergeWithBundled(sheetEvents, bundled) {
       const hasSheetVal = Array.isArray(sheetVal) ? sheetVal.length > 0 : !!sheetVal
       if (!hasSheetVal && prev[f] != null) merged[f] = prev[f]
     }
+    // 額外欄位逐鍵合併：Sheet 有填優先，沒填用內建補
+    merged.extras = { ...(prev.extras || {}), ...(e.extras || {}) }
     return merged
   })
 }
