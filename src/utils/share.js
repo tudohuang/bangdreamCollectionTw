@@ -4,6 +4,21 @@ export function formatDateRange(start, end) {
   return `${start} → ${end}`
 }
 
+// 分享用的網址。
+// ⚠ 不能給 `#/event/<id>` —— `#` 後面永遠不會送到伺服器，
+// 爬蟲（Threads / Discord / X）只會看到首頁那組通用 og 標籤，
+// 所以每一場分享出去的縮圖都會長一樣。
+// `/e/<id>`、`/p/<人>`、`/b/<團>` 才是有專屬 og 標籤的分享頁，開啟後會自動轉回 app。
+const SHARE_PREFIX = { event: 'e', person: 'p', band: 'b' }
+
+export function shareUrl(kind, value) {
+  const seg = SHARE_PREFIX[kind]
+  const base = (typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL) || '/'
+  const root = `${location.origin}${base.replace(/\/$/, '')}`
+  if (!seg) return `${root}/`
+  return `${root}/${seg}/${encodeURIComponent(value)}`
+}
+
 // 票券用的緊湊日期：同年同月的結束日只留日，不把年月重講一次
 export function formatDateRangeCompact(start, end) {
   const a = /^(\d{4})-(\d{2})-(\d{2})$/.exec(start || '')

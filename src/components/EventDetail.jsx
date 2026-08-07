@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { buildSummary, copyText, formatDateRangeCompact } from '../utils/share.js'
+import { buildSummary, copyText, formatDateRangeCompact, shareUrl } from '../utils/share.js'
 import { primaryMeta, bandMeta, parseGroup, isPersonal, rootGroup } from '../utils/bands.js'
 import { photoUrl, coverOf, photoCredit, PHOTO_CREDIT_KEYS } from '../utils/media.js'
 import { eventStatus, daysUntil, weekday, STATUS_LABEL } from '../utils/datetime.js'
@@ -69,7 +69,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
 
   const flash = (m) => { setToast(m); setTimeout(() => setToast(''), 1800) }
   const copySummary = async () => flash((await copyText(buildSummary(event))) ? '已複製摘要' : '複製失敗')
-  const copyLink = async () => flash((await copyText(`${location.origin}${location.pathname}#/event/${event.id}`)) ? '已複製連結' : '複製失敗')
+  const copyLink = async () => flash((await copyText(shareUrl('event', event.id))) ? '已複製連結' : '複製失敗')
 
   const dex = `#${String(event.number ?? 0).padStart(3, '0')}`
   const groups = event.relatedGroups || []

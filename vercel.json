@@ -1,6 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    { "source": "/e/:id", "destination": "/api/share?id=:id" }
+    { "source": "/e/:id", "destination": "/api/share?kind=event&id=:id" },
+    { "source": "/p/:value", "destination": "/api/share?kind=person&value=:value" },
+    { "source": "/b/:value", "destination": "/api/share?kind=band&value=:value" }
   ]
 }

@@ -1,5 +1,6 @@
 // 把場次匯出成行事曆檔（.ics）。全日事件，不處理時刻 — Sheet 只有日期。
 import { parseDate } from './datetime.js'
+import { shareUrl } from './share.js'
 
 const esc = (s) => String(s ?? '')
   .replace(/\\/g, '\\\\')
@@ -33,7 +34,7 @@ function fold(line) {
 
 function eventLink(event) {
   if (typeof location === 'undefined') return ''
-  return `${location.origin}${location.pathname}#/event/${event.id}`
+  return shareUrl('event', event.id)
 }
 
 export function eventToVevent(event, stamp) {

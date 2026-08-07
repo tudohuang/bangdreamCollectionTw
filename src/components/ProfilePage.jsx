@@ -3,7 +3,7 @@ import { bandMeta, rootGroup, primaryMeta, isPersonal, BAND_META } from '../util
 import { coverOf } from '../utils/media.js'
 import { buildRoster, detectCity } from '../utils/derive.js'
 import { eventStatus, daysUntil } from '../utils/datetime.js'
-import { formatMonthDay, copyText, formatDateRangeCompact } from '../utils/share.js'
+import { formatMonthDay, copyText, formatDateRangeCompact, shareUrl } from '../utils/share.js'
 import { sortChrono, daysBetween } from '../utils/context.js'
 import { yearGaps } from '../utils/insights.js'
 import { downloadIcs } from '../utils/ics.js'
@@ -83,7 +83,7 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
 
   const flash = (m) => { setToast(m); setTimeout(() => setToast(''), 1800) }
   const copyLink = async () => {
-    const ok = await copyText(`${location.origin}${location.pathname}#/${kind}/${encodeURIComponent(value)}`)
+    const ok = await copyText(shareUrl(kind, value))
     flash(ok ? '已複製連結' : '複製失敗')
   }
 

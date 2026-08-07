@@ -61,7 +61,7 @@ function wrap(text, maxUnits, maxLines) {
 
 const primaryMetaOf = (e) => BAND_META[bandKey((e.relatedGroups || [])[0] || '')] || BAND_META.other
 
-function ogSvg(e) {
+function ogSvg(e, coverUri = null) {
   const m = primaryMetaOf(e)
   const dex = `#${String(e.number ?? 0).padStart(3, '0')}`
   const personal = e.category === '擦邊'
@@ -70,8 +70,9 @@ function ogSvg(e) {
   const meta = [date, e.type, personal ? '個人來台' : m.name].filter(Boolean).join('   ·   ')
   const people = (e.people || []).slice(0, 6).join('、')
 
+  // 壓在花俏海報上要有陰影才讀得出來
   const titleSvg = titleLines.map((ln, i) =>
-    `<text x="80" y="${292 + i * 78}" font-size="64" font-weight="800" fill="#ffffff" font-family="'Noto Sans TC','Microsoft JhengHei',sans-serif">${esc(ln)}</text>`
+    `<text x="80" y="${292 + i * 78}" font-size="64" font-weight="800" fill="#ffffff" filter="url(#tsh)" font-family="'Noto Sans TC','Microsoft JhengHei',sans-serif">${esc(ln)}</text>`
   ).join('')
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
@@ -81,11 +82,25 @@ function ogSvg(e) {
       <stop offset="0.55" stop-color="#a855f7"/>
       <stop offset="1" stop-color="#7c3aed"/>
     </linearGradient>
+    <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a0616" stop-opacity="0.72"/>
+      <stop offset="0.26" stop-color="#0a0616" stop-opacity="0.44"/>
+      <stop offset="0.62" stop-color="#0a0616" stop-opacity="0.74"/>
+      <stop offset="1" stop-color="#0a0616" stop-opacity="0.92"/>
+    </linearGradient>
+    <filter id="tsh" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000000" flood-opacity="0.75"/>
+    </filter>
   </defs>
   <rect width="1200" height="630" fill="url(#bg)"/>
+  ${coverUri ? `
+  <image href="${coverUri}" x="0" y="0" width="1200" height="630"
+         preserveAspectRatio="xMidYMid slice"/>
+  <rect width="1200" height="630" fill="url(#shade)"/>
+  <rect x="0" y="0" width="14" height="630" fill="${m.color}"/>` : `
   <rect width="1200" height="630" fill="#1a1233" opacity="0.18"/>
   <circle cx="1050" cy="120" r="220" fill="#ffffff" opacity="0.10"/>
-  <circle cx="120" cy="560" r="180" fill="#ffffff" opacity="0.08"/>
+  <circle cx="120" cy="560" r="180" fill="#ffffff" opacity="0.08"/>`}
   <text x="80" y="96" font-size="30" font-weight="700" fill="#ffffff" opacity="0.92" font-family="'Noto Sans TC','Microsoft JhengHei',sans-serif">邦邦來台圖鑑 · Taiwan BanG Dream!</text>
   <text x="1120" y="110" text-anchor="end" font-size="58" font-weight="800" fill="#ffffff" font-family="sans-serif">${esc(dex)}</text>
   <rect x="80" y="150" width="${24 + (personal ? '個人來台' : m.name).length * 26}" height="56" rx="28" fill="#ffffff" opacity="0.22"/>
@@ -101,6 +116,29 @@ function renderPng(svg, outPath) {
   const r = new Resvg(svg, { fitTo: { mode: 'width', value: 1200 }, font: { loadSystemFonts: true } })
   writeFileSync(outPath, r.render().asPng())
   return true
+}
+
+// ---- 封面照抓下來當 OG 底圖（resvg 不會自己抓遠端圖，得先轉成 data URI） ----
+const COVER_TIMEOUT = 8000
+
+async function fetchCoverDataUri(url) {
+  if (!url || !/^https?:\/\//i.test(url)) return null
+  try {
+    const ac = new AbortController()
+    const t = setTimeout(() => ac.abort(), COVER_TIMEOUT)
+    const r = await fetch(url, { signal: ac.signal, headers: { 'User-Agent': 'Mozilla/5.0' } })
+    clearTimeout(t)
+    if (!r.ok) return null
+    const type = (r.headers.get('content-type') || '').split(';')[0]
+    if (!/^image\/(jpeg|png|webp)$/.test(type)) return null
+    const buf = Buffer.from(await r.arrayBuffer())
+    if (buf.length < 1024 || buf.length > 6 * 1024 * 1024) return null   // 太小是錯誤頁、太大不值得
+    // resvg 不支援 webp，只有 jpeg/png 能用
+    if (type === 'image/webp') return null
+    return `data:${type};base64,${buf.toString('base64')}`
+  } catch {
+    return null
+  }
 }
 
 // 分享頁 stub
@@ -140,10 +178,139 @@ const ON_VERCEL = !!process.env.VERCEL
 mkdirSync(join(DIST, 'og'), { recursive: true })
 if (!ON_VERCEL) mkdirSync(join(DIST, 'e'), { recursive: true })
 
+// 封面照併發抓取（抓不到就退回樂團色底，不擋 build）
+const COVER_CONCURRENCY = 6
+const coverUris = new Map()
+{
+  const queue = events.filter(e => e.cover)
+  let i = 0
+  await Promise.all(Array.from({ length: COVER_CONCURRENCY }, async () => {
+    while (i < queue.length) {
+      const e = queue[i++]
+      const uri = await fetchCoverDataUri(e.cover)
+      if (uri) coverUris.set(e.id, uri)
+    }
+  }))
+}
+
 let pngCount = 0
 for (const e of events) {
-  if (renderPng(ogSvg(e), join(DIST, 'og', `${e.id}.png`))) pngCount++
+  if (renderPng(ogSvg(e, coverUris.get(e.id)), join(DIST, 'og', `${e.id}.png`))) pngCount++
   if (!ON_VERCEL) writeFileSync(join(DIST, 'e', `${e.id}.html`), stubHtml(e), 'utf8')
+}
+
+// ---- 聲優／樂團的分享頁與 OG 圖 ----
+const rootGroupOf = (g) => String(g).split('／')[0].trim()
+const profiles = []
+{
+  const byPerson = new Map(), byBand = new Map()
+  for (const e of events) {
+    for (const p of (e.people || [])) {
+      if (!byPerson.has(p)) byPerson.set(p, [])
+      byPerson.get(p).push(e)
+    }
+    for (const g of new Set((e.relatedGroups || []).map(rootGroupOf).filter(Boolean))) {
+      if (!byBand.has(g)) byBand.set(g, [])
+      byBand.get(g).push(e)
+    }
+  }
+  for (const [name, list] of byPerson) profiles.push({ kind: 'person', name, list })
+  for (const [name, list] of byBand) profiles.push({ kind: 'band', name, list })
+}
+
+function profileSvg({ kind, name, list }) {
+  const m = BAND_META[bandKey((list[0]?.relatedGroups || [])[0] || '')] || BAND_META.other
+  const years = list.map(e => e.year).filter(Boolean).sort((a, b) => a - b)
+  const span = years.length ? (years[0] === years[years.length - 1] ? `${years[0]}` : `${years[0]}–${years[years.length - 1]}`) : ''
+  const nameLines = wrap(name, 22, 2)
+
+  // 中間別留一大塊空白：人 → 常同台的樂團；團 → 登場過的聲優
+  const rel = {}
+  for (const e of list) {
+    const src = kind === 'person'
+      ? (e.relatedGroups || []).map(g => String(g).split('／')[0].trim())
+      : (e.people || [])
+    for (const x of new Set(src.filter(Boolean))) rel[x] = (rel[x] || 0) + 1
+  }
+  const relTop = Object.entries(rel).sort((a, b) => b[1] - a[1]).slice(0, kind === 'person' ? 3 : 5).map(([k]) => k)
+  const relLine = relTop.length
+    ? wrap(`${kind === 'person' ? '常見於' : '登場聲優'}   ${relTop.join('、')}`, 40, 1)[0]
+    : ''
+  const latest = [...list].sort((a, b) => (b.startDate || '').localeCompare(a.startDate || ''))[0]
+  const latestLine = latest ? wrap(`最近   ${latest.startDate || ''}   ${latest.title || ''}`, 44, 1)[0] : ''
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="${m.color}"/>
+      <stop offset="0.6" stop-color="#a855f7"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="#1a1233" opacity="0.2"/>
+  <circle cx="1060" cy="110" r="230" fill="#ffffff" opacity="0.10"/>
+  <text x="80" y="96" font-size="30" font-weight="700" fill="#ffffff" opacity="0.92" font-family="'Noto Sans TC','Microsoft JhengHei',sans-serif">邦邦來台圖鑑 · Taiwan BanG Dream!</text>
+  <text x="80" y="190" font-size="32" font-weight="700" fill="#ffffff" opacity="0.85" font-family="'Noto Sans TC','Microsoft JhengHei',sans-serif">${kind === 'person' ? '聲優' : '樂團'}</text>
+  ${nameLines.map((ln, i) => `<text x="80" y="${300 + i * 88}" font-size="76" font-weight="800" fill="#ffffff" font-family="'Noto Sans TC','Microsoft JhengHei',sans-serif">${esc(ln)}</text>`).join('')}
+  ${relLine ? `<text x="80" y="${300 + nameLines.length * 88 - 20}" font-size="30" fill="#ffffff" opacity="0.86" font-family="'Noto Sans TC','Microsoft JhengHei',sans-serif">${esc(relLine)}</text>` : ''}
+  ${latestLine ? `<text x="80" y="${300 + nameLines.length * 88 + 26}" font-size="26" fill="#ffffff" opacity="0.7" font-family="'Noto Sans TC','Microsoft JhengHei',sans-serif">${esc(latestLine)}</text>` : ''}
+  <rect x="80" y="500" width="${String(list.length).length * 30 + 240}" height="66" rx="33" fill="#ffffff" opacity="0.16"/>
+  <text x="108" y="546" font-size="46" font-weight="800" fill="#ffffff" font-family="sans-serif">${list.length}</text>
+  <text x="${108 + String(list.length).length * 28 + 10}" y="544" font-size="28" fill="#ffffff" opacity="0.95" font-family="'Noto Sans TC','Microsoft JhengHei',sans-serif">場來台紀錄${span ? `   ·   ${span}` : ''}</text>
+</svg>`
+}
+
+function profileStub({ kind, name, list }) {
+  const seg = kind === 'person' ? 'p' : 'b'
+  const enc = encodeURIComponent(name)
+  const img = `${SITE_URL}/og/${seg}-${slug(name)}.png`
+  const url = `${SITE_URL}/#/${kind}/${enc}`
+  const title = `${name}｜${kind === 'person' ? '聲優' : '樂團'}來台紀錄`
+  const years = list.map(e => e.year).filter(Boolean).sort((a, b) => a - b)
+  const desc = `${list.length} 場來台紀錄${years.length ? ` · ${years[0]}–${years[years.length - 1]}` : ''}`
+  return `<!doctype html><html lang="zh-Hant"><head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>${esc(title)}｜邦邦來台圖鑑</title>
+<meta name="description" content="${esc(desc)}"/>
+<meta property="og:type" content="profile"/>
+<meta property="og:title" content="${esc(title)}"/>
+<meta property="og:description" content="${esc(desc)}"/>
+<meta property="og:image" content="${esc(img)}"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+${SITE_URL ? `<meta property="og:url" content="${esc(url)}"/>` : ''}
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="${esc(title)}"/>
+<meta name="twitter:description" content="${esc(desc)}"/>
+<meta name="twitter:image" content="${esc(img)}"/>
+<script>location.replace('../#/${kind}/${enc}');</script>
+</head><body>前往 <a href="../#/${kind}/${enc}">${esc(title)}</a>…</body></html>`
+}
+
+// 檔名安全的 slug（中文/日文檔名在部分主機會出事，用編碼過的短碼）
+function slug(name) {
+  return Buffer.from(name, 'utf8').toString('base64url')
+}
+
+// 名字裡有這些字元就沒辦法當檔名（Vercel 上由 api/share.js 即時處理，不受影響）
+const UNSAFE_PATH = /[\\/:*?"<>|]/
+
+let profilePng = 0
+const skippedStubs = []
+if (!ON_VERCEL) { mkdirSync(join(DIST, 'p'), { recursive: true }); mkdirSync(join(DIST, 'b'), { recursive: true }) }
+for (const pr of profiles) {
+  const seg = pr.kind === 'person' ? 'p' : 'b'
+  if (renderPng(profileSvg(pr), join(DIST, 'og', `${seg}-${slug(pr.name)}.png`))) profilePng++
+  if (ON_VERCEL) continue
+  if (UNSAFE_PATH.test(pr.name)) { skippedStubs.push(pr.name); continue }
+  // 檔名要用原字（UTF-8）。網址是 percent-encoded，靜態主機會先解碼再找檔，
+  // 若把檔名也寫成 %E6%84%9B%E7%BE%8E.html 就永遠對不上。
+  writeFileSync(join(DIST, seg, `${pr.name}.html`), profileStub(pr), 'utf8')
+}
+if (skippedStubs.length) {
+  console.log(`⚠ ${skippedStubs.length} 個名字含有無法當檔名的字元，靜態分享頁已略過：${skippedStubs.join('、')}`)
+  console.log('  （Vercel 上由 api/share.js 即時處理，不受影響。建議把 Sheet 的「人物」欄拆成兩個人。）')
 }
 
 // 預設 OG 圖 + 注入 index.html
@@ -183,5 +350,6 @@ writeFileSync(join(DIST, 'sitemap.xml'), sitemap, 'utf8')
 writeFileSync(join(DIST, 'robots.txt'),
   `User-agent: *\nAllow: /\n${base ? `Sitemap: ${base}/sitemap.xml\n` : ''}`, 'utf8')
 
-console.log(`✓ OG：${events.length} 個分享頁、${pngCount} 張預覽圖${SITE_URL ? `（網域 ${SITE_URL}）` : '（未設 SITE_URL，og:image 為相對路徑）'}`)
+console.log(`✓ OG：${events.length} 個場次分享頁、${pngCount} 張預覽圖（其中 ${coverUris.size} 張用真的封面照）${SITE_URL ? `（網域 ${SITE_URL}）` : '（未設 SITE_URL，og:image 為相對路徑）'}`)
+console.log(`✓ OG：${profiles.length} 個聲優／樂團分享頁、${profilePng} 張預覽圖`)
 console.log(`✓ sitemap.xml（${urls.length} 連結）+ robots.txt`)
