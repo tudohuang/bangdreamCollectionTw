@@ -3,7 +3,7 @@
 // 有 error 時離開碼為 1（可擋 CI / build）。warning 只提示。
 
 import { readFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dirname, join } from 'node:path'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -51,6 +51,13 @@ for (const e of events) {
     if (!KNOWN_BANDS.some(b => root.startsWith(b))) warns.push(`${tag}：未知樂團「${g}」（會以「其他」灰色呈現）`)
   }
   if (e.isFullBand && (e.people || []).length < 3) warns.push(`${tag}：標記全團但聲優少於 3 位`)
+}
+
+// 歸不出城市的場館：列出來讓你在 Sheet 的「城市」欄補上
+const { detectCity } = await import(pathToFileURL(join(ROOT, 'src', 'utils', 'derive.js')).href)
+const noCity = [...new Set(events.filter(e => e.venue && !detectCity(e)).map(e => e.venue))]
+for (const v of noCity) {
+  warns.push(`場館「${v}」歸不出城市 — 請在 Sheet 的「城市」欄補上`)
 }
 
 // 編號連續性

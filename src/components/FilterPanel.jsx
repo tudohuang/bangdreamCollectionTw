@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { rootGroup, bandMeta } from '../utils/bands.js'
 import { uniqueCharacters, uniqueVenues, uniqueCities } from '../utils/derive.js'
 import Icon from './Icon.jsx'
@@ -16,8 +17,10 @@ const VIEWS = [
 // 進階篩選維度（收進「全部篩選」抽屜，不佔工具列）
 const ADV_KEYS = ['year', 'groups', 'people', 'characters', 'types', 'venues', 'cities', 'fullBand']
 
-export default function FilterPanel({ events, filters, onChange, onReset, resultCount }) {
+// variant='bar'（預設，內容上方橫條）／'sidebar'（xl 以上的左側常駐工作台）
+export default function FilterPanel({ events, filters, onChange, onReset, resultCount, variant = 'bar', onExportIcs }) {
   const [sheetOpen, setSheetOpen] = useState(false)
+  const side = variant === 'sidebar'
 
   const advCount =
     (filters.year !== 'all' ? 1 : 0) +
@@ -25,7 +28,68 @@ export default function FilterPanel({ events, filters, onChange, onReset, result
     ['groups', 'people', 'characters', 'types', 'venues', 'cities'].reduce((n, k) => n + (filters[k]?.length || 0), 0)
 
   const chips = buildAppliedChips(filters)
+  const openSheet = () => setSheetOpen(true)
 
+  // 一定要 portal 到 body：側欄是 position:sticky，它會建立 stacking context，
+  // 浮層的 z-50 會被關在裡面，結果被後面的卡片蓋過去。
+  const sheet = sheetOpen && typeof document !== 'undefined' && createPortal(
+    <FilterSheet
+      events={events}
+      filters={filters}
+      onChange={onChange}
+      onClose={() => setSheetOpen(false)}
+      onReset={() => {
+        const patch = { year: 'all', fullBand: 'all' }
+        for (const k of ['groups', 'people', 'characters', 'types', 'venues', 'cities']) patch[k] = []
+        onChange(patch)
+      }}
+      resultCount={resultCount}
+    />,
+    document.body
+  )
+
+  // ---------- 側欄：標題與結果數也搬進來，左邊那條就是整個圖鑑的操作台 ----------
+  if (side) {
+    return (
+      <div className="glass p-4 flex flex-col gap-3.5">
+        <div>
+          <div className="eyebrow"><Icon n="grid" className="text-[10px]" /> Collection</div>
+          <h2 className="font-display font-bold text-[26px] text-dream-ink leading-tight mt-1.5">活動圖鑑</h2>
+          <div className="mt-1.5 text-[12px] text-dream-faint" aria-live="polite">
+            <span className="font-display font-bold text-[17px] text-bloom-indigo">{resultCount}</span> 筆結果
+          </div>
+        </div>
+
+        <SearchBox filters={filters} onChange={onChange} />
+        <Segmented full value={filters.category} onChange={(v) => onChange({ category: v })}
+          options={[['全部', 'all'], ['本體', '本體'], ['個人', '擦邊']]} />
+        <Segmented full value={filters.view} onChange={(v) => onChange({ view: v })} options={VIEWS} />
+
+        <span className="h-px bg-dream-line dark:bg-white/10" />
+
+        <div className="flex flex-wrap gap-2">
+          <TimeframePills filters={filters} onChange={onChange} />
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <QuickPills filters={filters} onChange={onChange} advCount={advCount} onOpenSheet={openSheet} onExportIcs={onExportIcs} />
+        </div>
+
+        <label className="flex items-center gap-2 text-[11px] text-dream-faint">
+          排序
+          <SortSelect filters={filters} onChange={onChange} className="flex-1" />
+        </label>
+
+        {chips.length > 0 && (
+          <div className="pt-3 border-t border-dream-line dark:border-white/10 flex flex-wrap gap-2">
+            <AppliedChips chips={chips} filters={filters} onChange={onChange} onReset={onReset} />
+          </div>
+        )}
+        {sheet}
+      </div>
+    )
+  }
+
+  // ---------- 橫條：窄螢幕與其他情境 ----------
   return (
     <div className="mb-8">
       <div className="flex items-end justify-between gap-4 mb-5">
@@ -42,16 +106,7 @@ export default function FilterPanel({ events, filters, onChange, onReset, result
       {/* 單列工具列：搜尋 + 本體/個人 + 檢視 */}
       <div className="glass p-4 sm:p-5">
         <div className="grid lg:grid-cols-[1fr_auto_auto] gap-3 items-center">
-          <div className="relative">
-            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-dream-faint"><Icon n="magnifying-glass" /></span>
-            <input
-              type="search"
-              className="dream-input !pl-10"
-              placeholder="搜尋聲優、樂團、活動、城市…"
-              value={filters.search}
-              onChange={(e) => onChange({ search: e.target.value })}
-            />
-          </div>
+          <SearchBox filters={filters} onChange={onChange} />
           <Segmented value={filters.category} onChange={(v) => onChange({ category: v })}
             options={[['全部', 'all'], ['本體', '本體'], ['個人', '擦邊']]} />
           <Segmented value={filters.view} onChange={(v) => onChange({ view: v })} options={VIEWS} />
@@ -59,64 +114,98 @@ export default function FilterPanel({ events, filters, onChange, onReset, result
 
         {/* 常用快篩 + 全部篩選 + 排序 */}
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          {TIMEFRAMES.map(([l, v]) => (
-            <button key={v} className={`pill ${filters.timeframe === v ? 'pill-active' : ''}`}
-              onClick={() => onChange({ timeframe: v })}>{l}</button>
-          ))}
+          <TimeframePills filters={filters} onChange={onChange} />
           <span className="w-px h-5 bg-dream-line mx-1" />
-          <button className={`pill ${filters.attended === 'yes' ? 'pill-active' : ''}`}
-            onClick={() => onChange({ attended: filters.attended === 'yes' ? 'all' : 'yes' })}>
-            <Icon n="circle-check" className="text-[11px]" /> 我去過
-          </button>
-          <button className={`pill ${filters.photos === 'yes' ? 'pill-active' : ''}`}
-            onClick={() => onChange({ photos: filters.photos === 'yes' ? 'all' : 'yes' })}>
-            <Icon n="images" className="text-[11px]" /> 有照片
-          </button>
-          <button className={`pill ${advCount ? '!border-bloom-indigo !text-bloom-indigo' : ''}`}
-            onClick={() => setSheetOpen(true)}>
-            <Icon n="sliders" className="text-[11px]" /> 全部篩選{advCount ? `（${advCount}）` : ''}
-          </button>
+          <QuickPills filters={filters} onChange={onChange} advCount={advCount} onOpenSheet={openSheet} onExportIcs={onExportIcs} />
           <span className="ml-auto flex items-center gap-2">
             <span className="text-[11px] text-dream-faint">排序</span>
-            <select
-              className="rounded-md border border-dream-line bg-white text-[13px] text-dream-ink px-2 py-1.5 dark:bg-white/5"
-              value={filters.order} onChange={(e) => onChange({ order: e.target.value })}
-            >
-              {ORDERS.map(([l, v]) => <option key={v} value={v}>{l}</option>)}
-            </select>
+            <SortSelect filters={filters} onChange={onChange} />
           </span>
         </div>
 
         {/* 已套用篩選 chip 列 */}
         {chips.length > 0 && (
           <div className="mt-3 pt-3 border-t border-dream-line flex flex-wrap items-center gap-2">
-            <span className="text-[11px] text-dream-faint">已套用：</span>
-            {chips.map(c => (
-              <button key={c.key + c.val} className="pill !text-bloom-indigo"
-                onClick={() => removeChip(filters, onChange, c)}>
-                {c.label} <Icon n="xmark" className="text-[10px]" />
-              </button>
-            ))}
-            <button className="pill !text-bloom-rose" onClick={onReset}>清除全部</button>
+            <AppliedChips chips={chips} filters={filters} onChange={onChange} onReset={onReset} />
           </div>
         )}
       </div>
 
-      {sheetOpen && (
-        <FilterSheet
-          events={events}
-          filters={filters}
-          onChange={onChange}
-          onClose={() => setSheetOpen(false)}
-          onReset={() => {
-            const patch = { year: 'all', fullBand: 'all' }
-            for (const k of ['groups', 'people', 'characters', 'types', 'venues', 'cities']) patch[k] = []
-            onChange(patch)
-          }}
-          resultCount={resultCount}
-        />
-      )}
+      {sheet}
     </div>
+  )
+}
+
+// ---- 兩種版型共用的控制項 ----
+function SearchBox({ filters, onChange }) {
+  return (
+    <div className="relative">
+      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-dream-faint"><Icon n="magnifying-glass" /></span>
+      <input
+        type="search"
+        className="dream-input !pl-10"
+        placeholder="搜尋聲優、樂團、活動、城市…"
+        value={filters.search}
+        onChange={(e) => onChange({ search: e.target.value })}
+      />
+    </div>
+  )
+}
+
+function TimeframePills({ filters, onChange }) {
+  return TIMEFRAMES.map(([l, v]) => (
+    <button key={v} className={`pill ${filters.timeframe === v ? 'pill-active' : ''}`}
+      onClick={() => onChange({ timeframe: v })}>{l}</button>
+  ))
+}
+
+function QuickPills({ filters, onChange, advCount, onOpenSheet, onExportIcs }) {
+  return (
+    <>
+      <button className={`pill ${filters.attended === 'yes' ? 'pill-active' : ''}`}
+        onClick={() => onChange({ attended: filters.attended === 'yes' ? 'all' : 'yes' })}>
+        <Icon n="circle-check" className="text-[11px]" /> 我去過
+      </button>
+      <button className={`pill ${filters.photos === 'yes' ? 'pill-active' : ''}`}
+        onClick={() => onChange({ photos: filters.photos === 'yes' ? 'all' : 'yes' })}>
+        <Icon n="images" className="text-[11px]" /> 有照片
+      </button>
+      <button className={`pill ${advCount ? '!border-bloom-indigo !text-bloom-indigo' : ''}`}
+        onClick={onOpenSheet}>
+        <Icon n="sliders" className="text-[11px]" /> 全部篩選{advCount ? `（${advCount}）` : ''}
+      </button>
+      {onExportIcs && (
+        <button className="pill" onClick={onExportIcs} title="把目前篩選出來的場次存成 .ics 行事曆檔">
+          <Icon n="calendar" className="text-[11px]" /> 匯出行事曆
+        </button>
+      )}
+    </>
+  )
+}
+
+function SortSelect({ filters, onChange, className = '' }) {
+  return (
+    <select
+      className={`rounded-md border border-dream-line bg-white text-[13px] text-dream-ink px-2 py-1.5 dark:bg-white/5 ${className}`}
+      value={filters.order} onChange={(e) => onChange({ order: e.target.value })}
+    >
+      {ORDERS.map(([l, v]) => <option key={v} value={v}>{l}</option>)}
+    </select>
+  )
+}
+
+function AppliedChips({ chips, filters, onChange, onReset }) {
+  return (
+    <>
+      <span className="text-[11px] text-dream-faint self-center">已套用：</span>
+      {chips.map(c => (
+        <button key={c.key + c.val} className="pill !text-bloom-indigo"
+          onClick={() => removeChip(filters, onChange, c)}>
+          {c.label} <Icon n="xmark" className="text-[10px]" />
+        </button>
+      ))}
+      <button className="pill !text-bloom-rose" onClick={onReset}>清除全部</button>
+    </>
   )
 }
 
@@ -244,12 +333,12 @@ function ChipGroup({ options, value, onChange, values, onToggle, colored, single
   )
 }
 
-function Segmented({ value, onChange, options }) {
+function Segmented({ value, onChange, options, full }) {
   return (
-    <div className="flex p-1 rounded-full bg-white border border-dream-line overflow-x-auto scrollbar-none max-w-full dark:bg-white/[.06] dark:border-white/15">
+    <div className={`flex p-1 rounded-full bg-white border border-dream-line overflow-x-auto scrollbar-none max-w-full dark:bg-white/[.06] dark:border-white/15 ${full ? 'w-full' : ''}`}>
       {options.map(([l, v, icon]) => (
         <button key={v}
-          className={`shrink-0 whitespace-nowrap inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-medium transition-colors ${
+          className={`${full ? 'flex-1 justify-center' : 'shrink-0'} whitespace-nowrap inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-medium transition-colors ${
             value === v
               ? 'bg-bloom-indigo text-white shadow-sm'
               : 'text-dream-sub hover:text-dream-ink hover:bg-dream-line/50 dark:hover:bg-white/10'}`}

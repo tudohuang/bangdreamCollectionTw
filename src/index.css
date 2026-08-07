@@ -120,17 +120,28 @@
     @apply relative rounded-2xl border border-dream-line bg-white;
   }
 
-  /* 活動卡 — 淺色：暖白帶樂團色淡暈；深色：霓虹玻璃（見下方覆寫） */
+  /* 活動卡 — 淺色：暖白紙、印刷網點、樂團色淡暈；深色：霓虹玻璃（見下方覆寫） */
   .event-card {
     @apply relative rounded-2xl border border-dream-line overflow-hidden cursor-pointer text-left w-full;
-    background: linear-gradient(180deg, rgba(var(--band), 0.06), #ffffff 56%);
+    background-color: #fffdff;
+    background-image:
+      radial-gradient(rgba(90, 60, 130, 0.05) 0.5px, transparent 0.6px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"),
+      linear-gradient(180deg, rgba(var(--band), 0.09), rgba(255, 255, 255, 0) 58%);
+    background-size: 4px 4px, 140px 140px, 100% 100%;
     box-shadow: 0 5px 18px -10px rgba(120, 80, 160, 0.22);
-    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    transition: transform 0.2s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.2s ease, border-color 0.18s ease;
   }
   .event-card:hover {
     transform: translateY(-3px);
     border-color: rgba(var(--band), 0.5);
     box-shadow: 0 16px 34px -14px rgba(var(--band), 0.5), 0 4px 14px -10px rgba(120, 80, 160, 0.25);
+  }
+  /* 滑過像把紙從桌上輕輕掀起一角 — 只給卡牆的方卡，橫向列表列不適用 */
+  .card-lift:hover { transform: translateY(-4px) rotate(-0.35deg); }
+  @media (prefers-reduced-motion: reduce) {
+    .event-card:hover,
+    .card-lift:hover { transform: none; }
   }
   /* 卡片左側一條樂團色霓虹細線 */
   .event-card::before {
@@ -138,9 +149,34 @@
     position: absolute;
     inset: 0 auto 0 0;
     width: 4px;
+    border-radius: 16px 0 0 16px;
     background: linear-gradient(180deg, rgba(var(--band), 0.95), rgba(var(--band), 0.45));
     pointer-events: none;
     z-index: 1;
+  }
+
+  /* 貼在卡片上緣的紙膠帶：歪一點才像手貼的 */
+  .card-tape {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    width: 74px;
+    height: 19px;
+    z-index: 20;
+    pointer-events: none;
+    transform: translateX(-50%) rotate(-2.4deg);
+    background:
+      linear-gradient(100deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 60%),
+      linear-gradient(90deg, rgba(var(--band), 0.34), rgba(var(--band), 0.2));
+    border-left: 1px dashed rgba(255, 255, 255, 0.55);
+    border-right: 1px dashed rgba(255, 255, 255, 0.55);
+    box-shadow: 0 1px 4px -1px rgba(60, 40, 90, 0.28);
+  }
+  .dark .card-tape {
+    background:
+      linear-gradient(100deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 60%),
+      linear-gradient(90deg, rgba(var(--band), 0.5), rgba(var(--band), 0.3));
+    border-color: rgba(255, 255, 255, 0.25);
   }
 
   /* ---------- 按鈕 / 標籤 ---------- */
@@ -266,6 +302,101 @@
 }
 
 @layer components {
+  /* ============================================================
+     票券質感 — 詳情浮層專用：紙纖維噪點 + 印刷網點 + 樂團色暈
+     ============================================================ */
+  .ticket-paper {
+    background-color: var(--modal-bg);
+    background-image:
+      radial-gradient(120% 380px at 50% 0%, rgba(var(--band), 0.13), transparent 70%),
+      radial-gradient(rgba(90, 60, 130, 0.06) 0.5px, transparent 0.6px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    background-size: 100% 380px, 4px 4px, 140px 140px;
+    background-repeat: no-repeat, repeat, repeat;
+    background-attachment: local, local, local;
+  }
+  .dark .ticket-paper {
+    background-image:
+      radial-gradient(120% 380px at 50% 0%, rgba(var(--band), 0.22), transparent 70%),
+      radial-gradient(rgba(255, 255, 255, 0.05) 0.5px, transparent 0.6px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  }
+
+  /* 開場：背幕先淡進、票券再從下方托上來 */
+  @keyframes veilIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes ticketIn {
+    from { opacity: 0; transform: translateY(28px) scale(0.985); }
+    to { opacity: 1; transform: none; }
+  }
+  .modal-veil { animation: veilIn 0.22s ease both; }
+  .modal-ticket { animation: ticketIn 0.34s cubic-bezier(0.2, 0.75, 0.2, 1) both; }
+
+  /* 插旗地圖的 OSM 圖磚：降飽和讓樂團色的旗子壓得住；夜場模式翻成深色 */
+  .vm-tiles {
+    filter: saturate(0.5) contrast(0.92) brightness(1.04);
+  }
+  .dark .vm-tiles {
+    filter: invert(0.92) hue-rotate(180deg) saturate(0.42) brightness(0.92) contrast(0.9);
+  }
+
+  /* 撕紙齒邊：紙從照片上撕下來的那一排三角缺口 */
+  .tear-teeth {
+    background: conic-gradient(from 135deg at 50% 0, var(--modal-bg) 0 90deg, transparent 0)
+      0 0 / 14px 100% repeat-x;
+  }
+
+  /* 打孔線：橫向（撕票線）與縱向（存根與正文之間） */
+  .perf-h {
+    background-image: radial-gradient(circle, rgb(var(--c-line)) 2.1px, transparent 2.3px);
+    background-size: 14px 100%;
+    background-repeat: repeat-x;
+    background-position: center;
+  }
+  .perf-v {
+    background-image: radial-gradient(circle, rgb(var(--c-line)) 2.1px, transparent 2.3px);
+    background-size: 100% 14px;
+    background-repeat: repeat-y;
+    background-position: center;
+  }
+  .dark .perf-h,
+  .dark .perf-v {
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.18) 2.1px, transparent 2.3px);
+  }
+
+  /* 橡皮章：蓋在頭圖上的「我去過」 */
+  .stamp {
+    border: 2.5px solid currentColor;
+    box-shadow: inset 0 0 0 1.5px currentColor, 0 2px 10px -2px rgba(0, 0, 0, 0.5);
+    background: rgba(20, 10, 40, 0.24);
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    opacity: 0.92;
+  }
+  /* 卡片角落那枚小章：底色壓深一點，才壓得住花花的封面 */
+  .stamp-sm {
+    border-width: 2px;
+    box-shadow: inset 0 0 0 1px currentColor, 0 1px 6px -1px rgba(0, 0, 0, 0.5);
+    background: rgba(18, 8, 38, 0.5);
+    transform: rotate(-9deg);
+    opacity: 1;
+  }
+
+  /* 拍立得：照片白框、隨手擺歪，滑過扶正 */
+  .polaroid {
+    @apply bg-white p-1.5 pb-6 rounded-[3px];
+    box-shadow: 0 4px 14px -6px rgba(60, 40, 90, 0.5);
+    transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.25s ease;
+  }
+  .polaroid:hover {
+    transform: rotate(0deg) scale(1.03) !important;
+    box-shadow: 0 14px 30px -10px rgba(60, 40, 90, 0.55);
+  }
+  .dark .polaroid { background: #f4f1fa; }
+
   /* ---------- 深色（夜場 LIVE）覆寫 ---------- */
   .dark .glass {
     background: rgba(22, 18, 48, 0.55);
@@ -281,7 +412,11 @@
     -webkit-backdrop-filter: blur(10px);
   }
   .dark .event-card {
-    background: rgba(24, 19, 52, 0.55);
+    background-color: rgba(24, 19, 52, 0.55);
+    background-image:
+      radial-gradient(rgba(255, 255, 255, 0.045) 0.5px, transparent 0.6px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E"),
+      linear-gradient(180deg, rgba(var(--band), 0.10), rgba(255, 255, 255, 0) 58%);
     border-color: rgba(255, 255, 255, 0.10);
     box-shadow: 0 8px 30px -14px rgba(0, 0, 0, 0.65), inset 0 1px 0 0 rgba(255, 255, 255, 0.07);
     backdrop-filter: blur(12px);

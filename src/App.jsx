@@ -1,19 +1,14 @@
 import { useEffect, useMemo, useState, lazy, Suspense } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import { useEvents } from './hooks/useEvents.js'
+import { useMediaQuery } from './hooks/useMediaQuery.js'
+// 首頁與圖鑑用得到的，直接進主包
 import Hero from './components/Hero.jsx'
 import MonthlyDigest from './components/MonthlyDigest.jsx'
 import Highlights from './components/Highlights.jsx'
-import ProfilePage from './components/ProfilePage.jsx'
-import PeoplePage from './components/PeoplePage.jsx'
-import MePage from './components/MePage.jsx'
 import OnThisDay from './components/OnThisDay.jsx'
 import FilterPanel from './components/FilterPanel.jsx'
 import EventWall from './components/EventWall.jsx'
-import StatsPanel from './components/StatsPanel.jsx'
-import YearReview from './components/YearReview.jsx'
-import Contribute from './components/Contribute.jsx'
-import CommandPalette from './components/CommandPalette.jsx'
 import Reveal from './components/Reveal.jsx'
 import Footer from './components/Footer.jsx'
 import Icon from './components/Icon.jsx'
@@ -24,9 +19,26 @@ import { eventCharacters, detectCity } from './utils/derive.js'
 import { coverOf } from './utils/media.js'
 import { matchSearch } from './utils/search.js'
 import { eventStatus, todayStr } from './utils/datetime.js'
+import { milestoneMap } from './utils/milestones.js'
+import { downloadIcs } from './utils/ics.js'
 import { getAttended, saveAttended } from './utils/attended.js'
 
+// 其餘按頁面切開：一個只看首頁的人不該下載統計圖表、地圖運算與產圖引擎
 const EventDetail = lazy(() => import('./components/EventDetail.jsx'))
+const ProfilePage = lazy(() => import('./components/ProfilePage.jsx'))
+const PeoplePage = lazy(() => import('./components/PeoplePage.jsx'))
+const MePage = lazy(() => import('./components/MePage.jsx'))
+const StatsPanel = lazy(() => import('./components/StatsPanel.jsx'))
+const VenueMap = lazy(() => import('./components/VenueMap.jsx'))
+const OtherHalf = lazy(() => import('./components/OtherHalf.jsx'))
+const YearReview = lazy(() => import('./components/YearReview.jsx'))
+const Contribute = lazy(() => import('./components/Contribute.jsx'))
+const CommandPalette = lazy(() => import('./components/CommandPalette.jsx'))
+
+// 換頁時的佔位：高度先撐住，避免內容跳動
+function PageFallback({ h = 320 }) {
+  return <div aria-hidden className="w-full rounded-2xl skeleton" style={{ height: h }} />
+}
 
 const VIEW_SET = ['cards', 'timeline', 'table']
 
@@ -124,6 +136,7 @@ export default function App() {
   const [detailId, setDetailId] = useState(null)
   const [profile, setProfile] = useState(null)  // {kind:'person'|'band', value} | null
   const [paletteOpen, setPaletteOpen] = useState(false)
+  const wideLayout = useMediaQuery('(min-width: 1280px)')
   const [attended, setAttended] = useState(() => getAttended())
   const [dark, setDark] = useState(() =>
     typeof document !== 'undefined' && document.documentElement.classList.contains('dark'))
@@ -176,6 +189,9 @@ export default function App() {
   const filtered = useMemo(
     () => orderEvents(applyFilters(events, filters, attended), filters.order),
     [events, filters, attended])
+  // 里程碑一定要對「全部」場次算，篩選過的算出來會是假的
+  const milestones = useMemo(() => milestoneMap(events), [events])
+  const exportIcs = () => downloadIcs(filtered, 'bangdream-tw.ics')
   const detailEvent = useMemo(
     () => (detailId ? events.find(e => e.id === detailId) : null),
     [detailId, events])
@@ -260,7 +276,7 @@ export default function App() {
       </a>
 
       <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-dream-line/70 dark:bg-[#0b0a24]/75 dark:border-white/10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-8 h-14 flex items-center justify-between gap-3">
+        <div className="max-w-6xl xl:max-w-[1400px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-8 h-14 flex items-center justify-between gap-3">
           <a href="#/" onClick={(e) => { e.preventDefault(); goPage('home') }} className="flex items-center gap-2.5 group shrink-0">
             <span className="grid place-items-center w-8 h-8 rounded-lg bg-gradient-to-br from-bloom-rose to-bloom-indigo text-white text-[13px] shadow-sm dark:shadow-[0_0_14px_-2px_rgba(217,70,239,0.6)]"><Icon n="music" /></span>
             <span className="font-display font-bold text-[16px] text-dream-ink group-hover:text-bloom-indigo transition-colors hidden min-[380px]:block">
@@ -298,9 +314,9 @@ export default function App() {
         </div>
       </header>
 
-      <main className="relative z-10 max-w-6xl w-full mx-auto px-4 sm:px-8 pt-8 sm:pt-10 pb-24 flex-1">
+      <main className="relative z-10 max-w-6xl xl:max-w-[1400px] 2xl:max-w-[1560px] w-full mx-auto px-4 sm:px-8 pt-8 sm:pt-10 pb-24 flex-1">
         {profile ? (
-          <ErrorBoundary>
+          <ErrorBoundary><Suspense fallback={<PageFallback h={520} />}>
             <ProfilePage
               kind={profile.kind}
               value={profile.value}
@@ -310,34 +326,48 @@ export default function App() {
               onSelect={handleOpenDetail}
               onClose={handleCloseProfile}
             />
-          </ErrorBoundary>
+          </Suspense></ErrorBoundary>
         ) : page === 'collection' ? (
           <section id="wall" className="scroll-mt-20">
             <ErrorBoundary>
-              <FilterPanel
-                events={events}
-                filters={filters}
-                onChange={updateFilters}
-                onReset={resetFilters}
-                resultCount={filtered.length}
-              />
-              <EventWall
-                events={filtered}
-                view={filters.view}
-                attended={attended}
-                onToggleAttended={toggleAttended}
-                onSelect={handleOpenDetail}
-                onReset={resetFilters}
-              />
+              {/* xl 以上：篩選變成左側常駐工作台，右邊專心放卡牆 */}
+              <div className="xl:grid xl:grid-cols-[268px_minmax(0,1fr)] xl:gap-8 xl:items-start">
+                <div className="xl:sticky xl:top-[72px]">
+                  <FilterPanel
+                    events={events}
+                    filters={filters}
+                    onChange={updateFilters}
+                    onReset={resetFilters}
+                    resultCount={filtered.length}
+                    variant={wideLayout ? 'sidebar' : 'bar'}
+                    onExportIcs={exportIcs}
+                  />
+                </div>
+                <EventWall
+                  events={filtered}
+                  allEvents={events}
+                  milestones={milestones}
+                  view={filters.view}
+                  attended={attended}
+                  onToggleAttended={toggleAttended}
+                  onSelect={handleOpenDetail}
+                  onReset={resetFilters}
+                />
+              </div>
             </ErrorBoundary>
           </section>
         ) : page === 'people' ? (
-          <ErrorBoundary><PeoplePage events={events} /></ErrorBoundary>
+          <ErrorBoundary><Suspense fallback={<PageFallback h={520} />}><PeoplePage events={events} onSelect={handleOpenDetail} /></Suspense></ErrorBoundary>
         ) : page === 'stats' ? (
-          <>
-            <ErrorBoundary><OnThisDay events={events} onSelect={handleOpenDetail} /></ErrorBoundary>
+          <Suspense fallback={<PageFallback h={560} />}>
             <Reveal as="section" className="mt-14 sm:mt-20">
               <ErrorBoundary><StatsPanel events={events} /></ErrorBoundary>
+            </Reveal>
+            <Reveal as="section" className="mt-14 sm:mt-20">
+              <ErrorBoundary><VenueMap events={events} /></ErrorBoundary>
+            </Reveal>
+            <Reveal as="section" className="mt-14 sm:mt-20">
+              <ErrorBoundary><OtherHalf events={events} /></ErrorBoundary>
             </Reveal>
             <Reveal as="section" className="mt-14 sm:mt-20">
               <ErrorBoundary><YearReview events={events} /></ErrorBoundary>
@@ -345,17 +375,18 @@ export default function App() {
             <Reveal as="section" className="mt-14 sm:mt-20">
               <ErrorBoundary><Contribute /></ErrorBoundary>
             </Reveal>
-          </>
+          </Suspense>
         ) : page === 'me' ? (
-          <ErrorBoundary>
+          <ErrorBoundary><Suspense fallback={<PageFallback h={420} />}>
             <MePage events={events} attended={attended}
               onToggleAttended={toggleAttended} onSelect={handleOpenDetail}
               onBrowse={() => goPage('collection')} />
-          </ErrorBoundary>
+          </Suspense></ErrorBoundary>
         ) : (
           <>
             <Hero events={events} onSelect={handleOpenDetail} onYearJump={handleYearJump} />
             <ErrorBoundary><MonthlyDigest events={events} onSelect={handleOpenDetail} /></ErrorBoundary>
+            <Reveal><ErrorBoundary><OnThisDay events={events} onSelect={handleOpenDetail} /></ErrorBoundary></Reveal>
             <Reveal><ErrorBoundary><Highlights events={events} onSelect={handleOpenDetail} /></ErrorBoundary></Reveal>
           </>
         )}
@@ -366,12 +397,14 @@ export default function App() {
       <BackToTop />
       <Analytics />
 
+      <Suspense fallback={null}>
       <CommandPalette
         open={paletteOpen}
         onClose={() => setPaletteOpen(false)}
         events={events}
         onSelectEvent={handleOpenDetail}
       />
+      </Suspense>
 
       {detailEvent && (
         <Suspense fallback={null}>
@@ -383,6 +416,7 @@ export default function App() {
             onClose={handleCloseDetail}
             prevId={neighbors.prevId}
             nextId={neighbors.nextId}
+            milestones={milestones.get(detailEvent.id) || []}
             onNavigate={handleOpenDetail}
           />
         </Suspense>

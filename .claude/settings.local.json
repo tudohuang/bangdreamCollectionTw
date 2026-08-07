@@ -35,7 +35,8 @@
       "Read(//c/Users/Tudo/.claude/plugins/cache/**)",
       "Bash(node -e ' *)",
       "WebFetch(domain:www.threads.com)",
-      "Bash(node -e \"const e=require\\('./src/data/events.json'\\); const arr=Array.isArray\\(e\\)?e:e.events; console.log\\('count',arr.length\\); console.log\\(JSON.stringify\\(arr[arr.length-1],null,1\\)\\)\")"
+      "Bash(node -e \"const e=require\\('./src/data/events.json'\\); const arr=Array.isArray\\(e\\)?e:e.events; console.log\\('count',arr.length\\); console.log\\(JSON.stringify\\(arr[arr.length-1],null,1\\)\\)\")",
+      "Bash(node -e \"const d=require\\('./src/data/events.json'\\); console.log\\(Array.isArray\\(d\\)?d.length:Object.keys\\(d\\)\\); const arr=Array.isArray\\(d\\)?d:d.events; console.log\\(JSON.stringify\\(arr.slice\\(0,3\\),null,1\\)\\); const keys=new Set\\(\\); arr.forEach\\(e=>Object.keys\\(e\\).forEach\\(k=>keys.add\\(k\\)\\)\\); console.log\\('KEYS:',[...keys].join\\(', '\\)\\)\")"
     ]
   }
 }

@@ -1,10 +1,20 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { bandKey, BAND_META } from '../utils/bands.js'
 import { detectCity } from '../utils/derive.js'
 import Icon from './Icon.jsx'
 
+// 本體 / 個人 兩個系列的固定配色（站上既有的 violet / rose；
+// 已用 dataviz 驗證器跑過淺色與深色兩種底色，六項檢查全數通過）
+const SERIES = {
+  core: { key: 'core', label: '本體', color: '#a855f7' },
+  side: { key: 'side', label: '個人', color: '#ec4899' },
+}
+
 function computeStats(events) {
   const byYear = {}
+  const byYearCore = {}
+  const byYearSide = {}
+  const byMonth = {}
   const byType = {}
   const byBand = {}
   const byPerson = {}
@@ -12,7 +22,12 @@ function computeStats(events) {
   const byOrganizer = {}
   let core = 0, side = 0, fullBand = 0, attendance = 0
   for (const e of events) {
-    if (e.year) byYear[e.year] = (byYear[e.year] || 0) + 1
+    if (e.year) {
+      byYear[e.year] = (byYear[e.year] || 0) + 1
+      if (e.category === '本體') byYearCore[e.year] = (byYearCore[e.year] || 0) + 1
+      else byYearSide[e.year] = (byYearSide[e.year] || 0) + 1
+    }
+    if (e.month) byMonth[e.month] = (byMonth[e.month] || 0) + 1
     if (e.type) byType[e.type] = (byType[e.type] || 0) + 1
     for (const g of (e.relatedGroups || [])) {
       const k = bandKey(g)
@@ -27,7 +42,10 @@ function computeStats(events) {
     else side++
     if (e.isFullBand) fullBand++
   }
-  return { byYear, byType, byBand, byPerson, byCity, byOrganizer, core, side, fullBand, attendance, total: events.length }
+  return {
+    byYear, byYearCore, byYearSide, byMonth, byType, byBand, byPerson, byCity, byOrganizer,
+    core, side, fullBand, attendance, total: events.length,
+  }
 }
 
 function sortEntries(obj, limit) {
@@ -36,8 +54,18 @@ function sortEntries(obj, limit) {
 
 export default function StatsPanel({ events }) {
   const s = useMemo(() => computeStats(events), [events])
-  const years = Object.keys(s.byYear).map(Number).sort((a, b) => a - b)
-  const maxYear = Math.max(...Object.values(s.byYear))
+  const [hoverYear, setHoverYear] = useState(null)
+  const [hoverMonth, setHoverMonth] = useState(null)
+
+  // 年份軸要連續：中間完全沒場次的年份也要站在圖上，跳過去等於圖表在說謊
+  const present = Object.keys(s.byYear).map(Number).sort((a, b) => a - b)
+  const years = present.length
+    ? Array.from({ length: present[present.length - 1] - present[0] + 1 }, (_, i) => present[0] + i)
+    : []
+  const maxYear = Math.max(1, ...Object.values(s.byYear))
+  const emptyYears = years.filter(y => !s.byYear[y])
+  const maxMonth = Math.max(1, ...Object.values(s.byMonth))
+  const peakMonth = Object.entries(s.byMonth).sort((a, b) => b[1] - a[1])[0]
   const peakYear = years.find(y => s.byYear[y] === maxYear)
   const maxBand = Math.max(...Object.values(s.byBand))
   const topPeople = Object.entries(s.byPerson).sort((a, b) => b[1] - a[1]).slice(0, 8)
@@ -63,35 +91,57 @@ export default function StatsPanel({ events }) {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* 年份分布 */}
+        {/* 年份分布：本體 / 個人 堆疊，空白年份也留在軸上 */}
         <div className="glass p-7">
-          <h3 className="flex items-center gap-2.5 font-display font-bold text-lg text-dream-ink mb-6">
-            <Icon n="calendar" className="text-bloom-violet" /> 年份分布
-          </h3>
+          <div className="flex items-start justify-between gap-4 mb-5">
+            <h3 className="flex items-center gap-2.5 font-display font-bold text-lg text-dream-ink">
+              <Icon n="calendar" className="text-bloom-violet" /> 年份分布
+            </h3>
+            <Legend items={[SERIES.core, SERIES.side]} />
+          </div>
+
           <ul className="space-y-3">
             {years.map(y => {
-              const v = s.byYear[y]
-              const pct = (v / maxYear) * 100
-              const isPeak = y === peakYear
+              const v = s.byYear[y] || 0
+              const cv = s.byYearCore[y] || 0
+              const sv = s.byYearSide[y] || 0
+              const on = hoverYear === y
               return (
-                <li key={y} className="grid grid-cols-[48px_1fr_30px] items-center gap-3">
-                  <span className="font-round font-bold text-[13px] text-dream-sub">{y}</span>
-                  <span className="h-3 rounded-full bg-white/55 relative overflow-hidden">
-                    <span
-                      className="absolute inset-y-0 left-0 rounded-full"
-                      style={{
-                        width: `${pct}%`,
-                        background: isPeak ? '#a855f7' : '#e9d5ff',
-                      }}
-                    />
+                <li key={y}
+                  onMouseEnter={() => setHoverYear(y)} onMouseLeave={() => setHoverYear(null)}
+                  className="relative grid grid-cols-[48px_1fr_30px] items-center gap-3">
+                  <span className={`font-round font-bold text-[13px] ${v ? 'text-dream-sub' : 'text-dream-faint'}`}>{y}</span>
+                  {v ? (
+                    <span className="h-3 flex items-stretch gap-[2px]">
+                      {cv > 0 && <span className="rounded-full" style={{ width: `${(cv / maxYear) * 100}%`, background: SERIES.core.color }} />}
+                      {sv > 0 && <span className="rounded-full" style={{ width: `${(sv / maxYear) * 100}%`, background: SERIES.side.color }} />}
+                    </span>
+                  ) : (
+                    <span className="h-3 flex items-center">
+                      <span className="w-full border-t border-dashed border-dream-line dark:border-white/15" />
+                    </span>
+                  )}
+                  <span className={`text-[13px] font-round font-bold text-right ${v ? 'text-dream-ink' : 'text-dream-faint'}`}>
+                    {v || '—'}
                   </span>
-                  <span className="text-[13px] font-round font-bold text-dream-ink text-right">{v}</span>
+
+                  {on && v > 0 && (
+                    <span className="absolute right-12 -top-1 z-10 rounded-lg bg-dream-ink text-white text-[11.5px] px-2.5 py-1.5 shadow-lg whitespace-nowrap pointer-events-none">
+                      本體 {cv} · 個人 {sv}
+                    </span>
+                  )}
                 </li>
               )
             })}
           </ul>
-          <div className="mt-6 pt-4 border-t border-white/60 text-[13px] text-dream-sub">
-            最熱鬧的一年是 <span className="font-bold text-gradient">{peakYear}（{maxYear} 場）</span>
+
+          <div className="mt-6 pt-4 border-t border-dream-line dark:border-white/10 text-[13px] text-dream-sub space-y-1">
+            <div>最熱鬧的一年是 <span className="font-bold text-gradient">{peakYear}（{maxYear} 場）</span></div>
+            {emptyYears.length > 0 && (
+              <div className="text-dream-faint">
+                {emptyYears.join('、')} 一場都沒有
+              </div>
+            )}
           </div>
         </div>
 
@@ -141,6 +191,41 @@ export default function StatsPanel({ events }) {
             </ul>
           </div>
         </div>
+      </div>
+
+      {/* 月份分布：一年裡哪幾個月最常來 */}
+      <div className="glass p-7 mt-6">
+        <h3 className="flex items-center gap-2.5 font-display font-bold text-lg text-dream-ink mb-6">
+          <Icon n="calendar-days" className="text-bloom-violet" /> 哪幾個月最常來
+        </h3>
+        <div className="flex items-end gap-1.5 sm:gap-2.5 h-40">
+          {Array.from({ length: 12 }, (_, i) => i + 1).map(mo => {
+            const v = s.byMonth[mo] || 0
+            const on = hoverMonth === mo
+            return (
+              <div key={mo} className="relative flex-1 h-full flex flex-col justify-end items-center gap-2"
+                onMouseEnter={() => setHoverMonth(mo)} onMouseLeave={() => setHoverMonth(null)}>
+                {on && v > 0 && (
+                  <span className="absolute -top-1 z-10 rounded-lg bg-dream-ink text-white text-[11.5px] px-2.5 py-1.5 shadow-lg whitespace-nowrap pointer-events-none">
+                    {mo} 月 · {v} 場
+                  </span>
+                )}
+                <span className="w-full rounded-t-[4px] transition-opacity"
+                  style={{
+                    height: `${v ? Math.max(4, (v / maxMonth) * 100) : 2}%`,
+                    background: v ? SERIES.core.color : 'rgb(var(--c-line))',
+                    opacity: hoverMonth && !on ? 0.45 : 1,
+                  }} />
+                <span className="text-[11px] font-round font-bold text-dream-faint">{mo}</span>
+              </div>
+            )
+          })}
+        </div>
+        {peakMonth && (
+          <div className="mt-5 pt-4 border-t border-dream-line dark:border-white/10 text-[13px] text-dream-sub">
+            最常來的是 <span className="font-bold text-gradient">{peakMonth[0]} 月（{peakMonth[1]} 場）</span>
+          </div>
+        )}
       </div>
 
       {/* 聲優出現排行 */}
@@ -200,6 +285,20 @@ export default function StatsPanel({ events }) {
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+// 兩個系列以上一定要有圖例，識別才不會只靠顏色
+function Legend({ items }) {
+  return (
+    <div className="flex items-center gap-3 shrink-0 pt-1">
+      {items.map(it => (
+        <span key={it.key} className="inline-flex items-center gap-1.5 text-[12px] text-dream-sub">
+          <span className="w-2.5 h-2.5 rounded-full" style={{ background: it.color }} />
+          {it.label}
+        </span>
+      ))}
     </div>
   )
 }

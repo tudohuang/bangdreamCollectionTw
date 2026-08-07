@@ -26,6 +26,19 @@ export function photoUrl(p = '') {
   return `${base}/photos/${p}`
 }
 
+// Sheet 上用來標照片出處的欄名（任一個都認；不在 KNOWN_HEADERS 裡，所以會自動進 extras）
+export const PHOTO_CREDIT_KEYS = ['照片來源', '圖片來源', '照片提供', '圖片提供', '攝影', 'photoCredit']
+
+// 取這場活動的照片出處；沒填就回 null
+export function photoCredit(event) {
+  const ex = event?.extras || {}
+  for (const k of PHOTO_CREDIT_KEYS) {
+    const v = typeof ex[k] === 'string' ? ex[k].trim() : ''
+    if (v) return { label: k, value: v, isUrl: /^https?:\/\//i.test(v) }
+  }
+  return null
+}
+
 // 取封面：優先 cover 欄，否則第一張照片
 export function coverOf(event) {
   if (event.cover) return photoUrl(event.cover)

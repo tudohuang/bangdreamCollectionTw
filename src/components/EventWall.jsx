@@ -3,7 +3,7 @@ import Timeline from './Timeline.jsx'
 import EventTable from './EventTable.jsx'
 import Icon from './Icon.jsx'
 
-export default function EventWall({ events, view, attended, onToggleAttended, onSelect, onReset }) {
+export default function EventWall({ events, view, attended, onToggleAttended, onSelect, onReset, allEvents, milestones }) {
   if (events.length === 0) {
     return (
       <div className="glass px-6 py-24 text-center">
@@ -21,18 +21,19 @@ export default function EventWall({ events, view, attended, onToggleAttended, on
     )
   }
 
-  if (view === 'timeline') return <Timeline events={events} onSelect={onSelect} />
+  if (view === 'timeline') return <Timeline events={events} onSelect={onSelect} allEvents={allEvents} />
   if (view === 'table') return <EventTable events={events} onSelect={onSelect} />
-  return <Grid events={events} attended={attended} onToggleAttended={onToggleAttended} onSelect={onSelect} />
+  return <Grid events={events} attended={attended} onToggleAttended={onToggleAttended} onSelect={onSelect} milestones={milestones} />
 }
 
-function Grid({ events, attended, onToggleAttended, onSelect }) {
+function Grid({ events, attended, onToggleAttended, onSelect, milestones }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5 sm:gap-6">
       {events.map(e => (
         <EventCard key={e.id} event={e}
           attended={attended?.has(e.id)}
           onToggleAttended={onToggleAttended}
+          milestone={milestones?.get(e.id)?.[0]}
           onClick={() => onSelect(e.id)} />
       ))}
     </div>

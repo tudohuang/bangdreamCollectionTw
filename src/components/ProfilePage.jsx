@@ -1,12 +1,16 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { bandMeta, rootGroup, primaryMeta, isPersonal, BAND_META } from '../utils/bands.js'
 import { coverOf } from '../utils/media.js'
 import { buildRoster, detectCity } from '../utils/derive.js'
-import { eventStatus } from '../utils/datetime.js'
-import { formatMonthDay, copyText } from '../utils/share.js'
+import { eventStatus, daysUntil } from '../utils/datetime.js'
+import { formatMonthDay, copyText, formatDateRangeCompact } from '../utils/share.js'
+import { sortChrono, daysBetween } from '../utils/context.js'
+import { yearGaps } from '../utils/insights.js'
+import { downloadIcs } from '../utils/ics.js'
+import { downloadPassCard } from '../utils/passImage.js'
 import Icon from './Icon.jsx'
 import Img from './Img.jsx'
-import { useState } from 'react'
+import CollectionStrip from './CollectionStrip.jsx'
 
 function tally(arr) {
   const m = {}
@@ -36,10 +40,38 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
     const related = tally(relatedRaw)
 
     const roster = kind === 'person' ? buildRoster(events)[value] : null
-    return { list, years, attendance, cities, fullBand, related, roster }
+
+    // 這個人／團自己的時間線：空白期、下一場、隔最久的一次
+    const chrono = sortChrono(list)
+    const ids = new Set(list.map(e => e.id))
+    const gaps = yearGaps(chrono)
+    const next = chrono.find(e => {
+      const st = eventStatus(e)
+      return st === 'upcoming' || st === 'ongoing'
+    })
+    let longest = null
+    for (let i = 1; i < chrono.length; i++) {
+      const d = daysBetween(chrono[i - 1].startDate, chrono[i].startDate)
+      if (d != null && (!longest || d > longest.days)) {
+        longest = { days: d, from: chrono[i - 1], to: chrono[i] }
+      }
+    }
+    return { list, chrono, ids, years, attendance, cities, fullBand, related, roster, gaps, next, longest }
   }, [kind, value, events])
 
-  const { list, years, attendance, cities, fullBand, related, roster } = data
+  const { list, chrono, ids, years, attendance, cities, fullBand, related, roster, gaps, next, longest } = data
+  const allChrono = useMemo(() => sortChrono(events), [events])
+
+  // 場次依年份分組（新到舊），沒有年份的歸到最後
+  const byYear = useMemo(() => {
+    const map = new Map()
+    for (const e of list) {
+      const y = e.year || 0
+      if (!map.has(y)) map.set(y, [])
+      map.get(y).push(e)
+    }
+    return [...map.entries()].sort((a, b) => b[0] - a[0])
+  }, [list])
 
   const meta = kind === 'band'
     ? bandMeta(value)
@@ -49,10 +81,10 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
   const last = list.length ? list[0].year : null
   const span = first && last ? (first === last ? `${first}` : `${first}–${last}`) : '—'
 
+  const flash = (m) => { setToast(m); setTimeout(() => setToast(''), 1800) }
   const copyLink = async () => {
     const ok = await copyText(`${location.origin}${location.pathname}#/${kind}/${encodeURIComponent(value)}`)
-    setToast(ok ? '已複製連結' : '複製失敗')
-    setTimeout(() => setToast(''), 1800)
+    flash(ok ? '已複製連結' : '複製失敗')
   }
 
   if (!list.length) {
@@ -104,14 +136,79 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
               {kind === 'band' && fullBand > 0 && <Stat n={fullBand} unit="場" label="全團場次" color={meta.color} />}
               {kind === 'person' && <Stat n={related.length} unit="團" label="關聯樂團" color={meta.color} />}
             </div>
-            <div className="mt-5 flex gap-2.5">
-              <button onClick={copyLink} className="btn-primary !h-10 !px-5 !text-[13px]">
-                <Icon n="link" /> 複製這頁連結
-              </button>
-            </div>
           </div>
         </div>
+
+        {/* 操作列獨立一行，手機上才不會被頭像擠成三行 */}
+        <div className="relative px-6 sm:px-8 pb-6 sm:pb-8 -mt-1 flex flex-wrap gap-2">
+          <button onClick={copyLink} className="btn-primary !h-10 !px-5 !text-[13px]">
+            <Icon n="link" /> 複製連結
+          </button>
+          <button className="pill !px-4 !py-2 !text-[13px]"
+            onClick={() => flash(downloadIcs(list, `${value}.ics`) ? '已下載行事曆檔' : '沒有確定日期的場次')}>
+            <Icon n="calendar" /> 加行事曆
+          </button>
+          <button className="pill !px-4 !py-2 !text-[13px]"
+            onClick={() => downloadPassCard(events, ids, {
+              title: `${value} 的來台紀錄`,
+              header: `${kind === 'person' ? 'VOICE ACTOR' : 'BAND'} · TAIWAN BANG DREAM!`,
+            })}>
+            <Icon n="star" /> 存成圖
+          </button>
+        </div>
       </div>
+
+      {/* 下一次來台：這頁才不只是回顧 */}
+      {next && (
+        <button onClick={() => onSelect(next.id)}
+          className="mt-4 w-full text-left rounded-2xl px-5 py-4 flex items-center gap-4 transition-colors hover:brightness-[1.02]"
+          style={{ background: `rgba(${meta.glow},0.10)`, border: `1px solid rgba(${meta.glow},0.28)` }}>
+          <span className="shrink-0 text-center">
+            <span className="block font-display font-extrabold text-[30px] leading-none" style={{ color: meta.color }}>
+              {Math.max(0, daysUntil(next.startDate) ?? 0)}
+            </span>
+            <span className="block text-[11px] text-dream-faint mt-1">天後</span>
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[12px] font-bold" style={{ color: meta.color }}>下一次來台</span>
+            <span className="block font-display font-bold text-[15px] text-dream-ink line-clamp-2 mt-0.5">{next.title}</span>
+            <span className="block text-[12px] text-dream-faint mt-0.5">
+              {formatDateRangeCompact(next.startDate, next.endDate)}{next.venue && ` · ${next.venue}`}
+            </span>
+          </span>
+          <Icon n="chevron-right" className="shrink-0 text-[12px] text-dream-faint" />
+        </button>
+      )}
+
+      {/* 脈絡：空白期與隔最久的一次 */}
+      {(gaps.length > 0 || (longest && longest.days >= 365)) && (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {gaps.map(g => (
+            <span key={g.from} className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-dream-line dark:border-white/15 px-3 py-1.5 text-[12.5px] text-dream-sub">
+              <Icon n="calendar" className="text-[10px] text-dream-faint" />
+              {g.length === 1 ? `${g.from} 年` : `${g.from}–${g.to}`} 沒有場次
+            </span>
+          ))}
+          {longest && longest.days >= 365 && (
+            <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px] font-medium"
+              style={{ background: `rgba(${meta.glow},0.12)`, color: meta.color }}>
+              <Icon n="bolt" className="text-[10px]" />
+              最久隔了 {Math.floor(longest.days / 365)} 年
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* 收藏軌：在全站 {allChrono.length} 場裡，這個人／團站在哪些位置 */}
+      {allChrono.length > 1 && (
+        <div className="mt-7">
+          <div className="flex items-center justify-between text-[11px] font-bold text-dream-faint mb-2.5">
+            <span>在全站的位置</span>
+            <span className="font-normal">{list.length} / {allChrono.length} 場</span>
+          </div>
+          <CollectionStrip chrono={allChrono} isOn={(e) => ids.has(e.id)} onNavigate={onSelect} />
+        </div>
+      )}
 
       {/* 關聯 chips */}
       {related.length > 0 && (
@@ -142,49 +239,34 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
         </div>
       )}
 
-      {/* 全部場次 */}
+      {/* 全部場次：新到舊，年份分組，中間空掉的年份也標出來 */}
       <div className="mt-9">
         <h2 className="section-h mb-5">全部場次 <span className="text-dream-faint text-lg font-bold">{list.length}</span></h2>
-        <ul className="space-y-2.5">
-          {list.map(e => {
-            const m = primaryMeta(e)
-            const cover = coverOf(e)
-            const status = eventStatus(e)
-            const att = attended?.has(e.id)
-            return (
-              <li key={e.id}>
-                <button onClick={() => onSelect(e.id)}
-                  className="event-card group w-full text-left flex items-center gap-3.5 p-3 pr-4"
-                  style={{ '--band': m.glow }}>
-                  <div className="relative w-16 h-16 sm:w-20 sm:h-16 shrink-0 rounded overflow-hidden grid place-items-center"
-                    style={{ background: cover ? undefined : `rgba(${m.glow},0.12)` }}>
-                    {cover
-                      ? <Img src={cover} className="w-full h-full object-cover group-hover:scale-105 motion-reduce:transform-none" />
-                      : <span className="text-lg" style={{ color: m.color }}><Icon n={isPersonal(e) ? 'user' : m.icon} /></span>}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 text-[12px] text-dream-sub">
-                      <span className="font-round font-bold" style={{ color: m.color }}>#{String(e.number ?? 0).padStart(3, '0')}</span>
-                      <span>{e.year}.{formatMonthDay(e.startDate).replace(/^\d{4}\./, '')}</span>
-                      {status === 'past' && <span className="text-dream-faint">已結束</span>}
-                      {(status === 'upcoming' || status === 'ongoing') && <span className="text-bloom-indigo font-bold">即將</span>}
-                    </div>
-                    <div className="font-display font-bold text-[14px] text-dream-ink line-clamp-1 mt-0.5 group-hover:text-bloom-indigo transition-colors">{e.title}</div>
-                    {e.type && <div className="text-[12px] text-dream-faint mt-0.5 truncate">{e.type}</div>}
-                  </div>
-                  <span
-                    role="button" tabIndex={0}
-                    onClick={(ev) => { ev.stopPropagation(); onToggleAttended?.(e.id) }}
-                    onKeyDown={(ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.stopPropagation(); onToggleAttended?.(e.id) } }}
-                    aria-label={att ? '取消已去過' : '標記我去過'}
-                    className={`grid place-items-center w-7 h-7 rounded-full shrink-0 transition-colors ${att ? 'bg-bloom-indigo text-white shadow-sm' : 'border border-dream-line text-dream-faint hover:text-bloom-indigo hover:border-bloom-sky'}`}>
-                    <Icon n="circle-check" className="text-[11px]" />
-                  </span>
-                </button>
-              </li>
-            )
-          })}
-        </ul>
+        {byYear.map(([year, arr], gi) => {
+          const prev = byYear[gi - 1]
+          const skipped = prev && prev[0] - year > 1
+          return (
+            <div key={year} className={gi ? 'mt-6' : ''}>
+              {skipped && (
+                <div className="mb-4 flex items-center gap-3 text-[12.5px] text-dream-faint">
+                  <span className="h-px flex-1 border-t border-dashed border-dream-line dark:border-white/15" />
+                  {year + 1 === prev[0] - 1
+                    ? `${year + 1} 年沒有場次`
+                    : `${year + 1}–${prev[0] - 1} 沒有場次`}
+                  <span className="h-px flex-1 border-t border-dashed border-dream-line dark:border-white/15" />
+                </div>
+              )}
+              <div className="flex items-center gap-3 mb-2.5">
+                <span className="font-display font-bold text-[15px]" style={{ color: meta.color }}>{year}</span>
+                <span className="text-[12px] text-dream-faint">{arr.length} 場</span>
+                <span className="h-px flex-1 bg-dream-line dark:bg-white/10" />
+              </div>
+              <ul className="space-y-2.5">
+                {arr.map(e => <EventRow key={e.id} e={e} attended={attended} onSelect={onSelect} onToggleAttended={onToggleAttended} />)}
+              </ul>
+            </div>
+          )
+        })}
       </div>
 
       {toast && (
@@ -193,6 +275,49 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
         </div>
       )}
     </div>
+  )
+}
+
+// 一列場次
+function EventRow({ e, attended, onSelect, onToggleAttended }) {
+  const m = primaryMeta(e)
+  const cover = coverOf(e)
+  const status = eventStatus(e)
+  const att = attended?.has(e.id)
+  return (
+    <li>
+      <button onClick={() => onSelect(e.id)}
+        className="event-card group w-full text-left flex items-center gap-3.5 p-3 pr-4"
+        style={{ '--band': m.glow }}>
+        <div className="relative w-16 h-16 sm:w-20 sm:h-16 shrink-0 rounded overflow-hidden grid place-items-center"
+          style={{ background: cover ? undefined : `rgba(${m.glow},0.12)` }}>
+          {cover
+            ? <Img src={cover} className="w-full h-full object-cover group-hover:scale-105 motion-reduce:transform-none" />
+            : <span className="text-lg" style={{ color: m.color }}><Icon n={isPersonal(e) ? 'user' : m.icon} /></span>}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 text-[12px] text-dream-sub">
+            <span className="font-round font-bold" style={{ color: m.color }}>#{String(e.number ?? 0).padStart(3, '0')}</span>
+            <span>{e.year}.{formatMonthDay(e.startDate).replace(/^\d{4}\./, '')}</span>
+            {status === 'past' && <span className="text-dream-faint">已結束</span>}
+            {(status === 'upcoming' || status === 'ongoing') && <span className="text-bloom-indigo font-bold">即將</span>}
+          </div>
+          <div className="font-display font-bold text-[14px] text-dream-ink line-clamp-1 mt-0.5 group-hover:text-bloom-indigo transition-colors">{e.title}</div>
+          {e.type && <div className="text-[12px] text-dream-faint mt-0.5 truncate">{e.type}</div>}
+        </div>
+        <span
+          role="button" tabIndex={0}
+          onClick={(ev) => { ev.stopPropagation(); onToggleAttended?.(e.id) }}
+          onKeyDown={(ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.stopPropagation(); onToggleAttended?.(e.id) } }}
+          aria-label={att ? '取消已去過' : '標記我去過'}
+          className={`grid place-items-center w-7 h-7 rounded-full shrink-0 transition-colors ${
+            att
+              ? 'bg-bloom-indigo text-white shadow-sm'
+              : 'border border-dream-line text-dream-faint hover:text-bloom-indigo hover:border-bloom-sky'}`}>
+          <Icon n="circle-check" className="text-[11px]" />
+        </span>
+      </button>
+    </li>
   )
 }
 

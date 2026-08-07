@@ -4,6 +4,19 @@ export function formatDateRange(start, end) {
   return `${start} → ${end}`
 }
 
+// 票券用的緊湊日期：同年同月的結束日只留日，不把年月重講一次
+export function formatDateRangeCompact(start, end) {
+  const a = /^(\d{4})-(\d{2})-(\d{2})$/.exec(start || '')
+  if (!a) return formatDateRange(start, end)
+  const head = `${a[1]}.${a[2]}.${a[3]}`
+  if (!end || start === end) return head
+  const b = /^(\d{4})-(\d{2})-(\d{2})$/.exec(end)
+  if (!b) return formatDateRange(start, end)
+  if (a[1] !== b[1]) return `${head} → ${b[1]}.${b[2]}.${b[3]}`
+  if (a[2] !== b[2]) return `${head} → ${b[2]}.${b[3]}`
+  return `${head} → ${b[3]}`
+}
+
 export function formatDateShort(d) {
   if (!d) return ''
   const m = d.match(/^(\d{4})-(\d{2})-(\d{2})$/)

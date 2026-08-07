@@ -1,14 +1,25 @@
 // 從活動資料衍生的維度：城市、角色、場館、聲優 roster
 import { parseGroup, rootGroup } from './bands.js'
+import { VENUE_CITY_KEYWORDS } from '../data/venues.js'
 
 const CITY_KEYS = ['台北', '臺北', '新北', '桃園', '台中', '臺中', '台南', '臺南', '高雄', '新竹', '基隆', '宜蘭']
+const norm = (c) => c.replace('臺', '台')
 
-// 城市：優先用手填欄位，否則從場館/標題猜（台/臺統一成台）
+// 城市：Sheet 的「城市」欄 > 場館/標題裡直接出現的城市名 > 場館關鍵字對照表。
+// 光靠字串比對會漏掉一半（MOONDOG、TICC、南港展覽館… 名字裡沒有城市），所以要有第三層。
 export function detectCity(e) {
-  if (e.city) return e.city.replace('臺', '台')
+  if (e.city) return norm(e.city)
+
   const hay = `${e.venue || ''} ${e.title || ''}`
+  // 「新北」要比「台北」先判，否則 Zepp New Taipei 會被 Taipei 規則吃掉
+  if (hay.includes('新北')) return '新北'
   for (const c of CITY_KEYS) {
-    if (hay.includes(c)) return c.replace('臺', '台')
+    if (hay.includes(c)) return norm(c)
+  }
+
+  const venue = e.venue || ''
+  for (const [kw, city] of VENUE_CITY_KEYWORDS) {
+    if (venue.includes(kw)) return city
   }
   return ''
 }

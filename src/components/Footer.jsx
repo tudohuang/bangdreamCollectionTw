@@ -16,7 +16,7 @@ export default function Footer({ source = 'bundled', updatedAt, onRetry }) {
   const txt = sourceText(source, updatedAt)
   return (
     <footer className="relative z-10 mt-8">
-      <div className="max-w-6xl mx-auto px-4 sm:px-8 pb-10">
+      <div className="max-w-6xl xl:max-w-[1400px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-8 pb-10">
         <div className="glass-soft px-6 sm:px-8 py-7">
           <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center justify-between">
             <div className="flex items-center gap-3">

@@ -9,7 +9,7 @@ import Img from './Img.jsx'
 
 // 資訊分級：封面圖為主 → 標題 → 一行 meta（日期・場館）→ 一行歸屬。
 // 其餘（類型、人物、人次、角色）全部留給詳情頁——卡片是用來「掃」的。
-export default function EventCard({ event, attended, onToggleAttended, onClick }) {
+export default function EventCard({ event, attended, onToggleAttended, onClick, milestone }) {
   const [imgOk, setImgOk] = useState(true)
   const dex = `#${String(event.number ?? 0).padStart(3, '0')}`
   const sameDay = event.startDate === event.endDate
@@ -27,12 +27,16 @@ export default function EventCard({ event, attended, onToggleAttended, onClick }
   return (
     <button
       onClick={onClick}
-      className="event-card group flex flex-col text-left"
+      className="event-card card-lift group flex flex-col text-left !overflow-visible"
       style={{ '--band': meta.glow }}
       aria-label={`${dex} ${event.title}`}
     >
-      {/* 封面（沒圖用樂團色舞台；固定 3:2 版位 → 無 CLS） */}
-      <div className="relative w-full aspect-[3/2] overflow-hidden">
+      {/* 貼在上緣的紙膠帶 */}
+      <span aria-hidden className="card-tape" />
+
+      {/* 封面像貼上去的照片：四周留一圈紙、固定 3:2 版位 → 無 CLS */}
+      <div className="p-2.5 pb-0">
+      <div className="relative w-full aspect-[3/2] overflow-hidden rounded-xl shadow-[0_2px_8px_-4px_rgba(60,40,90,0.45)]">
         {cover ? (
           <Img src={cover} onError={() => setImgOk(false)}
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04] motion-reduce:transform-none" />
@@ -43,7 +47,7 @@ export default function EventCard({ event, attended, onToggleAttended, onClick }
           </div>
         )}
         <span className="absolute inset-x-0 bottom-0 h-[3px] z-10" style={{ background: meta.color }} />
-        {/* 左上：狀態；右上：打卡 */}
+        {/* 左上：狀態；右上：打卡（去過就變成一枚蓋歪的章） */}
         {dleft != null && (
           <span className="absolute left-2.5 top-2.5 z-10 rounded-full bg-bloom-indigo text-white px-2 py-0.5 text-[11px] font-bold shadow-sm">
             {dleft === 0 ? '今天' : `${dleft} 天後`}
@@ -55,20 +59,33 @@ export default function EventCard({ event, attended, onToggleAttended, onClick }
           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); e.preventDefault(); onToggleAttended?.(event.id) } }}
           aria-label={attended ? '取消已去過' : '標記我去過'}
           title={attended ? '已標記去過' : '標記我去過'}
-          className={`absolute right-2.5 top-2.5 z-10 grid place-items-center w-7 h-7 rounded-full transition-colors ${
+          className={`absolute right-2.5 top-2.5 z-10 grid place-items-center rounded-full transition-colors ${
             attended
-              ? 'bg-bloom-indigo text-white shadow-sm'
-              : 'bg-black/25 text-white/85 backdrop-blur-sm hover:bg-bloom-indigo'}`}
-        ><Icon n="circle-check" className="text-[11px]" /></span>
+              ? 'stamp stamp-sm w-9 h-9 text-white'
+              : 'w-7 h-7 bg-black/25 text-white/85 backdrop-blur-sm hover:bg-bloom-indigo'}`}
+        >
+          {attended
+            ? <span className="font-hand font-bold text-[11px] leading-none">去過</span>
+            : <Icon n="circle-check" className="text-[11px]" />}
+        </span>
+        {/* 里程碑：這場在收藏史上是個「第一次」或「隔最久」 */}
+        {milestone && (
+          <span className="absolute left-2.5 bottom-3 z-10 max-w-[calc(100%-24px)] inline-flex items-center gap-1.5 rounded-full bg-black/45 backdrop-blur-sm pl-2 pr-2.5 py-1 text-[10.5px] font-bold text-white">
+            <Icon n="star" className="text-[8px] shrink-0" style={{ color: meta.color }} />
+            <span className="truncate">{milestone.label}</span>
+          </span>
+        )}
+      </div>
       </div>
 
-      <div className="flex flex-col gap-1.5 p-4">
+      <div className="flex flex-col gap-1.5 px-4 pt-3 pb-4">
         <h3 className="font-display font-bold text-[15px] leading-snug text-dream-ink line-clamp-2 group-hover:text-bloom-violet transition-colors">
           {event.title || '未命名活動'}
         </h3>
-        <div className="text-[12px] text-dream-sub flex items-center gap-1.5 min-w-0">
+        {/* 手寫那行：像自己在照片下面補記的日期與地點 */}
+        <div className="font-hand text-[13.5px] leading-snug text-dream-sub flex items-baseline gap-1.5 min-w-0">
           {event.startDate ? (
-            <span className="shrink-0 font-round font-semibold" style={{ color: meta.color }}>
+            <span className="shrink-0 font-bold" style={{ color: meta.color }}>
               {event.year}.{dayLabel.replace(/^\d{4}\./, '')}{wd && `（${wd.replace('週', '')}）`}
             </span>
           ) : (
@@ -76,7 +93,7 @@ export default function EventCard({ event, attended, onToggleAttended, onClick }
           )}
           {place && <span className="truncate text-dream-faint">· {place}</span>}
         </div>
-        <div className="flex items-center justify-between gap-2 text-[12px]">
+        <div className="flex items-center justify-between gap-2 text-[12px] pt-0.5">
           <span className="inline-flex items-center gap-1.5 min-w-0" style={{ color: meta.color }}>
             <Icon n={personal ? 'user' : meta.icon} className="text-[10px] shrink-0" />
             <span className="truncate font-medium">{personal ? `個人 · ${meta.name}` : meta.name}</span>

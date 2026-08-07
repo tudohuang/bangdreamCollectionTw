@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { primaryMeta, isPersonal } from '../utils/bands.js'
 import { formatMonthDay } from '../utils/share.js'
+import { downloadPassCard } from '../utils/passImage.js'
 import Icon from './Icon.jsx'
 
 // 我的收藏：把「我去過」的打勾變成看得見的個人紀錄。
@@ -46,9 +47,14 @@ export default function MePage({ events, attended, onToggleAttended, onSelect, o
 
   return (
     <section>
-      <div className="mb-6">
-        <div className="eyebrow"><Icon n="circle-check" className="text-[10px]" /> My Collection</div>
-        <h2 className="section-h mt-1.5">我的收藏</h2>
+      <div className="mb-6 flex items-end justify-between gap-4 flex-wrap">
+        <div>
+          <div className="eyebrow"><Icon n="circle-check" className="text-[10px]" /> My Collection</div>
+          <h2 className="section-h mt-1.5">我的收藏</h2>
+        </div>
+        <button className="btn-primary shrink-0" onClick={() => downloadPassCard(events, attended)}>
+          <Icon n="star" /> 存成季票
+        </button>
       </div>
 
       {/* 個人數據磚 */}
