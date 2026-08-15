@@ -1,5 +1,6 @@
 // CSV → 活動陣列（純函式，瀏覽器與 Node 共用）
 // 前端即時抓 Google Sheet、以及 scripts/import-csv.mjs 都用這支。
+import { URGENT_VALUE } from './urgency.js'
 
 // ---- 極簡 CSV 解析（支援雙引號、引號內逗號、"" 轉義） ----
 export function parseCSV(text) {
@@ -44,6 +45,7 @@ const fixName = (p) => NAME_FIX[p] || p
 const KNOWN_HEADERS = new Set([
   '編號', 'number', '年份', '開始日期', '結束日期', '月份',
   '活動名稱', '類型', '人物', '團體／關聯', '本體／擦邊', '全團', '人次',
+  '緊急性', 'urgency',
   '備註', 'notes', '地點', 'venue', '城市', 'city', '照片', 'photos',
   '封面', 'cover', '購票連結', '購票', '主辦', '主辦單位',
   '簡介', 'description', '心得', 'impression', '來源', 'sources',
@@ -61,6 +63,7 @@ export function parseCsvToEvents(text) {
     title: col('活動名稱'), type: col('類型'), people: col('人物'),
     groups: col('團體／關聯'), category: col('本體／擦邊'), full: col('全團'),
     count: col('人次'),
+    urgency: col('緊急性') >= 0 ? col('緊急性') : col('urgency'),
     notes: col('備註') >= 0 ? col('備註') : col('notes'),
     venue: col('地點') >= 0 ? col('地點') : col('venue'),
     city: col('城市') >= 0 ? col('城市') : col('city'),
@@ -101,6 +104,9 @@ export function parseCsvToEvents(text) {
       category: get('category') || '本體',
       isFullBand: get('full') === '是',
       attendanceCount: Number(get('count')) || 0,
+      // 緊急性：留空／「普通」＝一般；「非常」＝全站進緊急狀態（見 utils/urgency.js）
+      urgency: get('urgency'),
+      isUrgent: get('urgency') === URGENT_VALUE,
       venue: get('venue'),
       city: get('city'),
       photos: splitMedia(get('photos')),

@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { bandKey, primaryMeta, isPersonal } from '../utils/bands.js'
 import { eventStatus, daysUntil, weekday, todayStr } from '../utils/datetime.js'
 import { formatMonthDay } from '../utils/share.js'
+import { isUrgent, urgentEvents, URGENT_LABEL } from '../utils/urgency.js'
 import { OWNER_NOTE } from '../config.js'
 import Icon from './Icon.jsx'
 
@@ -36,9 +37,11 @@ function computeStats(events) {
   }
 }
 
-// 下一場（沒有未來場次就退回最近一場）
+// 下一場（沒有未來場次就退回最近一場）；有緊急情報時，票根直接讓給它
 function pickHighlight(events) {
   const today = todayStr()
+  const urgent = urgentEvents(events, today)
+  if (urgent.length) return { event: urgent[0], upcoming: true }
   const future = events
     .filter(e => { const s = eventStatus(e, today); return s === 'upcoming' || s === 'ongoing' })
     .sort((a, b) => (a.startDate || '').localeCompare(b.startDate || ''))
@@ -55,24 +58,26 @@ function TicketCountdown({ events, onSelect }) {
   if (!hl) return null
   const { event: e, upcoming } = hl
   const m = primaryMeta(e)
+  const urgent = isUrgent(e)
+  const accent = urgent ? 'rgb(var(--c-urgent))' : m.color
   const d = daysUntil(e.startDate)
   const status = eventStatus(e)
   const big = upcoming
-    ? (status === 'ongoing' ? 'ON AIR' : d === 0 ? 'TODAY' : `${d}`)
+    ? (status === 'ongoing' ? 'ON AIR' : status === 'unknown' ? '日期未定' : d === 0 ? 'TODAY' : `${d}`)
     : 'REPLAY'
   const unit = upcoming && status !== 'ongoing' && d > 0 ? '天後開演' : ''
 
   return (
     <button onClick={() => onSelect?.(e.id)}
-      className="event-card group w-full text-left flex items-stretch"
+      className={`event-card group w-full text-left flex items-stretch ${urgent ? 'urgent-card' : ''}`}
       style={{ '--band': m.glow }}>
       {/* 撕票區 */}
       <div className="relative shrink-0 w-32 sm:w-40 grid place-items-center px-3 py-6 border-r border-dashed border-dream-line dark:border-white/20">
         <span aria-hidden className="absolute -right-2 -top-2.5 w-4 h-4 rounded-full bg-dream-bg border border-dream-line dark:border-white/15" />
         <span aria-hidden className="absolute -right-2 -bottom-2.5 w-4 h-4 rounded-full bg-dream-bg border border-dream-line dark:border-white/15" />
         <div className="text-center">
-          <div className="text-[11px] font-bold tracking-[0.25em]" style={{ color: m.color }}>
-            {upcoming ? 'UP NEXT' : 'LAST SHOW'}
+          <div className="text-[11px] font-bold tracking-[0.25em]" style={{ color: accent }}>
+            {urgent ? 'URGENT' : upcoming ? 'UP NEXT' : 'LAST SHOW'}
           </div>
           <div className="font-display font-extrabold leading-none mt-1.5 text-dream-ink"
             style={{ fontSize: unit ? 'clamp(34px,4.5vw,46px)' : 'clamp(19px,2.4vw,26px)' }}>
@@ -84,7 +89,12 @@ function TicketCountdown({ events, onSelect }) {
       {/* 場次資訊 */}
       <div className="min-w-0 flex-1 p-4 sm:p-5 flex items-center gap-4">
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5 text-[12px] mb-1" style={{ color: m.color }}>
+          <div className="flex items-center gap-1.5 text-[12px] mb-1 flex-wrap" style={{ color: m.color }}>
+            {urgent && (
+              <span className="urgent-badge">
+                <Icon n="triangle-exclamation" className="text-[9px]" /> {URGENT_LABEL}
+              </span>
+            )}
             <Icon n={isPersonal(e) ? 'user' : m.icon} className="text-[10px]" />
             {isPersonal(e) ? '個人來台' : m.name}
           </div>

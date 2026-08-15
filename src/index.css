@@ -16,6 +16,10 @@
     --c-faint: 156 148 190;
     --c-line: 238 230 248;
     --modal-bg: rgba(255, 253, 255, 0.97);
+    /* 緊急色：粉紫全站色系裡唯一的紅，看到就知道是「這件事很急」 */
+    --c-urgent: 225 29 72;
+    /* 頁首下方 sticky 元件的黏著點；有緊急橫幅時整條往下推（見 .urgent-mode） */
+    --sticky-top: 72px;
   }
 
   .dark {
@@ -26,7 +30,12 @@
     --c-faint: 114 108 154;
     --c-line: 48 44 84;
     --modal-bg: rgba(15, 13, 36, 0.97);
+    /* 夜場的紅要更亮才壓得過霓虹 */
+    --c-urgent: 255 82 110;
   }
+
+  /* 全站緊急狀態：有「緊急性＝非常」且還沒結束的場次時，<html> 會被掛上這個 class。
+     --sticky-top 由 App 量頁首實際高度後寫進來（緊急橫幅會把頁首撐高）。 */
 
   html {
     -webkit-font-smoothing: antialiased;
@@ -396,6 +405,85 @@
     box-shadow: 0 14px 30px -10px rgba(60, 40, 90, 0.55);
   }
   .dark .polaroid { background: #f4f1fa; }
+
+  /* ============================================================
+     緊急狀態 — Sheet 標「非常」的場次，全站用同一套紅色語言
+     ============================================================ */
+
+  /* 頁首下方那條警示帶：跑馬燈式斜紋 + 呼吸的紅 */
+  .urgent-bar {
+    background:
+      repeating-linear-gradient(115deg,
+        rgba(255, 255, 255, 0.14) 0 12px, transparent 12px 26px),
+      linear-gradient(100deg, rgb(var(--c-urgent)), #f43f5e 55%, #fb7185);
+    color: #fff;
+    box-shadow: 0 8px 22px -12px rgba(var(--c-urgent), 0.9);
+    animation: urgentBar 7s linear infinite;
+    background-size: 220px 100%, 100% 100%;
+  }
+  .dark .urgent-bar {
+    background:
+      repeating-linear-gradient(115deg,
+        rgba(255, 255, 255, 0.10) 0 12px, transparent 12px 26px),
+      linear-gradient(100deg, #9f1239, #e11d48 55%, #f43f5e);
+    box-shadow: 0 8px 26px -10px rgba(var(--c-urgent), 0.75);
+  }
+  @keyframes urgentBar {
+    from { background-position: 0 0, 0 0; }
+    to { background-position: 220px 0, 0 0; }
+  }
+
+  /* 緊急小標：卡片、時間軸、月曆共用的那顆紅籤 */
+  .urgent-badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10.5px] font-bold text-white whitespace-nowrap;
+    background: rgb(var(--c-urgent));
+    box-shadow: 0 0 0 2px rgba(var(--c-urgent), 0.22), 0 2px 8px -2px rgba(var(--c-urgent), 0.8);
+    animation: urgentPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes urgentPulse {
+    0%, 100% { box-shadow: 0 0 0 2px rgba(var(--c-urgent), 0.22), 0 2px 8px -2px rgba(var(--c-urgent), 0.8); }
+    50% { box-shadow: 0 0 0 5px rgba(var(--c-urgent), 0.05), 0 2px 14px 0 rgba(var(--c-urgent), 0.55); }
+  }
+
+  /* 緊急活動卡：紅框、紅膠帶、紅光暈 —— 掃過卡牆時第一眼就看到它 */
+  .urgent-card {
+    border-color: rgba(var(--c-urgent), 0.55) !important;
+    box-shadow:
+      0 0 0 1px rgba(var(--c-urgent), 0.35),
+      0 10px 30px -12px rgba(var(--c-urgent), 0.55) !important;
+  }
+  .urgent-card:hover {
+    border-color: rgb(var(--c-urgent)) !important;
+    box-shadow:
+      0 0 0 1px rgba(var(--c-urgent), 0.6),
+      0 18px 40px -14px rgba(var(--c-urgent), 0.7) !important;
+  }
+  .urgent-card::before {
+    background: linear-gradient(180deg, rgb(var(--c-urgent)), rgba(var(--c-urgent), 0.5)) !important;
+    box-shadow: 0 0 12px 0 rgba(var(--c-urgent), 0.7) !important;
+  }
+  .urgent-card .card-tape {
+    background:
+      linear-gradient(100deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 60%),
+      linear-gradient(90deg, rgba(var(--c-urgent), 0.5), rgba(var(--c-urgent), 0.3));
+  }
+
+  /* 緊急提示塊：詳情浮層 / 首頁票根上方那條說明 */
+  .urgent-note {
+    @apply flex items-start gap-2.5 rounded-xl px-4 py-3 text-[13px];
+    background: rgba(var(--c-urgent), 0.09);
+    border: 1px solid rgba(var(--c-urgent), 0.35);
+    color: rgb(var(--c-ink));
+  }
+
+  /* 緊急狀態下，頂部進度條也換成紅色，整個網站的「氣氛」一起變 */
+  .urgent-mode .scroll-progress {
+    background: linear-gradient(90deg, #fb7185, rgb(var(--c-urgent)) 60%, #be123c) !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .urgent-bar, .urgent-badge { animation: none; }
+  }
 
   /* ---------- 深色（夜場 LIVE）覆寫 ---------- */
   .dark .glass {

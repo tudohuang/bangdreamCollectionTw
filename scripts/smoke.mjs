@@ -42,6 +42,7 @@ import CollectionStrip from './src/components/CollectionStrip.jsx'
 import Footer from './src/components/Footer.jsx'
 import Contribute from './src/components/Contribute.jsx'
 import CommandPalette from './src/components/CommandPalette.jsx'
+import UrgentBar from './src/components/UrgentBar.jsx'
 import { milestoneMap } from './src/utils/milestones.js'
 import { sortChrono } from './src/utils/context.js'
 
@@ -55,6 +56,9 @@ const filters = {
 const milestones = milestoneMap(events)
 const chrono = sortChrono(events)
 const one = events.find(e => e.venue && (e.people || []).length) || events[0]
+// 緊急狀態（Sheet 標「非常」）：真資料裡不一定有，直接捏一場未來的來測那條分支
+const urgentOne = { ...one, urgency: '非常', isUrgent: true, year: 2099, month: 1, startDate: '2099-01-01', endDate: '2099-01-01' }
+const withUrgent = [urgentOne, ...events.filter(e => e.id !== one.id)]
 
 // 每個案例都要碰到真實資料的分支，不能只 render 空狀態
 export const CASES = [
@@ -86,6 +90,13 @@ export const CASES = [
   // REPORT_URL 沒設時本來就不該顯示，空輸出是正確行為
   ['Contribute', <Contribute />, { mayBeEmpty: true }],
   ['CommandPalette', <CommandPalette open events={events} onClose={noop} onSelectEvent={noop} />],
+  // 緊急狀態：橫幅本身，以及票根／卡片／詳情的紅色分支
+  ['UrgentBar', <UrgentBar events={[urgentOne]} onSelect={noop} />],
+  ['UrgentBar(無)', <UrgentBar events={[]} onSelect={noop} />, { mayBeEmpty: true }],
+  ['Hero(緊急)', <Hero events={withUrgent} onSelect={noop} onYearJump={noop} />],
+  ['EventCard(緊急)', <EventCard event={urgentOne} attended={false} onToggleAttended={noop} onClick={noop} />],
+  ['EventDetail(緊急)', <EventDetail event={urgentOne} allEvents={withUrgent} attended={attended} onToggleAttended={noop} onClose={noop} onNavigate={noop} milestones={[]} />],
+  ['EventWall(緊急時間軸)', <EventWall events={withUrgent} view="timeline" attended={attended} onSelect={noop} allEvents={withUrgent} milestones={milestones} />],
 ]
 
 export { renderToStaticMarkup }

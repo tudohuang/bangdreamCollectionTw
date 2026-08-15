@@ -1,6 +1,7 @@
 import { formatMonthDay } from '../utils/share.js'
 import { primaryMeta, isPersonal } from '../utils/bands.js'
 import { yearGaps } from '../utils/insights.js'
+import { isUrgent, URGENT_LABEL } from '../utils/urgency.js'
 import Icon from './Icon.jsx'
 
 // 路線圖式時間軸：一條粉→紫漸層幹線，年份是「車站」，場次是樂團色的停靠點。
@@ -45,6 +46,7 @@ export default function Timeline({ events, onSelect, allEvents }) {
             <ul>
               {arr.map(e => {
                 const meta = primaryMeta(e)
+                const urgent = isUrgent(e)
                 const sameDay = e.startDate === e.endDate
                 const md = formatMonthDay(e.startDate)
                 const day = e.startDate
@@ -54,12 +56,16 @@ export default function Timeline({ events, onSelect, allEvents }) {
                   <li key={e.id} className="relative">
                     <button
                       onClick={() => onSelect(e.id)}
-                      className="group w-full text-left flex items-center gap-3 rounded-xl py-2 pl-[20px] pr-3 hover:bg-white dark:hover:bg-white/[.06] transition-colors"
+                      className={`group w-full text-left flex items-center gap-3 rounded-xl py-2 pl-[20px] pr-3 hover:bg-white dark:hover:bg-white/[.06] transition-colors ${
+                        urgent ? 'ring-1 ring-inset' : ''}`}
+                      style={urgent
+                        ? { background: 'rgba(var(--c-urgent),0.08)', '--tw-ring-color': 'rgba(var(--c-urgent),0.45)' }
+                        : undefined}
                     >
-                      {/* 停靠點圓點（壓在幹線上） */}
+                      {/* 停靠點圓點（壓在幹線上）；緊急場次改點紅燈 */}
                       <span aria-hidden
                         className="shrink-0 w-[13px] h-[13px] rounded-full ring-[3px] ring-dream-bg z-10 transition-transform group-hover:scale-125"
-                        style={{ background: meta.color }} />
+                        style={{ background: urgent ? 'rgb(var(--c-urgent))' : meta.color }} />
                       <span className="shrink-0 w-[76px] font-round font-bold text-[12px]" style={{ color: meta.color }}>
                         {day}
                       </span>
@@ -73,6 +79,11 @@ export default function Timeline({ events, onSelect, allEvents }) {
                           {e.venue && <span className="text-dream-faint truncate hidden sm:inline">· {e.venue}</span>}
                         </span>
                       </span>
+                      {urgent && (
+                        <span className="urgent-badge shrink-0">
+                          <Icon n="triangle-exclamation" className="text-[9px]" /> {URGENT_LABEL}
+                        </span>
+                      )}
                       {e.isFullBand && <span className="badge badge-full shrink-0 hidden sm:inline-flex"><Icon n="star" className="text-[9px]" /> 全團</span>}
                       <span className="shrink-0 font-round font-bold text-[11px] text-dream-faint">
                         #{String(e.number).padStart(3, '0')}

@@ -1,3 +1,5 @@
+import { isUrgent } from '../utils/urgency.js'
+
 // 總表 = 原封不動的整張 sheet，毫無修飾。
 // 欄位順序與表頭比照原始 CSV，純樸素表格。
 const COLUMNS = [
@@ -12,6 +14,7 @@ const COLUMNS = [
   ['本體／擦邊', e => e.category ?? ''],
   ['全團', e => (e.isFullBand ? '是' : '否')],
   ['人次', e => e.attendanceCount ?? 0],
+  ['緊急性', e => e.urgency ?? ''],
 ]
 
 export default function EventTable({ events, onSelect }) {
@@ -38,15 +41,19 @@ export default function EventTable({ events, onSelect }) {
           </tr>
         </thead>
         <tbody>
-          {events.map(e => (
-            <tr key={e.id} onClick={() => onSelect(e.id)} style={{ cursor: 'pointer' }}>
-              {COLUMNS.map(([label, get]) => (
-                <td key={label} style={{ border: '1px solid #ccc', padding: '4px 8px' }}>
-                  {String(get(e))}
-                </td>
-              ))}
-            </tr>
-          ))}
+          {events.map(e => {
+            const urgent = isUrgent(e)
+            return (
+              <tr key={e.id} onClick={() => onSelect(e.id)}
+                style={{ cursor: 'pointer', background: urgent ? '#ffe4e6' : undefined, fontWeight: urgent ? 'bold' : undefined }}>
+                {COLUMNS.map(([label, get]) => (
+                  <td key={label} style={{ border: '1px solid #ccc', padding: '4px 8px', color: urgent ? '#9f1239' : undefined }}>
+                    {String(get(e))}
+                  </td>
+                ))}
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </div>

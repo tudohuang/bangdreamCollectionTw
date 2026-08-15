@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, lazy, Suspense } from 'react'
+import { useEffect, useMemo, useRef, useState, lazy, Suspense } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import { useEvents } from './hooks/useEvents.js'
 import { useMediaQuery } from './hooks/useMediaQuery.js'
@@ -12,6 +12,7 @@ import EventWall from './components/EventWall.jsx'
 import Reveal from './components/Reveal.jsx'
 import Footer from './components/Footer.jsx'
 import Icon from './components/Icon.jsx'
+import UrgentBar from './components/UrgentBar.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import { readHash, writeHash } from './utils/url.js'
 import { rootGroup } from './utils/bands.js'
@@ -20,6 +21,7 @@ import { coverOf } from './utils/media.js'
 import { matchSearch } from './utils/search.js'
 import { eventStatus, todayStr } from './utils/datetime.js'
 import { milestoneMap } from './utils/milestones.js'
+import { isUrgent, urgentEvents } from './utils/urgency.js'
 import { downloadIcs } from './utils/ics.js'
 import { getAttended, saveAttended } from './utils/attended.js'
 
@@ -49,6 +51,7 @@ const DEFAULT_FILTERS = {
   fullBand: 'all',     // all / full
   attended: 'all',     // all / yes
   photos: 'all',       // all / yes（有封面/照片）
+  urgent: 'all',       // all / yes（Sheet 標「非常」的緊急場次）
   timeframe: 'all',    // all / upcoming / past / thisYear / thisMonth
   search: '',
   view: 'cards',       // cards / timeline / table
@@ -79,6 +82,7 @@ function applyFilters(events, f, attended) {
     if (f.fullBand === 'full' && !e.isFullBand) return false
     if (f.attended === 'yes' && !attended.has(e.id)) return false
     if (f.photos === 'yes' && !coverOf(e)) return false
+    if (f.urgent === 'yes' && !isUrgent(e)) return false
     if (f.timeframe !== 'all') {
       const st = eventStatus(e, today)
       if (f.timeframe === 'upcoming' && !(st === 'upcoming' || st === 'ongoing')) return false
@@ -113,7 +117,7 @@ function orderEvents(events, order) {
 function filtersToParams(f) {
   const p = {}
   for (const k of ARRAY_KEYS) if (f[k]?.length) p[k] = f[k].join(',')
-  for (const k of ['year', 'category', 'fullBand', 'attended', 'photos', 'timeframe', 'search', 'view', 'order']) {
+  for (const k of ['year', 'category', 'fullBand', 'attended', 'photos', 'urgent', 'timeframe', 'search', 'view', 'order']) {
     if (f[k] && f[k] !== DEFAULT_FILTERS[k]) p[k] = f[k]
   }
   return p
@@ -121,7 +125,7 @@ function filtersToParams(f) {
 function paramsToFilters(params) {
   const f = {}
   for (const k of ARRAY_KEYS) if (params[k]) f[k] = params[k].split(',').filter(Boolean)
-  for (const k of ['year', 'category', 'fullBand', 'attended', 'photos', 'timeframe', 'search', 'view', 'order']) {
+  for (const k of ['year', 'category', 'fullBand', 'attended', 'photos', 'urgent', 'timeframe', 'search', 'view', 'order']) {
     if (params[k] != null) f[k] = params[k]
   }
   // 舊網址的 gallery / year / calendar 檢視已合併，一律退回卡片
@@ -140,6 +144,26 @@ export default function App() {
   const [attended, setAttended] = useState(() => getAttended())
   const [dark, setDark] = useState(() =>
     typeof document !== 'undefined' && document.documentElement.classList.contains('dark'))
+  const headerRef = useRef(null)
+
+  // 全站緊急狀態：還沒結束的「非常」場次
+  const urgent = useMemo(() => urgentEvents(events), [events])
+
+  // 掛在 <html> 上，讓 CSS 能把整站的氣氛（進度條等）一起轉紅
+  useEffect(() => {
+    document.documentElement.classList.toggle('urgent-mode', urgent.length > 0)
+  }, [urgent.length])
+
+  // 緊急橫幅會把頁首撐高，底下 sticky 的側欄要跟著往下讓 —— 直接量真實高度最準
+  useEffect(() => {
+    const el = headerRef.current
+    if (!el || typeof ResizeObserver === 'undefined') return
+    const sync = () => document.documentElement.style.setProperty('--sticky-top', `${Math.round(el.offsetHeight + 16)}px`)
+    sync()
+    const ro = new ResizeObserver(sync)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
 
   useEffect(() => {
     const sync = () => {
@@ -275,7 +299,7 @@ export default function App() {
         跳到活動圖鑑
       </a>
 
-      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-dream-line/70 dark:bg-[#0b0a24]/75 dark:border-white/10">
+      <header ref={headerRef} className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-dream-line/70 dark:bg-[#0b0a24]/75 dark:border-white/10">
         <div className="max-w-6xl xl:max-w-[1400px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-8 h-14 flex items-center justify-between gap-3">
           <a href="#/" onClick={(e) => { e.preventDefault(); goPage('home') }} className="flex items-center gap-2.5 group shrink-0">
             <span className="grid place-items-center w-8 h-8 rounded-lg bg-gradient-to-br from-bloom-rose to-bloom-indigo text-white text-[13px] shadow-sm dark:shadow-[0_0_14px_-2px_rgba(217,70,239,0.6)]"><Icon n="music" /></span>
@@ -312,6 +336,7 @@ export default function App() {
             </button>
           </nav>
         </div>
+        <UrgentBar events={urgent} onSelect={handleOpenDetail} />
       </header>
 
       <main className="relative z-10 max-w-6xl xl:max-w-[1400px] 2xl:max-w-[1560px] w-full mx-auto px-4 sm:px-8 pt-8 sm:pt-10 pb-24 flex-1">
@@ -328,11 +353,11 @@ export default function App() {
             />
           </Suspense></ErrorBoundary>
         ) : page === 'collection' ? (
-          <section id="wall" className="scroll-mt-20">
+          <section id="wall" className="scroll-mt-[var(--sticky-top)]">
             <ErrorBoundary>
               {/* xl 以上：篩選變成左側常駐工作台，右邊專心放卡牆 */}
               <div className="xl:grid xl:grid-cols-[268px_minmax(0,1fr)] xl:gap-8 xl:items-start">
-                <div className="xl:sticky xl:top-[72px]">
+                <div className="xl:sticky xl:top-[var(--sticky-top)]">
                   <FilterPanel
                     events={events}
                     filters={filters}
@@ -443,7 +468,7 @@ function ScrollProgress() {
   }, [])
   return (
     <div className="fixed top-0 left-0 right-0 z-40 h-[3px] pointer-events-none">
-      <div className="h-full bg-gradient-to-r from-bloom-sky via-bloom-indigo to-bloom-rose transition-[width] duration-100"
+      <div className="scroll-progress h-full bg-gradient-to-r from-bloom-sky via-bloom-indigo to-bloom-rose transition-[width] duration-100"
         style={{ width: `${p}%` }} />
     </div>
   )

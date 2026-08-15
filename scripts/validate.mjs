@@ -51,6 +51,11 @@ for (const e of events) {
     if (!KNOWN_BANDS.some(b => root.startsWith(b))) warns.push(`${tag}：未知樂團「${g}」（會以「其他」灰色呈現）`)
   }
   if (e.isFullBand && (e.people || []).length < 3) warns.push(`${tag}：標記全團但聲優少於 3 位`)
+  // 緊急性只認得「普通 / 非常」，打錯字會安靜地不亮紅燈，所以要唸出來
+  if (e.urgency && !['普通', '非常'].includes(e.urgency)) {
+    warns.push(`${tag}：緊急性「${e.urgency}」看不懂（只認得「普通 / 非常」，其餘視為普通）`)
+  }
+  if (e.isUrgent) warns.push(`${tag}：緊急性＝非常 — 全站會進緊急狀態，結束後記得改回「普通」`)
 }
 
 // 歸不出城市的場館：列出來讓你在 Sheet 的「城市」欄補上

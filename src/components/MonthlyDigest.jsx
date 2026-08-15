@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { primaryMeta, isPersonal } from '../utils/bands.js'
 import { todayStr } from '../utils/datetime.js'
+import { isUrgent } from '../utils/urgency.js'
 import Icon from './Icon.jsx'
 
 // 月曆總覽：一年 12 格，每格列出當月來台的活動（日期＋出演者）。
@@ -81,6 +82,7 @@ export default function MonthlyDigest({ events, onSelect }) {
                     const meta = primaryMeta(e)
                     const day = e.startDate ? Number(e.startDate.slice(8, 10)) : null
                     const names = (e.people || []).join('、')
+                    const urgent = isUrgent(e)
                     return (
                       <li key={e.id}>
                         <button
@@ -90,10 +92,14 @@ export default function MonthlyDigest({ events, onSelect }) {
                         >
                           <span
                             className="mt-[5px] w-1.5 h-1.5 rounded-full shrink-0"
-                            style={{ background: meta.color }}
+                            style={{ background: urgent ? 'rgb(var(--c-urgent))' : meta.color }}
                           />
                           <span className="min-w-0">
-                            <span className="font-round font-bold" style={{ color: meta.color }}>
+                            {urgent && (
+                              <Icon n="triangle-exclamation" className="text-[9px] mr-1"
+                                style={{ color: 'rgb(var(--c-urgent))' }} />
+                            )}
+                            <span className="font-round font-bold" style={{ color: urgent ? 'rgb(var(--c-urgent))' : meta.color }}>
                               {day ? `${day}日` : '未定'}
                             </span>{' '}
                             <span className="text-dream-ink group-hover:text-bloom-indigo transition-colors">

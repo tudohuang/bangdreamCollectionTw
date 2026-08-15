@@ -4,6 +4,7 @@ import { primaryMeta, isPersonal } from '../utils/bands.js'
 import { coverOf } from '../utils/media.js'
 import { eventStatus, daysUntil, weekday } from '../utils/datetime.js'
 import { detectCity } from '../utils/derive.js'
+import { isUrgent, URGENT_LABEL } from '../utils/urgency.js'
 import Icon from './Icon.jsx'
 import Img from './Img.jsx'
 
@@ -23,13 +24,14 @@ export default function EventCard({ event, attended, onToggleAttended, onClick, 
   const wd = weekday(event.startDate)
   const city = detectCity(event)
   const place = event.venue || city
+  const urgent = isUrgent(event)
 
   return (
     <button
       onClick={onClick}
-      className="event-card card-lift group flex flex-col text-left !overflow-visible"
+      className={`event-card card-lift group flex flex-col text-left !overflow-visible ${urgent ? 'urgent-card' : ''}`}
       style={{ '--band': meta.glow }}
-      aria-label={`${dex} ${event.title}`}
+      aria-label={`${urgent ? `${URGENT_LABEL} ` : ''}${dex} ${event.title}`}
     >
       {/* 貼在上緣的紙膠帶 */}
       <span aria-hidden className="card-tape" />
@@ -48,10 +50,19 @@ export default function EventCard({ event, attended, onToggleAttended, onClick, 
         )}
         <span className="absolute inset-x-0 bottom-0 h-[3px] z-10" style={{ background: meta.color }} />
         {/* 左上：狀態；右上：打卡（去過就變成一枚蓋歪的章） */}
-        {dleft != null && (
-          <span className="absolute left-2.5 top-2.5 z-10 rounded-full bg-bloom-indigo text-white px-2 py-0.5 text-[11px] font-bold shadow-sm">
-            {dleft === 0 ? '今天' : `${dleft} 天後`}
-          </span>
+        {(urgent || dleft != null) && (
+          <div className="absolute left-2.5 top-2.5 z-10 flex flex-col items-start gap-1">
+            {urgent && (
+              <span className="urgent-badge">
+                <Icon n="triangle-exclamation" className="text-[9px]" /> {URGENT_LABEL}
+              </span>
+            )}
+            {dleft != null && (
+              <span className="rounded-full bg-bloom-indigo text-white px-2 py-0.5 text-[11px] font-bold shadow-sm">
+                {dleft === 0 ? '今天' : `${dleft} 天後`}
+              </span>
+            )}
+          </div>
         )}
         <span
           role="button" tabIndex={0}

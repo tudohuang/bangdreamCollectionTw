@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { rootGroup, bandMeta } from '../utils/bands.js'
 import { uniqueCharacters, uniqueVenues, uniqueCities } from '../utils/derive.js'
+import { isUrgent, URGENT_LABEL } from '../utils/urgency.js'
 import Icon from './Icon.jsx'
 
 function uniq(arr) { return [...new Set(arr)] }
@@ -29,6 +30,8 @@ export default function FilterPanel({ events, filters, onChange, onReset, result
 
   const chips = buildAppliedChips(filters)
   const openSheet = () => setSheetOpen(true)
+  // 沒有緊急場次時就不擺這顆按鈕，平常的工具列不該長出用不到的東西
+  const hasUrgent = useMemo(() => events.some(isUrgent), [events])
 
   // 一定要 portal 到 body：側欄是 position:sticky，它會建立 stacking context，
   // 浮層的 z-50 會被關在裡面，結果被後面的卡片蓋過去。
@@ -71,7 +74,7 @@ export default function FilterPanel({ events, filters, onChange, onReset, result
           <TimeframePills filters={filters} onChange={onChange} />
         </div>
         <div className="flex flex-wrap gap-2">
-          <QuickPills filters={filters} onChange={onChange} advCount={advCount} onOpenSheet={openSheet} onExportIcs={onExportIcs} />
+          <QuickPills filters={filters} onChange={onChange} advCount={advCount} onOpenSheet={openSheet} onExportIcs={onExportIcs} hasUrgent={hasUrgent} />
         </div>
 
         <label className="flex items-center gap-2 text-[11px] text-dream-faint">
@@ -116,7 +119,7 @@ export default function FilterPanel({ events, filters, onChange, onReset, result
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <TimeframePills filters={filters} onChange={onChange} />
           <span className="w-px h-5 bg-dream-line mx-1" />
-          <QuickPills filters={filters} onChange={onChange} advCount={advCount} onOpenSheet={openSheet} onExportIcs={onExportIcs} />
+          <QuickPills filters={filters} onChange={onChange} advCount={advCount} onOpenSheet={openSheet} onExportIcs={onExportIcs} hasUrgent={hasUrgent} />
           <span className="ml-auto flex items-center gap-2">
             <span className="text-[11px] text-dream-faint">排序</span>
             <SortSelect filters={filters} onChange={onChange} />
@@ -159,9 +162,17 @@ function TimeframePills({ filters, onChange }) {
   ))
 }
 
-function QuickPills({ filters, onChange, advCount, onOpenSheet, onExportIcs }) {
+function QuickPills({ filters, onChange, advCount, onOpenSheet, onExportIcs, hasUrgent }) {
   return (
     <>
+      {hasUrgent && (
+        <button
+          className={`pill ${filters.urgent === 'yes' ? '!text-white !border-transparent' : '!text-rose-600 !border-rose-300'}`}
+          style={filters.urgent === 'yes' ? { background: 'rgb(var(--c-urgent))' } : undefined}
+          onClick={() => onChange({ urgent: filters.urgent === 'yes' ? 'all' : 'yes' })}>
+          <Icon n="triangle-exclamation" className="text-[11px]" /> {URGENT_LABEL}
+        </button>
+      )}
       <button className={`pill ${filters.attended === 'yes' ? 'pill-active' : ''}`}
         onClick={() => onChange({ attended: filters.attended === 'yes' ? 'all' : 'yes' })}>
         <Icon n="circle-check" className="text-[11px]" /> 我去過
@@ -357,12 +368,13 @@ const SINGLE_LABELS = {
   fullBand: { full: '僅全團' },
   attended: { yes: '我去過' },
   photos: { yes: '有照片' },
+  urgent: { yes: URGENT_LABEL },
   timeframe: { upcoming: '即將', past: '已結束', thisYear: '今年', thisMonth: '本月' },
 }
 function buildAppliedChips(f) {
   const chips = []
   if (f.year !== 'all') chips.push({ key: 'year', val: f.year, label: `${f.year} 年` })
-  for (const [k, val] of [['category', f.category], ['fullBand', f.fullBand], ['attended', f.attended], ['photos', f.photos], ['timeframe', f.timeframe]]) {
+  for (const [k, val] of [['category', f.category], ['fullBand', f.fullBand], ['attended', f.attended], ['photos', f.photos], ['urgent', f.urgent], ['timeframe', f.timeframe]]) {
     if (val && val !== 'all') chips.push({ key: k, val, label: SINGLE_LABELS[k]?.[val] || val })
   }
   for (const k of ['groups', 'people', 'characters', 'types', 'venues', 'cities']) {

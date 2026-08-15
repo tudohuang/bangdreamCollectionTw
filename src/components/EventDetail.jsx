@@ -6,6 +6,7 @@ import { eventStatus, daysUntil, weekday, STATUS_LABEL } from '../utils/datetime
 import { eventContext, typeTags } from '../utils/context.js'
 import { downloadIcs } from '../utils/ics.js'
 import { downloadShareImage } from '../utils/shareImage.js'
+import { isUrgent, URGENT_LABEL } from '../utils/urgency.js'
 import { REPORT_URL } from '../config.js'
 import Icon from './Icon.jsx'
 import Img from './Img.jsx'
@@ -82,6 +83,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
   const status = eventStatus(event)
   const dleft = status === 'upcoming' ? daysUntil(event.startDate) : null
   const tags = typeTags(event)
+  const urgent = isUrgent(event)
   // 照片出處另外拉出來擺在圖片旁邊，不要混在存根的雜項欄裡
   const credit = photoCredit(event)
   const extras = Object.entries(event.extras || {}).filter(([k]) => !PHOTO_CREDIT_KEYS.includes(k))
@@ -103,7 +105,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
     <div className="modal-veil fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 bg-black/60 backdrop-blur-sm" onClick={onClose}>
       <div
         ref={panelRef} tabIndex={-1}
-        className="ticket-paper modal-ticket relative w-full sm:max-w-3xl lg:max-w-5xl max-h-[94vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl border border-dream-line shadow-glassHover scrollbar-thin dark:border-white/15 focus:outline-none"
+        className={`ticket-paper modal-ticket relative w-full sm:max-w-3xl lg:max-w-5xl max-h-[94vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl border border-dream-line shadow-glassHover scrollbar-thin dark:border-white/15 focus:outline-none ${urgent ? 'urgent-card' : ''}`}
         style={{ '--band': meta.glow }}
         onClick={(e) => e.stopPropagation()}
         role="dialog" aria-modal="true" aria-label={event.title}
@@ -169,6 +171,11 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
           {/* 標題疊底部 */}
           <div className="absolute inset-x-0 bottom-0 px-5 sm:px-8 pb-4 sm:pb-5 pointer-events-none">
             <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+              {urgent && (
+                <span className="urgent-badge !text-[11.5px]">
+                  <Icon n="triangle-exclamation" className="text-[10px]" /> {URGENT_LABEL}
+                </span>
+              )}
               <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11.5px] font-bold text-white"
                 style={{ background: status === 'past' ? 'rgba(0,0,0,0.5)' : meta.color }}>{STATUS_LABEL[status]}</span>
               <span className="text-[12.5px] font-semibold text-white/90 drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)]">
@@ -247,6 +254,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
 
               <StubRow icon="tag" label="性質" color={meta.color} glow={meta.glow}>
                 <div className="flex flex-wrap gap-1.5">
+                  {urgent && <span className="urgent-badge"><Icon n="triangle-exclamation" className="text-[9px]" /> {URGENT_LABEL}</span>}
                   {event.category && <span className={`badge ${event.category === '本體' ? 'badge-core' : 'badge-side'}`}>{event.category === '擦邊' ? '個人' : '本體'}</span>}
                   {event.isFullBand && <span className="badge badge-full"><Icon n="star" className="text-[9px]" /> 全團</span>}
                   {tags.map(t => (
@@ -300,6 +308,25 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
           <div aria-hidden className="hidden lg:block perf-v" />
 
           <div className="order-1 lg:order-none min-w-0 px-5 sm:px-8 lg:pl-6 lg:pr-7 pt-5 lg:pt-6 pb-2">
+
+            {urgent && (
+              <div className="urgent-note mb-5">
+                <Icon n="triangle-exclamation" className="mt-0.5 shrink-0" style={{ color: 'rgb(var(--c-urgent))' }} />
+                <span>
+                  <span className="font-bold">這場被標成緊急</span>
+                  ：情報還在動，時間、票務或內容隨時可能變。看到就先確認一次官方公告。
+                  {event.ticketUrl && (
+                    <>
+                      {' '}
+                      <a href={event.ticketUrl} target="_blank" rel="noopener noreferrer"
+                        className="font-bold underline underline-offset-2" style={{ color: 'rgb(var(--c-urgent))' }}>
+                        直接去購票頁
+                      </a>
+                    </>
+                  )}
+                </span>
+              </div>
+            )}
 
             {personal && (
               <div className="mb-5 flex items-start gap-2.5 rounded-xl px-4 py-3 text-[13px] text-dream-sub"

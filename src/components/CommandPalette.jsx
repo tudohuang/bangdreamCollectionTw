@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { matchSearch } from '../utils/search.js'
 import { rootGroup, bandMeta, primaryMeta, isPersonal } from '../utils/bands.js'
+import { isUrgent, URGENT_LABEL } from '../utils/urgency.js'
 import Icon from './Icon.jsx'
 
 const norm = (s) => (s || '').toLowerCase().replace(/\s+/g, '')
@@ -95,8 +96,15 @@ export default function CommandPalette({ open, onClose, events, onSelectEvent })
                   <Icon n={r.type === 'person' ? 'microphone' : r.type === 'band' ? 'guitar' : r.type === 'filter' ? 'sliders' : (isPersonal(r.event) ? 'user' : 'calendar')} />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-[14px] text-dream-ink truncate">
-                    {r.type === 'filter' ? <>在圖鑑中篩選：<span className="font-semibold">{r.label}</span></> : r.label}
+                  <span className="flex items-center gap-1.5 text-[14px] text-dream-ink">
+                    {r.type === 'event' && isUrgent(r.event) && (
+                      <span className="urgent-badge shrink-0">
+                        <Icon n="triangle-exclamation" className="text-[9px]" /> {URGENT_LABEL}
+                      </span>
+                    )}
+                    <span className="truncate">
+                      {r.type === 'filter' ? <>在圖鑑中篩選：<span className="font-semibold">{r.label}</span></> : r.label}
+                    </span>
                   </span>
                   <span className="block text-[11px] text-dream-faint">
                     {r.type === 'person' ? '聲優圖鑑頁' : r.type === 'band' ? '樂團圖鑑頁' : r.type === 'filter' ? '套用篩選' : `#${String(r.event.number).padStart(3, '0')} · ${r.event.year}`}

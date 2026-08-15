@@ -2,6 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { bandKey, parseGroup, rootGroup, isPersonal } from '../src/utils/bands.js'
 import { parseCsvToEvents, mergeWithBundled } from '../src/utils/parseEvents.js'
+import { isUrgent, urgentEvents } from '../src/utils/urgency.js'
 import { normalizeImageUrl, photoCredit } from '../src/utils/media.js'
 import { eventStatus, daysUntil, weekday } from '../src/utils/datetime.js'
 import { detectCity, eventCharacters, buildRoster } from '../src/utils/derive.js'
@@ -54,6 +55,33 @@ test('parseCsvToEvents 用「編號」欄當穩定 key（插列不錯位）', ()
   assert.equal(ev[0].notes, '測試備註')
   assert.equal(ev[1].number, 2)
   assert.equal(ev[1].id, 'evt-002')
+})
+
+test('parseCsvToEvents 讀「緊急性」欄，只有「非常」算緊急', () => {
+  const csv = '編號,年份,開始日期,活動名稱,緊急性\n' +
+    '1,2026,2026-09-01,大爆炸,非常\n' +
+    '2,2026,2026-09-02,普通場,普通\n' +
+    '3,2026,2026-09-03,沒填,'
+  const ev = parseCsvToEvents(csv)
+  assert.equal(ev[0].isUrgent, true)
+  assert.equal(ev[1].isUrgent, false)
+  assert.equal(ev[2].isUrgent, false)
+  assert.equal(ev[0].urgency, '非常')
+  // 認得的表頭不會再被當成 extras 多印一行
+  assert.deepEqual(ev[0].extras, {})
+})
+
+test('urgentEvents 只挑還沒結束的緊急場次，日期近的排前', () => {
+  const mk = (n, startDate, urgency) => ({ id: `evt-${n}`, number: n, startDate, endDate: startDate, urgency, isUrgent: urgency === '非常' })
+  const list = [
+    mk(1, '2020-01-01', '非常'),   // 已結束 → 不進橫幅
+    mk(2, '2099-05-05', '非常'),
+    mk(3, '2099-01-01', '非常'),
+    mk(4, '2099-02-02', '普通'),
+  ]
+  const out = urgentEvents(list, '2026-08-15')
+  assert.deepEqual(out.map(e => e.number), [3, 2])
+  assert.equal(isUrgent(list[3]), false)
 })
 
 test('normalizeImageUrl 轉換 Drive / Dropbox 分享連結', () => {
