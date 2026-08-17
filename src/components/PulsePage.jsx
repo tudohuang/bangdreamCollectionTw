@@ -266,9 +266,6 @@ function IndexCard({ item, open, onToggle, onSelectEvent }) {
         </button>
       ) : (
         <>
-          <button onClick={onToggle} className="text-left text-[11px] text-dream-faint hover:text-bloom-violet transition-colors">
-            {open ? '收起依據' : `${item.factors.length} 個因子 · 看依據`}
-          </button>
           {open && (
             <ul className="flex flex-col gap-1.5 pt-1 border-t border-dashed border-dream-line dark:border-white/10">
               {item.factors.map(f => (
