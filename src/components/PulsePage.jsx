@@ -62,7 +62,6 @@ export default function PulsePage({ roster, pulse, events, source, onSelectEvent
           <h3 className="font-display font-bold text-[15px] text-dream-ink">
             {Number(nextYm.slice(5))} 月來台指數
           </h3>
-          <span className="text-[11px] text-dream-faint">點卡片看分數怎麼來的</span>
         </div>
         {/* 已公告的不用猜，收成一行就好，指數卡的位子留給真的要判斷的 */}
         {confirmed.length > 0 && (
