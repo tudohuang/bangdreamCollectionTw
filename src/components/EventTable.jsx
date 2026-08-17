@@ -1,7 +1,7 @@
 import { isUrgent } from '../utils/urgency.js'
 
-// 總表 = 原封不動的整張 sheet，毫無修飾。
-// 欄位順序與表頭比照原始 CSV，純樸素表格。
+// 總表 = 原封不動的整張 sheet，毫無修飾 —— 但「樸素」不等於「硬寫死白底黑字」，
+// 夜場模式那樣會整片白到刺眼。樣式改吃 .sheet-table（見 index.css），兩種主題都讀得下去。
 const COLUMNS = [
   ['年份', e => e.year ?? ''],
   ['開始日期', e => e.startDate ?? ''],
@@ -19,41 +19,21 @@ const COLUMNS = [
 
 export default function EventTable({ events, onSelect }) {
   return (
-    <div style={{ overflowX: 'auto' }}>
-      <table
-        style={{
-          borderCollapse: 'collapse',
-          width: '100%',
-          background: '#fff',
-          color: '#000',
-          fontFamily: 'Arial, "Noto Sans TC", sans-serif',
-          fontSize: '13px',
-          whiteSpace: 'nowrap',
-        }}
-      >
+    <div className="rounded-xl border border-dream-line dark:border-white/10 overflow-auto max-h-[78vh] scrollbar-thin">
+      <table className="sheet-table">
         <thead>
           <tr>
-            {COLUMNS.map(([label]) => (
-              <th key={label} style={{ border: '1px solid #999', background: '#f0f0f0', padding: '4px 8px', textAlign: 'left', fontWeight: 'bold' }}>
-                {label}
-              </th>
-            ))}
+            {COLUMNS.map(([label]) => <th key={label}>{label}</th>)}
           </tr>
         </thead>
         <tbody>
-          {events.map(e => {
-            const urgent = isUrgent(e)
-            return (
-              <tr key={e.id} onClick={() => onSelect(e.id)}
-                style={{ cursor: 'pointer', background: urgent ? '#ffe4e6' : undefined, fontWeight: urgent ? 'bold' : undefined }}>
-                {COLUMNS.map(([label, get]) => (
-                  <td key={label} style={{ border: '1px solid #ccc', padding: '4px 8px', color: urgent ? '#9f1239' : undefined }}>
-                    {String(get(e))}
-                  </td>
-                ))}
-              </tr>
-            )
-          })}
+          {events.map(e => (
+            <tr key={e.id} onClick={() => onSelect(e.id)} className={isUrgent(e) ? 'is-urgent' : ''}>
+              {COLUMNS.map(([label, get]) => (
+                <td key={label}>{String(get(e))}</td>
+              ))}
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

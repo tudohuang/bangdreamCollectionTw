@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { buildSummary, copyText, formatDateRangeCompact, shareUrl } from '../utils/share.js'
 import { primaryMeta, bandMeta, parseGroup, isPersonal, rootGroup } from '../utils/bands.js'
 import { photoUrl, coverOf, photoCredit, PHOTO_CREDIT_KEYS } from '../utils/media.js'
-import { eventStatus, daysUntil, weekday, STATUS_LABEL } from '../utils/datetime.js'
+import { eventStatus, countdownLabel, weekday, STATUS_LABEL } from '../utils/datetime.js'
 import { eventContext, typeTags } from '../utils/context.js'
 import { downloadIcs } from '../utils/ics.js'
 import { downloadShareImage } from '../utils/shareImage.js'
@@ -81,7 +81,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
   const galleryPhotos = cover ? photos.filter(p => photoUrl(p) !== cover) : photos
   const roles = groups.flatMap(g => parseGroup(g).parts)
   const status = eventStatus(event)
-  const dleft = status === 'upcoming' ? daysUntil(event.startDate) : null
+  const countdown = countdownLabel(event, { style: 'long' })
   const tags = typeTags(event)
   const urgent = isUrgent(event)
   // 照片出處另外拉出來擺在圖片旁邊，不要混在存根的雜項欄裡
@@ -113,9 +113,14 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
         {/* ---------- 舞台頭圖（有封面用照片、沒封面用樂團色舞台，同一套版型） ---------- */}
         <div className="relative overflow-hidden">
           {cover ? (
-            <button onClick={() => setLightbox(cover)} aria-label="放大封面" className="block w-full text-left group/cover">
+            // 活動主視覺多半是直式海報，硬 object-cover 會把臉裁掉。
+            // 改成 letterbox：背景放同一張圖放大模糊，前景完整顯示。
+            <button onClick={() => setLightbox(cover)} aria-label="放大封面"
+              className="block w-full text-left group/cover relative h-60 sm:h-80 overflow-hidden bg-black/10">
+              <img aria-hidden src={cover} alt=""
+                className="absolute inset-0 w-full h-full object-cover scale-125 blur-2xl opacity-70" />
               <Img src={cover} onError={() => setCoverOk(false)}
-                className="w-full h-60 sm:h-80 object-cover group-hover/cover:scale-[1.03] motion-reduce:transform-none" />
+                className="relative w-full h-full object-contain group-hover/cover:scale-[1.03] motion-reduce:transform-none" />
             </button>
           ) : (
             <div aria-hidden className="w-full h-44 sm:h-56 relative"
@@ -140,7 +145,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
 
           {/* 控制列（永遠浮在頭圖上） */}
           <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-3 sm:px-4 py-3 pointer-events-none">
-            <span className="pointer-events-auto inline-flex items-center gap-2 rounded-full pl-1.5 pr-3 py-1 text-[12.5px] font-bold text-white backdrop-blur-sm"
+            <span className="pointer-events-auto inline-flex items-center gap-2 rounded-full pl-1.5 pr-3 py-1 text-[13px] font-bold text-white backdrop-blur-sm"
               style={{ background: personal ? 'rgba(139,92,246,0.85)' : `rgba(${meta.glow},0.85)` }}>
               <span className="grid place-items-center w-5 h-5 rounded-full bg-white/30 text-[11px]"><Icon n={personal ? 'user' : meta.icon} /></span>
               {personal ? '個人來台' : meta.name}
@@ -172,18 +177,18 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
           <div className="absolute inset-x-0 bottom-0 px-5 sm:px-8 pb-4 sm:pb-5 pointer-events-none">
             <div className="flex items-center gap-2 mb-1.5 flex-wrap">
               {urgent && (
-                <span className="urgent-badge !text-[11.5px]">
+                <span className="urgent-badge !text-[11px]">
                   <Icon n="triangle-exclamation" className="text-[10px]" /> {URGENT_LABEL}
                 </span>
               )}
-              <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11.5px] font-bold text-white"
+              <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold text-white"
                 style={{ background: status === 'past' ? 'rgba(0,0,0,0.5)' : meta.color }}>{STATUS_LABEL[status]}</span>
-              <span className="text-[12.5px] font-semibold text-white/90 drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)]">
+              <span className="text-[13px] font-semibold text-white/90 drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)]">
                 {formatDateRangeCompact(event.startDate, event.endDate) || ''}{weekday(event.startDate) && ` ・ ${weekday(event.startDate)}`}
               </span>
-              {dleft != null && (
+              {countdown && (
                 <span className="rounded-full px-2 py-0.5 text-[11px] font-bold text-white" style={{ background: 'rgba(139,92,246,0.92)' }}>
-                  {dleft === 0 ? '就是今天' : `還有 ${dleft} 天`}
+                  {countdown}
                 </span>
               )}
             </div>
@@ -226,7 +231,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
                 <div className="font-display font-bold text-[16px] text-dream-ink leading-tight">
                   {formatDateRangeCompact(event.startDate, event.endDate) || '—'}
                 </div>
-                <div className="text-[12px] text-dream-faint mt-0.5">
+                <div className="text-[13px] text-dream-faint mt-0.5">
                   {[weekday(event.startDate), ctx.ago].filter(Boolean).join(' · ')}
                 </div>
               </StubRow>
@@ -239,7 +244,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
                     {event.venue}<Icon n="link" className="text-[9px] mt-1.5 shrink-0 opacity-60" />
                   </a>
                   {ctx.venueTotal > 1 && (
-                    <div className="text-[12px] text-dream-faint mt-0.5">這裡的第 {ctx.venueNth} 場 · 共 {ctx.venueTotal} 場</div>
+                    <div className="text-[13px] text-dream-faint mt-0.5">這裡的第 {ctx.venueNth} 場 · 共 {ctx.venueTotal} 場</div>
                   )}
                 </StubRow>
               )}
@@ -247,7 +252,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
               {event.attendanceCount > 0 && (
                 <StubRow icon="users" label="人次" color={meta.color} glow={meta.glow}>
                   <span className="font-display font-bold text-[18px] text-dream-ink leading-none">
-                    {event.attendanceCount}<span className="text-[12px] font-normal text-dream-faint ml-1">人</span>
+                    {event.attendanceCount}<span className="text-[13px] font-normal text-dream-faint ml-1">人</span>
                   </span>
                 </StubRow>
               )}
@@ -265,9 +270,9 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
 
               {event.organizer && (
                 <StubRow icon="user-group" label="主辦" color={meta.color} glow={meta.glow}>
-                  <div className="text-[14px] text-dream-ink">{event.organizer}</div>
+                  <div className="text-[15px] text-dream-ink">{event.organizer}</div>
                   {ctx.organizerTotal > 1 && (
-                    <div className="text-[12px] text-dream-faint mt-0.5">辦過的第 {ctx.organizerNth} 場</div>
+                    <div className="text-[13px] text-dream-faint mt-0.5">辦過的第 {ctx.organizerNth} 場</div>
                   )}
                 </StubRow>
               )}
@@ -284,7 +289,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
                 <StubRow key={name} icon="tag" label={name} color={meta.color} glow={meta.glow}>
                   {/^https?:\/\//i.test(value)
                     ? <a className="text-bloom-violet hover:underline break-all text-[13px]" target="_blank" rel="noopener noreferrer" href={value}>{value}</a>
-                    : <span className="text-[13.5px] text-dream-sub whitespace-pre-line">{value}</span>}
+                    : <span className="text-[13px] text-dream-sub whitespace-pre-line">{value}</span>}
                 </StubRow>
               ))}
 
@@ -347,7 +352,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
                 <div className="mb-4 flex flex-wrap gap-2">
                   {milestones.map(m => (
                     <span key={m.key}
-                      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12.5px] font-bold text-white"
+                      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] font-bold text-white"
                       style={{ background: meta.color }}>
                       <Icon n="star" className="text-[9px]" />{m.label}
                     </span>
@@ -369,7 +374,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
 
               {ctx.prevBandEvent && (
                 <button onClick={() => onNavigate(ctx.prevBandEvent.id)}
-                  className="mt-3.5 w-full text-left text-[12.5px] text-dream-sub hover:text-dream-ink transition-colors">
+                  className="mt-3.5 w-full text-left text-[13px] text-dream-sub hover:text-dream-ink transition-colors">
                   上一次是 <span className="font-round font-bold" style={{ color: meta.color }}>#{String(ctx.prevBandEvent.number).padStart(3, '0')}</span>
                   <span className="ml-1.5">{ctx.prevBandEvent.title}</span>
                 </button>
@@ -377,7 +382,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
 
               {ctx.sameDay.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-dashed" style={{ borderColor: `rgba(${meta.glow},0.28)` }}>
-                  <div className="text-[12px] font-semibold text-dream-faint mb-1.5">同一天還有 {ctx.sameDay.length} 場</div>
+                  <div className="text-[13px] font-semibold text-dream-faint mb-1.5">同一天還有 {ctx.sameDay.length} 場</div>
                   <RelatedList items={ctx.sameDay} color={meta.color} onNavigate={onNavigate} />
                 </div>
               )}
@@ -389,12 +394,12 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
                 <div className="flex flex-wrap gap-1.5">
                   {ctx.people.map(p => (
                     <a key={p.name} href={`#/person/${encodeURIComponent(p.name)}`}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-dream-line dark:border-white/10 bg-white/70 dark:bg-white/[.06] pl-3 pr-1.5 py-1 text-[13.5px] text-dream-ink hover:border-bloom-violet transition-colors">
+                      className="inline-flex items-center gap-1.5 rounded-full border border-dream-line dark:border-white/10 bg-white/70 dark:bg-white/[.06] pl-3 pr-1.5 py-1 text-[13px] text-dream-ink hover:border-bloom-violet transition-colors">
                       {p.name}
                       {p.isFirst ? (
-                        <span className="rounded-full px-1.5 py-0.5 text-[10px] font-bold text-white" style={{ background: meta.color }}>首次</span>
+                        <span className="rounded-full px-1.5 py-0.5 text-[11px] font-bold text-white" style={{ background: meta.color }}>首次</span>
                       ) : (
-                        <span className="rounded-full px-1.5 py-0.5 text-[10.5px] font-bold"
+                        <span className="rounded-full px-1.5 py-0.5 text-[11px] font-bold"
                           style={{ background: `rgba(${meta.glow},0.16)`, color: meta.color }}>第 {p.nth} 次</span>
                       )}
                     </a>
@@ -421,7 +426,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
             {/* 收藏軌：53 場排成一條，這場亮起來，點任何一格直接跳過去 */}
             <Section title="收藏軌" color={meta.color}>
               <CollectionStrip chrono={ctx.chrono} isOn={(o) => o.id === event.id} onNavigate={onNavigate} />
-              <div className="mt-2.5 flex items-center justify-between text-[12px] text-dream-faint">
+              <div className="mt-2.5 flex items-center justify-between text-[13px] text-dream-faint">
                 <span>全站第 <span className="font-round font-bold" style={{ color: meta.color }}>{ctx.index + 1}</span> 場 · 共 {ctx.total} 場</span>
                 <span className="hidden sm:inline font-hand text-[13px]">點任一格跳過去</span>
               </div>
@@ -431,9 +436,9 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
               </div>
             </Section>
 
-            {event.description && <Section title="活動簡介" color={meta.color}><p className="text-[14px] leading-7 text-dream-sub whitespace-pre-line">{event.description}</p></Section>}
-            {event.impression && <Section title="個人心得" color={meta.color}><p className="text-[14px] leading-7 text-dream-sub whitespace-pre-line">{event.impression}</p></Section>}
-            {event.notes && <Section title="備註" color={meta.color}><p className="text-[14px] leading-7 text-dream-sub whitespace-pre-line">{event.notes}</p></Section>}
+            {event.description && <Section title="活動簡介" color={meta.color}><p className="text-[15px] leading-7 text-dream-sub whitespace-pre-line">{event.description}</p></Section>}
+            {event.impression && <Section title="個人心得" color={meta.color}><p className="text-[15px] leading-7 text-dream-sub whitespace-pre-line">{event.impression}</p></Section>}
+            {event.notes && <Section title="備註" color={meta.color}><p className="text-[15px] leading-7 text-dream-sub whitespace-pre-line">{event.notes}</p></Section>}
 
             {galleryPhotos.length > 0 && (
               <Section title="活動照片" color={meta.color}>
@@ -464,17 +469,17 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
 
             {related.length > 0 && (
               <Section title={`${meta.name} 的其他場次`} color={meta.color}>
-                <RelatedList items={related} color={meta.color} onNavigate={onNavigate} />
+                <RelatedStrip items={related} color={meta.color} onNavigate={onNavigate} />
               </Section>
             )}
             {samePeople.length > 0 && (
               <Section title="同聲優的其他場次" color={meta.color}>
-                <RelatedList items={samePeople} color={meta.color} onNavigate={onNavigate} />
+                <RelatedStrip items={samePeople} color={meta.color} onNavigate={onNavigate} />
               </Section>
             )}
             {sameVenue.length > 0 && (
               <Section title={`也在 ${event.venue}`} color={meta.color}>
-                <RelatedList items={sameVenue} color={meta.color} onNavigate={onNavigate} />
+                <RelatedStrip items={sameVenue} color={meta.color} onNavigate={onNavigate} />
               </Section>
             )}
 
@@ -496,14 +501,14 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
           <button className="btn-primary !h-10 !px-4 sm:!px-6" onClick={copyLink}>
             <Icon n="link" /> 複製連結
           </button>
-          <button className="pill !px-3 sm:!px-4 !py-2 !text-[13.5px]" aria-label="加入行事曆" title="加入行事曆"
+          <button className="pill !px-3 sm:!px-4 !py-2 !text-[13px]" aria-label="加入行事曆" title="加入行事曆"
             onClick={() => flash(downloadIcs(event, `${event.id}.ics`) ? '已下載行事曆檔' : '這場沒有確定日期')}>
             <Icon n="calendar" /> <span className="hidden sm:inline">加行事曆</span>
           </button>
-          <button className="pill !px-3 sm:!px-4 !py-2 !text-[13.5px]" aria-label="複製摘要" title="複製摘要" onClick={copySummary}>
+          <button className="pill !px-3 sm:!px-4 !py-2 !text-[13px]" aria-label="複製摘要" title="複製摘要" onClick={copySummary}>
             <Icon n="clipboard" /> <span className="hidden sm:inline">摘要</span>
           </button>
-          <button className="pill !px-3 sm:!px-4 !py-2 !text-[13.5px]" aria-label="存成圖" title="存成圖"
+          <button className="pill !px-3 sm:!px-4 !py-2 !text-[13px]" aria-label="存成圖" title="存成圖"
             onClick={() => downloadShareImage(event, meta, personal, {
               attended: isAttended,
               bandNth: ctx.bandNth, bandTotal: ctx.bandTotal,
@@ -544,7 +549,7 @@ function trapFocus(e, container) {
 // 照片出處：網址就做成可點的連結，回得去原始出處
 function PhotoCredit({ credit, color }) {
   return (
-    <div className="mt-3 flex items-start gap-2 text-[12px] text-dream-faint">
+    <div className="mt-3 flex items-start gap-2 text-[13px] text-dream-faint">
       <Icon n="images" className="text-[10px] mt-1 shrink-0" style={{ color }} />
       <span className="min-w-0">
         <span className="font-semibold">{credit.label}：</span>
@@ -584,8 +589,8 @@ function StubRow({ icon, label, color, glow, children }) {
       <span className="grid place-items-center w-8 h-8 shrink-0 rounded-lg text-[13px]"
         style={{ background: `rgba(${glow},0.16)`, color }}><Icon n={icon} /></span>
       <div className="min-w-0 flex-1">
-        <div className="text-[10.5px] font-bold tracking-[0.14em] uppercase text-dream-faint mb-1">{label}</div>
-        <div className="text-[14px] text-dream-ink">{children}</div>
+        <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-dream-faint mb-1">{label}</div>
+        <div className="text-[15px] text-dream-ink">{children}</div>
       </div>
     </div>
   )
@@ -602,7 +607,7 @@ function Stat({ value, label, meta }) {
         }}>
         {value}
       </div>
-      <div className="mt-2 pt-2 border-t text-[11.5px] leading-snug text-dream-sub"
+      <div className="mt-2 pt-2 border-t text-[11px] leading-snug text-dream-sub"
         style={{ borderColor: `rgba(${meta.glow},0.28)` }}>{label}</div>
     </div>
   )
@@ -628,7 +633,39 @@ function NeighborBtn({ side, item, color, onNavigate }) {
   )
 }
 
-// 推薦清單：hub 的一節（同樂團 / 同聲優 / 同場館共用）
+// 推薦小卡橫滑：詳情是 hub 不是死路，帶封面的卡比一行字更讓人想點下去
+function RelatedStrip({ items, color, onNavigate }) {
+  return (
+    <div className="-mx-1 px-1 flex gap-3 overflow-x-auto scrollbar-none snap-x">
+      {items.map(o => {
+        const m = bandMeta((o.relatedGroups || [])[0] || '')
+        const c = coverOf(o)
+        return (
+          <button key={o.id} onClick={() => onNavigate(o.id)}
+            className="snap-start shrink-0 w-[168px] text-left rounded-xl border border-dream-line dark:border-white/10 overflow-hidden hover:border-bloom-violet transition-colors group/rel">
+            <span className="relative block w-full aspect-[3/2] overflow-hidden bg-dream-line/40">
+              {c
+                ? <Img src={c}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover/rel:scale-105 motion-reduce:transform-none" />
+                : <span aria-hidden className="absolute inset-0 grid place-items-center font-display font-extrabold text-[22px]"
+                    style={{ background: `rgba(${m.glow},0.14)`, color: m.color }}>
+                    #{String(o.number ?? 0).padStart(3, '0')}
+                  </span>}
+            </span>
+            <span className="block px-2.5 py-2">
+              <span className="block text-[11px] font-round font-bold" style={{ color }}>
+                {o.startDate ? o.startDate.replace(/-/g, '.') : `${o.year || ''}`}
+              </span>
+              <span className="block text-[13px] text-dream-ink leading-snug line-clamp-2 mt-0.5">{o.title}</span>
+            </span>
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+// 推薦清單（純文字版）：擺在「同一天還有 N 場」那種窄位置
 function RelatedList({ items, color, onNavigate }) {
   return (
     <ul className="space-y-1.5">

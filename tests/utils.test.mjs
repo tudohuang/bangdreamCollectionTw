@@ -3,6 +3,11 @@ import assert from 'node:assert/strict'
 import { bandKey, parseGroup, rootGroup, isPersonal } from '../src/utils/bands.js'
 import { parseCsvToEvents, mergeWithBundled } from '../src/utils/parseEvents.js'
 import { isUrgent, urgentEvents } from '../src/utils/urgency.js'
+import {
+  normalizeDate, normalizeType, primaryType,
+  parseRosterCsv, groupRoster, parsePulseCsv, buildPulseIndex, monthsIn, pulseMonths,
+} from '../src/utils/parsePulse.js'
+import { taiwanIndex, rankIndex, shiftYm } from '../src/utils/forecast.js'
 import { normalizeImageUrl, photoCredit } from '../src/utils/media.js'
 import { eventStatus, daysUntil, weekday } from '../src/utils/datetime.js'
 import { detectCity, eventCharacters, buildRoster } from '../src/utils/derive.js'
@@ -82,6 +87,117 @@ test('urgentEvents 只挑還沒結束的緊急場次，日期近的排前', () =
   const out = urgentEvents(list, '2026-08-15')
   assert.deepEqual(out.map(e => e.number), [3, 2])
   assert.equal(isUrgent(list[3]), false)
+})
+
+test('動態表：日期補零、類型分隔符統一', () => {
+  assert.equal(normalizeDate('2026-8-16'), '2026-08-16')   // Sheet 上手打常常少補零
+  assert.equal(normalizeDate('2026-08-16'), '2026-08-16')
+  assert.equal(normalizeDate('2026-9'), '2026-09-01')       // 只填到月 → 當月 1 號
+  assert.equal(normalizeDate('未定'), '')
+  assert.equal(normalizeType('LIVE/活動'), 'LIVE／活動')     // 半形斜線 → 全形
+  assert.equal(normalizeType('LIVE／活動'), 'LIVE／活動')
+  assert.equal(primaryType('LIVE／發售活動'), 'LIVE')
+})
+
+test('名冊解析與分組（團體列排在自己那組最前面）', () => {
+  const csv = '對象,類別,樂團,角色,追蹤中\n' +
+    '愛美,個人,Poppin\'Party,戶山香澄,是\n' +
+    'Poppin\'Party,團體,Poppin\'Party,,是\n' +
+    '退役太郎,個人,Poppin\'Party,,否\n'
+  const roster = parseRosterCsv(csv)
+  assert.equal(roster.length, 3)
+  assert.equal(roster[1].kind, 'band')
+  assert.equal(roster[2].tracked, false)
+  const groups = groupRoster(roster)
+  assert.equal(groups.length, 1)
+  assert.equal(groups[0].lead.name, "Poppin'Party")
+  assert.deepEqual(groups[0].members.map(m => m.name), ['愛美'])  // 追蹤中=否 被排除
+})
+
+test('動態索引：日本行程與來台場次掛在同一格', () => {
+  const pulseCsv = '日期,對象,類型,標題,地點,狀態,連結\n' +
+    '2026-8-16,愛美,LIVE/發售活動,發售紀念 Mini Live,東京,已公開,\n' +
+    '2026-09-02,Ave Mujica,音樂祭,夏日音樂祭,千葉,已公開,\n'
+  const pulse = parsePulseCsv(pulseCsv)
+  assert.equal(pulse.length, 2)
+  assert.equal(pulse[0].date, '2026-08-16')
+  assert.equal(pulse[0].mainType, 'LIVE')
+  assert.deepEqual(monthsIn(pulse), ['2026-08', '2026-09'])
+
+  const events = [{
+    id: 'evt-001', number: 1, year: 2026, month: 8, startDate: '2026-08-02', endDate: '2026-08-02',
+    title: 'Poppin’Party 聲優見面會', people: ['愛美'], relatedGroups: ['Ave Mujica'], venue: '台北',
+  }]
+  const roster = parseRosterCsv('對象,類別,樂團,角色,追蹤中\nAve Mujica,團體,Ave Mujica,,是\n')
+  const idx = buildPulseIndex(pulse, events, roster)
+  const aimi = idx.get('愛美|2026-08')
+  assert.equal(aimi.length, 2)                                    // 日本 1 筆 + 來台 1 筆
+  assert.deepEqual(aimi.map(x => x.where).sort(), ['jp', 'tw'])
+  // 樂團名對得起來時，來台場次也掛到團體那一列
+  assert.equal(idx.get('Ave Mujica|2026-08').some(x => x.where === 'tw'), true)
+})
+
+test('pulseMonths 補成連續月份，並延伸到之後的來台場次', () => {
+  const pulse = parsePulseCsv(
+    '日期,對象,類型,標題\n' +
+    '2026-08-16,愛美,LIVE,A\n' +
+    '2026-09-02,愛美,LIVE,B\n')
+  // 動態只到 9 月，但 12 月有來台 → 中間的 10、11 月也要留欄，才看得出空了兩個月
+  const events = [
+    { startDate: '2026-12-05', people: ['愛美'] },
+    { startDate: '2018-02-03', people: ['愛美'] },   // 動態開始之前的舊場次不算
+  ]
+  assert.deepEqual(pulseMonths(pulse, events),
+    ['2026-08', '2026-09', '2026-10', '2026-11', '2026-12'])
+  assert.deepEqual(pulseMonths(pulse, []), ['2026-08', '2026-09'])
+  assert.deepEqual(pulseMonths([], events), [])
+  // 跨年也要接得起來
+  const p2 = parsePulseCsv('日期,對象,類型,標題\n2026-11-01,愛美,LIVE,C\n')
+  assert.deepEqual(pulseMonths(p2, [{ startDate: '2027-01-10', people: ['愛美'] }]),
+    ['2026-11', '2026-12', '2027-01'])
+})
+
+test('shiftYm 跨年也算得對', () => {
+  assert.equal(shiftYm('2026-12', 1), '2027-01')
+  assert.equal(shiftYm('2026-01', -1), '2025-12')
+  assert.equal(shiftYm('2026-08', -12), '2025-08')
+})
+
+test('來台指數：已公告直接標 100、其餘攤開因子', () => {
+  const roster = parseRosterCsv(
+    '對象,類別,樂團,角色,追蹤中\n' +
+    '愛美,個人,Poppin\'Party,戶山香澄,是\n' +
+    'Poppin\'Party,團體,Poppin\'Party,,是\n')
+  const events = [
+    { id: 'evt-1', startDate: '2026-09-05', month: 9, people: ['愛美'], relatedGroups: ["Poppin'Party"] },
+    { id: 'evt-2', startDate: '2024-02-03', month: 2, people: ['愛美'], relatedGroups: ["Poppin'Party"] },
+  ]
+  const pulse = parsePulseCsv(
+    '日期,對象,類型,標題\n' +
+    '2026-08-10,愛美,LIVE,近況 A\n' +
+    '2026-08-14,愛美,公錄,近況 B\n' +
+    '2025-01-01,愛美,LIVE,很久以前\n')
+  const opts = { events, pulse, roster, today: '2026-08-16' }
+
+  // 9 月已經有公告的場次 → 不用猜
+  const sep = taiwanIndex('愛美', { ...opts, targetYm: '2026-09' })
+  assert.equal(sep.scheduled, true)
+  assert.equal(sep.score, 100)
+  assert.equal(sep.events[0].id, 'evt-1')
+
+  // 10 月沒公告 → 給指數，且因子講得出來源
+  const oct = taiwanIndex('愛美', { ...opts, targetYm: '2026-10' })
+  assert.equal(oct.scheduled, false)
+  assert.ok(oct.score > 0 && oct.score <= 96)
+  const jp = oct.factors.find(f => f.label === '日本近況')
+  assert.match(jp.detail, /2 筆/)              // 只算近 60 天，2025 那筆不算
+  const gapF = oct.factors.find(f => f.label === '距上次來台')
+  assert.match(gapF.detail, /2026-09/)         // 上次來台是 9 月
+  assert.equal(oct.factors.reduce((s, f) => s + f.pts, 0), oct.score)
+
+  // 排名把已公告的排前面
+  const ranked = rankIndex(roster, { ...opts, targetYm: '2026-09' })
+  assert.equal(ranked[0].score, 100)
 })
 
 test('normalizeImageUrl 轉換 Drive / Dropbox 分享連結', () => {

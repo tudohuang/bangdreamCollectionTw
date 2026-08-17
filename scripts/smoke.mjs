@@ -43,6 +43,9 @@ import Footer from './src/components/Footer.jsx'
 import Contribute from './src/components/Contribute.jsx'
 import CommandPalette from './src/components/CommandPalette.jsx'
 import UrgentBar from './src/components/UrgentBar.jsx'
+import ResultBar from './src/components/ResultBar.jsx'
+import PulsePage from './src/components/PulsePage.jsx'
+import { parseRosterCsv, parsePulseCsv } from './src/utils/parsePulse.js'
 import { milestoneMap } from './src/utils/milestones.js'
 import { sortChrono } from './src/utils/context.js'
 
@@ -50,7 +53,7 @@ const noop = () => {}
 const attended = new Set(events.slice(0, 6).map(e => e.id))
 const filters = {
   year: 'all', groups: [], people: [], characters: [], types: [], venues: [], cities: [],
-  category: 'all', fullBand: 'all', attended: 'all', photos: 'all', timeframe: 'all',
+  category: 'all', fullBand: 'all', attended: 'all', photos: 'all', urgent: 'all', timeframe: 'all',
   search: '', view: 'cards', order: 'date-asc',
 }
 const milestones = milestoneMap(events)
@@ -59,6 +62,21 @@ const one = events.find(e => e.venue && (e.people || []).length) || events[0]
 // 緊急狀態（Sheet 標「非常」）：真資料裡不一定有，直接捏一場未來的來測那條分支
 const urgentOne = { ...one, urgency: '非常', isUrgent: true, year: 2099, month: 1, startDate: '2099-01-01', endDate: '2099-01-01' }
 const withUrgent = [urgentOne, ...events.filter(e => e.id !== one.id)]
+
+// 動態頁的替身資料：真的 Sheet 抓不到（也不該在測試裡連網），用固定樣本
+const pulseRoster = parseRosterCsv(
+  '對象,類別,樂團,角色,追蹤中\\n' +
+  "愛美,個人,Poppin'Party,戶山香澄,是\\n" +
+  "伊藤彩沙,個人,Poppin'Party,市谷有咲,是\\n" +
+  "Poppin'Party,團體,Poppin'Party,,是\\n" +
+  '高尾奏音,個人,Ave Mujica,Mortis,是\\n' +
+  'Ave Mujica,團體,Ave Mujica,,是\\n')
+const pulseRows = parsePulseCsv(
+  '日期,對象,類型,標題,地點,狀態,連結\\n' +
+  '2026-8-16,愛美,LIVE/發售活動,「AIM STAR」發售紀念 Free Mini Live,日本,已公開,\\n' +
+  '2026-08-30,愛美,公錄,#水曜日のD4DJ,東京,已公開,\\n' +
+  '2026-9-19,高尾奏音,朗讀劇,朗讀劇 出演,新宿,已公開,\\n' +
+  '2026-08-16,Ave Mujica,音樂祭,SUMMER SONIC 2026 TOKYO,ZOZO Marine Stadium,已公開,\\n')
 
 // 每個案例都要碰到真實資料的分支，不能只 render 空狀態
 export const CASES = [
@@ -97,6 +115,14 @@ export const CASES = [
   ['EventCard(緊急)', <EventCard event={urgentOne} attended={false} onToggleAttended={noop} onClick={noop} />],
   ['EventDetail(緊急)', <EventDetail event={urgentOne} allEvents={withUrgent} attended={attended} onToggleAttended={noop} onClose={noop} onNavigate={noop} milestones={[]} />],
   ['EventWall(緊急時間軸)', <EventWall events={withUrgent} view="timeline" attended={attended} onSelect={noop} allEvents={withUrgent} milestones={milestones} />],
+  // 卡牆分年 / 結果摘要條 / 空狀態帶推薦
+  ['EventWall(分年卡牆)', <EventWall events={events} view="cards" attended={attended} onToggleAttended={noop} onSelect={noop} allEvents={events} milestones={milestones} groupByYear />],
+  ['EventWall(空+推薦)', <EventWall events={[]} view="cards" attended={attended} onSelect={noop} onReset={noop} allEvents={events} suggestions={events.slice(0, 3)} />],
+  ['ResultBar', <ResultBar filters={{ ...filters, year: '2026', people: ['愛美'], search: '見面會' }} onChange={noop} onReset={noop} count={3} total={events.length} />],
+  ['ResultBar(無條件)', <ResultBar filters={filters} onChange={noop} onReset={noop} count={events.length} total={events.length} />, { mayBeEmpty: true }],
+  // 聲優動態：名冊 + 動態兩張分頁的矩陣
+  ['PulsePage', <PulsePage roster={pulseRoster} pulse={pulseRows} events={events} source="sheet" onSelectEvent={noop} />],
+  ['PulsePage(沒資料)', <PulsePage roster={[]} pulse={[]} events={events} source="off" onSelectEvent={noop} />],
 ]
 
 export { renderToStaticMarkup }

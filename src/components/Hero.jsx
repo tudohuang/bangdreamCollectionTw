@@ -62,8 +62,9 @@ function TicketCountdown({ events, onSelect }) {
   const accent = urgent ? 'rgb(var(--c-urgent))' : m.color
   const d = daysUntil(e.startDate)
   const status = eventStatus(e)
+  // 倒數的講法跟卡片／詳情共用一套（countdownLabel），這裡只是把數字放大成票面
   const big = upcoming
-    ? (status === 'ongoing' ? 'ON AIR' : status === 'unknown' ? '日期未定' : d === 0 ? 'TODAY' : `${d}`)
+    ? (status === 'ongoing' ? '進行中' : status === 'unknown' ? '日期未定' : d === 0 ? '今天' : `${d}`)
     : 'REPLAY'
   const unit = upcoming && status !== 'ongoing' && d > 0 ? '天後開演' : ''
 
@@ -83,13 +84,13 @@ function TicketCountdown({ events, onSelect }) {
             style={{ fontSize: unit ? 'clamp(34px,4.5vw,46px)' : 'clamp(19px,2.4vw,26px)' }}>
             {big}
           </div>
-          {unit && <div className="text-[12px] font-bold text-dream-sub mt-1">{unit}</div>}
+          {unit && <div className="text-[13px] font-bold text-dream-sub mt-1">{unit}</div>}
         </div>
       </div>
       {/* 場次資訊 */}
       <div className="min-w-0 flex-1 p-4 sm:p-5 flex items-center gap-4">
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5 text-[12px] mb-1 flex-wrap" style={{ color: m.color }}>
+          <div className="flex items-center gap-1.5 text-[13px] mb-1 flex-wrap" style={{ color: m.color }}>
             {urgent && (
               <span className="urgent-badge">
                 <Icon n="triangle-exclamation" className="text-[9px]" /> {URGENT_LABEL}
@@ -101,7 +102,7 @@ function TicketCountdown({ events, onSelect }) {
           <div className="font-display font-bold text-[15px] sm:text-[16px] text-dream-ink line-clamp-2 group-hover:text-bloom-violet transition-colors">
             {e.title}
           </div>
-          <div className="text-[12px] text-dream-sub mt-1.5 flex items-center gap-1.5 flex-wrap">
+          <div className="text-[13px] text-dream-sub mt-1.5 flex items-center gap-1.5 flex-wrap">
             <Icon n="calendar" className="text-bloom-violet text-[10px]" />
             {e.year}.{formatMonthDay(e.startDate).replace(/^\d{4}\./, '')}
             {weekday(e.startDate) && `（${weekday(e.startDate).replace('週', '')}）`}
@@ -117,8 +118,8 @@ function TicketCountdown({ events, onSelect }) {
 const StatTile = ({ value, label, sub, href, onClick }) => (
   <a href={href} onClick={onClick} className="glass p-4 sm:p-5 transition-colors hover:border-bloom-violet/60">
     <div className="font-display text-[24px] sm:text-[28px] font-extrabold text-dream-ink leading-none">{value}</div>
-    <div className="mt-2 text-[12px] text-dream-sub">{label}</div>
-    <div className="mt-0.5 text-[10px] font-bold tracking-[0.18em] uppercase text-dream-faint">{sub}</div>
+    <div className="mt-2 text-[13px] text-dream-sub">{label}</div>
+    <div className="mt-0.5 text-[11px] font-bold tracking-[0.18em] uppercase text-dream-faint">{sub}</div>
   </a>
 )
 
@@ -138,7 +139,7 @@ export default function Hero({ events, onSelect, onYearJump }) {
               <span className="text-dream-ink">邦邦來台</span>
               <span className="text-gradient">圖鑑</span>
             </h1>
-            <p className="mt-2.5 text-[14px] text-dream-sub max-w-md">
+            <p className="mt-2.5 text-[15px] text-dream-sub max-w-md">
               邦邦聲優與樂團來台的活動紀錄，從 2018 記到現在。
             </p>
           </div>

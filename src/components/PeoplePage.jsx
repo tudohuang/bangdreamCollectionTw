@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { bandMeta, rootGroup } from '../utils/bands.js'
-import { buildRoster } from '../utils/derive.js'
+import { personBandMap } from '../utils/derive.js'
 import { eventStatus, daysUntil } from '../utils/datetime.js'
 import Icon from './Icon.jsx'
 
@@ -12,11 +12,12 @@ const ORDERS = [
 ]
 
 // 聲優目錄：資料的主角是「人」。每張卡都帶自己的最近一場，不會 41 張長得一樣。
-export default function PeoplePage({ events, onSelect }) {
+export default function PeoplePage({ events, onSelect, sheetRoster = [] }) {
   const [q, setQ] = useState('')
   const [order, setOrder] = useState('count')
   const [band, setBand] = useState('all')
-  const roster = useMemo(() => buildRoster(events), [events])
+  // 團／角色以「名冊」為準，活動表只補名冊沒有的人（見 derive.js 的說明）
+  const roster = useMemo(() => personBandMap(events, sheetRoster), [events, sheetRoster])
 
   const people = useMemo(() => {
     const map = new Map()
@@ -43,11 +44,17 @@ export default function PeoplePage({ events, onSelect }) {
     return [...map.values()]
   }, [events])
 
+  // 樂團快篩只認「這個人自己的團」。用同台過的團去分類，會讓聯合場次
+  // 把每個人都塞進所有團裡（愛美同時出現在 Roselia 的篩選結果）。
+  const bandOf = (name) => roster.get(name)?.band || ''
   const bands = useMemo(() => {
     const c = {}
-    for (const p of people) for (const b of p.bands) c[b] = (c[b] || 0) + 1
+    for (const p of people) {
+      const b = bandOf(p.name)
+      if (b) c[b] = (c[b] || 0) + 1
+    }
     return Object.entries(c).sort((a, b) => b[1] - a[1]).map(([b]) => b)
-  }, [people])
+  }, [people, roster])
 
   // 依「場次」聚合，不然同一場的五個人會排出五張一模一樣的卡
   const upcoming = useMemo(() => {
@@ -70,12 +77,13 @@ export default function PeoplePage({ events, onSelect }) {
   const shown = useMemo(() => {
     const nq = q.trim().toLowerCase()
     let list = people
-    if (band !== 'all') list = list.filter(p => p.bands.has(band))
+    if (band !== 'all') list = list.filter(p => bandOf(p.name) === band)
     if (nq) {
       list = list.filter(p =>
         p.name.toLowerCase().includes(nq) ||
+        bandOf(p.name).toLowerCase().includes(nq) ||
         [...p.bands].some(b => b.toLowerCase().includes(nq)) ||
-        (roster[p.name]?.char || '').toLowerCase().includes(nq))
+        (roster.get(p.name)?.char || '').toLowerCase().includes(nq))
     }
     const sorted = [...list]
     if (order === 'recent') sorted.sort((a, b) => (b.last || '').localeCompare(a.last || '') || b.count - a.count)
@@ -113,7 +121,7 @@ export default function PeoplePage({ events, onSelect }) {
           <h3 className="flex items-center gap-2 font-display font-bold text-[15px] text-dream-ink mb-3">
             <span className="w-1.5 h-4 rounded bg-bloom-indigo" />
             即將來台
-            <span className="text-[12px] font-normal text-dream-faint">{upcomingCount} 位</span>
+            <span className="text-[13px] font-normal text-dream-faint">{upcomingCount} 位</span>
           </h3>
           <ul className="space-y-2.5">
             {upcoming.map(({ event: e, names }) => {
@@ -123,22 +131,22 @@ export default function PeoplePage({ events, onSelect }) {
                 <li key={e.id}
                   className="rounded-2xl border border-dream-line dark:border-white/10 bg-white/70 dark:bg-white/[.06] px-4 py-3">
                   <div className="flex items-center gap-2.5 flex-wrap">
-                    <span className="shrink-0 rounded-full px-2.5 py-0.5 text-[11.5px] font-bold text-white"
+                    <span className="shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-bold text-white"
                       style={{ background: 'rgba(139,92,246,0.92)' }}>
                       {dleft <= 0 ? '就是這幾天' : `${dleft} 天後`}
                     </span>
-                    <span className="font-round font-bold text-[12.5px]" style={{ color: m.color }}>
+                    <span className="font-round font-bold text-[13px]" style={{ color: m.color }}>
                       {e.startDate.replace(/-/g, '.')}
                     </span>
                     <button onClick={() => onSelect?.(e.id)}
-                      className="min-w-0 flex-1 text-left font-display font-semibold text-[14px] text-dream-ink truncate hover:text-bloom-violet transition-colors">
+                      className="min-w-0 flex-1 text-left font-display font-semibold text-[15px] text-dream-ink truncate hover:text-bloom-violet transition-colors">
                       {e.title}
                     </button>
                   </div>
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {names.map(n => (
                       <a key={n} href={`#/person/${encodeURIComponent(n)}`}
-                        className="rounded-full border border-dream-line dark:border-white/10 px-2.5 py-0.5 text-[12.5px] text-dream-sub hover:text-dream-ink hover:border-bloom-violet transition-colors">
+                        className="rounded-full border border-dream-line dark:border-white/10 px-2.5 py-0.5 text-[13px] text-dream-sub hover:text-dream-ink hover:border-bloom-violet transition-colors">
                         {n}
                       </a>
                     ))}
@@ -155,17 +163,17 @@ export default function PeoplePage({ events, onSelect }) {
         <span className="text-[11px] font-bold text-dream-faint mr-0.5">排序</span>
         {ORDERS.map(([l, v]) => (
           <button key={v} onClick={() => setOrder(v)}
-            className={`pill !py-1 !px-3 !text-[12.5px] ${order === v ? 'pill-active' : ''}`}>{l}</button>
+            className={`pill !py-1 !px-3 !text-[13px] ${order === v ? 'pill-active' : ''}`}>{l}</button>
         ))}
         <span className="w-px h-5 bg-dream-line mx-1.5" />
         <button onClick={() => setBand('all')}
-          className={`pill !py-1 !px-3 !text-[12.5px] ${band === 'all' ? 'pill-active' : ''}`}>全部樂團</button>
+          className={`pill !py-1 !px-3 !text-[13px] ${band === 'all' ? 'pill-active' : ''}`}>全部樂團</button>
         {bands.map(b => {
           const m = bandMeta(b)
           const on = band === b
           return (
             <button key={b} onClick={() => setBand(on ? 'all' : b)}
-              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12.5px] font-medium transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] font-medium transition-colors"
               style={on
                 ? { background: m.color, color: '#fff', border: `1px solid ${m.color}` }
                 : { background: `rgba(${m.glow},0.12)`, color: m.color, border: `1px solid rgba(${m.glow},0.28)` }}>
@@ -174,13 +182,13 @@ export default function PeoplePage({ events, onSelect }) {
           )
         })}
         {filtering && (
-          <span className="ml-auto text-[12px] text-dream-faint">符合 {shown.length} 位</span>
+          <span className="ml-auto text-[13px] text-dream-faint">符合 {shown.length} 位</span>
         )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4">
         {shown.map(p => {
-          const info = roster[p.name]
+          const info = roster.get(p.name)
           const mainBand = info?.band || [...p.bands][0] || ''
           const m = bandMeta(mainBand)
           const dleft = p.next ? daysUntil(p.next.startDate) : null
@@ -196,10 +204,10 @@ export default function PeoplePage({ events, onSelect }) {
                       {p.name}
                     </span>
                     {p.count >= 5 && (
-                      <span className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold text-white" style={{ background: m.color }}>常客</span>
+                      <span className="shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold text-white" style={{ background: m.color }}>常客</span>
                     )}
                   </div>
-                  <div className="mt-1 flex items-center gap-1.5 text-[12px] min-w-0">
+                  <div className="mt-1 flex items-center gap-1.5 text-[13px] min-w-0">
                     <span className="w-2 h-2 rounded-full shrink-0" style={{ background: m.color }} />
                     <span className="truncate" style={{ color: m.color }}>{mainBand || '—'}</span>
                     {info?.char && <span className="text-dream-faint truncate">／{info.char}</span>}
@@ -207,7 +215,7 @@ export default function PeoplePage({ events, onSelect }) {
                 </div>
                 <span className="text-right shrink-0">
                   <span className="block font-display font-extrabold text-[24px] leading-none" style={{ color: m.color }}>{p.count}</span>
-                  <span className="block text-[10px] text-dream-faint mt-0.5">{p.count === 1 ? '一期一會' : '次'}</span>
+                  <span className="block text-[11px] text-dream-faint mt-0.5">{p.count === 1 ? '一期一會' : '次'}</span>
                 </span>
               </div>
 
@@ -223,7 +231,7 @@ export default function PeoplePage({ events, onSelect }) {
                   <div className="text-[11px] text-dream-faint">
                     最近 · {p.last.replace(/-/g, '.')}
                   </div>
-                  <div className="text-[12.5px] text-dream-sub line-clamp-2 leading-snug mt-0.5">
+                  <div className="text-[13px] text-dream-sub line-clamp-2 leading-snug mt-0.5">
                     {p.lastEvent.title}
                   </div>
                 </div>
@@ -247,7 +255,7 @@ export default function PeoplePage({ events, onSelect }) {
       </div>
 
       {shown.length === 0 && (
-        <div className="glass px-6 py-16 text-center text-dream-sub text-[14px]">
+        <div className="glass px-6 py-16 text-center text-dream-sub text-[15px]">
           找不到符合的聲優{q && <>「{q}」</>}
         </div>
       )}

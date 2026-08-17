@@ -35,17 +35,17 @@ export default function Footer({ source = 'bundled', updatedAt, onRetry }) {
               ))}
               {REPORT_URL && (
                 <a href={REPORT_URL} target="_blank" rel="noopener noreferrer"
-                  className="ml-1 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[12.5px] font-bold text-bloom-indigo bg-bloom-indigo/10 hover:bg-bloom-indigo hover:text-white transition-colors">
+                  className="ml-1 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-bold text-bloom-indigo bg-bloom-indigo/10 hover:bg-bloom-indigo hover:text-white transition-colors">
                   <Icon n="heart" className="text-[10px]" /> 資料回報
                 </a>
               )}
             </nav>
           </div>
 
-          <div className="mt-5 pt-4 border-t border-dream-line/70 dark:border-white/10 flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between text-[12px] text-dream-faint">
+          <div className="mt-5 pt-4 border-t border-dream-line/70 dark:border-white/10 flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between text-[13px] text-dream-faint">
             <span>
               粉絲自主整理的非官方站 · 看到錯漏跟我們說一聲
-              <span className="font-hand text-[12.5px] ml-2 text-dream-faint">（站長手動更新中，通常在半夜）</span>
+              <span className="font-hand text-[13px] ml-2 text-dream-faint">（站長手動更新中，通常在半夜）</span>
             </span>
             {txt && (
               <span>

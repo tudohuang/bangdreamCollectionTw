@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { rootGroup, bandMeta } from '../utils/bands.js'
 import { uniqueCharacters, uniqueVenues, uniqueCities } from '../utils/derive.js'
 import { isUrgent, URGENT_LABEL } from '../utils/urgency.js'
+import { buildAppliedChips, removeChipPatch } from '../utils/filters.js'
 import Icon from './Icon.jsx'
 
 function uniq(arr) { return [...new Set(arr)] }
@@ -58,7 +59,7 @@ export default function FilterPanel({ events, filters, onChange, onReset, result
         <div>
           <div className="eyebrow"><Icon n="grid" className="text-[10px]" /> Collection</div>
           <h2 className="font-display font-bold text-[26px] text-dream-ink leading-tight mt-1.5">活動圖鑑</h2>
-          <div className="mt-1.5 text-[12px] text-dream-faint" aria-live="polite">
+          <div className="mt-1.5 text-[13px] text-dream-faint" aria-live="polite">
             <span className="font-display font-bold text-[17px] text-bloom-indigo">{resultCount}</span> 筆結果
           </div>
         </div>
@@ -211,7 +212,7 @@ function AppliedChips({ chips, filters, onChange, onReset }) {
       <span className="text-[11px] text-dream-faint self-center">已套用：</span>
       {chips.map(c => (
         <button key={c.key + c.val} className="pill !text-bloom-indigo"
-          onClick={() => removeChip(filters, onChange, c)}>
+          onClick={() => onChange(removeChipPatch(filters, c))}>
           {c.label} <Icon n="xmark" className="text-[10px]" />
         </button>
       ))}
@@ -326,20 +327,56 @@ function Row({ label, children }) {
 }
 
 // single 模式用 value/onChange；多選模式用 values(array)/onToggle
-function ChipGroup({ options, value, onChange, values, onToggle, colored, single }) {
+// 選項多的時候（聲優、場館…）不要一次倒 40 顆 chip 出來：
+// 先給前 N 個常用的 + 一個小搜尋框，已選的一律置頂，其餘收在「展開」後面。
+function ChipGroup({ options, value, onChange, values, onToggle, colored, single, initial = 8 }) {
+  const [q, setQ] = useState('')
+  const [open, setOpen] = useState(false)
+  const searchable = !single && options.length > 12
+  const picked = values || []
+
+  const filtered = q
+    ? options.filter(([label, val]) => `${label} ${val}`.toLowerCase().includes(q.toLowerCase()))
+    : options
+  // 已選的排到最前，才不會勾完就被收進「展開」裡看不見
+  const ordered = single ? filtered : [...filtered].sort((a, b) => (picked.includes(b[1]) ? 1 : 0) - (picked.includes(a[1]) ? 1 : 0))
+  const collapsed = searchable && !open && !q
+  const shown = collapsed ? ordered.slice(0, Math.max(initial, picked.length)) : ordered
+  const hidden = ordered.length - shown.length
+
   return (
-    <div className="flex flex-wrap gap-2">
-      {options.map(([label, val]) => {
-        const active = single ? String(value) === String(val) : (values || []).includes(val)
-        const m = colored && val !== 'all' ? bandMeta(val) : null
-        return (
-          <button key={val} className={`pill ${active ? 'pill-active' : ''}`}
-            onClick={() => (single ? onChange(val) : onToggle(val))}>
-            {m && <span className="w-2 h-2 rounded-full" style={{ background: m.color }} />}
-            {label}
+    <div>
+      {searchable && (
+        <input
+          type="search" value={q} onChange={(e) => setQ(e.target.value)}
+          placeholder={`在 ${options.length} 個選項中找…`}
+          className="dream-input !py-1.5 !text-[13px] mb-2.5"
+        />
+      )}
+      <div className="flex flex-wrap gap-2">
+        {shown.map(([label, val]) => {
+          const active = single ? String(value) === String(val) : picked.includes(val)
+          const m = colored && val !== 'all' ? bandMeta(val) : null
+          return (
+            <button key={val} className={`pill ${active ? 'pill-active' : ''}`}
+              onClick={() => (single ? onChange(val) : onToggle(val))}>
+              {m && <span className="w-2 h-2 rounded-full" style={{ background: m.color }} />}
+              {label}
+            </button>
+          )
+        })}
+        {hidden > 0 && (
+          <button className="pill !text-bloom-indigo !border-dashed" onClick={() => setOpen(true)}>
+            還有 {hidden} 個 <Icon n="chevron-down" className="text-[10px]" />
           </button>
-        )
-      })}
+        )}
+        {searchable && open && !q && (
+          <button className="pill !text-dream-faint" onClick={() => setOpen(false)}>收合</button>
+        )}
+        {q && shown.length === 0 && (
+          <span className="text-[13px] text-dream-faint py-1.5">找不到「{q}」</span>
+        )}
+      </div>
     </div>
   )
 }
@@ -362,33 +399,3 @@ function Segmented({ value, onChange, options, full }) {
   )
 }
 
-// ---- 已套用篩選 chips ----
-const SINGLE_LABELS = {
-  category: { '本體': '本體', '擦邊': '個人' },
-  fullBand: { full: '僅全團' },
-  attended: { yes: '我去過' },
-  photos: { yes: '有照片' },
-  urgent: { yes: URGENT_LABEL },
-  timeframe: { upcoming: '即將', past: '已結束', thisYear: '今年', thisMonth: '本月' },
-}
-function buildAppliedChips(f) {
-  const chips = []
-  if (f.year !== 'all') chips.push({ key: 'year', val: f.year, label: `${f.year} 年` })
-  for (const [k, val] of [['category', f.category], ['fullBand', f.fullBand], ['attended', f.attended], ['photos', f.photos], ['urgent', f.urgent], ['timeframe', f.timeframe]]) {
-    if (val && val !== 'all') chips.push({ key: k, val, label: SINGLE_LABELS[k]?.[val] || val })
-  }
-  for (const k of ['groups', 'people', 'characters', 'types', 'venues', 'cities']) {
-    for (const v of (f[k] || [])) chips.push({ key: k, val: v, label: v })
-  }
-  if (f.search) chips.push({ key: 'search', val: f.search, label: `「${f.search}」` })
-  return chips
-}
-function removeChip(filters, onChange, c) {
-  if (['groups', 'people', 'characters', 'types', 'venues', 'cities'].includes(c.key)) {
-    onChange({ [c.key]: (filters[c.key] || []).filter(v => v !== c.val) })
-  } else if (c.key === 'search') {
-    onChange({ search: '' })
-  } else {
-    onChange({ [c.key]: 'all' })
-  }
-}

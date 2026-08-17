@@ -48,7 +48,7 @@ export default function YearReview({ events }) {
                       <span className="font-round font-extrabold text-[13px] text-center" style={{ color: b.color }}>{i + 1}</span>
                       <span className="flex items-center gap-2 min-w-0">
                         <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: b.color }} />
-                        <span className="text-[14px] font-medium text-dream-ink truncate">{b.name}</span>
+                        <span className="text-[15px] font-medium text-dream-ink truncate">{b.name}</span>
                       </span>
                       <span className="text-[13px] font-bold text-dream-sub">{b.n} 場</span>
                     </li>
@@ -63,7 +63,7 @@ export default function YearReview({ events }) {
                   {s.topPeople.map((p, i) => (
                     <li key={p.name} className="grid grid-cols-[20px_1fr_auto] items-center gap-2.5">
                       <span className="font-round font-extrabold text-[13px] text-center text-bloom-violet">{i + 1}</span>
-                      <a href={`#/person/${encodeURIComponent(p.name)}`} className="text-[14px] font-medium text-dream-ink truncate hover:text-bloom-indigo hover:underline">{p.name}</a>
+                      <a href={`#/person/${encodeURIComponent(p.name)}`} className="text-[15px] font-medium text-dream-ink truncate hover:text-bloom-indigo hover:underline">{p.name}</a>
                       <span className="text-[13px] font-bold text-dream-sub">{p.n} 次</span>
                     </li>
                   ))}
@@ -80,7 +80,7 @@ export default function YearReview({ events }) {
               s.attendance > 0 && `累計 ${s.attendance} 人次`,
               s.busiestMonth && `${s.busiestMonth.month} 月最熱（${s.busiestMonth.n} 場）`,
             ].filter(Boolean).map(t => (
-              <span key={t} className="inline-flex items-center rounded-full px-3 py-1 text-[12.5px] font-medium"
+              <span key={t} className="inline-flex items-center rounded-full px-3 py-1 text-[13px] font-medium"
                 style={{ background: `${accent}1a`, color: accent }}>{t}</span>
             ))}
           </div>

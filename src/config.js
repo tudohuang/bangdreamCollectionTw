@@ -14,6 +14,14 @@
 export const SHEET_CSV_URL =
   'https://docs.google.com/spreadsheets/d/1KWSuDODuH2gNAfsxDs1tpGj5ikBkpRKc6BxS0L5Qkcs/gviz/tq?tqx=out:csv'
 
+// 同一份試算表的其他分頁：加 &sheet=<分頁名> 就好（gviz 支援）。
+//   名冊 = 追蹤對象主檔（誰、屬於哪團、角色）
+//   動態 = 這些人在日本的行程長表（一列一筆）
+// 兩條都留空＝不啟用「動態」頁，網站其餘部分完全不受影響。
+const sheetTab = (name) => `${SHEET_CSV_URL}&sheet=${encodeURIComponent(name)}`
+export const SHEET_ROSTER_CSV_URL = sheetTab('名冊')
+export const SHEET_PULSE_CSV_URL = sheetTab('動態')
+
 // 資料回報入口（選填）：填了頁尾才會出現「資料回報」連結。
 // 可填信箱（mailto:你的信箱）、Google 表單、或 GitHub issues 連結。留空＝不顯示。
 export const REPORT_URL = ''

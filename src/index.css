@@ -20,6 +20,8 @@
     --c-urgent: 225 29 72;
     /* 頁首下方 sticky 元件的黏著點；有緊急橫幅時整條往下推（見 .urgent-mode） */
     --sticky-top: 72px;
+    /* 卡牆內的年份站牌黏在哪：有結果摘要條時再往下讓一條（App 會覆寫） */
+    --wall-top: var(--sticky-top);
   }
 
   .dark {
@@ -212,7 +214,7 @@
 
   /* 主要／次要按鈕 */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 h-11 text-[14px] font-bold text-white transition-all duration-150;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 h-11 text-[15px] font-bold text-white transition-all duration-150;
     background: linear-gradient(135deg, #ec4899, #8b5cf6);
     box-shadow: 0 10px 26px -10px rgba(217, 70, 239, 0.7);
   }
@@ -223,7 +225,7 @@
   }
   .btn-primary:active { transform: translateY(0); }
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 h-11 text-[14px] font-bold transition-colors duration-150;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 h-11 text-[15px] font-bold transition-colors duration-150;
     background: #fff;
     border: 1px solid theme('colors.dream.line');
     color: theme('colors.dream.sub');
@@ -251,7 +253,7 @@
   }
 
   .band-chip {
-    @apply inline-flex items-center gap-1.5 rounded-full pl-1.5 pr-3 py-1 text-[12.5px] font-medium;
+    @apply inline-flex items-center gap-1.5 rounded-full pl-1.5 pr-3 py-1 text-[13px] font-medium;
     background: rgba(var(--dot), 0.12);
     color: var(--dotText);
     border: 1px solid rgba(var(--dot), 0.28);
@@ -259,7 +261,7 @@
 
   /* 類別小標 */
   .badge {
-    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11.5px] font-semibold;
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold;
   }
   .badge-core {
     background: linear-gradient(135deg, #ec4899, #8b5cf6);
@@ -277,7 +279,7 @@
 
   /* 區塊小標題 */
   .eyebrow {
-    @apply inline-flex items-center gap-1.5 text-[12px] font-bold text-dream-faint tracking-[0.18em] uppercase;
+    @apply inline-flex items-center gap-1.5 text-[11px] font-bold text-dream-faint tracking-[0.18em] uppercase;
   }
   .section-h {
     @apply font-display text-2xl sm:text-3xl font-bold text-dream-ink leading-tight;
@@ -406,6 +408,53 @@
   }
   .dark .polaroid { background: #f4f1fa; }
 
+  /* ---------- 總表：素樸的試算表外觀，但兩種主題都讀得下去 ---------- */
+  .sheet-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    font-family: theme('fontFamily.sans');
+    font-size: 13px;
+    white-space: nowrap;
+    color: rgb(var(--c-ink));
+    background: #fff;
+  }
+  .dark .sheet-table { background: rgba(16, 13, 38, 0.9); }
+  .sheet-table th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    text-align: left;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    padding: 8px 10px;
+    color: rgb(var(--c-sub));
+    background: #f4f0fa;
+    border-bottom: 1px solid rgb(var(--c-line));
+  }
+  .dark .sheet-table th {
+    background: #201b3f;
+    border-bottom-color: rgba(255, 255, 255, 0.14);
+  }
+  .sheet-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid rgb(var(--c-line));
+  }
+  .dark .sheet-table td { border-bottom-color: rgba(255, 255, 255, 0.08); }
+  .sheet-table tbody tr { cursor: pointer; }
+  /* 斑馬紋比格線更好讀，橫向捲動時眼睛不會跳行 */
+  .sheet-table tbody tr:nth-child(even) { background: rgba(139, 92, 246, 0.035); }
+  .sheet-table tbody tr:hover { background: rgba(139, 92, 246, 0.11); }
+  .dark .sheet-table tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.03); }
+  .dark .sheet-table tbody tr:hover { background: rgba(255, 255, 255, 0.09); }
+  .sheet-table tbody tr.is-urgent {
+    background: rgba(var(--c-urgent), 0.1);
+    color: rgb(var(--c-urgent));
+    font-weight: 700;
+  }
+  .sheet-table tbody tr.is-urgent:hover { background: rgba(var(--c-urgent), 0.18); }
+
   /* ============================================================
      緊急狀態 — Sheet 標「非常」的場次，全站用同一套紅色語言
      ============================================================ */
@@ -435,7 +484,7 @@
 
   /* 緊急小標：卡片、時間軸、月曆共用的那顆紅籤 */
   .urgent-badge {
-    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10.5px] font-bold text-white whitespace-nowrap;
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold text-white whitespace-nowrap;
     background: rgb(var(--c-urgent));
     box-shadow: 0 0 0 2px rgba(var(--c-urgent), 0.22), 0 2px 8px -2px rgba(var(--c-urgent), 0.8);
     animation: urgentPulse 1.8s ease-in-out infinite;

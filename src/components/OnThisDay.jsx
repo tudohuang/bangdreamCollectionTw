@@ -49,7 +49,8 @@ export default function OnThisDay({ events, onSelect }) {
   const rest = list.slice(1)
 
   return (
-    <div className="mt-14 sm:mt-20">
+    // 收窄成一欄：夾在滿版月曆與滿版照片牆之間的一段安靜插曲
+    <div className="mt-14 sm:mt-20 max-w-3xl">
       <div className="mb-5">
         <div className="eyebrow"><Icon n="heart" className="text-[10px]" /> Rewind</div>
         <h2 className="font-display font-bold text-xl sm:text-2xl text-dream-ink mt-1.5">
@@ -75,7 +76,7 @@ export default function OnThisDay({ events, onSelect }) {
             style={{ fontSize: 'clamp(20px,3.4vw,28px)' }}>
             <span style={{ color: m.color }}>{yearsAgo}</span> 年前的{exact ? '今天' : '這個時候'}
           </div>
-          <div className="mt-2 flex items-center gap-1.5 text-[12px]" style={{ color: m.color }}>
+          <div className="mt-2 flex items-center gap-1.5 text-[13px]" style={{ color: m.color }}>
             <Icon n={personal ? 'user' : m.icon} className="text-[10px]" />
             {personal ? '個人來台' : m.name}
             <span className="text-dream-faint">
@@ -96,7 +97,7 @@ export default function OnThisDay({ events, onSelect }) {
               <li key={o.id}>
                 <button onClick={() => onSelect(o.id)}
                   className="w-full text-left flex items-center gap-2.5 rounded-xl border border-dream-line dark:border-white/10 px-3.5 py-2.5 hover:border-bloom-violet transition-colors">
-                  <span className="shrink-0 font-round font-bold text-[12.5px]" style={{ color: om.color }}>
+                  <span className="shrink-0 font-round font-bold text-[13px]" style={{ color: om.color }}>
                     {o.startDate.replace(/-/g, '.')}
                   </span>
                   <span className="min-w-0 flex-1 truncate text-[13px] text-dream-sub">{o.title}</span>

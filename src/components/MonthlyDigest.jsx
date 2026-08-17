@@ -56,27 +56,42 @@ export default function MonthlyDigest({ events, onSelect }) {
         </div>
       </div>
 
-      {/* 手機：橫滑逐月；平板以上：12 格總覽 */}
-      <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-none gap-3 -mx-4 px-4 pb-1 sm:mx-0 sm:px-0 sm:pb-0 sm:grid sm:grid-cols-3 lg:grid-cols-4 sm:overflow-visible">
+      {/* 手機：橫滑逐月；平板以上：12 格總覽。
+          空的月份縮成一條細的 —— 版面該讓給真的有活動的月份 */}
+      <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-none gap-3 -mx-4 px-4 pb-1 sm:mx-0 sm:px-0 sm:pb-0 sm:grid sm:grid-cols-3 lg:grid-cols-4 sm:auto-rows-min sm:items-start sm:overflow-visible">
         {Array.from({ length: 12 }, (_, i) => i + 1).map(m => {
           const list = byMonth.get(m) || []
           const isNow = year === thisYear && m === thisMonth
+          if (!list.length) {
+            return (
+              <div key={m}
+                className={`snap-start shrink-0 w-[230px] sm:w-auto sm:shrink rounded-xl border border-dashed px-3 py-2 flex items-baseline gap-2 opacity-60 ${
+                  isNow ? 'border-bloom-indigo/50' : 'border-dream-line/80 dark:border-white/10'}`}>
+                <span className={`font-display font-bold text-[13px] ${isNow ? 'text-bloom-indigo' : 'text-dream-faint'}`}>
+                  {m} 月
+                </span>
+                <span className="font-hand text-[13px] text-dream-faint">
+                  {['靜悄悄', '存錢月', '休息中'][m % 3]}
+                </span>
+              </div>
+            )
+          }
           return (
             <div
               key={m}
-              className={`snap-start shrink-0 w-[230px] sm:w-auto sm:shrink rounded-2xl border p-3.5 flex flex-col gap-2 min-h-[92px] transition-colors ${
+              className={`snap-start shrink-0 w-[230px] sm:w-auto sm:shrink rounded-2xl border p-3.5 flex flex-col gap-2 transition-colors ${
                 isNow
                   ? 'border-bloom-indigo/50 bg-bloom-indigo/[.05] dark:bg-bloom-indigo/10'
                   : 'border-dream-line/80 bg-white/55 dark:bg-white/[.04] dark:border-white/10'
-              } ${list.length ? '' : 'opacity-55'}`}
+              }`}
             >
               <div className="flex items-baseline justify-between">
                 <span className={`font-display font-bold text-[15px] ${isNow ? 'text-bloom-indigo' : 'text-dream-ink'}`}>
                   {m} 月
                 </span>
-                {isNow && <span className="text-[10px] font-bold text-bloom-indigo">本月</span>}
+                {isNow && <span className="text-[11px] font-bold text-bloom-indigo">本月</span>}
               </div>
-              {list.length ? (
+              {(
                 <ul className="flex flex-col gap-1.5">
                   {list.map(e => {
                     const meta = primaryMeta(e)
@@ -87,7 +102,7 @@ export default function MonthlyDigest({ events, onSelect }) {
                       <li key={e.id}>
                         <button
                           onClick={() => onSelect(e.id)}
-                          className="group w-full text-left text-[12px] leading-snug flex gap-1.5"
+                          className="group w-full text-left text-[13px] leading-snug flex gap-1.5"
                           title={e.title}
                         >
                           <span
@@ -112,10 +127,6 @@ export default function MonthlyDigest({ events, onSelect }) {
                     )
                   })}
                 </ul>
-              ) : (
-                <div className="font-hand text-[13px] text-dream-faint">
-                  {['靜悄悄', '存錢月', '休息中'][m % 3]}
-                </div>
               )}
             </div>
           )

@@ -1,5 +1,5 @@
 import { formatMonthDay } from '../utils/share.js'
-import { eventStatus, daysUntil, weekday } from '../utils/datetime.js'
+import { countdownLabel, weekday } from '../utils/datetime.js'
 import { URGENT_LABEL } from '../utils/urgency.js'
 import Icon from './Icon.jsx'
 
@@ -16,7 +16,7 @@ export default function UrgentBar({ events, onSelect }) {
         {shown.map(e => <UrgentRow key={e.id} event={e} onSelect={onSelect} />)}
         {rest > 0 && (
           <a href="#/collection?urgent=yes"
-            className="py-1.5 text-[12px] font-bold text-white/85 hover:text-white">
+            className="py-1.5 text-[13px] font-bold text-white/85 hover:text-white">
             還有 {rest} 場緊急情報 →
           </a>
         )}
@@ -26,16 +26,10 @@ export default function UrgentBar({ events, onSelect }) {
 }
 
 function UrgentRow({ event, onSelect }) {
-  const status = eventStatus(event)
-  const d = status === 'upcoming' ? daysUntil(event.startDate) : null
   const when = event.startDate
     ? `${event.year}.${formatMonthDay(event.startDate).replace(/^\d{4}\./, '')}${weekday(event.startDate) ? `（${weekday(event.startDate).replace('週', '')}）` : ''}`
     : '日期未定'
-  const countdown =
-    status === 'ongoing' ? '進行中'
-      : d === 0 ? '就是今天'
-      : d > 0 ? `還有 ${d} 天`
-      : ''
+  const countdown = countdownLabel(event, { style: 'long' })
 
   return (
     <button
@@ -49,7 +43,7 @@ function UrgentRow({ event, onSelect }) {
       <span className="min-w-0 flex-1 truncate text-[13px] font-bold group-hover:underline underline-offset-2">
         {event.title || '未命名活動'}
       </span>
-      <span className="shrink-0 hidden sm:inline text-[12px] text-white/85">{when}</span>
+      <span className="shrink-0 hidden sm:inline text-[13px] text-white/85">{when}</span>
       {countdown && (
         <span className="shrink-0 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-bold text-rose-700">
           {countdown}

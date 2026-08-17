@@ -19,7 +19,12 @@ export default function Highlights({ events, onSelect }) {
   if (picks.length < 3) return null
 
   return (
-    <div className="mt-14 sm:mt-20">
+    // 首頁的節奏：Hero 重、月曆中、那年今天窄，這裡放一段滿版的照片牆當高潮，
+    // 四段才不會像四張一樣大的投影片。
+    <div className="relative mt-14 sm:mt-24 py-12 sm:py-16">
+      <div aria-hidden
+        className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-screen -z-10 border-y border-dream-line/70 dark:border-white/10"
+        style={{ background: 'linear-gradient(180deg, rgba(168,85,247,0.07), rgba(236,72,153,0.05))' }} />
       <div className="mb-5 flex items-end justify-between gap-3">
         <div>
           <div className="eyebrow"><Icon n="images" className="text-[10px]" /> Photos</div>

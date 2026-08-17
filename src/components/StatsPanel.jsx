@@ -126,7 +126,7 @@ export default function StatsPanel({ events }) {
                   </span>
 
                   {on && v > 0 && (
-                    <span className="absolute right-12 -top-1 z-10 rounded-lg bg-dream-ink text-white text-[11.5px] px-2.5 py-1.5 shadow-lg whitespace-nowrap pointer-events-none">
+                    <span className="absolute right-12 -top-1 z-10 rounded-lg bg-dream-ink text-white text-[11px] px-2.5 py-1.5 shadow-lg whitespace-nowrap pointer-events-none">
                       本體 {cv} · 個人 {sv}
                     </span>
                   )}
@@ -152,16 +152,16 @@ export default function StatsPanel({ events }) {
               <Icon n="bullseye" className="text-bloom-rose" /> 本體 / 個人
             </h3>
             <div className="flex h-9 rounded-full overflow-hidden border border-white/60">
-              <div className="flex items-center justify-center text-[12px] font-bold text-white"
+              <div className="flex items-center justify-center text-[13px] font-bold text-white"
                    style={{ width: `${(s.core / s.total) * 100}%`, background: 'linear-gradient(135deg, #ec4899, #8b5cf6)' }}>
                 {s.core > 0 && `本體 ${s.core}`}
               </div>
-              <div className="flex items-center justify-center text-[12px] font-semibold text-dream-sub bg-white/60"
+              <div className="flex items-center justify-center text-[13px] font-semibold text-dream-sub bg-white/60"
                    style={{ width: `${(s.side / s.total) * 100}%` }}>
                 {s.side > 0 && `個人 ${s.side}`}
               </div>
             </div>
-            <div className="mt-4 flex items-center justify-between text-[12.5px] text-dream-sub">
+            <div className="mt-4 flex items-center justify-between text-[13px] text-dream-sub">
               <span>本體 {(s.core / s.total * 100).toFixed(0)}% · 個人 {(s.side / s.total * 100).toFixed(0)}%</span>
               <span className="font-semibold">全團 {s.fullBand} 場</span>
             </div>
@@ -206,7 +206,7 @@ export default function StatsPanel({ events }) {
               <div key={mo} className="relative flex-1 h-full flex flex-col justify-end items-center gap-2"
                 onMouseEnter={() => setHoverMonth(mo)} onMouseLeave={() => setHoverMonth(null)}>
                 {on && v > 0 && (
-                  <span className="absolute -top-1 z-10 rounded-lg bg-dream-ink text-white text-[11.5px] px-2.5 py-1.5 shadow-lg whitespace-nowrap pointer-events-none">
+                  <span className="absolute -top-1 z-10 rounded-lg bg-dream-ink text-white text-[11px] px-2.5 py-1.5 shadow-lg whitespace-nowrap pointer-events-none">
                     {mo} 月 · {v} 場
                   </span>
                 )}
@@ -294,7 +294,7 @@ function Legend({ items }) {
   return (
     <div className="flex items-center gap-3 shrink-0 pt-1">
       {items.map(it => (
-        <span key={it.key} className="inline-flex items-center gap-1.5 text-[12px] text-dream-sub">
+        <span key={it.key} className="inline-flex items-center gap-1.5 text-[13px] text-dream-sub">
           <span className="w-2.5 h-2.5 rounded-full" style={{ background: it.color }} />
           {it.label}
         </span>

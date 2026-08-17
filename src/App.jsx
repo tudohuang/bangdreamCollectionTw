@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, lazy, Suspense } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import { useEvents } from './hooks/useEvents.js'
+import { usePulse } from './hooks/usePulse.js'
 import { useMediaQuery } from './hooks/useMediaQuery.js'
 // 首頁與圖鑑用得到的，直接進主包
 import Hero from './components/Hero.jsx'
@@ -13,15 +14,17 @@ import Reveal from './components/Reveal.jsx'
 import Footer from './components/Footer.jsx'
 import Icon from './components/Icon.jsx'
 import UrgentBar from './components/UrgentBar.jsx'
+import ResultBar from './components/ResultBar.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import { readHash, writeHash } from './utils/url.js'
 import { rootGroup } from './utils/bands.js'
 import { eventCharacters, detectCity } from './utils/derive.js'
 import { coverOf } from './utils/media.js'
 import { matchSearch } from './utils/search.js'
-import { eventStatus, todayStr } from './utils/datetime.js'
+import { eventStatus, todayStr, daysUntil } from './utils/datetime.js'
 import { milestoneMap } from './utils/milestones.js'
 import { isUrgent, urgentEvents } from './utils/urgency.js'
+import { buildAppliedChips } from './utils/filters.js'
 import { downloadIcs } from './utils/ics.js'
 import { getAttended, saveAttended } from './utils/attended.js'
 
@@ -36,6 +39,7 @@ const OtherHalf = lazy(() => import('./components/OtherHalf.jsx'))
 const YearReview = lazy(() => import('./components/YearReview.jsx'))
 const Contribute = lazy(() => import('./components/Contribute.jsx'))
 const CommandPalette = lazy(() => import('./components/CommandPalette.jsx'))
+const PulsePage = lazy(() => import('./components/PulsePage.jsx'))
 
 // 換頁時的佔位：高度先撐住，避免內容跳動
 function PageFallback({ h = 320 }) {
@@ -63,6 +67,7 @@ const PAGE_TABS = [
   ['home', '首頁', 'house'],
   ['collection', '圖鑑', 'grid'],
   ['people', '聲優', 'microphone'],
+  ['pulse', '動態', 'bolt'],
   ['stats', '數據', 'chart-simple'],
   ['me', '我的', 'circle-check'],
 ]
@@ -135,12 +140,14 @@ function paramsToFilters(params) {
 
 export default function App() {
   const { events, source, updatedAt, retry } = useEvents()
+  const { roster, pulse, source: pulseSource } = usePulse()
   const [page, setPage] = useState('home')
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const [detailId, setDetailId] = useState(null)
   const [profile, setProfile] = useState(null)  // {kind:'person'|'band', value} | null
   const [paletteOpen, setPaletteOpen] = useState(false)
-  const wideLayout = useMediaQuery('(min-width: 1280px)')
+  // 1024–1280 這段最尷尬：螢幕夠寬、橫條卻拉得很長。側欄提前到 lg 就出現
+  const wideLayout = useMediaQuery('(min-width: 1024px)')
   const [attended, setAttended] = useState(() => getAttended())
   const [dark, setDark] = useState(() =>
     typeof document !== 'undefined' && document.documentElement.classList.contains('dark'))
@@ -158,7 +165,8 @@ export default function App() {
   useEffect(() => {
     const el = headerRef.current
     if (!el || typeof ResizeObserver === 'undefined') return
-    const sync = () => document.documentElement.style.setProperty('--sticky-top', `${Math.round(el.offsetHeight + 16)}px`)
+    // 貼齊頁首底線（不留縫），縫隙會露出從底下捲過去的卡片
+    const sync = () => document.documentElement.style.setProperty('--sticky-top', `${Math.round(el.offsetHeight)}px`)
     sync()
     const ro = new ResizeObserver(sync)
     ro.observe(el)
@@ -178,7 +186,7 @@ export default function App() {
         setDetailId(null); setProfile(null)
         setPage('collection')
         setFilters({ ...DEFAULT_FILTERS, ...paramsToFilters(h.params) })
-      } else if (h.route === 'people' || h.route === 'stats' || h.route === 'me') {
+      } else if (h.route === 'people' || h.route === 'stats' || h.route === 'me' || h.route === 'pulse') {
         setDetailId(null); setProfile(null)
         setPage(h.route)
         scrollToTop()
@@ -215,6 +223,17 @@ export default function App() {
     [events, filters, attended])
   // 里程碑一定要對「全部」場次算，篩選過的算出來會是假的
   const milestones = useMemo(() => milestoneMap(events), [events])
+  // 篩到 0 筆時拿來推薦：離今天最近的幾場（前後都算）
+  const nearest = useMemo(() => {
+    const today = todayStr()
+    return events
+      .filter(e => e.startDate)
+      .map(e => ({ e, d: Math.abs(daysUntil(e.startDate, today) ?? 99999) }))
+      .sort((a, b) => a.d - b.d)
+      .slice(0, 3)
+      .map(o => o.e)
+  }, [events])
+  const appliedChips = useMemo(() => buildAppliedChips(filters), [filters])
   const exportIcs = () => downloadIcs(filtered, 'bangdream-tw.ics')
   const detailEvent = useMemo(
     () => (detailId ? events.find(e => e.id === detailId) : null),
@@ -350,14 +369,15 @@ export default function App() {
               onToggleAttended={toggleAttended}
               onSelect={handleOpenDetail}
               onClose={handleCloseProfile}
+              sheetRoster={roster}
             />
           </Suspense></ErrorBoundary>
         ) : page === 'collection' ? (
           <section id="wall" className="scroll-mt-[var(--sticky-top)]">
             <ErrorBoundary>
-              {/* xl 以上：篩選變成左側常駐工作台，右邊專心放卡牆 */}
-              <div className="xl:grid xl:grid-cols-[268px_minmax(0,1fr)] xl:gap-8 xl:items-start">
-                <div className="xl:sticky xl:top-[var(--sticky-top)]">
+              {/* lg 以上：篩選變成左側常駐工作台，右邊專心放卡牆 */}
+              <div className="lg:grid lg:grid-cols-[254px_minmax(0,1fr)] xl:grid-cols-[268px_minmax(0,1fr)] lg:gap-6 xl:gap-8 lg:items-start">
+                <div className="lg:sticky lg:top-[calc(var(--sticky-top)+16px)]">
                   <FilterPanel
                     events={events}
                     filters={filters}
@@ -368,6 +388,16 @@ export default function App() {
                     onExportIcs={exportIcs}
                   />
                 </div>
+                {/* 有套條件時，卡牆上方多一條摘要；年份站牌就再往下讓一條 */}
+                <div className="min-w-0"
+                  style={{ '--wall-top': appliedChips.length ? 'calc(var(--sticky-top) + 56px)' : 'var(--sticky-top)' }}>
+                <ResultBar
+                  filters={filters}
+                  onChange={updateFilters}
+                  onReset={resetFilters}
+                  count={filtered.length}
+                  total={events.length}
+                />
                 <EventWall
                   events={filtered}
                   allEvents={events}
@@ -377,12 +407,20 @@ export default function App() {
                   onToggleAttended={toggleAttended}
                   onSelect={handleOpenDetail}
                   onReset={resetFilters}
+                  groupByYear={filters.order.startsWith('date')}
+                  suggestions={nearest}
                 />
+                </div>
               </div>
             </ErrorBoundary>
           </section>
         ) : page === 'people' ? (
-          <ErrorBoundary><Suspense fallback={<PageFallback h={520} />}><PeoplePage events={events} onSelect={handleOpenDetail} /></Suspense></ErrorBoundary>
+          <ErrorBoundary><Suspense fallback={<PageFallback h={520} />}><PeoplePage events={events} onSelect={handleOpenDetail} sheetRoster={roster} /></Suspense></ErrorBoundary>
+        ) : page === 'pulse' ? (
+          <ErrorBoundary><Suspense fallback={<PageFallback h={520} />}>
+            <PulsePage roster={roster} pulse={pulse} events={events}
+              source={pulseSource} onSelectEvent={handleOpenDetail} />
+          </Suspense></ErrorBoundary>
         ) : page === 'stats' ? (
           <Suspense fallback={<PageFallback h={560} />}>
             <Reveal as="section" className="mt-14 sm:mt-20">
@@ -418,8 +456,7 @@ export default function App() {
       </main>
 
       <Footer source={source} updatedAt={updatedAt} onRetry={retry} />
-      <RandomButton onClick={handleRandom} />
-      <BackToTop />
+      <FloatingDock onRandom={handleRandom} />
       <Analytics />
 
       <Suspense fallback={null}>
@@ -474,35 +511,39 @@ function ScrollProgress() {
   )
 }
 
-function BackToTop() {
-  const [show, setShow] = useState(false)
+// 右下角的浮動工具：兩顆鈕收進同一個 dock，間距只定義一次，
+// 也一起讓開手機的安全區（瀏海機底部那條 home indicator）。
+function FloatingDock({ onRandom }) {
+  const [showTop, setShowTop] = useState(false)
   useEffect(() => {
-    const onScroll = () => setShow(window.scrollY > 600)
+    const onScroll = () => setShowTop(window.scrollY > 600)
+    onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
-  if (!show) return null
-  return (
-    <button
-      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-      aria-label="回到頂部"
-      className="fixed bottom-[76px] right-5 sm:right-6 z-40 grid place-items-center w-11 h-11 rounded-full text-white bg-bloom-indigo hover:bg-bloom-violet transition-colors shadow-lg shadow-bloom-indigo/30 animate-pop"
-    >
-      <Icon n="arrow-up" />
-    </button>
-  )
-}
 
-// 隨機跳一場活動
-function RandomButton({ onClick }) {
   return (
-    <button
-      onClick={onClick}
-      aria-label="隨機抽一場"
-      title="隨機抽一場"
-      className="group fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 grid place-items-center w-11 h-11 rounded-full bg-white border border-dream-line text-bloom-indigo shadow-lg shadow-bloom-indigo/15 hover:text-white hover:bg-bloom-indigo hover:border-bloom-indigo transition-colors dark:bg-white/10 dark:border-white/15"
+    <div
+      className="fixed right-4 sm:right-6 bottom-4 sm:bottom-6 z-40 flex flex-col items-center gap-2.5"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
-      <Icon n="wand-magic-sparkles" className="transition-transform group-hover:rotate-12 group-active:scale-90" />
-    </button>
+      {showTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label="回到頂部"
+          className="grid place-items-center w-11 h-11 rounded-full text-white bg-bloom-indigo hover:bg-bloom-violet transition-colors shadow-lg shadow-bloom-indigo/30 animate-pop"
+        >
+          <Icon n="arrow-up" />
+        </button>
+      )}
+      <button
+        onClick={onRandom}
+        aria-label="隨機抽一場"
+        title="隨機抽一場"
+        className="group grid place-items-center w-11 h-11 rounded-full bg-white border border-dream-line text-bloom-indigo shadow-lg shadow-bloom-indigo/15 hover:text-white hover:bg-bloom-indigo hover:border-bloom-indigo transition-colors dark:bg-white/10 dark:border-white/15"
+      >
+        <Icon n="wand-magic-sparkles" className="transition-transform group-hover:rotate-12 group-active:scale-90" />
+      </button>
+    </div>
   )
 }
