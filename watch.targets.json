@@ -1,0 +1,312 @@
+{
+  "note": "actorId = eventernote（www.eventernote.com/actors/<名字>/<id>）　eplusId = イープラス藝人頁（eplus.jp/sf/word/<id>）　對不到的自己去那兩個站找 id 填進來，之後就會一直沿用。",
+  "piaKeywords": [
+    "MyGO!!!!!",
+    "Ave Mujica",
+    "Poppin'Party",
+    "Roselia",
+    "RAISE A SUILEN",
+    "BanG Dream"
+  ],
+  "news": [
+    {
+      "label": "BanG Dream! 官網",
+      "url": "https://bang-dream.com/news"
+    },
+    {
+      "label": "華視新聞",
+      "search": "https://news.cts.com.tw/search/?keyword={kw}",
+      "keywords": [
+        "BanG Dream",
+        "MyGO",
+        "Ave Mujica",
+        {
+          "kw": "聲優",
+          "require": [
+            "來台",
+            "訪台",
+            "台北",
+            "台灣",
+            "台中",
+            "高雄",
+            "見面會",
+            "公演",
+            "開賣"
+          ]
+        }
+      ]
+    }
+  ],
+  "targets": [
+    {
+      "name": "愛美",
+      "band": "Poppin'Party",
+      "kind": "person",
+      "actorId": 2806,
+      "actorName": "愛美",
+      "eplusId": "0000054293",
+      "eplusName": "愛美"
+    },
+    {
+      "name": "伊藤彩沙",
+      "band": "Poppin'Party",
+      "kind": "person",
+      "actorId": 5588,
+      "actorName": "伊藤彩沙",
+      "eplusId": "0000066806",
+      "eplusName": "伊藤彩沙"
+    },
+    {
+      "name": "西本里美",
+      "band": "Poppin'Party",
+      "kind": "person",
+      "actorId": 13822,
+      "actorName": "西本りみ",
+      "eplusId": "0000100399",
+      "eplusName": "西本りみ"
+    },
+    {
+      "name": "大塚紗英",
+      "band": "Poppin'Party",
+      "kind": "person",
+      "actorId": 14437,
+      "actorName": "大塚紗英",
+      "eplusId": "0000100398",
+      "eplusName": "大塚紗英"
+    },
+    {
+      "name": "大橋彩香",
+      "band": "Poppin'Party",
+      "kind": "person",
+      "actorId": 2777,
+      "actorName": "大橋彩香",
+      "eplusId": "0000058996",
+      "eplusName": "大橋彩香"
+    },
+    {
+      "name": "Poppin'Party",
+      "band": "Poppin'Party",
+      "kind": "band",
+      "actorId": 14234,
+      "actorName": "Poppin'Party",
+      "eplusId": "0000078045",
+      "eplusName": "Poppin’Party"
+    },
+    {
+      "name": "相羽あいな",
+      "band": "Roselia",
+      "kind": "person",
+      "actorId": 21127,
+      "actorName": "相羽あいな",
+      "eplusId": "0000099437",
+      "eplusName": "相羽あいな"
+    },
+    {
+      "name": "工藤晴香",
+      "band": "Roselia",
+      "kind": "person",
+      "actorId": 1633,
+      "actorName": "工藤晴香",
+      "eplusId": "0000100400",
+      "eplusName": "工藤晴香"
+    },
+    {
+      "name": "中島由貴",
+      "band": "Roselia",
+      "kind": "person",
+      "actorId": 12491,
+      "actorName": "中島由貴",
+      "eplusId": "0000081409",
+      "eplusName": "中島由貴"
+    },
+    {
+      "name": "櫻川惠",
+      "band": "Roselia",
+      "kind": "person",
+      "actorId": 2751,
+      "actorName": "櫻川めぐ",
+      "eplusId": "0000055858",
+      "eplusName": "櫻川めぐ"
+    },
+    {
+      "name": "志崎樺音",
+      "band": "Roselia",
+      "kind": "person",
+      "actorId": 42894,
+      "actorName": "志崎樺音",
+      "eplusId": "0000136592",
+      "eplusName": "志崎樺音"
+    },
+    {
+      "name": "Roselia",
+      "band": "Roselia",
+      "kind": "band",
+      "actorId": 24401,
+      "actorName": "Roselia",
+      "eplusId": "0000112794",
+      "eplusName": "Roselia"
+    },
+    {
+      "name": "Raychell",
+      "band": "RAISE A SUILEN",
+      "kind": "person",
+      "actorId": 16232,
+      "actorName": "Raychell",
+      "eplusId": "0000075134",
+      "eplusName": "Raychell"
+    },
+    {
+      "name": "紡木吏佐",
+      "band": "RAISE A SUILEN",
+      "kind": "person",
+      "actorId": 32136,
+      "actorName": "紡木吏佐",
+      "eplusId": "0000121796",
+      "eplusName": "紡木吏佐"
+    },
+    {
+      "name": "夏芽",
+      "band": "RAISE A SUILEN",
+      "kind": "person",
+      "actorId": 34384,
+      "actorName": "夏芽",
+      "eplusId": "0000121789",
+      "eplusName": "夏芽"
+    },
+    {
+      "name": "倉知玲鳳",
+      "band": "RAISE A SUILEN",
+      "kind": "person",
+      "actorId": 32783,
+      "actorName": "倉知玲鳳",
+      "eplusId": "0000121788",
+      "eplusName": "倉知玲鳳"
+    },
+    {
+      "name": "小原莉子",
+      "band": "RAISE A SUILEN",
+      "kind": "person",
+      "actorId": 9705,
+      "actorName": "小原莉子",
+      "eplusId": "0000099163",
+      "eplusName": "小原莉子"
+    },
+    {
+      "name": "RAISE A SUILEN",
+      "band": "RAISE A SUILEN",
+      "kind": "band",
+      "actorId": 39397,
+      "actorName": "RAISE A SUILEN",
+      "eplusId": "0000121787",
+      "eplusName": "RAISE A SUILEN"
+    },
+    {
+      "name": "羊宮妃那",
+      "band": "MyGO!!!!!",
+      "kind": "person",
+      "actorId": 54104,
+      "actorName": "羊宮妃那",
+      "eplusId": "0000153331",
+      "eplusName": "羊宮妃那"
+    },
+    {
+      "name": "立石凜",
+      "band": "MyGO!!!!!",
+      "kind": "person",
+      "actorId": 61313,
+      "actorName": "立石凛",
+      "eplusId": "0000158408",
+      "eplusName": "立石凛"
+    },
+    {
+      "name": "青木陽菜",
+      "band": "MyGO!!!!!",
+      "kind": "person",
+      "actorId": 59830,
+      "actorName": "青木陽菜",
+      "eplusId": "0000158409",
+      "eplusName": "青木陽菜"
+    },
+    {
+      "name": "小日向美香",
+      "band": "MyGO!!!!!",
+      "kind": "person",
+      "actorId": 63191,
+      "actorName": "小日向美香",
+      "eplusId": "0000158410",
+      "eplusName": "小日向美香"
+    },
+    {
+      "name": "林鼓子",
+      "band": "MyGO!!!!!",
+      "kind": "person",
+      "actorId": 30284,
+      "actorName": "林鼓子",
+      "eplusId": "0000119877",
+      "eplusName": "林鼓子"
+    },
+    {
+      "name": "MyGO!!!!!",
+      "band": "MyGO!!!!!",
+      "kind": "band",
+      "actorId": 66346,
+      "actorName": "MyGO!!!!!",
+      "eplusId": "0000158407",
+      "eplusName": "MyGO!!!!!"
+    },
+    {
+      "name": "佐佐木李子",
+      "band": "Ave Mujica",
+      "kind": "person",
+      "actorId": 19452,
+      "actorName": "佐々木李子",
+      "eplusId": "0000086614",
+      "eplusName": "佐々木李子"
+    },
+    {
+      "name": "渡瀨結月",
+      "band": "Ave Mujica",
+      "kind": "person",
+      "actorId": 55045,
+      "actorName": "渡瀬結月",
+      "eplusId": "0000143814",
+      "eplusName": "渡瀬結月"
+    },
+    {
+      "name": "米澤茜",
+      "band": "Ave Mujica",
+      "kind": "person",
+      "actorId": 73109,
+      "actorName": "米澤茜",
+      "eplusId": "0000178332",
+      "eplusName": "米澤茜"
+    },
+    {
+      "name": "岡田夢以",
+      "band": "Ave Mujica",
+      "kind": "person",
+      "actorId": 37809,
+      "actorName": "岡田夢以",
+      "eplusId": "0000133660",
+      "eplusName": "岡田夢以"
+    },
+    {
+      "name": "高尾奏音",
+      "band": "Ave Mujica",
+      "kind": "person",
+      "actorId": 12490,
+      "actorName": "高尾奏音",
+      "eplusId": "0000080974",
+      "eplusName": "高尾奏音"
+    },
+    {
+      "name": "Ave Mujica",
+      "band": "Ave Mujica",
+      "kind": "band",
+      "actorId": 70564,
+      "actorName": "Ave Mujica",
+      "eplusId": "0000159108",
+      "eplusName": "Ave Mujica"
+    }
+  ]
+}

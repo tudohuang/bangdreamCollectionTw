@@ -7,3 +7,8 @@ dist
 .env.local
 brag-output*/
 reports/
+
+# 看盤終端的本機狀態與匯出檔
+.watch-state.json
+watch-export.csv
+.cache/
