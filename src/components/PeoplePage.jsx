@@ -11,7 +11,7 @@ const ORDERS = [
   ['名字', 'name'],
 ]
 
-// 聲優目錄：資料的主角是「人」。每張卡都帶自己的最近一場，不會 41 張長得一樣。
+// 聲優目錄：每張卡帶自己的最近一場，避免所有卡片內容雷同
 export default function PeoplePage({ events, onSelect, sheetRoster = [] }) {
   const [q, setQ] = useState('')
   const [order, setOrder] = useState('count')

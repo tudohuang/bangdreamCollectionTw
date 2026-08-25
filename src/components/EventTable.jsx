@@ -1,7 +1,7 @@
 import { isUrgent } from '../utils/urgency.js'
 
-// 總表 = 原封不動的整張 sheet，毫無修飾 —— 但「樸素」不等於「硬寫死白底黑字」，
-// 夜場模式那樣會整片白到刺眼。樣式改吃 .sheet-table（見 index.css），兩種主題都讀得下去。
+// 總表：比照原始 sheet 的欄位順序，不做額外整理。
+// 樣式走 .sheet-table（見 index.css），淺色與夜場模式都有定義。
 const COLUMNS = [
   ['年份', e => e.year ?? ''],
   ['開始日期', e => e.startDate ?? ''],

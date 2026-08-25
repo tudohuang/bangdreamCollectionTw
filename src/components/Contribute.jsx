@@ -1,7 +1,7 @@
 import { REPORT_URL } from '../config.js'
 import Icon from './Icon.jsx'
 
-// 社群共筆入口：缺場次／有照片情報，歡迎一起補。沒設定 REPORT_URL 就不顯示。
+// 資料回報入口；config.js 沒設 REPORT_URL 就不顯示。
 export default function Contribute() {
   if (!REPORT_URL) return null
   return (

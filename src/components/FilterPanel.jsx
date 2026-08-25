@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { rootGroup, bandMeta } from '../utils/bands.js'
 import { uniqueCharacters, uniqueVenues, uniqueCities } from '../utils/derive.js'
@@ -15,8 +15,11 @@ const VIEWS = [
   ['時間軸', 'timeline', 'bars-staggered'],
   ['總表', 'table', 'table'],
 ]
+// 工具列只留兩種常用檢視；總表是給要對資料的人用的，收進「全部篩選」。
+// 已經在總表裡的時候要把它顯示出來，不然沒有路可以切回去。
+const mainViews = (view) => (view === 'table' ? VIEWS : VIEWS.slice(0, 2))
 
-// 進階篩選維度（收進「全部篩選」抽屜，不佔工具列）
+// 進階篩選維度：收在「全部篩選」抽屜裡，不佔工具列
 const ADV_KEYS = ['year', 'groups', 'people', 'characters', 'types', 'venues', 'cities', 'fullBand']
 
 // variant='bar'（預設，內容上方橫條）／'sidebar'（xl 以上的左側常駐工作台）
@@ -28,6 +31,15 @@ export default function FilterPanel({ events, filters, onChange, onReset, result
     (filters.year !== 'all' ? 1 : 0) +
     (filters.fullBand !== 'all' ? 1 : 0) +
     ['groups', 'people', 'characters', 'types', 'venues', 'cities'].reduce((n, k) => n + (filters[k]?.length || 0), 0)
+
+  // 手機的篩選鈕要顯示「現在有幾個條件生效」，所以連快篩也要算進去
+  const quickCount =
+    (filters.category !== 'all' ? 1 : 0) +
+    (filters.timeframe !== 'all' ? 1 : 0) +
+    (filters.attended !== 'all' ? 1 : 0) +
+    (filters.photos !== 'all' ? 1 : 0) +
+    (filters.urgent !== 'all' ? 1 : 0)
+  const mobileCount = advCount + quickCount
 
   const chips = buildAppliedChips(filters)
   const openSheet = () => setSheetOpen(true)
@@ -52,7 +64,7 @@ export default function FilterPanel({ events, filters, onChange, onReset, result
     document.body
   )
 
-  // ---------- 側欄：標題與結果數也搬進來，左邊那條就是整個圖鑑的操作台 ----------
+  // ---------- sidebar：標題與結果數一起收進側欄 ----------
   if (side) {
     return (
       <div className="glass p-4 flex flex-col gap-3.5">
@@ -64,10 +76,10 @@ export default function FilterPanel({ events, filters, onChange, onReset, result
           </div>
         </div>
 
-        <SearchBox filters={filters} onChange={onChange} />
+        <SearchBox filters={filters} onChange={onChange} resultCount={resultCount} />
         <Segmented full value={filters.category} onChange={(v) => onChange({ category: v })}
           options={[['全部', 'all'], ['本體', '本體'], ['個人', '擦邊']]} />
-        <Segmented full value={filters.view} onChange={(v) => onChange({ view: v })} options={VIEWS} />
+        <Segmented full value={filters.view} onChange={(v) => onChange({ view: v })} options={mainViews(filters.view)} />
 
         <span className="h-px bg-dream-line dark:bg-white/10" />
 
@@ -108,21 +120,45 @@ export default function FilterPanel({ events, filters, onChange, onReset, result
       </div>
 
       {/* 單列工具列：搜尋 + 本體/個人 + 檢視 */}
-      <div className="glass p-4 sm:p-5">
-        <div className="grid lg:grid-cols-[1fr_auto_auto] gap-3 items-center">
-          <SearchBox filters={filters} onChange={onChange} />
+      <div className="glass p-4 sm:p-5 py-3 sm:py-5">
+        {/* 桌機：搜尋 ＋ 兩組切換排成一列 */}
+        <div className="hidden sm:grid lg:grid-cols-[1fr_auto_auto] gap-3 items-center">
+          <SearchBox filters={filters} onChange={onChange} resultCount={resultCount} />
           <Segmented value={filters.category} onChange={(v) => onChange({ category: v })}
             options={[['全部', 'all'], ['本體', '本體'], ['個人', '擦邊']]} />
-          <Segmented value={filters.view} onChange={(v) => onChange({ view: v })} options={VIEWS} />
+          <Segmented value={filters.view} onChange={(v) => onChange({ view: v })} options={mainViews(filters.view)} />
         </div>
 
-        {/* 常用快篩 + 全部篩選 + 排序 */}
-        <div className="mt-3 flex flex-wrap items-center gap-2">
+        {/* 手機：一列搞定 —— 搜尋框 ＋ 一顆篩選鈕。
+            把七八個 pill 攤在畫面上是桌機的做法，手機那樣做會吃掉半個螢幕，
+            而且橫滑列永遠有東西被切在邊界。條件全部收進 Bottom Sheet。 */}
+        <div className="sm:hidden flex items-center gap-2">
+          <div className="min-w-0 flex-1">
+            <SearchBox filters={filters} onChange={onChange} resultCount={resultCount} compact />
+          </div>
+          <button onClick={openSheet}
+            aria-label={mobileCount ? `篩選，目前 ${mobileCount} 個條件` : '篩選'}
+            className={`shrink-0 inline-flex items-center gap-1.5 h-10 px-3.5 rounded-full text-[13px] font-medium transition-colors ${
+              mobileCount
+                ? 'bg-bloom-indigo text-white'
+                : 'border border-dream-line text-dream-sub dark:border-white/15'}`}>
+            <Icon n="sliders" className="text-[12px]" />
+            篩選
+            {mobileCount > 0 && (
+              <span className="grid place-items-center min-w-[18px] h-[18px] px-1 rounded-full bg-white/25 text-[11px] font-bold tabular-nums">
+                {mobileCount}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* 桌機：常用快篩攤開排 */}
+        <div className="hidden sm:flex mt-3 items-center gap-2 flex-wrap">
           <TimeframePills filters={filters} onChange={onChange} />
-          <span className="w-px h-5 bg-dream-line mx-1" />
+          <span className="shrink-0 w-px h-5 bg-dream-line mx-1" />
           <QuickPills filters={filters} onChange={onChange} advCount={advCount} onOpenSheet={openSheet} onExportIcs={onExportIcs} hasUrgent={hasUrgent} />
-          <span className="ml-auto flex items-center gap-2">
-            <span className="text-[11px] text-dream-faint">排序</span>
+          <span className="shrink-0 sm:ml-auto flex items-center gap-2">
+            <span className="hidden sm:inline text-[11px] text-dream-faint">排序</span>
             <SortSelect filters={filters} onChange={onChange} />
           </span>
         </div>
@@ -141,17 +177,37 @@ export default function FilterPanel({ events, filters, onChange, onReset, result
 }
 
 // ---- 兩種版型共用的控制項 ----
-function SearchBox({ filters, onChange }) {
+// 清單內搜尋。刻意跟頂部工具列那顆放大鏡講不同的話 ——
+// 那顆是「跳到某個頁面」，這裡是「在這批活動裡過濾」，
+// placeholder 與右側的即時筆數都是在強調這件事。
+function SearchBox({ filters, onChange, resultCount, compact }) {
+  const has = !!filters.search
   return (
     <div className="relative">
-      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-dream-faint"><Icon n="magnifying-glass" /></span>
+      <span className={`absolute ${compact ? 'left-3' : 'left-3.5'} top-1/2 -translate-y-1/2 text-dream-faint`}>
+        <Icon n="magnifying-glass" className={compact ? 'text-[12px]' : ''} />
+      </span>
       <input
         type="search"
-        className="dream-input !pl-10"
-        placeholder="搜尋聲優、樂團、活動、城市…"
+        inputMode="search"
+        enterKeyHint="search"
+        aria-label="在活動清單裡搜尋"
+        className={`dream-input ${compact ? '!h-10 !text-[14px] !pl-9 !pr-24' : '!pl-10'} ${has && !compact ? '!pr-24' : ''}`}
+        placeholder={compact ? '在活動裡搜尋…' : '在這些活動裡搜尋聲優、樂團、城市…'}
         value={filters.search}
         onChange={(e) => onChange({ search: e.target.value })}
       />
+      {has && (
+        <span className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+          <span aria-live="polite" className="text-[12px] font-medium text-dream-faint tabular-nums">
+            {resultCount} 筆
+          </span>
+          <button type="button" onClick={() => onChange({ search: '' })} aria-label="清除搜尋"
+            className="grid place-items-center w-7 h-7 rounded-full text-dream-faint hover:text-dream-ink hover:bg-dream-line/60 dark:hover:bg-white/10">
+            <Icon n="xmark" className="text-[11px]" />
+          </button>
+        </span>
+      )}
     </div>
   )
 }
@@ -223,6 +279,9 @@ function AppliedChips({ chips, filters, onChange, onReset }) {
 
 // 「全部篩選」抽屜：手機從底部滑出（bottom sheet）、桌面置中對話框
 function FilterSheet({ events, filters, onChange, onClose, onReset, resultCount }) {
+  const [dragY, setDragY] = useState(0)
+  const panelRef = useRef(null)
+  const scrollRef = useRef(null)
   const years = useMemo(() => uniq(events.map(e => e.year).filter(Boolean)).sort((a, b) => a - b), [events])
   const types = useMemo(() => uniq(events.map(e => e.type).filter(Boolean)).sort(), [events])
   const groups = useMemo(() => uniq(events.flatMap(e => (e.relatedGroups || []).map(rootGroup))).sort(), [events])
@@ -248,17 +307,58 @@ function FilterSheet({ events, filters, onChange, onClose, onReset, resultCount 
     return () => { document.body.style.overflow = ''; window.removeEventListener('keydown', onKey) }
   }, [onClose])
 
+  // 手機：往下拉可以關掉。只在內容捲到最頂端時才接管，
+  // 否則使用者想往上捲條件清單就會誤關。
+  useEffect(() => {
+    const panel = panelRef.current
+    if (!panel) return
+    let y0 = null
+
+    const atTop = () => (scrollRef.current?.scrollTop ?? 0) <= 0
+    const onStart = (e) => { y0 = atTop() && e.touches.length === 1 ? e.touches[0].clientY : null }
+    const onMove = (e) => {
+      if (y0 === null) return
+      const dy = e.touches[0].clientY - y0
+      if (dy <= 0 || !atTop()) { y0 = null; setDragY(0); return }
+      setDragY(dy)
+    }
+    const onEnd = () => {
+      if (y0 === null) return
+      y0 = null
+      setDragY(cur => { if (cur > 110) onClose(); return 0 })
+    }
+
+    panel.addEventListener('touchstart', onStart, { passive: true })
+    panel.addEventListener('touchmove', onMove, { passive: true })
+    panel.addEventListener('touchend', onEnd, { passive: true })
+    panel.addEventListener('touchcancel', onEnd, { passive: true })
+    return () => {
+      panel.removeEventListener('touchstart', onStart)
+      panel.removeEventListener('touchmove', onMove)
+      panel.removeEventListener('touchend', onEnd)
+      panel.removeEventListener('touchcancel', onEnd)
+    }
+  }, [onClose])
+
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm" onClick={onClose}>
       <div
-        className="w-full sm:max-w-2xl max-h-[86vh] sm:max-h-[80vh] flex flex-col rounded-t-3xl sm:rounded-3xl border border-dream-line dark:border-white/15"
-        style={{ background: 'var(--modal-bg)' }}
+        ref={panelRef}
+        className="sheet-panel w-full sm:max-w-2xl max-h-[88vh] sm:max-h-[80vh] flex flex-col rounded-t-3xl sm:rounded-3xl border border-dream-line dark:border-white/15"
+        style={{
+          background: 'var(--modal-bg)',
+          transform: dragY ? `translateY(${dragY}px)` : undefined,
+          transition: dragY ? 'none' : undefined,
+        }}
         onClick={(e) => e.stopPropagation()}
-        role="dialog" aria-modal="true" aria-label="全部篩選"
+        role="dialog" aria-modal="true" aria-label="篩選"
       >
-        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-dream-line dark:border-white/10">
+        {/* 手機的抓握條：看得出可以往下拉關掉 */}
+        <span aria-hidden className="sm:hidden mx-auto mt-2.5 mb-1 w-10 h-1 rounded-full bg-dream-faint/40" />
+
+        <div className="flex items-center justify-between px-5 sm:px-6 py-3 sm:py-4 border-b border-dream-line dark:border-white/10">
           <h3 className="font-display font-bold text-[16px] text-dream-ink flex items-center gap-2">
-            <Icon n="sliders" className="text-bloom-indigo text-[13px]" /> 全部篩選
+            <Icon n="sliders" className="text-bloom-indigo text-[13px]" /> 篩選
           </h3>
           <div className="flex items-center gap-2">
             <button className="text-[13px] text-dream-faint hover:text-bloom-rose" onClick={onReset}>重設</button>
@@ -266,7 +366,37 @@ function FilterSheet({ events, filters, onChange, onClose, onReset, resultCount 
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto scrollbar-thin px-5 sm:px-6 py-5 space-y-5">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto scrollbar-thin px-5 sm:px-6 py-5 space-y-5">
+          {/* 手機的快篩本來攤在工具列上，現在收進來 */}
+          <div className="sm:hidden space-y-5">
+            <Row label="本體 / 個人">
+              <ChipGroup options={[['全部', 'all'], ['本體', '本體'], ['個人', '擦邊']]}
+                value={filters.category} onChange={(v) => onChange({ category: v })} single />
+            </Row>
+            <Row label="時間">
+              <ChipGroup options={TIMEFRAMES} value={filters.timeframe}
+                onChange={(v) => onChange({ timeframe: v })} single />
+            </Row>
+            <Row label="只看">
+              <ChipGroup
+                options={[['我去過', 'attended'], ['有照片', 'photos']]}
+                values={[
+                  ...(filters.attended === 'yes' ? ['attended'] : []),
+                  ...(filters.photos === 'yes' ? ['photos'] : []),
+                ]}
+                onToggle={(v) => onChange(v === 'attended'
+                  ? { attended: filters.attended === 'yes' ? 'all' : 'yes' }
+                  : { photos: filters.photos === 'yes' ? 'all' : 'yes' })} />
+            </Row>
+            <Row label="排序">
+              <ChipGroup options={ORDERS} value={filters.order}
+                onChange={(v) => onChange({ order: v })} single />
+            </Row>
+          </div>
+          <Row label="檢視方式">
+            <ChipGroup options={VIEWS.map(([label, v]) => [label, v])}
+              value={filters.view} onChange={(v) => onChange({ view: v })} single />
+          </Row>
           <Row label="年份">
             <ChipGroup options={[['全部', 'all'], ...years.map(y => [String(y), String(y)])]}
               value={String(filters.year)} onChange={(v) => onChange({ year: v })} single />
@@ -307,8 +437,9 @@ function FilterSheet({ events, filters, onChange, onClose, onReset, resultCount 
           </Row>
         </div>
 
-        <div className="px-5 sm:px-6 py-3.5 border-t border-dream-line dark:border-white/10">
-          <button className="btn-primary w-full sm:w-auto" onClick={onClose}>
+        <div className="px-5 sm:px-6 py-3.5 border-t border-dream-line dark:border-white/10"
+          style={{ paddingBottom: 'max(0.875rem, env(safe-area-inset-bottom, 0px))' }}>
+          <button className="btn-primary w-full sm:w-auto !h-11" onClick={onClose}>
             顯示 {resultCount} 筆結果
           </button>
         </div>
@@ -327,8 +458,8 @@ function Row({ label, children }) {
 }
 
 // single 模式用 value/onChange；多選模式用 values(array)/onToggle
-// 選項多的時候（聲優、場館…）不要一次倒 40 顆 chip 出來：
-// 先給前 N 個常用的 + 一個小搜尋框，已選的一律置頂，其餘收在「展開」後面。
+// 選項超過門檻時（聲優、場館…）只先顯示前 N 個並附搜尋框，
+// 已選的置頂，其餘收在「展開」後面。
 function ChipGroup({ options, value, onChange, values, onToggle, colored, single, initial = 8 }) {
   const [q, setQ] = useState('')
   const [open, setOpen] = useState(false)
@@ -383,7 +514,7 @@ function ChipGroup({ options, value, onChange, values, onToggle, colored, single
 
 function Segmented({ value, onChange, options, full }) {
   return (
-    <div className={`flex p-1 rounded-full bg-white border border-dream-line overflow-x-auto scrollbar-none max-w-full dark:bg-white/[.06] dark:border-white/15 ${full ? 'w-full' : ''}`}>
+    <div className={`flex shrink-0 p-1 rounded-full bg-white border border-dream-line overflow-x-auto scrollbar-none max-w-full dark:bg-white/[.06] dark:border-white/15 ${full ? 'w-full' : ''}`}>
       {options.map(([l, v, icon]) => (
         <button key={v}
           className={`${full ? 'flex-1 justify-center' : 'shrink-0'} whitespace-nowrap inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-medium transition-colors ${

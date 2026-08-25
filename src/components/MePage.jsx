@@ -1,11 +1,12 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { primaryMeta, isPersonal } from '../utils/bands.js'
 import { formatMonthDay } from '../utils/share.js'
 import { downloadPassCard, passStats } from '../utils/passImage.js'
+import { exportCode, importCode } from '../utils/backup.js'
 import Icon from './Icon.jsx'
 
-// 我的收藏：把「我去過」的打勾變成看得見的個人紀錄。
-export default function MePage({ events, attended, onToggleAttended, onSelect, onBrowse }) {
+// 我的收藏：把「我去過」的標記整理成個人紀錄。
+export default function MePage({ events, attended, onToggleAttended, onReplaceAttended, onSelect, onBrowse }) {
   const mine = useMemo(() =>
     events
       .filter(e => attended.has(e.id))
@@ -41,6 +42,9 @@ export default function MePage({ events, attended, onToggleAttended, onSelect, o
         <button onClick={onBrowse} className="btn-primary mt-6">
           去圖鑑打卡 <Icon n="arrow-right" className="text-[12px]" />
         </button>
+        <div className="max-w-md mx-auto mt-10 text-left">
+          <Backup attended={attended} onReplaceAttended={onReplaceAttended} />
+        </div>
       </section>
     )
   }
@@ -52,8 +56,6 @@ export default function MePage({ events, attended, onToggleAttended, onSelect, o
         <h2 className="section-h mt-1.5">我的收藏</h2>
       </div>
 
-      <PassProgress events={events} attended={attended} />
-
       {/* 個人數據磚 */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-10">
         <StatTile value={stats.total} label="去過場次" sub="attended" />
@@ -61,6 +63,9 @@ export default function MePage({ events, attended, onToggleAttended, onSelect, o
         <StatTile value={stats.topPerson} label={stats.topCount ? `見最多次 · ${stats.topCount} 場` : '見最多次'} sub="most seen" />
         <StatTile value={stats.firstYear || '—'} label={stats.firstTitle ? `第一場 · ${stats.firstTitle}` : '第一場'} sub="first show" />
       </div>
+
+      {/* 季票是玩票性質，排在真正的紀錄後面 */}
+      <PassProgress events={events} attended={attended} />
 
       {/* 去過的場次（新到舊） */}
       <ul className="space-y-2.5">
@@ -97,12 +102,71 @@ export default function MePage({ events, attended, onToggleAttended, onSelect, o
           )
         })}
       </ul>
+
+      <div className="mt-10">
+        <Backup attended={attended} onReplaceAttended={onReplaceAttended} />
+      </div>
     </section>
   )
 }
 
-// 季票不該只是一顆孤零零的下載鈕：先在頁面上把「你現在是幾等票、離下一等還差幾場」畫出來，
-// 打卡才有推進感（passStats 已經算好這些數字，直接用）。
+// 換裝置用的備份碼。沒有帳號，紀錄就只活在這台裝置的瀏覽器裡，
+// 所以至少要讓它能被帶走 —— 一段字串，自己保管，貼回去就還原。
+function Backup({ attended, onReplaceAttended }) {
+  const code = useMemo(() => exportCode(attended), [attended])
+  const [draft, setDraft] = useState('')
+  const [status, setStatus] = useState(null)
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(code)
+      setStatus({ ok: true, text: '備份碼已複製' })
+    } catch {
+      setStatus({ ok: false, text: '複製失敗，請手動選取' })
+    }
+  }
+
+  const restore = () => {
+    const parsed = importCode(draft)
+    if (!parsed) return setStatus({ ok: false, text: '這段不是有效的備份碼' })
+    onReplaceAttended(parsed.ids)
+    setDraft('')
+    setStatus({ ok: true, text: `已還原 ${parsed.numbers.length} 場參戰紀錄` })
+  }
+
+  return (
+    <div className="glass p-5 sm:p-6">
+      <h3 className="flex items-center gap-2.5 font-display font-bold text-[17px] text-dream-ink">
+        <Icon n="clipboard" className="text-bloom-sky" /> 換裝置備份
+      </h3>
+      <p className="text-[13px] text-dream-sub mt-1.5 leading-relaxed">
+        這站沒有帳號，打卡紀錄只存在這台裝置的瀏覽器。把下面這段複製起來自己保管，
+        換手機時貼回去就會還原。
+      </p>
+
+      <label className="block mt-4 text-[12px] font-semibold text-dream-sub">我的備份碼</label>
+      <div className="flex flex-col sm:flex-row gap-2 mt-1.5">
+        <input readOnly value={code || '（還沒有打卡紀錄）'} onFocus={(e) => e.target.select()}
+          className="min-w-0 flex-1 rounded-lg border border-dream-line bg-white/70 px-3 py-2 font-mono text-[12.5px] text-dream-ink dark:bg-white/[.06] dark:border-white/15" />
+        <button onClick={copy} disabled={!code} className="btn-ghost shrink-0 !h-11 sm:!h-auto disabled:opacity-40">複製</button>
+      </div>
+
+      <label className="block mt-4 text-[12px] font-semibold text-dream-sub">貼上備份碼還原</label>
+      <div className="flex flex-col sm:flex-row gap-2 mt-1.5">
+        <input value={draft} onChange={(e) => { setDraft(e.target.value); setStatus(null) }}
+          placeholder="BDTW:v2:…" spellCheck={false}
+          className="min-w-0 flex-1 rounded-lg border border-dream-line bg-white/70 px-3 py-2 font-mono text-[12.5px] text-dream-ink placeholder:text-dream-faint dark:bg-white/[.06] dark:border-white/15" />
+        <button onClick={restore} disabled={!draft.trim()} className="btn-primary shrink-0 !h-11 sm:!h-auto disabled:opacity-40">還原</button>
+      </div>
+
+      <p aria-live="polite" className={`text-[12.5px] mt-2.5 ${status ? (status.ok ? 'text-bloom-indigo' : 'text-bloom-rose') : 'text-dream-faint'}`}>
+        {status ? status.text : '還原會整份取代目前的紀錄，不會合併。'}
+      </p>
+    </div>
+  )
+}
+
+// 季票等級與進度；數字由 passImage 的 passStats 算好
 function PassProgress({ events, attended }) {
   const s = useMemo(() => passStats(events, attended), [events, attended])
   const tiers = [['紙票', 0], ['銀票', 15], ['金票', 35], ['黑卡', 60]]
@@ -118,7 +182,7 @@ function PassProgress({ events, attended }) {
             <span className="text-[11px] font-bold tracking-[0.22em] uppercase text-dream-faint">{s.tier.en}</span>
           </div>
           <div className="mt-1.5 text-[13px] text-dream-sub">
-            走過 <span className="font-bold text-dream-ink">{s.total}</span> / {s.all} 場 · {s.percent}%
+            走過 <span className="font-bold text-dream-ink">{s.total}</span> / {s.all} 筆 · {s.percent}%
             {nextTier && <span className="text-dream-faint"> · 再 {needed} 場升{nextTier[0]}</span>}
           </div>
         </div>

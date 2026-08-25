@@ -3,7 +3,7 @@ import { peopleFrequency, bandsWithoutCore } from '../utils/insights.js'
 import { bandMeta } from '../utils/bands.js'
 import Icon from './Icon.jsx'
 
-// 排行榜只講來最多的那幾個。這一區講另一半：只來過一次的人、還沒正式來過的團。
+// 排行榜的另一面：只來過一次的聲優、還沒以本體名義來過的樂團。
 export default function OtherHalf({ events }) {
   const once = useMemo(() => peopleFrequency(events).once, [events])
   const absent = useMemo(() => bandsWithoutCore(events), [events])

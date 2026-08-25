@@ -4,7 +4,7 @@ import { locatedVenues, unlocatedVenues, splitByProximity, relaxMarkers } from '
 import { makeTileView, tilesFor, OSM_ATTRIBUTION, OSM_ATTRIBUTION_URL, TILE_SIZE } from '../utils/tiles.js'
 import Icon from './Icon.jsx'
 
-// 場館插旗圖：底圖是真的 OpenStreetMap 圖磚（自己算 Web Mercator，沒裝 Leaflet），
+// 場館插旗圖：底圖是 OpenStreetMap 圖磚，投影自己算（見 utils/tiles.js），未使用 Leaflet，
 // 座標來自 Sheet。旗子會互相推開，但落點固定在真實位置，用細線連回去。
 export default function VenueMap({ events }) {
   const [hover, setHover] = useState(null)

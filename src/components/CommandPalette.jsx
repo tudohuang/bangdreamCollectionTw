@@ -15,8 +15,7 @@ export default function CommandPalette({ open, onClose, events, onSelectEvent })
 
   useEffect(() => { if (open) { setQ(''); setActive(0); setTimeout(() => inputRef.current?.focus(), 0) } }, [open])
 
-  // 沒輸入時不要開一個空盒子：先把「緊急 / 即將 / 最新收錄」端出來，
-  // ⌘K 就從搜尋框變成快速導覽面板。
+  // 還沒輸入時先列「緊急 / 即將 / 最新收錄」，讓 ⌘K 也能當快速導覽用
   const defaults = useMemo(() => {
     const today = todayStr()
     const seen = new Set()

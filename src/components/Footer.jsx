@@ -10,23 +10,23 @@ function sourceText(source, updatedAt) {
   return ''
 }
 
-const NAV = [['#/collection', '圖鑑'], ['#/people', '聲優'], ['#/stats', '數據'], ['#/me', '我的']]
+const NAV = [['#/collection', '活動'], ['#/people', '人物'], ['#/stats', '統計'], ['#/me', '我的'], ['#/labs', 'Labs']]
 
 export default function Footer({ source = 'bundled', updatedAt, onRetry }) {
   const txt = sourceText(source, updatedAt)
   return (
     <footer className="relative z-10 mt-8">
       <div className="max-w-6xl xl:max-w-[1400px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-8 pb-10">
-        <div className="glass-soft px-6 sm:px-8 py-7">
+        <div className="glass-soft px-6 sm:px-8 py-5 sm:py-7">
           <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-3">
               <span className="grid place-items-center w-9 h-9 rounded-lg bg-gradient-to-br from-bloom-rose to-bloom-indigo text-white text-[14px] shadow-sm dark:shadow-[0_0_14px_-2px_rgba(217,70,239,0.6)]"><Icon n="music" /></span>
               <div>
                 <div className="font-display font-bold text-[15px] text-dream-ink">邦邦來台圖鑑</div>
                 <div className="text-[11px] text-dream-faint">Taiwan BanG Dream! Collection</div>
               </div>
             </div>
-            <nav className="flex items-center gap-1 text-[13px] text-dream-sub">
+            <nav className="hidden sm:flex items-center gap-1 text-[13px] text-dream-sub">
               {NAV.map(([href, label]) => (
                 <a key={href} href={href}
                   className="rounded-full px-3 py-1.5 hover:text-dream-ink hover:bg-dream-line/60 transition-colors dark:hover:bg-white/10">

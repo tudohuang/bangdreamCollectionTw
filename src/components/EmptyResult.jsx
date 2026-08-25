@@ -3,18 +3,25 @@ import { coverOf } from '../utils/media.js'
 import Icon from './Icon.jsx'
 import Img from './Img.jsx'
 
-// 篩不到東西不該是死路：清掉條件之外，順手推最靠近今天的幾場，讓人有地方可以去。
-export default function EmptyResult({ onReset, suggestions = [], onSelect }) {
+// 篩不到結果時，除了清除條件，另外推薦離今天最近的幾場。
+// 有搜尋字串時要講清楚是「哪個字」沒找到，而且清除鈕要一次清掉搜尋與篩選 ——
+// 只清其中一個的話，使用者會看到畫面沒變，以為壞掉。
+export default function EmptyResult({ onReset, suggestions = [], onSelect, search = '' }) {
   return (
     <div className="glass px-6 py-14 sm:py-16 text-center">
       <div className="mx-auto mb-5 grid place-items-center w-16 h-16 rounded-full bg-bloom-indigo/10 text-bloom-indigo text-2xl">
         <Icon n="magnifying-glass" />
       </div>
-      <div className="font-display font-bold text-xl text-dream-ink">沒有符合的條目</div>
-      <div className="text-[13px] text-dream-sub mt-2">換個關鍵字，或放寬一點篩選條件試試</div>
+      <div className="font-display font-bold text-xl text-dream-ink">
+        {search ? <>找不到「{search}」</> : '沒有符合的條目'}
+      </div>
+      <div className="text-[13px] text-dream-sub mt-2">
+        {search ? '換個關鍵字，或放寬一點篩選條件試試' : '放寬一點篩選條件試試'}
+      </div>
       {onReset && (
         <button onClick={onReset} className="btn-primary mt-6">
-          <Icon n="arrow-rotate-left" className="text-[12px]" /> 清除全部篩選
+          <Icon n="arrow-rotate-left" className="text-[12px]" />
+          {search ? '清除搜尋與篩選' : '清除全部篩選'}
         </button>
       )}
 

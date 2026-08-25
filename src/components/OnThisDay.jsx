@@ -15,8 +15,8 @@ function mmddDistance(a, b) {
   return Math.min(diff, 365 - diff)
 }
 
-// 「那年今天」：歷年同一天的場次。剛好今天沒有的話就往前後找幾天，
-// 不然一年 365 天裡有 300 天這一區都是空的，等於沒做。
+// 「那年今天」：歷年同一天的場次。
+// 同一天沒有紀錄時往前後找幾天，否則一年裡大部分日子這一區都會是空的。
 export default function OnThisDay({ events, onSelect }) {
   const today = todayStr()
   const thisYear = Number(today.slice(0, 4))
@@ -49,7 +49,7 @@ export default function OnThisDay({ events, onSelect }) {
   const rest = list.slice(1)
 
   return (
-    // 收窄成一欄：夾在滿版月曆與滿版照片牆之間的一段安靜插曲
+    // 收窄成單欄，與上下兩段滿版區塊做出區隔
     <div className="mt-14 sm:mt-20 max-w-3xl">
       <div className="mb-5">
         <div className="eyebrow"><Icon n="heart" className="text-[10px]" /> Rewind</div>

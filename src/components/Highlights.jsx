@@ -5,8 +5,7 @@ import { coverOf } from '../utils/media.js'
 import Icon from './Icon.jsx'
 import Img from './Img.jsx'
 
-// 精選回憶：靜態九宮格（取代自動滾動跑馬燈）——最近九場有封面的已結束場次。
-// 看得清、點得準，點開即詳情。
+// 最近九場有封面的已結束場次。
 export default function Highlights({ events, onSelect }) {
   const picks = useMemo(() => {
     const today = todayStr()
@@ -19,8 +18,7 @@ export default function Highlights({ events, onSelect }) {
   if (picks.length < 3) return null
 
   return (
-    // 首頁的節奏：Hero 重、月曆中、那年今天窄，這裡放一段滿版的照片牆當高潮，
-    // 四段才不會像四張一樣大的投影片。
+    // 首頁各區塊刻意給不同的版面重量，這一段用滿版
     <div className="relative mt-14 sm:mt-24 py-12 sm:py-16">
       <div aria-hidden
         className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-screen -z-10 border-y border-dream-line/70 dark:border-white/10"

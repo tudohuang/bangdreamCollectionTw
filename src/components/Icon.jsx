@@ -1,5 +1,5 @@
-// 自架 FontAwesome SVG 子集 — 只打包下面這些圖示，移除整包 CDN。
-// 用法：<Icon n="music" />、<Icon n="calendar" /> 等。
+// FontAwesome 的自建子集：只打包下列圖示，不引入整包 CDN。
+// 用法：<Icon n="music" />
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faMusic, faStar, faFire, faPalette, faCrown, faRainbow, faBolt, faGuitar,

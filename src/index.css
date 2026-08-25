@@ -192,7 +192,8 @@
 
   /* ---------- 按鈕 / 標籤 ---------- */
   .pill {
-    @apply inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-150;
+    /* shrink-0：篩選列在手機是橫滑的，pill 被壓縮就會擠成一團看不懂 */
+    @apply inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-150;
     background: #fff;
     border: 1px solid theme('colors.dream.line');
     color: theme('colors.dream.sub');
@@ -281,8 +282,9 @@
   .eyebrow {
     @apply inline-flex items-center gap-1.5 text-[11px] font-bold text-dream-faint tracking-[0.18em] uppercase;
   }
+  /* 手機上這就是 iOS 的 large title：大、粗、貼齊左邊 */
   .section-h {
-    @apply font-display text-2xl sm:text-3xl font-bold text-dream-ink leading-tight;
+    @apply font-display text-[28px] sm:text-3xl font-extrabold sm:font-bold text-dream-ink leading-tight tracking-tight sm:tracking-normal;
   }
 
   /* 重點字漸層 */
@@ -668,3 +670,170 @@
     .skeleton { animation: none; }
   }
 }
+
+/* 心得的 Markdown 排版；只針對 renderMarkdown 會產出的那幾種標籤 */
+@layer components {
+  .prose-note > * + * { margin-top: 0.85em; }
+  .prose-note h3, .prose-note h4, .prose-note h5 {
+    @apply font-display font-bold text-dream-ink;
+    margin-top: 1.5em;
+    line-height: 1.4;
+  }
+  .prose-note h3 { @apply text-[17px]; }
+  .prose-note h4 { @apply text-[15px]; }
+  .prose-note h5 { @apply text-[14px]; }
+  .prose-note strong { @apply font-semibold text-dream-ink; }
+  .prose-note a { @apply text-bloom-indigo underline underline-offset-2 decoration-bloom-indigo/40 hover:decoration-bloom-indigo; }
+  .prose-note code { @apply font-mono text-[13px] px-1.5 py-0.5 rounded bg-dream-line/70 text-dream-ink dark:bg-white/10; }
+  .prose-note blockquote {
+    @apply pl-4 border-l-2 border-dream-line text-dream-faint italic dark:border-white/15;
+  }
+  .prose-note ul { @apply pl-5 list-disc marker:text-dream-faint; }
+  .prose-note li + li { margin-top: 0.3em; }
+  .prose-note hr { @apply my-6 border-0 border-t border-dream-line dark:border-white/10; }
+}
+
+/* 資料點類的小按鈕（時間軸上的圓點）：外觀維持小巧，觸控範圍補到手指按得到 */
+@layer components {
+  .tap-target { position: relative; }
+  .tap-target::after {
+    content: '';
+    position: absolute;
+    inset: -12px;
+  }
+}
+
+/* ---------- 加到主畫面之後，這些細節決定它像 App 還是像網頁 ---------- */
+
+/* 點擊時的灰色方框是行動瀏覽器的預設行為，App 不會有 */
+html { -webkit-tap-highlight-color: transparent; }
+
+/* 捲到底不要把捲動傳給外層（也讓瀏覽器內建的下拉重新整理讓位給我們自己的） */
+body { overscroll-behavior-y: contain; }
+
+/* 浮層內部捲到底時，不要連帶捲動背後的頁面 */
+.modal-ticket, .scrollbar-thin { overscroll-behavior: contain; }
+
+/* 介面元件（按鈕、導覽）不該被長按選取；內文照常可以選 */
+button, [role="button"], nav {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* 獨立視窗模式（已加到主畫面）：頁首讓開瀏海 */
+@media (display-mode: standalone) {
+  header.sticky { padding-top: env(safe-area-inset-top, 0px); }
+}
+
+/* ---------- 按下去要有反應（App 的手感，網頁常常沒有） ---------- */
+/* 桌機靠 hover 給回饋，手機沒有 hover —— 沒有按下狀態的話，
+   使用者不確定到底按到沒有，那一瞬間的空白就是「這是網頁」的感覺。 */
+@media (hover: none) {
+  .event-card:active,
+  .pill:active,
+  .btn-primary:active,
+  .btn-ghost:active,
+  .icon-btn:active {
+    transform: scale(0.97);
+    transition-duration: 60ms;
+  }
+  /* 列表列不縮放（會抖），改用背景閃一下 */
+  .row-press:active { background: rgba(var(--c-ink), 0.045); }
+}
+
+/* ---------- 換頁時內容滑進來，不是硬換 ---------- */
+@keyframes viewIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.view-enter { animation: viewIn 0.26s cubic-bezier(0.22, 0.9, 0.3, 1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .view-enter { animation: none; }
+  @media (hover: none) {
+    .event-card:active, .pill:active, .btn-primary:active,
+    .btn-ghost:active, .icon-btn:active { transform: none; }
+  }
+}
+
+/* ================================================================
+   手機的版面規則
+   桌機是「卡片浮在留白上」，手機不該是同一套 —— 把桌機版縮窄就會變成
+   一堆擠在一起的小方框，看起來就是被壓扁的網頁。
+   原生 App 的清單是滿版的：內容貼齊兩側，靠細分隔線分段，不靠邊框。
+   ================================================================ */
+@media (max-width: 639px) {
+  /* 卡片攤平成整段：拿掉圓角、側邊框與陰影，往兩側撐滿 */
+  .glass, .glass-soft {
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    box-shadow: none;
+    margin-left: -1rem;
+    margin-right: -1rem;
+  }
+  .dark .glass { background: rgba(22, 18, 48, 0.4); }
+
+  /* 活動卡留著卡片感（它本來就是「票」），但收斂陰影 */
+  .event-card { box-shadow: none; }
+
+  /* 段落之間用底色的縫隙分開，不用邊框 */
+  .app-section + .app-section { margin-top: 10px; }
+}
+
+/* 滿版清單列：一列一件事，右邊一個 chevron，靠 hairline 分隔 */
+.app-row {
+  @apply flex items-center gap-3 w-full text-left;
+  min-height: 56px;
+  padding: 10px 0;
+}
+.app-row + .app-row { border-top: 1px solid theme('colors.dream.line'); }
+.dark .app-row + .app-row { border-top-color: rgba(255, 255, 255, 0.08); }
+
+/* ---------- 手機：詳情頁是「推進來的一頁」，不是浮在中間的視窗 ---------- */
+@media (max-width: 639px) {
+  @keyframes pushIn {
+    from { transform: translateX(100%); }
+    to   { transform: none; }
+  }
+  .push-page { animation: pushIn 0.28s cubic-bezier(0.32, 0.72, 0, 1); }
+  /* 放開手指後彈回原位；拖曳中由 inline style 關掉 transition */
+  .push-page { transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1); }
+
+  /* 全螢幕就不需要遮罩了，背後什麼都看不到 */
+  .modal-veil { background: transparent; backdrop-filter: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .push-page { animation: none; }
+}
+
+/* ---------- 可橫滑的一列：邊緣淡出，讓「被切一半」讀起來是「還有更多」 ---------- */
+/* 沒有這層淡出的話，pill 或卡片在邊界被硬切，看起來像版面壞掉。
+   左右各自的淡出由 JS 依 scrollLeft 開關（見 utils/useEdgeFade.js）。 */
+.hscroll {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  --fade-l: 0px;
+  --fade-r: 0px;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0, #000 var(--fade-l),
+    #000 calc(100% - var(--fade-r)), transparent 100%);
+  mask-image: linear-gradient(
+    to right,
+    transparent 0, #000 var(--fade-l),
+    #000 calc(100% - var(--fade-r)), transparent 100%);
+}
+.hscroll::-webkit-scrollbar { display: none; }
+.hscroll[data-start="false"] { --fade-l: 22px; }
+.hscroll[data-end="false"] { --fade-r: 26px; }
+
+/* Bottom sheet 進場：從底部滑上來（手機）／淡入（桌機） */
+@keyframes sheetUp { from { transform: translateY(100%); } to { transform: none; } }
+.sheet-panel { animation: sheetUp 0.24s cubic-bezier(0.32, 0.72, 0, 1); transition: transform 0.22s cubic-bezier(0.32, 0.72, 0, 1); }
+@media (min-width: 640px) {
+  @keyframes sheetUp { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: none; } }
+}
+@media (prefers-reduced-motion: reduce) { .sheet-panel { animation: none; } }

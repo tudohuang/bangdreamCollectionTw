@@ -7,15 +7,24 @@ import { eventContext, typeTags } from '../utils/context.js'
 import { downloadIcs } from '../utils/ics.js'
 import { downloadShareImage } from '../utils/shareImage.js'
 import { isUrgent, URGENT_LABEL } from '../utils/urgency.js'
+import { organizersOf } from '../utils/organizers.js'
+import { tap } from '../utils/haptics.js'
+import { renderMarkdown } from '../utils/markdown.js'
 import { REPORT_URL } from '../config.js'
 import Icon from './Icon.jsx'
 import Img from './Img.jsx'
 import CollectionStrip from './CollectionStrip.jsx'
+import Chronicle from './Chronicle.jsx'
+import {
+  PhotoCredit, Punch, OverBtn, StubRow, Stat,
+  NeighborBtn, RelatedStrip, RelatedList, Section,
+} from './DetailParts.jsx'
 
-// 詳情浮層 = 一張「後台通行證」：舞台頭圖、撕票線、左邊存根放事實、右邊放這場在收藏史裡的位置
-export default function EventDetail({ event, allEvents = [], attended, onToggleAttended, onClose, prevId, nextId, onNavigate, milestones = [] }) {
+// 場次詳情浮層：頭圖、撕票線，左欄是這場的基本資料，右欄是它在收藏史裡的位置。
+export default function EventDetail({ event, allEvents = [], attended, onToggleAttended, onClose, prevId, nextId, onNavigate, milestones = [], pulse = [] }) {
   const [toast, setToast] = useState('')
   const [lightbox, setLightbox] = useState(null)
+  const [swipeX, setSwipeX] = useState(0)
   const [coverOk, setCoverOk] = useState(true)
   const panelRef = useRef(null)
   const meta = primaryMeta(event)
@@ -36,7 +45,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
     }
   }, [])
 
-  // 換場次時把浮層捲回頂端，不然會停在上一場的捲動位置
+  // 換場次時把浮層捲回頂端，否則會停在上一場的捲動位置
   useEffect(() => { panelRef.current?.scrollTo({ top: 0 }) }, [event.id])
 
   // 鍵盤操作：Esc 關閉 / ← → 切換 / Tab 焦點陷阱（依當前 lightbox、鄰場重新綁定）
@@ -50,6 +59,64 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
+  }, [onClose, onNavigate, prevId, nextId, lightbox])
+
+  // 手機的兩種橫向手勢，靠「從哪裡開始滑」分辨，跟 iOS 一樣：
+  //   從左邊緣往右滑 → 返回（頁面跟著手指走）
+  //   在畫面中間左右滑 → 切換上一場／下一場
+  // 縱向明顯比較大的一律放行，不然一邊捲動一邊會誤觸。
+  const EDGE = 28          // 邊緣判定寬度
+  const BACK_DISTANCE = 96 // 放開後要退多遠才算返回
+  const SWITCH_DISTANCE = 60
+
+  useEffect(() => {
+    const panel = panelRef.current
+    if (!panel || lightbox) return
+    let x0 = null, y0 = null, fromEdge = false
+
+    const onStart = (e) => {
+      if (e.touches.length !== 1) return
+      x0 = e.touches[0].clientX
+      y0 = e.touches[0].clientY
+      fromEdge = x0 <= EDGE
+    }
+
+    const onMove = (e) => {
+      if (x0 === null || !fromEdge) return
+      const dx = e.touches[0].clientX - x0
+      const dy = e.touches[0].clientY - y0
+      if (Math.abs(dy) > Math.abs(dx)) { x0 = null; setSwipeX(0); return }
+      setSwipeX(Math.max(0, dx))
+    }
+
+    const onEnd = (e) => {
+      if (x0 === null) return
+      const t = e.changedTouches[0]
+      const dx = t.clientX - x0
+      const dy = t.clientY - y0
+      const edge = fromEdge
+      x0 = null
+
+      if (edge) {
+        setSwipeX(0)
+        if (dx > BACK_DISTANCE) { tap(); onClose() }
+        return
+      }
+      if (Math.abs(dx) < SWITCH_DISTANCE || Math.abs(dx) < Math.abs(dy) * 1.8) return
+      if (dx > 0 && prevId) { tap(); onNavigate(prevId) }
+      else if (dx < 0 && nextId) { tap(); onNavigate(nextId) }
+    }
+
+    panel.addEventListener('touchstart', onStart, { passive: true })
+    panel.addEventListener('touchmove', onMove, { passive: true })
+    panel.addEventListener('touchend', onEnd, { passive: true })
+    panel.addEventListener('touchcancel', onEnd, { passive: true })
+    return () => {
+      panel.removeEventListener('touchstart', onStart)
+      panel.removeEventListener('touchmove', onMove)
+      panel.removeEventListener('touchend', onEnd)
+      panel.removeEventListener('touchcancel', onEnd)
+    }
   }, [onClose, onNavigate, prevId, nextId, lightbox])
 
   // #19 JSON-LD（Event schema）
@@ -77,18 +144,18 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
   const people = event.people || []
   const photos = event.photos || []
   const cover = coverOk ? coverOf(event) : null
-  // 封面已做成上方 banner，照片牆就別重複它
+  // 封面已經是上方的 banner，照片牆不再重複顯示
   const galleryPhotos = cover ? photos.filter(p => photoUrl(p) !== cover) : photos
   const roles = groups.flatMap(g => parseGroup(g).parts)
   const status = eventStatus(event)
   const countdown = countdownLabel(event, { style: 'long' })
   const tags = typeTags(event)
   const urgent = isUrgent(event)
-  // 照片出處另外拉出來擺在圖片旁邊，不要混在存根的雜項欄裡
+  // 照片出處顯示在圖片旁，不與存根的其他欄位混在一起
   const credit = photoCredit(event)
   const extras = Object.entries(event.extras || {}).filter(([k]) => !PHOTO_CREDIT_KEYS.includes(k))
 
-  // 詳情是 hub 不是死路：同樂團 / 同聲優 / 同場館，看完自然滑進下一場
+  // 相關場次：同樂團 / 同聲優 / 同場館
   const band = rootGroup(groups[0] || '')
   const related = allEvents.filter(o =>
     o.id !== event.id && (o.relatedGroups || []).some(g => rootGroup(g) === band)
@@ -102,13 +169,13 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
     : []
 
   return (
-    <div className="modal-veil fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 bg-black/60 backdrop-blur-sm" onClick={onClose}>
+    <div className="modal-veil fixed inset-0 z-50 sm:flex sm:items-center sm:justify-center sm:p-6 sm:bg-black/60 sm:backdrop-blur-sm" onClick={onClose}>
       <div
         ref={panelRef} tabIndex={-1}
-        className={`ticket-paper modal-ticket relative w-full sm:max-w-3xl lg:max-w-5xl max-h-[94vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl border border-dream-line shadow-glassHover scrollbar-thin dark:border-white/15 focus:outline-none ${urgent ? 'urgent-card' : ''}`}
-        style={{ '--band': meta.glow }}
+        className={`ticket-paper modal-ticket push-page relative w-full h-full sm:h-auto sm:max-w-3xl lg:max-w-5xl sm:max-h-[94vh] overflow-y-auto rounded-none sm:rounded-3xl border-0 sm:border border-dream-line sm:shadow-glassHover scrollbar-thin dark:border-white/15 focus:outline-none ${urgent ? 'urgent-card' : ''}`}
         onClick={(e) => e.stopPropagation()}
         role="dialog" aria-modal="true" aria-label={event.title}
+        style={{ '--band': meta.glow, transform: swipeX ? `translateX(${swipeX}px)` : undefined, transition: swipeX ? 'none' : undefined }}
       >
         {/* ---------- 舞台頭圖（有封面用照片、沒封面用樂團色舞台，同一套版型） ---------- */}
         <div className="relative overflow-hidden">
@@ -144,8 +211,16 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
           </div>
 
           {/* 控制列（永遠浮在頭圖上） */}
-          <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-3 sm:px-4 py-3 pointer-events-none">
-            <span className="pointer-events-auto inline-flex items-center gap-2 rounded-full pl-1.5 pr-3 py-1 text-[13px] font-bold text-white backdrop-blur-sm"
+          {/* 頭圖上的控制列。
+              手機是推進來的一頁，所以左上角是「返回」而不是叉叉，
+              上下張的箭頭也收起來 —— 那裡改用左右滑，欄位留給返回。 */}
+          <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-3 sm:px-4 py-3 pointer-events-none"
+            style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top, 0px))' }}>
+            <button onClick={onClose} aria-label="返回"
+              className="sm:hidden pointer-events-auto inline-flex items-center gap-0.5 h-9 pl-1.5 pr-3 rounded-full text-[14px] font-semibold text-white backdrop-blur-sm bg-black/35">
+              <Icon n="chevron-left" className="text-[13px]" /> 返回
+            </button>
+            <span className="hidden sm:inline-flex pointer-events-auto items-center gap-2 rounded-full pl-1.5 pr-3 py-1 text-[13px] font-bold text-white backdrop-blur-sm"
               style={{ background: personal ? 'rgba(139,92,246,0.85)' : `rgba(${meta.glow},0.85)` }}>
               <span className="grid place-items-center w-5 h-5 rounded-full bg-white/30 text-[11px]"><Icon n={personal ? 'user' : meta.icon} /></span>
               {personal ? '個人來台' : meta.name}
@@ -154,9 +229,11 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
               <OverBtn active={isAttended} onClick={() => onToggleAttended?.(event.id)} aria-label={isAttended ? '取消已去過' : '標記我去過'}>
                 <Icon n="circle-check" className="text-[13px]" />
               </OverBtn>
-              <OverBtn disabled={!prevId} onClick={() => prevId && onNavigate(prevId)} aria-label="上一張"><Icon n="chevron-left" className="text-[13px]" /></OverBtn>
-              <OverBtn disabled={!nextId} onClick={() => nextId && onNavigate(nextId)} aria-label="下一張"><Icon n="chevron-right" className="text-[13px]" /></OverBtn>
-              <OverBtn onClick={onClose} aria-label="關閉" className="ml-0.5"><Icon n="xmark" /></OverBtn>
+              <span className="hidden sm:flex items-center gap-1.5">
+                <OverBtn disabled={!prevId} onClick={() => prevId && onNavigate(prevId)} aria-label="上一張"><Icon n="chevron-left" className="text-[13px]" /></OverBtn>
+                <OverBtn disabled={!nextId} onClick={() => nextId && onNavigate(nextId)} aria-label="下一張"><Icon n="chevron-right" className="text-[13px]" /></OverBtn>
+                <OverBtn className="ml-0.5" onClick={onClose} aria-label="關閉"><Icon n="xmark" /></OverBtn>
+              </span>
             </div>
           </div>
 
@@ -192,7 +269,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
                 </span>
               )}
             </div>
-            <h2 className="font-display font-bold text-[22px] sm:text-[30px] leading-snug text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)] line-clamp-3">
+            <h2 className="font-display font-bold text-[22px] sm:text-[30px] leading-snug text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)] line-clamp-3 pr-12 sm:pr-0">
               {event.title || '未命名活動'}
             </h2>
           </div>
@@ -214,6 +291,15 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
           <Punch className="-left-2" />
           <Punch className="-right-2" />
         </div>
+
+        {/* 站長一句話：全站唯一沒辦法從公開資料重建的東西，所以放在最前面 */}
+        {event.oneLine && (
+          <blockquote className="mx-5 sm:mx-8 mt-4 -mb-1 pl-4 border-l-[3px] text-[15px] sm:text-[17px] leading-relaxed font-hand text-dream-ink"
+            style={{ borderColor: meta.color }}>
+            {event.oneLine}
+            <cite className="block mt-1 not-italic text-[11px] tracking-widest uppercase text-dream-faint">站長一句話</cite>
+          </blockquote>
+        )}
 
         {/* ---------- 存根（左）＋ 脈絡（右）：手機疊成單欄，脈絡先出 ---------- */}
         <div className="flex flex-col lg:grid lg:grid-cols-[286px_14px_minmax(0,1fr)] lg:items-stretch">
@@ -270,7 +356,14 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
 
               {event.organizer && (
                 <StubRow icon="user-group" label="主辦" color={meta.color} glow={meta.glow}>
-                  <div className="text-[15px] text-dream-ink">{event.organizer}</div>
+                  <div className="flex flex-wrap gap-x-2 gap-y-1">
+                    {organizersOf(event).map(name => (
+                      <a key={name} href={`#/org/${encodeURIComponent(name)}`}
+                        className="text-[15px] text-dream-ink underline underline-offset-2 decoration-dream-line hover:decoration-current transition-colors">
+                        {name}
+                      </a>
+                    ))}
+                  </div>
                   {ctx.organizerTotal > 1 && (
                     <div className="text-[13px] text-dream-faint mt-0.5">辦過的第 {ctx.organizerNth} 場</div>
                   )}
@@ -437,8 +530,17 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
             </Section>
 
             {event.description && <Section title="活動簡介" color={meta.color}><p className="text-[15px] leading-7 text-dream-sub whitespace-pre-line">{event.description}</p></Section>}
-            {event.impression && <Section title="個人心得" color={meta.color}><p className="text-[15px] leading-7 text-dream-sub whitespace-pre-line">{event.impression}</p></Section>}
+            {event.impression && (
+              <Section title="個人心得" color={meta.color}>
+                <div className="prose-note text-[15px] leading-7 text-dream-sub"
+                  dangerouslySetInnerHTML={{ __html: renderMarkdown(event.impression) }} />
+              </Section>
+            )}
             {event.notes && <Section title="備註" color={meta.color}><p className="text-[15px] leading-7 text-dream-sub whitespace-pre-line">{event.notes}</p></Section>}
+
+            {/* 史料層：這場周圍發生過什麼。基本資料任何人都查得到，這一層查不到 */}
+            <Chronicle event={event} allEvents={allEvents} pulse={pulse}
+              color={meta.color} glow={meta.glow} onNavigate={onNavigate} />
 
             {galleryPhotos.length > 0 && (
               <Section title="活動照片" color={meta.color}>
@@ -496,25 +598,26 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
 
         {/* 常駐操作列：黏在浮層底部，捲到哪都能分享 */}
         <div className="sticky bottom-0 z-10 px-5 sm:px-8 py-3 flex flex-wrap gap-2.5 items-center border-t border-dream-line dark:border-white/10"
-          style={{ background: 'var(--modal-bg)' }}>
+          style={{ background: 'var(--modal-bg)', paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))' }}>
           {/* 手機只留圖示，四顆按鈕才不會擠成兩行吃掉半個畫面 */}
-          <button className="btn-primary !h-10 !px-4 sm:!px-6" onClick={copyLink}>
+          <button className="btn-primary !h-11 sm:!h-10 !px-4 sm:!px-6" onClick={copyLink}>
             <Icon n="link" /> 複製連結
           </button>
-          <button className="pill !px-3 sm:!px-4 !py-2 !text-[13px]" aria-label="加入行事曆" title="加入行事曆"
+          <button className="pill !h-11 sm:!h-auto !px-4 !py-2 !text-[13px]" aria-label="加入行事曆" title="加入行事曆"
             onClick={() => flash(downloadIcs(event, `${event.id}.ics`) ? '已下載行事曆檔' : '這場沒有確定日期')}>
             <Icon n="calendar" /> <span className="hidden sm:inline">加行事曆</span>
           </button>
-          <button className="pill !px-3 sm:!px-4 !py-2 !text-[13px]" aria-label="複製摘要" title="複製摘要" onClick={copySummary}>
+          <button className="pill !h-11 sm:!h-auto !px-4 !py-2 !text-[13px]" aria-label="複製摘要" title="複製摘要" onClick={copySummary}>
             <Icon n="clipboard" /> <span className="hidden sm:inline">摘要</span>
           </button>
-          <button className="pill !px-3 sm:!px-4 !py-2 !text-[13px]" aria-label="存成圖" title="存成圖"
+          <button className="pill !h-11 sm:!h-auto !px-4 !py-2 !text-[13px]" aria-label="存成圖" title="存成圖"
             onClick={() => downloadShareImage(event, meta, personal, {
               attended: isAttended,
               bandNth: ctx.bandNth, bandTotal: ctx.bandTotal,
               index: ctx.index, total: ctx.total,
             })}><Icon n="star" /> <span className="hidden sm:inline">存成圖</span></button>
           <span className="ml-auto self-center text-[11px] text-dream-faint hidden sm:inline">← → 切換 · Esc 關閉</span>
+          <span className="ml-auto self-center text-[11px] text-dream-faint sm:hidden">左右滑切換 · 左緣滑回</span>
         </div>
       </div>
 
@@ -544,151 +647,4 @@ function trapFocus(e, container) {
   const first = els[0], last = els[els.length - 1]
   if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
   else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
-}
-
-// 照片出處：網址就做成可點的連結，回得去原始出處
-function PhotoCredit({ credit, color }) {
-  return (
-    <div className="mt-3 flex items-start gap-2 text-[13px] text-dream-faint">
-      <Icon n="images" className="text-[10px] mt-1 shrink-0" style={{ color }} />
-      <span className="min-w-0">
-        <span className="font-semibold">{credit.label}：</span>
-        {credit.isUrl
-          ? <a href={credit.value} target="_blank" rel="noopener noreferrer"
-              className="text-bloom-violet hover:underline break-all">{credit.value}</a>
-          : <span className="break-words">{credit.value}</span>}
-      </span>
-    </div>
-  )
-}
-
-// 撕票線兩端的打孔：一半被浮層邊界切掉，看起來就是咬掉一口
-function Punch({ className = '' }) {
-  return (
-    <span aria-hidden
-      className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border border-dream-line dark:border-white/15 ${className}`}
-      style={{ background: 'rgb(var(--c-bg))' }} />
-  )
-}
-
-// 浮在頭圖上的控制鈕：半透明深底 + 毛玻璃，白圖示
-function OverBtn({ children, active, disabled, className = '', ...rest }) {
-  return (
-    <button disabled={disabled} {...rest}
-      className={`grid place-items-center w-8 h-8 rounded-full backdrop-blur-sm transition-colors disabled:opacity-30 disabled:cursor-not-allowed
-        ${active ? 'bg-bloom-indigo text-white shadow-[0_0_12px_-2px_rgba(217,70,239,0.7)]' : 'bg-black/35 text-white hover:bg-black/55'} ${className}`}>
-      {children}
-    </button>
-  )
-}
-
-// 存根的一列：左側樂團色圖示方塊 + 小標，下面放值
-function StubRow({ icon, label, color, glow, children }) {
-  return (
-    <div className="flex items-start gap-3 px-4 py-3.5">
-      <span className="grid place-items-center w-8 h-8 shrink-0 rounded-lg text-[13px]"
-        style={{ background: `rgba(${glow},0.16)`, color }}><Icon n={icon} /></span>
-      <div className="min-w-0 flex-1">
-        <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-dream-faint mb-1">{label}</div>
-        <div className="text-[15px] text-dream-ink">{children}</div>
-      </div>
-    </div>
-  )
-}
-
-// 脈絡卡裡的一個數字：大字、團色漸層墨水、底下一條細髮線
-function Stat({ value, label, meta }) {
-  return (
-    <div className="min-w-0">
-      <div className="font-display font-extrabold text-[26px] sm:text-[29px] leading-none tracking-tight"
-        style={{
-          backgroundImage: `linear-gradient(135deg, ${meta.color} 15%, rgba(${meta.glow},0.55) 100%)`,
-          WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent',
-        }}>
-        {value}
-      </div>
-      <div className="mt-2 pt-2 border-t text-[11px] leading-snug text-dream-sub"
-        style={{ borderColor: `rgba(${meta.glow},0.28)` }}>{label}</div>
-    </div>
-  )
-}
-
-// 時間軸上的前一場 / 下一場
-function NeighborBtn({ side, item, color, onNavigate }) {
-  if (!item) return <div />
-  const next = side === 'next'
-  return (
-    <button onClick={() => onNavigate(item.id)}
-      className={`min-w-0 rounded-xl border border-dream-line dark:border-white/10 px-3 py-2.5 hover:border-bloom-violet transition-colors ${next ? 'text-right' : 'text-left'}`}>
-      <div className={`flex items-center gap-1.5 text-[11px] text-dream-faint mb-1 ${next ? 'justify-end' : ''}`}>
-        {!next && <Icon n="chevron-left" className="text-[9px]" />}
-        {next ? '下一場' : '前一場'}
-        {next && <Icon n="chevron-right" className="text-[9px]" />}
-      </div>
-      <div className="truncate text-[13px] text-dream-ink">
-        <span className="font-round font-bold mr-1.5" style={{ color }}>#{String(item.number ?? 0).padStart(3, '0')}</span>
-        {item.title}
-      </div>
-    </button>
-  )
-}
-
-// 推薦小卡橫滑：詳情是 hub 不是死路，帶封面的卡比一行字更讓人想點下去
-function RelatedStrip({ items, color, onNavigate }) {
-  return (
-    <div className="-mx-1 px-1 flex gap-3 overflow-x-auto scrollbar-none snap-x">
-      {items.map(o => {
-        const m = bandMeta((o.relatedGroups || [])[0] || '')
-        const c = coverOf(o)
-        return (
-          <button key={o.id} onClick={() => onNavigate(o.id)}
-            className="snap-start shrink-0 w-[168px] text-left rounded-xl border border-dream-line dark:border-white/10 overflow-hidden hover:border-bloom-violet transition-colors group/rel">
-            <span className="relative block w-full aspect-[3/2] overflow-hidden bg-dream-line/40">
-              {c
-                ? <Img src={c}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover/rel:scale-105 motion-reduce:transform-none" />
-                : <span aria-hidden className="absolute inset-0 grid place-items-center font-display font-extrabold text-[22px]"
-                    style={{ background: `rgba(${m.glow},0.14)`, color: m.color }}>
-                    #{String(o.number ?? 0).padStart(3, '0')}
-                  </span>}
-            </span>
-            <span className="block px-2.5 py-2">
-              <span className="block text-[11px] font-round font-bold" style={{ color }}>
-                {o.startDate ? o.startDate.replace(/-/g, '.') : `${o.year || ''}`}
-              </span>
-              <span className="block text-[13px] text-dream-ink leading-snug line-clamp-2 mt-0.5">{o.title}</span>
-            </span>
-          </button>
-        )
-      })}
-    </div>
-  )
-}
-
-// 推薦清單（純文字版）：擺在「同一天還有 N 場」那種窄位置
-function RelatedList({ items, color, onNavigate }) {
-  return (
-    <ul className="space-y-1.5">
-      {items.map(o => (
-        <li key={o.id}>
-          <button onClick={() => onNavigate(o.id)} className="w-full text-left flex items-center gap-2 text-[13px] text-dream-sub hover:text-dream-ink py-1">
-            <span className="font-round font-bold shrink-0" style={{ color }}>#{String(o.number).padStart(3, '0')}</span>
-            <span className="text-dream-faint shrink-0">{o.year}</span>
-            <span className="truncate">{o.title}</span>
-          </button>
-        </li>
-      ))}
-    </ul>
-  )
-}
-
-function Section({ title, color, children }) {
-  return (
-    <section className="mt-6">
-      <h3 className="flex items-center gap-2 font-display font-bold text-[15px] text-dream-ink mb-2">
-        <span className="w-1.5 h-4 rounded" style={{ background: color }} />{title}
-      </h3>
-      {children}
-    </section>
-  )
 }

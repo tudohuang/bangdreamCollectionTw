@@ -3,15 +3,19 @@ import { primaryMeta, isPersonal } from '../utils/bands.js'
 import { todayStr } from '../utils/datetime.js'
 import { isUrgent } from '../utils/urgency.js'
 import Icon from './Icon.jsx'
+import YearGlance from './YearGlance.jsx'
 
-// 月曆總覽：一年 12 格，每格列出當月來台的活動（日期＋出演者）。
-// 靈感來自情報帳的「月份列表制」——資訊量最低、一眼看完今年誰來。
+// 月曆總覽。
+// 桌機：12 張月卡並排，一次看完整年的細節。
+// 手機：改用 4×3 的年度總覽（YearGlance），點月份才展開 ——
+//       同一份資料，兩種版面，不是把桌機的縮窄。
 export default function MonthlyDigest({ events, onSelect }) {
   const years = useMemo(
     () => [...new Set(events.map(e => e.year).filter(Boolean))].sort((a, b) => a - b),
     [events])
   const thisYear = Number(todayStr().slice(0, 4))
   const [picked, setPicked] = useState(null)
+  const [openMonth, setOpenMonth] = useState(null)
   if (!years.length) return null
 
   const year = picked ?? (years.includes(thisYear) ? thisYear : years[years.length - 1])
@@ -41,14 +45,14 @@ export default function MonthlyDigest({ events, onSelect }) {
         </div>
         <div className="flex items-center gap-1 text-[13px]">
           <button
-            onClick={() => setPicked(years[yi - 1])}
+            onClick={() => { setPicked(years[yi - 1]); setOpenMonth(null) }}
             disabled={yi === 0}
             aria-label="上一年"
             className="icon-btn disabled:opacity-30 disabled:pointer-events-none"
           ><Icon n="chevron-left" /></button>
           <span className="font-round font-bold text-dream-ink w-12 text-center">{year}</span>
           <button
-            onClick={() => setPicked(years[yi + 1])}
+            onClick={() => { setPicked(years[yi + 1]); setOpenMonth(null) }}
             disabled={yi === years.length - 1}
             aria-label="下一年"
             className="icon-btn disabled:opacity-30 disabled:pointer-events-none"
@@ -56,16 +60,20 @@ export default function MonthlyDigest({ events, onSelect }) {
         </div>
       </div>
 
-      {/* 手機：橫滑逐月；平板以上：12 格總覽。
-          空的月份縮成一條細的 —— 版面該讓給真的有活動的月份 */}
-      <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-none gap-3 -mx-4 px-4 pb-1 sm:mx-0 sm:px-0 sm:pb-0 sm:grid sm:grid-cols-3 lg:grid-cols-4 sm:auto-rows-min sm:items-start sm:overflow-visible">
+      <YearGlance
+        year={year} byMonth={byMonth} thisYear={thisYear} thisMonth={thisMonth}
+        openMonth={openMonth} onOpenMonth={setOpenMonth} onSelect={onSelect}
+      />
+
+      {/* 桌機：12 格總覽。空的月份縮成一條細的 —— 版面該讓給真的有活動的月份 */}
+      <div className="hidden sm:grid sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:auto-rows-min sm:items-start">
         {Array.from({ length: 12 }, (_, i) => i + 1).map(m => {
           const list = byMonth.get(m) || []
           const isNow = year === thisYear && m === thisMonth
           if (!list.length) {
             return (
               <div key={m}
-                className={`snap-start shrink-0 w-[230px] sm:w-auto sm:shrink rounded-xl border border-dashed px-3 py-2 flex items-baseline gap-2 opacity-60 ${
+                className={`rounded-xl border border-dashed px-3 py-2 flex items-baseline gap-2 opacity-60 ${
                   isNow ? 'border-bloom-indigo/50' : 'border-dream-line/80 dark:border-white/10'}`}>
                 <span className={`font-display font-bold text-[13px] ${isNow ? 'text-bloom-indigo' : 'text-dream-faint'}`}>
                   {m} 月
@@ -79,7 +87,7 @@ export default function MonthlyDigest({ events, onSelect }) {
           return (
             <div
               key={m}
-              className={`snap-start shrink-0 w-[230px] sm:w-auto sm:shrink rounded-2xl border p-3.5 flex flex-col gap-2 transition-colors ${
+              className={`rounded-2xl border p-3.5 flex flex-col gap-2 transition-colors ${
                 isNow
                   ? 'border-bloom-indigo/50 bg-bloom-indigo/[.05] dark:bg-bloom-indigo/10'
                   : 'border-dream-line/80 bg-white/55 dark:bg-white/[.04] dark:border-white/10'

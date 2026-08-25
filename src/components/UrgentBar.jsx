@@ -3,8 +3,7 @@ import { countdownLabel, weekday } from '../utils/datetime.js'
 import { URGENT_LABEL } from '../utils/urgency.js'
 import Icon from './Icon.jsx'
 
-// 全站緊急橫幅：Sheet 標「緊急性＝非常」且還沒結束的場次，黏在頁首下方，關不掉。
-// 大爆炸情報就是要一進站就撞到臉上，所以它不是可以忽略的小徽章，而是一整條。
+// 全站緊急橫幅：Sheet 標「緊急性＝非常」且尚未結束的場次，固定在頁首下方，不可關閉
 export default function UrgentBar({ events, onSelect }) {
   if (!events.length) return null
   const shown = events.slice(0, 3)

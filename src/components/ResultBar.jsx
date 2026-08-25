@@ -1,8 +1,8 @@
 import { buildAppliedChips, removeChipPatch } from '../utils/filters.js'
 import Icon from './Icon.jsx'
 
-// 卡牆上方的結果摘要條：捲到哪都看得到「現在剩幾筆、是被什麼條件篩掉的」。
-// 沒套任何條件時不出現 —— 平常瀏覽不需要它佔一條。
+// 卡牆上方的結果摘要條：顯示剩幾筆與目前套用的條件。
+// 沒有任何條件時不顯示。
 export default function ResultBar({ filters, onChange, onReset, count, total }) {
   const chips = buildAppliedChips(filters)
   if (!chips.length) return null

@@ -11,6 +11,7 @@ import { downloadPassCard } from '../utils/passImage.js'
 import Icon from './Icon.jsx'
 import Img from './Img.jsx'
 import CollectionStrip from './CollectionStrip.jsx'
+import LifeTimeline from './LifeTimeline.jsx'
 
 function tally(arr) {
   const m = {}
@@ -100,7 +101,8 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
 
   return (
     <div className="animate-riseIn">
-      <button onClick={onClose} className="inline-flex items-center gap-1.5 text-[13px] text-dream-sub hover:text-dream-ink mb-6">
+      {/* 手機的 App Bar 左上角已經有「返回」，這顆是給桌機的 */}
+      <button onClick={onClose} className="hidden sm:inline-flex items-center gap-1.5 text-[13px] text-dream-sub hover:text-dream-ink mb-6">
         <Icon n="chevron-left" className="text-[11px]" /> 回首頁
       </button>
 
@@ -199,6 +201,8 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
           )}
         </div>
       )}
+
+      <LifeTimeline list={list} color={meta.color} glow={meta.glow} onSelect={onSelect} />
 
       {/* 收藏軌：在全站 {allChrono.length} 場裡，這個人／團站在哪些位置 */}
       {allChrono.length > 1 && (

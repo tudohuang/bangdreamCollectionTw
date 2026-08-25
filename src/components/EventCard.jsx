@@ -8,9 +8,9 @@ import { isUrgent, URGENT_LABEL } from '../utils/urgency.js'
 import Icon from './Icon.jsx'
 import Img from './Img.jsx'
 
-// 資訊分級：封面圖為主 → 標題 → 一行 meta（日期・場館）→ 一行歸屬。
-// 第二層（類型、人物、人次）壓在封面下緣，滑過才浮上來 —— 卡片平常是用來「掃」的。
-// 字級只用三階：15（標題）/ 13（手寫行）/ 11（標籤與編號）。
+// 活動卡的資訊分級：封面 → 標題 → 日期與場館 → 樂團。
+// 第二層（類型、人物、人次）平常收在封面下緣，滑過才浮出。
+// 字級只用三階：15（標題）/ 13（日期行）/ 11（標籤與編號）。
 export default function EventCard({ event, attended, onToggleAttended, onClick, milestone }) {
   const [imgOk, setImgOk] = useState(true)
   const dex = `#${String(event.number ?? 0).padStart(3, '0')}`

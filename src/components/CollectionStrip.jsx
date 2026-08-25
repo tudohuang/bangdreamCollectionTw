@@ -1,6 +1,6 @@
 import { primaryMeta } from '../utils/bands.js'
 
-// 收藏軌：全站每一場排成一條地層，符合條件的亮起來、其他淡掉。
+// 收藏軌：全站每一場排成一條，符合條件的亮起來、其他淡掉。
 // 詳情浮層用它標「這一場」，個人／樂團頁用它標「這個人的所有場次」。
 export default function CollectionStrip({ chrono, isOn, onNavigate, tall = 40, short = 16 }) {
   const marks = chrono

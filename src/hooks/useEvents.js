@@ -28,29 +28,33 @@ export function useEvents() {
     !SHEET_CSV_URL ? 'bundled' : cached ? 'cached' : 'loading')
   const [updatedAt, setUpdatedAt] = useState(cached?.ts || null)
 
-  const load = useCallback(() => {
-    if (!SHEET_CSV_URL) return () => {}
-    let alive = true
+  // 回傳 Promise，下拉重新整理才知道什麼時候轉完。
+  // alive 由呼叫端傳進來，元件卸載後就不要再 setState。
+  const fetchSheet = useCallback((isAlive = () => true) => {
+    if (!SHEET_CSV_URL) return Promise.resolve()
     setSource(prev => (prev === 'bundled' || prev === 'error' ? 'loading' : prev))
-    fetch(SHEET_CSV_URL, { cache: 'no-store' })
+    return fetch(SHEET_CSV_URL, { cache: 'no-store' })
       .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text() })
       .then(text => {
         const parsed = parseCsvToEvents(text)
         if (!parsed.length) throw new Error('empty sheet')
         const merged = mergeWithBundled(parsed, bundled)
         const ts = Date.now()
-        if (!alive) return
+        if (!isAlive()) return
         setEvents(merged); setSource('sheet'); setUpdatedAt(ts)
         try { localStorage.setItem(CACHE_KEY, JSON.stringify({ v: CACHE_VERSION, events: merged, ts })) } catch {}
       })
       .catch((e) => {
         console.warn('[useEvents] 即時抓取失敗：', e.message)
-        if (alive) setSource(prev => (prev === 'cached' ? 'cached' : 'error'))
+        if (isAlive()) setSource(prev => (prev === 'cached' ? 'cached' : 'error'))
       })
-    return () => { alive = false }
   }, [])
 
-  useEffect(() => load(), [load])
+  useEffect(() => {
+    let alive = true
+    fetchSheet(() => alive)
+    return () => { alive = false }
+  }, [fetchSheet])
 
-  return { events, source, updatedAt, retry: load }
+  return { events, source, updatedAt, retry: () => fetchSheet() }
 }

@@ -4,9 +4,9 @@ import EventTable from './EventTable.jsx'
 import EmptyResult from './EmptyResult.jsx'
 import Icon from './Icon.jsx'
 
-export default function EventWall({ events, view, attended, onToggleAttended, onSelect, onReset, allEvents, milestones, groupByYear, suggestions }) {
+export default function EventWall({ events, view, attended, onToggleAttended, onSelect, onReset, allEvents, milestones, groupByYear, suggestions, search = '' }) {
   if (events.length === 0) {
-    return <EmptyResult onReset={onReset} suggestions={suggestions} onSelect={onSelect} />
+    return <EmptyResult onReset={onReset} suggestions={suggestions} onSelect={onSelect} search={search} />
   }
 
   if (view === 'timeline') return <Timeline events={events} onSelect={onSelect} allEvents={allEvents} />
@@ -17,7 +17,7 @@ export default function EventWall({ events, view, attended, onToggleAttended, on
   )
 }
 
-// lg 開始左邊被側欄吃掉 254px，這裡就先維持兩欄，卡片才不會擠成郵票
+// lg 以上左側有 254px 的篩選側欄，這裡維持兩欄避免卡片過窄
 const GRID = 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5 sm:gap-6'
 
 function Grid({ events, attended, onToggleAttended, onSelect, milestones, groupByYear }) {

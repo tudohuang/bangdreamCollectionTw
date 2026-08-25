@@ -4,10 +4,10 @@ import { groupRoster, buildPulseIndex, pulseMonths } from '../utils/parsePulse.j
 import { taiwanIndex, rankIndex, shiftYm, LEVEL_LABEL } from '../utils/forecast.js'
 import { todayStr } from '../utils/datetime.js'
 import Icon from './Icon.jsx'
+import PulseCalendar from './PulseCalendar.jsx'
 
-// 聲優動態：左邊是人，右邊是一條「節奏軌」——每個月一根柱子，
-// 柱子高＝那個月在日本有多忙，粉紅那根＝那個月人在台灣。
-// 上面再壓一排來台指數，把「日本很活躍 + 很久沒來」翻譯成一個看得懂的分數。
+// 聲優動態：每個對象一條節奏軌，一個月一根柱子。
+// 柱高＝該月在日本的行程數，紅色＝該月有來台。上方是下個月的來台指數。
 export default function PulsePage({ roster, pulse, events, source, onSelectEvent }) {
   const [sel, setSel] = useState(null)          // { name, ym|null }
   const [openIndex, setOpenIndex] = useState(null)
@@ -48,19 +48,21 @@ export default function PulsePage({ roster, pulse, events, source, onSelectEvent
   return (
     <section className="flex flex-col gap-6">
       <div>
-        <div className="eyebrow"><Icon n="bolt" className="text-[10px]" /> Pulse</div>
-        <h2 className="section-h mt-1.5">聲優動態</h2>
+        <h3 className="flex items-center gap-2 font-display font-bold text-[19px] text-dream-ink">
+          <Icon n="bolt" className="text-bloom-rose text-[15px]" /> 聲優動態
+        </h3>
         <p className="mt-2 text-[13px] text-dream-sub max-w-2xl">
           追蹤名單在日本的行程。每個月一根柱子，柱子越高那個月越忙；
           <span className="mx-1 font-bold" style={{ color: 'rgb(var(--c-urgent))' }}>粉紅</span>
         </p>
       </div>
 
-      {/* ── 來台指數 ─────────────────────────────── */}
+      {/* ── 來台指數：不是機率，是幾個可觀測因子的加權和（見 utils/forecast.js） ── */}
       <div>
         <div className="flex items-baseline justify-between gap-3 mb-3">
           <h3 className="font-display font-bold text-[15px] text-dream-ink">
             {Number(nextYm.slice(5))} 月來台指數
+            <span className="ml-2 text-[11px] font-medium text-dream-faint">加權觀測值，不是機率</span>
           </h3>
         </div>
         {/* 已公告的不用猜，收成一行就好，指數卡的位子留給真的要判斷的 */}
@@ -93,14 +95,20 @@ export default function PulsePage({ roster, pulse, events, source, onSelectEvent
         </p>
       </div>
 
+      {/* ── 月曆 ────────────────────────────────── */}
+      <div>
+        <h3 className="font-display font-bold text-[15px] text-dream-ink mb-3">月曆</h3>
+        <PulseCalendar months={months} pulse={pulse} events={events}
+          roster={roster} onSelectEvent={onSelectEvent} />
+      </div>
+
       {/* ── 節奏軌 ──────────────────────────────── */}
       <div className="flex flex-col gap-4">
         {groups.map(g => {
           const m = bandMeta(g.band)
           const rows = [...(g.lead ? [g.lead] : []), ...g.members]
           return (
-            // 用 glass 而不是 event-card：event-card 的樂團色背景會把整張卡染成團色，
-            // PoPiPa 那種粉色團會跟「來台」的紅撞在一起。改成只在左邊留一條色帶。
+            // 用 glass 而非 event-card：後者的樂團色背景會讓粉色系的團與「來台」的紅難以區分
             <div key={g.band} className="glass p-4 sm:p-5 border-l-4" style={{ borderLeftColor: m.color }}>
               <div className="flex items-center gap-2 mb-3">
                 <Icon n={m.icon} className="text-[11px]" style={{ color: m.color }} />
@@ -208,8 +216,7 @@ function TrackRow({ entry, color, glow, months, get, maxCount, sel, onSelect }) 
                 list.length ? 'cursor-pointer hover:opacity-75' : 'cursor-default'
               } ${on ? 'ring-2 ring-dream-ink' : ''}`}
             >
-              {/* 來台的月份在柱子上方插一顆紅點 —— PoPiPa 這種本來就是粉色的團，
-                  光靠顏色分不出「日本」還是「台灣」，所以另外給一個形狀 */}
+              {/* 來台的月份在柱子上方加一顆紅點：粉色系的團光靠顏色分不出日本或台灣 */}
               <span className="w-1.5 h-1.5 rounded-full shrink-0"
                 style={{ background: tw ? 'rgb(var(--c-urgent))' : 'transparent' }} />
               <span className="w-full rounded-[4px]"

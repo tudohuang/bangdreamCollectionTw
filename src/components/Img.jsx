@@ -6,7 +6,7 @@ export default function Img({ src, alt = '', className = '', onError }) {
   const [loaded, setLoaded] = useState(false)
   const [errored, setErrored] = useState(false)
 
-  // 載入失敗：收掉骨架（不然會永遠閃光），畫一塊中性底，並通知呼叫端
+  // 載入失敗：收掉骨架（否則會一直閃），畫中性底色並通知呼叫端
   if (errored) {
     return <span aria-hidden className={`${className} block bg-dream-line/40`} />
   }

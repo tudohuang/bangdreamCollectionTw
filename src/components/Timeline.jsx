@@ -4,8 +4,8 @@ import { yearGaps } from '../utils/insights.js'
 import { isUrgent, URGENT_LABEL } from '../utils/urgency.js'
 import Icon from './Icon.jsx'
 
-// 路線圖式時間軸：一條粉→紫漸層幹線，年份是「車站」，場次是樂團色的停靠點。
-// 中間真的什麼都沒發生的年份不跳過，而是停下來講一句——那也是紀錄的一部分。
+// 路線圖式時間軸：年份是站牌，場次是樂團色的停靠點。
+// 中間完全沒有場次的年份不跳過，改用一段虛線標示。
 export default function Timeline({ events, onSelect, allEvents }) {
   // 依年份分段
   const byYear = new Map()
