@@ -34,9 +34,14 @@ Google Sheet ─CSV→ hooks ─parse→ utils ─props→ components
 驗證方式：
 
 ```bash
-npm test        # utils 單元測試 + 把每個畫面在 Node 裡 render 一遍（抓少 import、undefined 之類的錯）
+npm run verify   # 推之前跑這個：測試 + 完整 build（含 prebuild / postbuild）
+npm test         # utils 單元測試 + 把每個畫面在 Node 裡 render 一遍
 npm run validate # 檢查 events.json 的資料品質
 ```
+
+> **不要用 `npx vite build` 當作驗證。** 它會跳過 `prebuild`（心得折進 JSON）
+> 與 `postbuild`（OG 圖與分享頁），那兩支壞掉在本機看不出來，
+> 但正式部署一定失敗 —— 這個坑已經踩過一次。
 
 ### Sheet 可填的欄位（全部都吃得到）
 

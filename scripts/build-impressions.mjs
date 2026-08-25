@@ -27,8 +27,9 @@ const missing = []
 for (const file of readdirSync(dir).filter(f => f.endsWith('.md')).sort()) {
   if (file.toLowerCase() === 'readme.md') continue
 
-  const number = Number(file.replace(/^evt-/, '').replace(/\.md$/, ''))
-  const event = byNumber.get(number)
+  // 檔名是永久鍵，不是圖鑑編號 —— 編號可以重排，心得不能跟著對到別場活動
+  const id = Number(file.replace(/^evt-/, '').replace(/\.md$/, ''))
+  const event = byId.get(id)
   if (!event) { missing.push(file); continue }
 
   const { meta, body } = parseFrontMatter(readFileSync(join(dir, file), 'utf8'))

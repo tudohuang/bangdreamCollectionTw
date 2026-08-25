@@ -31,10 +31,10 @@ if (/^https?:\/\//.test(ARG)) {
 }
 
 // 讀既有 JSON 以保留手動欄位
-const prevByNumber = new Map()
+const prevById = new Map()
 if (existsSync(OUT_PATH)) {
   try {
-    for (const e of JSON.parse(readFileSync(OUT_PATH, 'utf8'))) prevByNumber.set(e.stableId ?? e.number, e)
+    for (const e of JSON.parse(readFileSync(OUT_PATH, 'utf8'))) prevById.set(e.stableId ?? e.number, e)
   } catch { /* 壞掉就重建 */ }
 }
 
@@ -42,7 +42,7 @@ const parsed = parseCsvToEvents(raw)
 const pick = (a, b) => (a ? a : (b || ''))
 const pickArr = (a, b) => (a && a.length ? a : (b || []))
 const events = parsed.map(e => {
-  const prev = prevByNumber.get(e.stableId ?? e.number) || {}
+  const prev = prevById.get(e.stableId ?? e.number) || {}
   return {
     ...e,
     id: prev.id || e.id,
@@ -63,7 +63,7 @@ const events = parsed.map(e => {
 })
 
 // 先比對再覆蓋：舊的 events.json 就是上一次同步的快照
-const prevEvents = [...prevByNumber.values()]
+const prevEvents = [...prevById.values()]
 const diff = diffEvents(prevEvents, events)
 if (prevEvents.length) {
   const log = existsSync(LOG_PATH) ? JSON.parse(readFileSync(LOG_PATH, 'utf8')) : []
@@ -73,7 +73,7 @@ if (prevEvents.length) {
 
 writeFileSync(OUT_PATH, JSON.stringify(events, null, 2) + '\n', 'utf8')
 console.log(`✓ 匯入 ${events.length} 筆 → ${OUT_PATH.replace(ROOT, '.')}`)
-const merged = events.filter(e => prevByNumber.has(e.stableId ?? e.number)).length
+const merged = events.filter(e => prevById.has(e.stableId ?? e.number)).length
 console.log(`  其中 ${merged} 筆沿用既有手動欄位（心得 / 簡介 / 照片 等）`)
 if (diff.added.length || diff.changed.length) {
   console.log(`  異動：新增 ${diff.added.length} 筆、修改 ${diff.changed.length} 筆 → changelog.json`)
