@@ -1,0 +1,19 @@
+# Cloudflare Pages 會讀這個檔設回應標頭。
+# build 產物帶雜湊檔名，可以長快取；HTML 與資料不快取，改了要馬上看得到。
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/og/*
+  Cache-Control: public, max-age=86400
+
+/index.html
+  Cache-Control: no-cache
+
+# Service worker 千萬不能被長快取，否則改了快取策略也推不出去
+/sw.js
+  Cache-Control: no-cache
+  Service-Worker-Allowed: /
+
+/manifest.webmanifest
+  Cache-Control: public, max-age=3600
+  Content-Type: application/manifest+json

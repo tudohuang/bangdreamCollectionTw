@@ -1,0 +1,23 @@
+{
+  "name": "邦邦來台圖鑑",
+  "short_name": "邦邦圖鑑",
+  "description": "BanG Dream! 聲優與樂團來台活動的紀錄，從 2018 記到現在。",
+  "lang": "zh-Hant",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fdfaff",
+  "theme_color": "#fdfaff",
+  "categories": ["entertainment", "music"],
+  "icons": [
+    { "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "./icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "活動圖鑑", "url": "./#/collection" },
+    { "name": "我的收藏", "url": "./#/me" },
+    { "name": "統計", "url": "./#/stats" }
+  ]
+}
