@@ -26,6 +26,11 @@ export const SHEET_PULSE_CSV_URL = sheetTab('動態')
 // 可填信箱（mailto:你的信箱）、Google 表單、或 GitHub issues 連結。留空＝不顯示。
 export const REPORT_URL = ''
 
-// 站長便利貼（選填）：首頁標題旁的手寫小紙條，想到什麼寫什麼。留空＝不顯示。
+// Cloudflare Web Analytics 的 token（選填）。
+// 取得方式：Cloudflare 後台 → Web Analytics → Add a site → 複製 beacon 的 token。
+// 留空＝不載入任何分析程式。
+export const CF_ANALYTICS_TOKEN = ''
+
+// 站長便利貼（選填）：首頁標題旁的手寫紙條。留空＝不顯示。
 export const OWNER_NOTE = '台灣邦邦在一起 強大!'
 
