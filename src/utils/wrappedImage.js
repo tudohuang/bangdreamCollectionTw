@@ -1,180 +1,141 @@
-// 年度回顧卡（Wrapped）→ 直式分享圖，適合貼到脆 / IG
-// 深色「夜間偶像」風，與網站／brag 影片同調：樂團色光暈 + 發光年份 + 排行比例條 + 色譜底線
-import { yearSummary } from './review.js'
+// 年度回顧卡：把一年的場次封面拼成一張可下載的牆。
+//
+// 排法用磚牆（每欄各自往下疊）而不是方格：收藏裡的封面多半是直式海報或橫式 banner，
+// 硬切成正方形會把主視覺裁掉一大半，整面牆就變成一堆看不出是什麼的碎片。
+import { yearSummary, yearTiles } from './review.js'
+import { SANS, DISP, ensureFonts, roundRect, dotPattern, loadCover, drawCover, downloadCanvas } from './canvas.js'
 
-const F = '"Noto Sans TC", "Microsoft JhengHei", sans-serif'
+const W = 1080
+const PAD = 64
+const GAP = 14
+const PAPER = '#fffdfb'
+const SUB = '#605882'
+const FAINT = '#9c94be'
 
-// 樂團色光譜（與 brag 影片同一組），用在頂條與底線
-const SPECTRUM = ['#ff5c8a', '#ec3d56', '#ff86bd', '#4d6bff', '#f5b400', '#56bcdd', '#19bd95', '#4f86d6', '#8a4ff0']
+// 極端比例會排出一條細長的縫，夾在這個範圍內再裁
+const MIN_RATIO = 0.62
+const MAX_RATIO = 1.55
+
+const columnsFor = (n) => (n <= 4 ? 2 : n <= 12 ? 3 : 4)
 
 export async function downloadWrapped(events, year) {
-  // 等字體就緒，否則 Noto Sans TC 還沒載入會 fallback 成系統字，產出的圖字體不一致
-  try { await document.fonts?.ready } catch {}
-  const c = renderWrappedCanvas(events, year)
-  const a = document.createElement('a')
-  a.href = c.toDataURL('image/png')
-  a.download = `taiwan-bangdream-${yearSummary(events, year).year}-wrapped.png`
-  a.click()
+  await ensureFonts()
+  const tiles = yearTiles(events, year)
+  const loaded = await Promise.all(tiles.map(t => loadCover(t.url)))
+  // 載不到的（圖床不給 CORS、Instagram 那種會過期的簽名網址）直接不排進版，
+  // 留一塊空白反而更難看
+  const covers = loaded.filter(Boolean)
+  downloadCanvas(renderWall(events, year, covers), `taiwan-bangdream-${year}-wall.png`)
 }
 
-export function renderWrappedCanvas(events, year) {
+// 貪心排版：每一張都放進目前最矮的那一欄
+function layout(covers, cols, colW) {
+  const heights = Array(cols).fill(0)
+  const placed = covers.map(img => {
+    const ratio = Math.min(MAX_RATIO, Math.max(MIN_RATIO, img.height / img.width))
+    const h = Math.round(colW * ratio)
+    const col = heights.indexOf(Math.min(...heights))
+    const y = heights[col]
+    heights[col] += h + GAP
+    return { img, col, y, h }
+  })
+  return { placed, wallH: Math.max(0, Math.max(...heights, 0) - GAP) }
+}
+
+function renderWall(events, year, covers) {
   const s = yearSummary(events, year)
-  const W = 1080, H = 1350
+  const accent = s.topBands[0]?.color || '#8b5cf6'
+  const cols = columnsFor(covers.length)
+  const colW = Math.floor((W - PAD * 2 - GAP * (cols - 1)) / cols)
+  const { placed, wallH } = layout(covers, cols, colW)
+
+  const headH = 268
+  const footH = 116
+  const H = headH + wallH + footH
+
   const c = document.createElement('canvas')
   c.width = W; c.height = H
   const x = c.getContext('2d')
-  const accent = s.topBands[0]?.color || '#7c8cff'
-  const accentGlow = s.topBands[0]?.glow || '124,140,255'
-  const pad = 84
 
-  // ---- 背景：深藍 + 兩團色光暈 ----
-  x.fillStyle = '#0f172a'; x.fillRect(0, 0, W, H)
-  radial(x, W * 0.82, 120, 560, `rgba(${accentGlow},0.30)`, 'rgba(15,23,42,0)')
-  radial(x, W * 0.10, H * 0.96, 520, 'rgba(255,92,138,0.18)', 'rgba(15,23,42,0)')
-  radial(x, W * 0.5, H * 0.42, 700, 'rgba(124,58,237,0.10)', 'rgba(15,23,42,0)')
+  // ---------- 紙 ----------
+  x.fillStyle = PAPER
+  x.fillRect(0, 0, W, H)
+  x.fillStyle = x.createPattern(dotPattern('rgba(90,60,130,0.05)'), 'repeat')
+  x.fillRect(0, 0, W, H)
+  const wash = x.createLinearGradient(0, 0, 0, 300)
+  wash.addColorStop(0, `${accent}22`)
+  wash.addColorStop(1, 'rgba(255,255,255,0)')
+  x.fillStyle = wash
+  x.fillRect(0, 0, W, 300)
 
-  // 頂部樂團色光譜細條
-  spectrumStrip(x, 0, 0, W, 12)
-
-  // ---- 標頭 ----
-  x.textBaseline = 'alphabetic'
-  x.fillStyle = '#94a3b8'; x.font = `600 33px ${F}`
-  x.fillText('邦邦來台圖鑑 · 年度回顧', pad, 112)
-
-  // 發光年份
+  // ---------- 抬頭 ----------
   x.save()
-  x.shadowColor = `rgba(${accentGlow},0.55)`; x.shadowBlur = 56
-  x.fillStyle = accent; x.font = `900 172px ${F}`
-  x.fillText(String(s.year), pad - 4, 296)
+  if ('letterSpacing' in x) x.letterSpacing = '6px'
+  x.fillStyle = FAINT
+  x.font = `700 19px ${DISP}`
+  x.fillText('TAIWAN BANG DREAM! COLLECTION', PAD, 84)
   x.restore()
-  x.fillStyle = '#e2e8f0'; x.font = `700 40px ${F}`
-  x.fillText('台邦在台灣，這一年', pad, 356)
 
-  // ---- 三個統計色塊 ----
-  const tiles = [
-    { big: String(s.total), unit: '場', label: '收錄活動' },
-    s.attendance > 0
-      ? { big: String(s.attendance), unit: '人', label: '累計人次' }
-      : { big: String(s.core), unit: '場', label: '本體場次' },
-    { big: String(s.cityCount || 1), unit: '個', label: '城市' },
-  ]
-  const gap = 22, tileW = (W - pad * 2 - gap * 2) / 3, tileH = 148, tileY = 404
-  tiles.forEach((t, i) => {
-    const tx = pad + i * (tileW + gap)
-    x.fillStyle = `rgba(${accentGlow},0.10)`
-    roundRect(x, tx, tileY, tileW, tileH, 22); x.fill()
-    x.strokeStyle = `rgba(${accentGlow},0.28)`; x.lineWidth = 1.5
-    roundRect(x, tx, tileY, tileW, tileH, 22); x.stroke()
-    // 大數字 + 單位
-    x.fillStyle = '#f8fafc'; x.font = `900 78px ${F}`
-    x.fillText(t.big, tx + 26, tileY + 92)
-    const bw = x.measureText(t.big).width
-    x.fillStyle = '#94a3b8'; x.font = `600 28px ${F}`
-    x.fillText(t.unit, tx + 26 + bw + 9, tileY + 92)
-    x.fillStyle = `rgba(${accentGlow},0.95)`; x.font = `600 25px ${F}`
-    x.fillText(t.label, tx + 26, tileY + 128)
-  })
+  x.fillStyle = accent
+  x.font = `800 148px ${DISP}`
+  x.fillText(String(year), PAD - 8, 206)
 
-  let y = tileY + tileH + 74
-
-  // ---- 排行：標題 + 比例條 ----
-  const sectionTitle = (t) => {
-    x.fillStyle = accent; roundRect(x, pad, y - 24, 8, 28, 4); x.fill()
-    x.fillStyle = '#e2e8f0'; x.font = `800 33px ${F}`
-    x.fillText(t, pad + 24, y)
-    y += 50
-  }
-  const rankRow = (rank, name, n, maxN, color) => {
-    const rowH = 62, barX = pad + 70, barW = W - pad - barX
-    const dotColor = color || accent
-    // 名次
-    x.fillStyle = '#475569'; x.font = `900 34px ${F}`
-    x.fillText(String(rank), pad, y + 6)
-    // 色點
-    x.fillStyle = dotColor
-    x.beginPath(); x.arc(pad + 48, y - 5, 11, 0, Math.PI * 2); x.fill()
-    // 比例條底 + 填色
-    const by = y + 18
-    x.fillStyle = 'rgba(255,255,255,0.06)'; roundRect(x, barX, by, barW, 11, 5.5); x.fill()
-    const frac = maxN > 0 ? Math.max(0.12, n / maxN) : 0
-    const grad = x.createLinearGradient(barX, 0, barX + barW * frac, 0)
-    grad.addColorStop(0, `rgba(${hexToRgb(dotColor)},0.55)`); grad.addColorStop(1, dotColor)
-    x.fillStyle = grad; roundRect(x, barX, by, barW * frac, 11, 5.5); x.fill()
-    // 名稱（條上方）
-    x.fillStyle = '#f1f5f9'; x.font = `600 36px ${F}`
-    x.fillText(name, barX, y + 4)
-    // 場次（右對齊）
-    x.fillStyle = '#cbd5e1'; x.font = `700 31px ${F}`; x.textAlign = 'right'
-    x.fillText(`${n}`, W - pad, y + 4); x.textAlign = 'left'
-    y += rowH
-  }
-
-  if (s.topBands.length) {
-    sectionTitle('最常出沒的樂團')
-    const maxN = s.topBands[0].n
-    s.topBands.forEach((b, i) => rankRow(i + 1, b.name, b.n, maxN, b.color))
-    y += 18
-  }
-  if (s.topPeople.length) {
-    sectionTitle('看最多次的聲優')
-    const maxN = s.topPeople[0].n
-    s.topPeople.forEach((p, i) => rankRow(i + 1, p.name, p.n, maxN, '#a78bfa'))
-    y += 10
-  }
-
-  // ---- 摘要 chips ----
-  const chips = [
-    s.topCity && `主場 ${s.topCity}`,
-    s.fullBand > 0 && `全團 ${s.fullBand} 場`,
-    s.busiestMonth && `${s.busiestMonth.month} 月最熱`,
-  ].filter(Boolean)
-  x.font = `600 29px ${F}`
-  let cx = pad
-  const cy = y + 44
-  for (const t of chips) {
-    const w = x.measureText(t).width + 46
-    if (cx + w > W - pad) break
-    x.fillStyle = `rgba(${accentGlow},0.14)`; roundRect(x, cx, cy - 40, w, 56, 28); x.fill()
-    x.strokeStyle = `rgba(${accentGlow},0.30)`; x.lineWidth = 1.5; roundRect(x, cx, cy - 40, w, 56, 28); x.stroke()
-    x.fillStyle = '#e2e8f0'; x.fillText(t, cx + 23, cy)
-    cx += w + 14
-  }
-
-  // ---- 底部：色譜線 + 置中頁尾 ----
-  spectrumStrip(x, pad, H - 104, W - pad * 2, 8, 4)
-  x.textAlign = 'center'
-  x.fillStyle = '#8595ad'; x.font = `500 27px ${F}`
-  x.fillText('邦邦來台圖鑑 · bangdream-collection-tw.vercel.app', W / 2, H - 56)
+  // 右側對齊、與年份底線齊平的一行
+  x.textAlign = 'right'
+  x.fillStyle = SUB
+  x.font = `600 26px ${SANS}`
+  x.fillText(`${s.total} 場　·　${covers.length} 張封面`, W - PAD, 200)
   x.textAlign = 'left'
 
+  // 細線 + 一行事實
+  x.fillStyle = 'rgba(90,60,130,0.14)'
+  x.fillRect(PAD, 232, W - PAD * 2, 1)
+
+  const facts = [
+    s.topBands[0] && `${s.topBands[0].name} ${s.topBands[0].n} 場`,
+    s.topPeople[0] && `${s.topPeople[0].name} ${s.topPeople[0].n} 次`,
+    s.topCity && `主場 ${s.topCity}`,
+  ].filter(Boolean).join('　·　')
+  x.fillStyle = SUB
+  x.font = `500 22px ${SANS}`
+  x.fillText(facts, PAD, 264)
+
+  // ---------- 封面牆 ----------
+  for (const { img, col, y, h } of placed) {
+    const px = PAD + col * (colW + GAP)
+    const py = headH + y
+
+    x.save()
+    roundRect(x, px, py, colW, h, 10)
+    x.clip()
+    drawCover(x, img, px, py, colW, h)
+    x.restore()
+
+    // 極細的內描邊，讓相鄰的照片分得開，又不會變成彩色格線
+    x.save()
+    roundRect(x, px + 0.5, py + 0.5, colW - 1, h - 1, 10)
+    x.strokeStyle = 'rgba(60,40,90,0.10)'
+    x.lineWidth = 1
+    x.stroke()
+    x.restore()
+  }
+
+  // ---------- 頁尾 ----------
+  const footY = headH + wallH
+  x.fillStyle = 'rgba(90,60,130,0.14)'
+  x.fillRect(PAD, footY + 44, W - PAD * 2, 1)
+
+  x.fillStyle = FAINT
+  x.font = `500 20px ${SANS}`
+  x.fillText(s.attendance > 0 ? `累計 ${s.attendance} 人次` : '', PAD, footY + 84)
+
+  x.save()
+  if ('letterSpacing' in x) x.letterSpacing = '4px'
+  x.fillStyle = accent
+  x.font = `700 19px ${DISP}`
+  x.textAlign = 'right'
+  x.fillText('BANGDREAM.TW', W - PAD, footY + 84)
+  x.restore()
+
   return c
-}
-
-// ---- 小工具 ----
-function radial(x, cx, cy, r, c0, c1) {
-  const g = x.createRadialGradient(cx, cy, 0, cx, cy, r)
-  g.addColorStop(0, c0); g.addColorStop(1, c1)
-  x.fillStyle = g; x.fillRect(0, 0, 1080, 1350)
-}
-
-function spectrumStrip(x, px, py, w, h, r = 0) {
-  const g = x.createLinearGradient(px, 0, px + w, 0)
-  SPECTRUM.forEach((c, i) => g.addColorStop(i / (SPECTRUM.length - 1), c))
-  x.fillStyle = g
-  if (r) { roundRect(x, px, py, w, h, r); x.fill() } else x.fillRect(px, py, w, h)
-}
-
-function hexToRgb(hex) {
-  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-  return m ? `${parseInt(m[1], 16)},${parseInt(m[2], 16)},${parseInt(m[3], 16)}` : '124,140,255'
-}
-
-function roundRect(x, px, py, w, h, r) {
-  x.beginPath()
-  x.moveTo(px + r, py)
-  x.arcTo(px + w, py, px + w, py + h, r)
-  x.arcTo(px + w, py + h, px, py + h, r)
-  x.arcTo(px, py + h, px, py, r)
-  x.arcTo(px, py, px + w, py, r)
-  x.closePath()
 }

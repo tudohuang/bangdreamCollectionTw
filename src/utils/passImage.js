@@ -1,6 +1,6 @@
 // 把「我去過」的紀錄畫成一張季票（SEASON PASS）並下載。
-// 主角是收藏軌：全站每一場排成一條，去過的亮起來 —— 一眼看到自己參與了多少。
-// 走得越多，卡片本身也會升級（紙票 → 銀票 → 金票 → 黑卡），拿出來才有份量。
+// 版面主體是收藏軌：全站每一場排成一條，去過的亮起來。
+// 依走過的比例分級：紙票 → 銀票 → 金票 → 黑卡。
 import { primaryMeta, bandMeta } from './bands.js'
 import { sortChrono } from './context.js'
 import { formatDateRangeCompact } from './share.js'
@@ -204,7 +204,7 @@ export async function downloadPassCard(events, attendedIds, options = {}) {
   const cellW = textW / cells.length
   cells.forEach((cell, i) => {
     const cx = textX + i * cellW
-    // 字級自動縮到塞得下為止（「2018–2026」在 46px 會爆出去）
+    // 字級自動縮到塞得下為止（「2018–2026」在 46px 會超出寬度）
     let size = cell.small ? 30 : 46
     const room = cellW - (cell.unit ? 46 : 22)
     x.font = `800 ${size}px ${DISP}`

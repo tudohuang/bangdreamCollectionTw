@@ -11,11 +11,13 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { parseCsvToEvents } from '../src/utils/parseEvents.js'
+import { diffEvents, appendEntry } from './changelog.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
 const ARG = process.argv[2] || join(ROOT, '邦邦來台 - 工作表1.csv')
 const OUT_PATH = join(ROOT, 'src', 'data', 'events.json')
+const LOG_PATH = join(ROOT, 'src', 'data', 'changelog.json')
 const today = new Date().toISOString().slice(0, 10)
 
 // 讀取來源（本機檔或網址）
@@ -32,7 +34,7 @@ if (/^https?:\/\//.test(ARG)) {
 const prevByNumber = new Map()
 if (existsSync(OUT_PATH)) {
   try {
-    for (const e of JSON.parse(readFileSync(OUT_PATH, 'utf8'))) prevByNumber.set(e.number, e)
+    for (const e of JSON.parse(readFileSync(OUT_PATH, 'utf8'))) prevByNumber.set(e.stableId ?? e.number, e)
   } catch { /* 壞掉就重建 */ }
 }
 
@@ -40,7 +42,7 @@ const parsed = parseCsvToEvents(raw)
 const pick = (a, b) => (a ? a : (b || ''))
 const pickArr = (a, b) => (a && a.length ? a : (b || []))
 const events = parsed.map(e => {
-  const prev = prevByNumber.get(e.number) || {}
+  const prev = prevByNumber.get(e.stableId ?? e.number) || {}
   return {
     ...e,
     id: prev.id || e.id,
@@ -53,13 +55,30 @@ const events = parsed.map(e => {
     organizer: pick(e.organizer, prev.organizer),
     description: pick(e.description, prev.description),
     impression: pick(e.impression, prev.impression),
+    oneLine: pick(e.oneLine, prev.oneLine),
     sources: pickArr(e.sources, prev.sources),
     notes: pick(e.notes, prev.notes),
     lastUpdated: today,
   }
 })
 
+// 先比對再覆蓋：舊的 events.json 就是上一次同步的快照
+const prevEvents = [...prevByNumber.values()]
+const diff = diffEvents(prevEvents, events)
+if (prevEvents.length) {
+  const log = existsSync(LOG_PATH) ? JSON.parse(readFileSync(LOG_PATH, 'utf8')) : []
+  const nextLog = appendEntry(log, diff, today)
+  if (nextLog !== log) writeFileSync(LOG_PATH, JSON.stringify(nextLog, null, 2) + String.fromCharCode(10), 'utf8')
+}
+
 writeFileSync(OUT_PATH, JSON.stringify(events, null, 2) + '\n', 'utf8')
 console.log(`✓ 匯入 ${events.length} 筆 → ${OUT_PATH.replace(ROOT, '.')}`)
-const merged = events.filter(e => prevByNumber.has(e.number)).length
+const merged = events.filter(e => prevByNumber.has(e.stableId ?? e.number)).length
 console.log(`  其中 ${merged} 筆沿用既有手動欄位（心得 / 簡介 / 照片 等）`)
+if (diff.added.length || diff.changed.length) {
+  console.log(`  異動：新增 ${diff.added.length} 筆、修改 ${diff.changed.length} 筆 → changelog.json`)
+  for (const a of diff.added.slice(0, 8)) console.log(`    + #${a.number} ${a.title}`)
+  for (const c of diff.changed.slice(0, 8)) console.log(`    ~ #${c.number} ${c.title}（${c.fields.join('、')}）`)
+} else if (prevEvents.length) {
+  console.log('  沒有異動')
+}

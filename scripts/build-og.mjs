@@ -15,11 +15,9 @@ import { BAND_META, bandKey } from '../src/utils/bands.js'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
 const DIST = join(ROOT, 'dist')
-// 優先用明確的 SITE_URL；在 Vercel 上自動退回正式網域，讓 og:image / og:url 成為絕對網址
-const SITE_URL = (
-  process.env.SITE_URL ||
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : '')
-).replace(/\/$/, '')
+// 優先用明確的 SITE_URL；Cloudflare Pages 上自動用該次部署的網址，
+// 讓 og:image / og:url 是絕對網址（相對路徑在爬蟲那邊不會動）
+const SITE_URL = (process.env.SITE_URL || process.env.CF_PAGES_URL || '').replace(/\/$/, '')
 
 if (!existsSync(DIST)) {
   console.log('（跳過 OG：尚未 build，找不到 dist/）')
@@ -172,11 +170,12 @@ ${SITE_URL ? `<meta property="og:url" content="${esc(url)}"/>` : ''}
 </head><body>前往 <a href="../#/event/${e.id}">${esc(title)}</a>…</body></html>`
 }
 
-// Vercel 上由 api/share.js 即時處理 /e/<id>，不需靜態 stub
-const ON_VERCEL = !!process.env.VERCEL
+// 有 serverless 的平台（Cloudflare Pages）由 functions/e/[id].js 即時處理 /e/<id>，
+// 不需要 build 時的靜態 stub；純靜態主機（GitHub Pages）才要
+const ON_EDGE = !!(process.env.CF_PAGES || process.env.VERCEL)
 
 mkdirSync(join(DIST, 'og'), { recursive: true })
-if (!ON_VERCEL) mkdirSync(join(DIST, 'e'), { recursive: true })
+if (!ON_EDGE) mkdirSync(join(DIST, 'e'), { recursive: true })
 
 // 封面照併發抓取（抓不到就退回樂團色底，不擋 build）
 const COVER_CONCURRENCY = 6
@@ -196,7 +195,7 @@ const coverUris = new Map()
 let pngCount = 0
 for (const e of events) {
   if (renderPng(ogSvg(e, coverUris.get(e.id)), join(DIST, 'og', `${e.id}.png`))) pngCount++
-  if (!ON_VERCEL) writeFileSync(join(DIST, 'e', `${e.id}.html`), stubHtml(e), 'utf8')
+  if (!ON_EDGE) writeFileSync(join(DIST, 'e', `${e.id}.html`), stubHtml(e), 'utf8')
 }
 
 // ---- 聲優／樂團的分享頁與 OG 圖 ----
@@ -298,11 +297,11 @@ const UNSAFE_PATH = /[\\/:*?"<>|]/
 
 let profilePng = 0
 const skippedStubs = []
-if (!ON_VERCEL) { mkdirSync(join(DIST, 'p'), { recursive: true }); mkdirSync(join(DIST, 'b'), { recursive: true }) }
+if (!ON_EDGE) { mkdirSync(join(DIST, 'p'), { recursive: true }); mkdirSync(join(DIST, 'b'), { recursive: true }) }
 for (const pr of profiles) {
   const seg = pr.kind === 'person' ? 'p' : 'b'
   if (renderPng(profileSvg(pr), join(DIST, 'og', `${seg}-${slug(pr.name)}.png`))) profilePng++
-  if (ON_VERCEL) continue
+  if (ON_EDGE) continue
   if (UNSAFE_PATH.test(pr.name)) { skippedStubs.push(pr.name); continue }
   // 檔名要用原字（UTF-8）。網址是 percent-encoded，靜態主機會先解碼再找檔，
   // 若把檔名也寫成 %E6%84%9B%E7%BE%8E.html 就永遠對不上。
@@ -340,7 +339,7 @@ writeFileSync(idxPath, idx, 'utf8')
 
 // sitemap.xml + robots.txt（#20）
 const base = SITE_URL || ''
-const urls = [`${base}/`, ...events.map(e => `${base}/e/${e.id}${ON_VERCEL ? '' : '.html'}`)]
+const urls = [`${base}/`, ...events.map(e => `${base}/e/${e.id}${ON_EDGE ? '' : '.html'}`)]
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(u => `  <url><loc>${u}</loc></url>`).join('\n')}

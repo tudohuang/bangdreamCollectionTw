@@ -1,6 +1,7 @@
 [
   {
     "id": "evt-001",
+    "stableId": 1,
     "number": 1,
     "year": 2018,
     "startDate": "2018-02-03",
@@ -19,7 +20,9 @@
     "category": "本體",
     "isFullBand": false,
     "attendanceCount": 3,
-    "venue": "世貿一館",
+    "urgency": "",
+    "isUrgent": false,
+    "venue": "台北世貿一館",
     "city": "",
     "photos": [],
     "cover": "https://truth.bahamut.com.tw/s01/201801/0427e0aa64a0936e72cbd0aac75b2943.JPG",
@@ -27,12 +30,19 @@
     "organizer": "移動怪獸",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.033647834299405, 121.5624091842944"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-002",
+    "stableId": 2,
     "number": 2,
     "year": 2018,
     "startDate": "2018-02-03",
@@ -51,6 +61,8 @@
     "category": "本體",
     "isFullBand": false,
     "attendanceCount": 3,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "詩涼子街頭實況攝影棚",
     "city": "",
     "photos": [],
@@ -59,12 +71,19 @@
     "organizer": "移動怪獸",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.041995567783406, 121.50757686564295"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-003",
+    "stableId": 3,
     "number": 3,
     "year": 2018,
     "startDate": "2018-04-07",
@@ -81,6 +100,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "TICC",
     "city": "",
     "photos": [],
@@ -89,12 +110,19 @@
     "organizer": "萬代南夢宮娛樂",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.033677434259534, 121.56091275545798"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-004",
+    "stableId": 4,
     "number": 4,
     "year": 2018,
     "startDate": "2018-05-19",
@@ -111,6 +139,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "花博爭豔館",
     "city": "",
     "photos": [],
@@ -119,12 +149,19 @@
     "organizer": "開拓動漫",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.069831257938237, 121.52083509964054"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-005",
+    "stableId": 5,
     "number": 5,
     "year": 2018,
     "startDate": "2018-08-18",
@@ -146,6 +183,8 @@
     "category": "本體",
     "isFullBand": false,
     "attendanceCount": 4,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "台北世貿一館",
     "city": "",
     "photos": [],
@@ -154,12 +193,19 @@
     "organizer": "移動怪獸",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.033647834299405, 121.5624091842944"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-006",
+    "stableId": 6,
     "number": 6,
     "year": 2018,
     "startDate": "2018-09-30",
@@ -176,6 +222,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "國立體育大學綜合體育館／林口體育館",
     "city": "",
     "photos": [],
@@ -184,12 +232,19 @@
     "organizer": "國王唱片",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.034963936894517, 121.38349535360369"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-007",
+    "stableId": 7,
     "number": 7,
     "year": 2018,
     "startDate": "2018-12-15",
@@ -206,6 +261,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "台灣大學綜合體育館",
     "city": "",
     "photos": [],
@@ -214,12 +271,19 @@
     "organizer": "好玩國際文化",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.021796018791985, 121.53506255360321"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-008",
+    "stableId": 8,
     "number": 8,
     "year": 2018,
     "startDate": "2018-12-16",
@@ -236,6 +300,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "台北華山 Legacy Taipei",
     "city": "",
     "photos": [],
@@ -244,12 +310,19 @@
     "organizer": "好玩國際文化",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.045185758565307, 121.52938959593106"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-009",
+    "stableId": 9,
     "number": 9,
     "year": 2019,
     "startDate": "2019-01-21",
@@ -266,6 +339,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "台北世貿一館",
     "city": "",
     "photos": [],
@@ -274,12 +349,19 @@
     "organizer": "移動怪獸",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.033647834299405, 121.5624091842944"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-010",
+    "stableId": 10,
     "number": 10,
     "year": 2019,
     "startDate": "2019-08-04",
@@ -296,6 +378,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "台北世貿一館",
     "city": "",
     "photos": [],
@@ -304,12 +388,19 @@
     "organizer": "Netflix",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.033647834299405, 121.5624091842944"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-011",
+    "stableId": 11,
     "number": 11,
     "year": 2023,
     "startDate": "2023-05-20",
@@ -318,7 +409,8 @@
     "title": "Bushiroad EXPO 2023",
     "type": "EXPO／Talk／手渡／上映會",
     "people": [
-      "進藤天音/西尾夕香"
+      "進藤あまね",
+      "西尾夕香"
     ],
     "relatedGroups": [
       "Morfonica"
@@ -326,6 +418,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 2,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "台北富邦國際會議中心",
     "city": "",
     "photos": [],
@@ -334,12 +428,19 @@
     "organizer": "武士道",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.04561273806598, 121.548449726622"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-012",
+    "stableId": 12,
     "number": 12,
     "year": 2023,
     "startDate": "2023-07-29",
@@ -356,6 +457,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "台北世貿一館",
     "city": "",
     "photos": [],
@@ -364,12 +467,19 @@
     "organizer": "木棉花國際",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.033647834299405, 121.5624091842944"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-013",
+    "stableId": 13,
     "number": 13,
     "year": 2023,
     "startDate": "2023-11-19",
@@ -390,6 +500,8 @@
     "category": "本體",
     "isFullBand": false,
     "attendanceCount": 3,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "台北中正紀念堂演藝廳",
     "city": "",
     "photos": [],
@@ -398,12 +510,19 @@
     "organizer": "移動怪獸",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.035550581886277, 121.52015101127607"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-014",
+    "stableId": 14,
     "number": 14,
     "year": 2024,
     "startDate": "2024-02-02",
@@ -420,6 +539,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "台北世貿一館",
     "city": "",
     "photos": [],
@@ -428,12 +549,19 @@
     "organizer": "武士道",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.033647834299405, 121.5624091842944"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-015",
+    "stableId": 15,
     "number": 15,
     "year": 2024,
     "startDate": "2024-02-03",
@@ -442,7 +570,7 @@
     "title": "Bushiroad EXPO 2024",
     "type": "簽名會",
     "people": [
-      "進藤天音"
+      "進藤あまね"
     ],
     "relatedGroups": [
       "Morfonica"
@@ -450,20 +578,29 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "台北世貿一館",
     "city": "",
     "photos": [],
-    "cover": "https://instagram.ftpe7-2.fna.fbcdn.net/v/t51.82787-15/729767731_17960542737123007_833544216713567659_n.webp?_nc_cat=111&ig_cache_key=MzkyNDUzMzAyMTY0NjA4ODExNg%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkNBUk9VU0VMX0lURU0ueHBpZHMuMTQ0MC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=tWuyhEYVJ4gQ7kNvwEe7gLk&_nc_oc=AdoDyfKzs9PwEsv_mZjQwZdpCOgLjiTYQIeUG3K-0eB-pGot8KyfboTX5myQs4Oi-vs&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.ftpe7-2.fna&_nc_gid=h7h8D9na4nV9VlmjOn0_0g&_nc_ss=7a22e&oh=00_Af-sYRVz0dzSr8UrZ8Ehhg5qoXBebQl45wllvFc_a8cfwg&oe=6A3E4EE8",
+    "cover": "https://p2.bahamut.com.tw/B/2KU/54/7da749b5d5f791f736ca2002b31o9ve5.JPG",
     "ticketUrl": "",
     "organizer": "武士道",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.033647834299405, 121.5624091842944"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-016",
+    "stableId": 16,
     "number": 16,
     "year": 2024,
     "startDate": "2024-03-02",
@@ -480,6 +617,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "Bushiroad 台北旗艦店「魔法氣泡」",
     "city": "",
     "photos": [],
@@ -488,12 +627,19 @@
     "organizer": "武士道",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.05673084147199, 121.36935212476776"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-017",
+    "stableId": 17,
     "number": 17,
     "year": 2024,
     "startDate": "2024-03-03",
@@ -510,6 +656,8 @@
     "category": "本體",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "Bushiroad 台北旗艦店「魔法氣泡」",
     "city": "",
     "photos": [],
@@ -518,12 +666,19 @@
     "organizer": "武士道",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.05673084147199, 121.36935212476776"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-018",
+    "stableId": 18,
     "number": 18,
     "year": 2024,
     "startDate": "2024-03-23",
@@ -544,6 +699,8 @@
     "category": "本體",
     "isFullBand": true,
     "attendanceCount": 5,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "Zepp New Taipei",
     "city": "",
     "photos": [],
@@ -552,12 +709,19 @@
     "organizer": "數位至匯",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.059862936750406, 121.44961551313123"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-019",
+    "stableId": 19,
     "number": 19,
     "year": 2024,
     "startDate": "2024-06-28",
@@ -576,6 +740,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 2,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "SAKURA 音樂餐酒館",
     "city": "",
     "photos": [],
@@ -584,12 +750,19 @@
     "organizer": "",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.035480132440163, 121.56624307979008"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-020",
+    "stableId": 20,
     "number": 20,
     "year": 2024,
     "startDate": "2024-11-16",
@@ -606,6 +779,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "三創生活園區 CLAPPER STUDIO",
     "city": "",
     "photos": [],
@@ -614,12 +789,19 @@
     "organizer": "開拓動漫 / 好玩國際文化",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.045517357904412, 121.5311791842947"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-021",
+    "stableId": 21,
     "number": 21,
     "year": 2025,
     "startDate": "2025-02-08",
@@ -636,6 +818,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "南港展覽館一館",
     "city": "",
     "photos": [],
@@ -644,12 +828,19 @@
     "organizer": "回歸線娛樂",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.056757383998285, 121.61812662662228"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-022",
+    "stableId": 22,
     "number": 22,
     "year": 2025,
     "startDate": "2025-02-08",
@@ -669,6 +860,8 @@
     "category": "本體",
     "isFullBand": false,
     "attendanceCount": 3,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "台北世貿一館",
     "city": "",
     "photos": [],
@@ -677,12 +870,19 @@
     "organizer": "武士道",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.033647834299405, 121.5624091842944"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-023",
+    "stableId": 23,
     "number": 23,
     "year": 2025,
     "startDate": "2025-02-09",
@@ -701,6 +901,8 @@
     "category": "本體",
     "isFullBand": false,
     "attendanceCount": 2,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "台北世貿一館",
     "city": "",
     "photos": [],
@@ -709,12 +911,19 @@
     "organizer": "武士道",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.033647834299405, 121.5624091842944"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-024",
+    "stableId": 24,
     "number": 24,
     "year": 2025,
     "startDate": "2025-02-15",
@@ -733,6 +942,8 @@
     "category": "本體",
     "isFullBand": false,
     "attendanceCount": 3,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "TICC",
     "city": "",
     "photos": [],
@@ -741,12 +952,19 @@
     "organizer": "移動怪獸",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.033677434259534, 121.56091275545798"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-025",
+    "stableId": 25,
     "number": 25,
     "year": 2025,
     "startDate": "2025-04-20",
@@ -763,6 +981,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "華中露營場",
     "city": "",
     "photos": [],
@@ -771,12 +991,19 @@
     "organizer": "宝島制作委員会",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.01478421477335, 121.49625829593023"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-026",
+    "stableId": 26,
     "number": 26,
     "year": 2025,
     "startDate": "2025-05-24",
@@ -797,6 +1024,8 @@
     "category": "本體",
     "isFullBand": true,
     "attendanceCount": 5,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "桃園會展中心",
     "city": "",
     "photos": [],
@@ -805,12 +1034,19 @@
     "organizer": "新想股份有限公司",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.003176958404442, 121.20090462662107"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-027",
+    "stableId": 27,
     "number": 27,
     "year": 2025,
     "startDate": "2025-06-21",
@@ -827,6 +1063,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "WESTAR",
     "city": "",
     "photos": [],
@@ -835,12 +1073,19 @@
     "organizer": "AniStar製作委員會",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.043090223888605, 121.50731818244019"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-028",
+    "stableId": 28,
     "number": 28,
     "year": 2025,
     "startDate": "2025-08-23",
@@ -857,6 +1102,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "時藝劇場",
     "city": "",
     "photos": [],
@@ -865,12 +1112,19 @@
     "organizer": "Ani-mode",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.05808881559169, 121.4991657149856"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-029",
+    "stableId": 29,
     "number": 29,
     "year": 2025,
     "startDate": "2025-09-29",
@@ -887,6 +1141,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "時藝劇場",
     "city": "",
     "photos": [],
@@ -895,12 +1151,19 @@
     "organizer": "集藝文化",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.05808881559169, 121.4991657149856"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-030",
+    "stableId": 30,
     "number": 30,
     "year": 2025,
     "startDate": "2025-11-09",
@@ -917,6 +1180,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "MOONDOG",
     "city": "",
     "photos": [],
@@ -925,12 +1190,19 @@
     "organizer": "宝島制作委員会",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.04625425726183, 121.5443547977855"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-031",
+    "stableId": 31,
     "number": 31,
     "year": 2025,
     "startDate": "2025-11-22",
@@ -949,6 +1221,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 2,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "台灣大學綜合體育館",
     "city": "",
     "photos": [],
@@ -957,12 +1231,19 @@
     "organizer": "好玩國際文化",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.021796018791985, 121.53506255360321"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-032",
+    "stableId": 32,
     "number": 32,
     "year": 2025,
     "startDate": "2025-12-10",
@@ -980,6 +1261,8 @@
     "category": "本體",
     "isFullBand": false,
     "attendanceCount": 2,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "MUVIE CINEMAS 台北松仁影城（TITAN SCREEN）",
     "city": "",
     "photos": [],
@@ -988,12 +1271,19 @@
     "organizer": "威秀影城",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.036970884850206, 121.56806831498538"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-033",
+    "stableId": 33,
     "number": 33,
     "year": 2025,
     "startDate": "2025-12-26",
@@ -1014,6 +1304,8 @@
     "category": "本體",
     "isFullBand": true,
     "attendanceCount": 5,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "Zepp New Taipei",
     "city": "",
     "photos": [],
@@ -1022,12 +1314,19 @@
     "organizer": "數位至匯",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.059862936750406, 121.44961551313123"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-034",
+    "stableId": 34,
     "number": 34,
     "year": 2026,
     "startDate": "2026-01-17",
@@ -1044,6 +1343,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "新光三越高雄左營店 10F 舞台區",
     "city": "",
     "photos": [],
@@ -1052,12 +1353,19 @@
     "organizer": "Voice Stage",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "22.68928615749584, 120.31042518425267"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-035",
+    "stableId": 35,
     "number": 35,
     "year": 2026,
     "startDate": "2026-02-05",
@@ -1076,6 +1384,8 @@
     "category": "本體",
     "isFullBand": false,
     "attendanceCount": 2,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "南港展覽館一館",
     "city": "",
     "photos": [],
@@ -1084,12 +1394,19 @@
     "organizer": "武士道",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.056757383998285, 121.61812662662228"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-036",
+    "stableId": 36,
     "number": 36,
     "year": 2026,
     "startDate": "2026-02-06",
@@ -1106,6 +1423,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "南港展覽館一館",
     "city": "",
     "photos": [],
@@ -1114,12 +1433,19 @@
     "organizer": "ATC Taiwan",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.056757383998285, 121.61812662662229"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-037",
+    "stableId": 37,
     "number": 37,
     "year": 2026,
     "startDate": "2026-02-07",
@@ -1136,6 +1462,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "南港展覽館一館",
     "city": "",
     "photos": [],
@@ -1144,12 +1472,19 @@
     "organizer": "ATC Taiwan",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.056757383998285, 121.61812662662230"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-038",
+    "stableId": 38,
     "number": 38,
     "year": 2026,
     "startDate": "2026-02-08",
@@ -1161,11 +1496,13 @@
       "直田姬奈"
     ],
     "relatedGroups": [
-      "Ave Mujica／若葉睦"
+      "Morfonica"
     ],
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "南港展覽館一館",
     "city": "",
     "photos": [],
@@ -1174,12 +1511,19 @@
     "organizer": "木棉花國際",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.056757383998285, 121.61812662662231"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-039",
+    "stableId": 39,
     "number": 39,
     "year": 2026,
     "startDate": "2026-03-21",
@@ -1196,6 +1540,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "MOONDOG",
     "city": "",
     "photos": [],
@@ -1204,12 +1550,19 @@
     "organizer": "宝島制作委員会",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.04625425726183, 121.5443547977855"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-040",
+    "stableId": 40,
     "number": 40,
     "year": 2026,
     "startDate": "2026-04-04",
@@ -1226,6 +1579,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "台北松山文創園區第五倉",
     "city": "",
     "photos": [],
@@ -1234,12 +1589,19 @@
     "organizer": "創角數位",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.04391082312588, 121.56064271940983"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-041",
+    "stableId": 41,
     "number": 41,
     "year": 2026,
     "startDate": "2026-04-07",
@@ -1254,6 +1616,8 @@
     "category": "本體",
     "isFullBand": false,
     "attendanceCount": 0,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "台北微風廣場 8F C1、C2 廳",
     "city": "",
     "photos": [],
@@ -1262,12 +1626,19 @@
     "organizer": "宝島制作委員会",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.04631357728319, 121.5445902996399"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-042",
+    "stableId": 42,
     "number": 42,
     "year": 2026,
     "startDate": "2026-04-11",
@@ -1294,20 +1665,29 @@
     "category": "本體",
     "isFullBand": true,
     "attendanceCount": 10,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "台北大佳河濱公園",
     "city": "",
     "photos": [],
-    "cover": "https://p2.bahamut.com.tw/B/2KU/19/8a8f74aade0d4e39109587992c1xjsn5.JPG",
+    "cover": "https://pgw.udn.com.tw/gw/photo.php?u=https://uc.udn.com.tw/photo/2026/02/05/0/34369199.png&x=0&y=0&sw=0&sh=0&sl=W&fw=800&exp=3600",
     "ticketUrl": "",
     "organizer": "宝島制作委員会",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.074806590236637, 121.54108986894981"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-043",
+    "stableId": 43,
     "number": 43,
     "year": 2026,
     "startDate": "2026-04-12",
@@ -1334,20 +1714,33 @@
     "category": "本體",
     "isFullBand": true,
     "attendanceCount": 10,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "台北大佳河濱公園",
     "city": "",
-    "photos": [],
-    "cover": "https://p2.bahamut.com.tw/B/2KU/19/8a8f74aade0d4e39109587992c1xjsn5.JPG",
+    "photos": [
+      "https://www.cts.com.tw/data/images/c7/a6/4b/64/c7a64b6448372753b63f24f2ef911b87.webp",
+      "https://www.cts.com.tw/data/images/e5/6b/c7/a7/e56bc7a77590595140f46e8f4f50317b.webp",
+      "https://www.cts.com.tw/data/images/97/1f/74/3b/971f743b9794cb6b5bf2e93b703976b9.webp"
+    ],
+    "cover": "https://img.league-funny.com/imgur/177026992115_o.png",
     "ticketUrl": "",
     "organizer": "宝島制作委員会",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "日期暫定（9月）",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.074806590236637, 121.54108986894981"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-044",
+    "stableId": 44,
     "number": 44,
     "year": 2026,
     "startDate": "2026-04-25",
@@ -1364,20 +1757,33 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "MOONDOG",
     "city": "",
-    "photos": [],
+    "photos": [
+      "https://scontent-tpe1-1.cdninstagram.com/v/t51.82787-15/681517782_18030952226802371_5935665488916846230_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ig_cache_key=Mzg4Mzc2Mzg1OTYyNjk5OTc2MA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkNBUk9VU0VMX0lURU0ueHBpZHMuMTQ0MC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=wjyipAzKUM8Q7kNvwExaT8U&_nc_oc=Ado3y5DHpC6cyNxsiQz4uoDd6WbqcrAIcnyqU3YIsWz8MQG4bDa7a3GAcq4Du632TH4&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe1-1.cdninstagram.com&_nc_gid=GxQEwpnswoxpn-juX3yNwg&_nc_ss=7a22e&oh=00_AQHsX_CiAsGO_OjsM_qWvqp3UHXuKHpnlLSTBSJ9k8gWYA&oe=6A7B5697",
+      "https://scontent-tpe1-1.cdninstagram.com/v/t51.82787-15/681116746_18030952247802371_8652781386514997478_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=105&ig_cache_key=Mzg4Mzc2Mzg1OTY5NDE1NTQyMw%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkNBUk9VU0VMX0lURU0ueHBpZHMuMTQ0MC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=7Px3WJXrkwcQ7kNvwGyi5mP&_nc_oc=AdrQq4IlhzMiuqkgNLJ8mw2tLzklsGYnZiEWQULXurr9TSjOxm3KSUAilYMU2AbQmXQ&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe1-1.cdninstagram.com&_nc_gid=GxQEwpnswoxpn-juX3yNwg&_nc_ss=7a22e&oh=00_AQGpadKwcMgWJQyzkREc2qHB3Vtyx0Ns-m0cnVKSXD4dJg&oe=6A7B66A6",
+      "https://scontent-tpe1-1.cdninstagram.com/v/t51.82787-15/682138208_18030952460802371_6030449994575927330_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=104&ig_cache_key=Mzg4Mzc2Mzg1OTY3NzMzMjk5OQ%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkNBUk9VU0VMX0lURU0ueHBpZHMuMTQ0MC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=ftC5QWAvln8Q7kNvwGpr9Ba&_nc_oc=AdphiVxR3A1S9GdZh5jE5Z8RLn88hvsqSV_13XU1YSzeZX--yyJO_b-tlPQPRRRQWoM&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe1-1.cdninstagram.com&_nc_gid=GxQEwpnswoxpn-juX3yNwg&_nc_ss=7a22e&oh=00_AQFJOwJnHASpoWwPaAV21MrQtPAENUDBujBxf5yxQV9j8g&oe=6A7B4A54"
+    ],
     "cover": "https://assets.kktix.io/upload_images/295857/0224_AIMI_1200x630_large.jpg",
     "ticketUrl": "",
     "organizer": "宝島制作委員会",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.04625425726183, 121.5443547977855"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-045",
+    "stableId": 45,
     "number": 45,
     "year": 2026,
     "startDate": "2026-05-09",
@@ -1394,6 +1800,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "南港展覽館一館",
     "city": "",
     "photos": [],
@@ -1402,12 +1810,19 @@
     "organizer": "台灣Cosplay藝術推廣協會",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.056757383998285, 121.61812662662228"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-046",
+    "stableId": 46,
     "number": 46,
     "year": 2026,
     "startDate": "2026-05-10",
@@ -1424,6 +1839,8 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "台北南港展覽館一館 4 樓",
     "city": "",
     "photos": [],
@@ -1432,17 +1849,24 @@
     "organizer": "新想股份有限公司",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.056757383998285, 121.61812662662228"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-047",
+    "stableId": 47,
     "number": 47,
     "year": 2026,
-    "startDate": "2026-07-12",
-    "endDate": "2026-07-12",
-    "month": 7,
+    "startDate": "2026-10-11",
+    "endDate": "2026-10-11",
+    "month": 10,
     "title": "Kanon Shizaki Fan Meeting “NON” Stop XI in Taipei",
     "type": "FMT",
     "people": [
@@ -1454,22 +1878,31 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "HANASPACE 花漾展演空間",
     "city": "",
     "photos": [],
-    "cover": "https://static.ticketplus.com.tw/event/14b934c1397c1f913aa0f6f005d420ba/picBigActiveMain_1779431358667.jpeg",
+    "cover": "https://www.cts.com.tw/data/images/bf/98/5e/46/bf985e46b8b50974054bccf423a2e8a1.webp",
     "ticketUrl": "",
     "organizer": "數位至匯",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [
       "https://ticketplus.com.tw/activity/14b934c1397c1f913aa0f6f005d420ba"
     ],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.039263773158908, 121.52234102847616"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-048",
+    "stableId": 48,
     "number": 48,
     "year": 2026,
     "startDate": "2026-08-01",
@@ -1488,22 +1921,35 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 2,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "MOONDOG",
     "city": "",
-    "photos": [],
+    "photos": [
+      "https://scontent-tpe1-1.cdninstagram.com/v/t51.82787-15/763740635_17933606247360590_3384646212108934412_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=107&ig_cache_key=Mzk1NzY2NDc3NjIwODkxNDQxNQ%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkNBUk9VU0VMX0lURU0ueHBpZHMuNDA5Ni5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=tVowBYQosLMQ7kNvwE_uYe5&_nc_oc=AdrKJjMhA8VuHnddTaQbx8Pwc8uNa5ppgCkDBbfPVN5TuZooPt7tBHliYwxbd3vytdY&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe1-1.cdninstagram.com&_nc_gid=AvZqzg5DGu8lpD7e967qsg&_nc_ss=7a22e&oh=00_AQHSJR7CekHFolyGUZfeK-wA0JbaFZqmXIIwIyy85zARJg&oe=6A7B4EE2",
+      "https://scontent-tpe1-1.cdninstagram.com/v/t51.82787-15/765008556_17933606220360590_2400157483636633413_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=102&ig_cache_key=Mzk1NzY2NDc3NzEzMTcxNjc3Nw%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkNBUk9VU0VMX0lURU0ueHBpZHMuNDA5Ni5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=Lkg4e42mFrgQ7kNvwFABAmC&_nc_oc=Adqiqqk-qMlQ1nOli7rZ4kI1ea7KH0TBrEglkURCjRsitn7wegK-nFWYUnr2DY-Sjpw&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe1-1.cdninstagram.com&_nc_gid=AvZqzg5DGu8lpD7e967qsg&_nc_ss=7a22e&oh=00_AQEpuPTUe3JlHBQfd9EZlno9GduPAfLdeP4esLDcPzJW-A&oe=6A7B62D3",
+      "https://scontent-tpe1-1.cdninstagram.com/v/t51.82787-15/763515296_17933606226360590_6630560194010327604_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=104&ig_cache_key=Mzk1NzY2NDc3Njc2MjU2MjQzOA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkNBUk9VU0VMX0lURU0ueHBpZHMuNDA5Ni5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=zG7koVNTYvkQ7kNvwE52Bd2&_nc_oc=Adp0nyoyljm3tT9xS3UBxDZ_5ZIzkNPJ9_0nh8H6xAOyFUYG-M217Dfj6D5xYDbxWdM&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe1-1.cdninstagram.com&_nc_gid=AvZqzg5DGu8lpD7e967qsg&_nc_ss=7a22e&oh=00_AQFmTnleThbBoO8rekdHInha1S3e1CY9Ydix-213xLo7RQ&oe=6A7B48C9"
+    ],
     "cover": "https://pbs.twimg.com/media/HKcg_hsbEAAgDZ5.jpg",
     "ticketUrl": "",
     "organizer": "宝島制作委員会",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [
       "https://baodaorecords.kktix.cc/events/6b8019fc"
     ],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.04625425726183, 121.5443547977855"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-049",
+    "stableId": 49,
     "number": 49,
     "year": 2026,
     "startDate": "2026-08-02",
@@ -1522,23 +1968,71 @@
     "category": "本體",
     "isFullBand": false,
     "attendanceCount": 3,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "HANASPACE 花漾展演空間",
     "city": "",
     "photos": [],
-    "cover": "https://scontent-tpe1-1.cdninstagram.com/v/t51.82787-15/728266083_17968126224120485_2966002183394514056_n.webp?_nc_cat=104&ig_cache_key=MzkyNzg3MTg5MDUzNTM0NjU1Ng%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTIwMC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=5wj3QjMTHEkQ7kNvwEOvd0C&_nc_oc=Adpwh2kEa9Z3iXZTRfzUQTw3GzKZt_QBPbc9ZUu2SoZrsRzmYGwdKIbgiF0bdRksF3w&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe1-1.cdninstagram.com&_nc_gid=rqGe-P2MEt3MckaU_3xhAA&_nc_ss=7a22e&oh=00_Af8qH6hkdY2nrqJ_E0PRW7EBlnHrldwoQiF0WeVY1XZpIA&oe=6A43FC0E",
+    "cover": "https://assets.kktix.io/upload_images/547387/FM260802_KKTIX_large.jpg",
     "ticketUrl": "",
     "organizer": "移動怪獸",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [
       "https://mobimon.kktix.cc/events/mobimon20260625-campaign?fbclid=IwY2xjawSrDUlleHRuA2FlbQIxMABicmlkETFjYmEwOWNmUHMxY2phbXF0c3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHtJGMcGY_tp0GIwX_9W6kQ-mqq8DUcHYj-cO7XbiticechAbWN9sdB7j4lFJ_aem_86-Repoc7Kqbr08eiEeHJw"
     ],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.039263773158908, 121.52234102847616"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
     "id": "evt-050",
+    "stableId": 50,
     "number": 50,
+    "year": 2026,
+    "startDate": "2026-08-07",
+    "endDate": "2026-08-10",
+    "month": 8,
+    "title": "Ave Mujica LIVE TOUR 2026「Exitus」台北限定快閃店",
+    "type": "快閃店",
+    "people": [],
+    "relatedGroups": [
+      "Ave Mujica"
+    ],
+    "category": "本體",
+    "isFullBand": false,
+    "attendanceCount": 0,
+    "urgency": "",
+    "isUrgent": false,
+    "venue": "台北微風廣場 8F C1、C2 廳",
+    "city": "",
+    "photos": [],
+    "cover": "https://storage.googleapis.com/prod-ticketupload-gash/activity/21251242d31992ec4ca23672569a1074.webp",
+    "ticketUrl": "",
+    "organizer": "宝島制作委員会",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "sources": [
+      "https://ticketplus.com.tw/activity/296250ccc90137f0ce805764b3a6f450"
+    ],
+    "notes": "",
+    "extras": {
+      "座標": "25.04631357728319, 121.5445902996399"
+    },
+    "lastUpdated": "2026-08-24"
+  },
+  {
+    "id": "evt-051",
+    "stableId": 51,
+    "number": 51,
     "year": 2026,
     "startDate": "2026-08-08",
     "endDate": "2026-08-09",
@@ -1558,6 +2052,8 @@
     "category": "本體",
     "isFullBand": true,
     "attendanceCount": 5,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "國立體育大學綜合體育館／林口體育館",
     "city": "",
     "photos": [],
@@ -1566,50 +2062,68 @@
     "organizer": "宝島制作委員会",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [
       "https://ticketplus.com.tw/activity/296250ccc90137f0ce805764b3a6f450"
     ],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.034963936894517, 121.38349535360369"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
-    "id": "evt-051",
-    "number": 51,
+    "id": "evt-052",
+    "stableId": 52,
+    "number": 52,
     "year": 2026,
     "startDate": "2026-08-15",
     "endDate": "2026-08-15",
     "month": 8,
     "title": "反田葉月 1st LIVE tour「全力Melty Summer!!!」特別篇 台北公演",
-    "type": "LIVE",
+    "type": "LIVE/FMT",
     "people": [
       "反田葉月"
     ],
     "relatedGroups": [
-      "Ave Mujica／sumimi／純田真奈"
+      "Sumimi／純田真奈"
     ],
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "HANASPACE 花漾展演空間",
     "city": "",
     "photos": [],
-    "cover": "",
+    "cover": "https://assets.kktix.io/upload_images/551532/%E5%8F%8D%E7%94%B0%E8%91%89%E6%9C%88-1200-630_original.jpg",
     "ticketUrl": "",
     "organizer": "數位至匯",
     "description": "",
     "impression": "",
-    "sources": [],
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "sources": [
+      "https://kktix.com/events/lqera-02/registrations/new"
+    ],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.039263773158908, 121.52234102847616"
+    },
+    "lastUpdated": "2026-08-24"
   },
   {
-    "id": "evt-052",
-    "number": 52,
+    "id": "evt-053",
+    "stableId": 53,
+    "number": 53,
     "year": 2026,
-    "startDate": "",
-    "endDate": "",
+    "startDate": "2026-09-27",
+    "endDate": "2026-09-27",
     "month": 9,
-    "title": "林鼓子粉絲見面會（暫）台北",
+    "title": "林鼓子粉絲見面會 台北",
     "type": "FMT",
     "people": [
       "林鼓子"
@@ -1620,21 +2134,223 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
+    "venue": "HANASPACE 花漾展演空間",
+    "city": "",
+    "photos": [],
+    "cover": "https://p2.bahamut.com.tw/B/2KU/49/201be4cfe2d19e28cc598a84301zgq15.JPG",
+    "ticketUrl": "",
+    "organizer": "數位至匯",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "sources": [],
+    "notes": "",
+    "extras": {
+      "座標": "25.039263773158908, 121.52234102847616"
+    },
+    "lastUpdated": "2026-08-24"
+  },
+  {
+    "id": "evt-054",
+    "stableId": 54,
+    "number": 54,
+    "year": 2026,
+    "startDate": "2026-10-17",
+    "endDate": "2026-10-17",
+    "month": 10,
+    "title": "TSUMUGI RISA FAN MEETING 2026 in TAIPEI",
+    "type": "FMT",
+    "people": [
+      "紡木吏佐"
+    ],
+    "relatedGroups": [
+      "RAISE A SUILEN／CHU^2"
+    ],
+    "category": "擦邊",
+    "isFullBand": false,
+    "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
+    "venue": "WESTAR",
+    "city": "",
+    "photos": [],
+    "cover": "https://assets.kktix.io/upload_images/553652/%E7%B4%A1%E6%9C%A8%E5%90%8F%E4%BD%90_KKTIX_original.jpg",
+    "ticketUrl": "",
+    "organizer": "鳴音合創",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "sources": [],
+    "notes": "",
+    "extras": {
+      "座標": "25.043090223888605, 121.50731818244019"
+    },
+    "lastUpdated": "2026-08-24"
+  },
+  {
+    "id": "evt-055",
+    "stableId": 55,
+    "number": 55,
+    "year": 2026,
+    "startDate": "2026-10-31",
+    "endDate": "2026-10-31",
+    "month": 10,
+    "title": "Ayasa首次臺北見面會",
+    "type": "FMT",
+    "people": [
+      "Ayasa"
+    ],
+    "relatedGroups": [
+      "Morfonica"
+    ],
+    "category": "擦邊",
+    "isFullBand": false,
+    "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
+    "venue": "MOONDOG",
+    "city": "",
+    "photos": [],
+    "cover": "https://scontent-tpe5-1.cdninstagram.com/v/t51.82787-15/778381296_18082202591448654_2361746055322304616_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=109&ig_cache_key=Mzk2OTIzMzEwMTIwNTUzMzIwMQ%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTQxNC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=xAWL7rVUFiMQ7kNvwGr3tFg&_nc_oc=AdqpbQDSIq3EAGSyn6QRxsDnx38araPFBsbx6aDvnDpBQnpQ2sB1DZxfgYE9TmC4Dcc&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe5-1.cdninstagram.com&_nc_gid=i49QwzToWRIhP1ZcSeKrrw&_nc_ss=7a22e&oh=00_AQGfoXB5RxJlOviLQ2dInF8_5i8Qq2XO-UClauVqD4V3Vw&oe=6A8F9135",
+    "ticketUrl": "",
+    "organizer": "",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "sources": [],
+    "notes": "",
+    "extras": {
+      "座標": "25.04625425726183, 121.5443547977855"
+    },
+    "lastUpdated": "2026-08-24"
+  },
+  {
+    "id": "evt-056",
+    "stableId": 56,
+    "number": 56,
+    "year": 2026,
+    "startDate": "2026-11-07",
+    "endDate": "2026-11-07",
+    "month": 11,
+    "title": "工藤晴香 Fan Meeting 2026 in Taipei",
+    "type": "FMT",
+    "people": [
+      "工藤晴香"
+    ],
+    "relatedGroups": [
+      "Roselia"
+    ],
+    "category": "擦邊",
+    "isFullBand": false,
+    "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
+    "venue": "Clapper Studio",
+    "city": "",
+    "photos": [],
+    "cover": "https://instagram.ftpe8-1.fna.fbcdn.net/v/t51.82787-15/773556269_17891737860599312_3170672272355519654_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=109&ig_cache_key=Mzk2Njg3NTQ4NTQ0MjkzNDgxNg%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMjA3Mi5zZHIucmVndWxhcl9waG90by5DMiJ9&_nc_ohc=yHznckC0Ir0Q7kNvwHBpxOa&_nc_oc=AdrFVa6HgMQ60IK0OfXoVXszAYuH6KgHlXpAHNCh1aIJ0mHAXmhILZqdfvl47H_1124&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.ftpe8-1.fna&_nc_gid=JP0QdOJHxxhsh9tXWwTf_Q&_nc_ss=7a22e&oh=00_AQE0EpymJ66DYzMDyIHUHQE5OkjC1fRc8V-8xRulRaSIJw&oe=6A8B1D58",
+    "ticketUrl": "",
+    "organizer": "ATC Taiwan",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "sources": [],
+    "notes": "",
+    "extras": {
+      "座標": "25.045521197970487, 121.53114385199983"
+    },
+    "lastUpdated": "2026-08-24"
+  },
+  {
+    "id": "evt-057",
+    "stableId": 57,
+    "number": 57,
+    "year": 2026,
+    "startDate": "2026-11-14",
+    "endDate": "2026-11-14",
+    "month": 11,
+    "title": "AKANE YONEZAWA \"Black Pasta\" TOUR in Taipei",
+    "type": "LIVE",
+    "people": [
+      "米澤茜"
+    ],
+    "relatedGroups": [
+      "Ave Mujica"
+    ],
+    "category": "擦邊",
+    "isFullBand": false,
+    "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
+    "venue": "MOONDOG",
+    "city": "",
+    "photos": [],
+    "cover": "https://instagram.ftpe8-3.fna.fbcdn.net/v/t51.82787-15/775446118_17936007927360590_3211033735839261065_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=106&ig_cache_key=Mzk2NjMzMTc1Mzc1NzYxOTY1NA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMjI1MC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=ql6PD2WqDN0Q7kNvwGD60Cn&_nc_oc=AdpWasBwNwmxb1-np-3Ffj7_O-3hCFb7A0So7ihuZQOagH-JD_3e7MUqvGjMBwgI1os&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.ftpe8-3.fna&_nc_gid=Vc2v8Qi6kNUnqOev1DfJyw&_nc_ss=7a22e&oh=00_AQGvuydtmWIOzgf1x9naPRd0cE7Fb1sbx_tQ1g0gN1BZxQ&oe=6A89E86A",
+    "ticketUrl": "",
+    "organizer": "宝島制作委員会",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "sources": [],
+    "notes": "",
+    "extras": {
+      "座標": "25.04625425726183, 121.5443547977855"
+    },
+    "lastUpdated": "2026-08-24"
+  },
+  {
+    "id": "evt-058",
+    "stableId": 58,
+    "number": 58,
+    "year": 2026,
+    "startDate": "2026-11-28",
+    "endDate": "2026-11-28",
+    "month": 11,
+    "title": "伊藤美来 10th Anniversary Live Tour「39rpm」",
+    "type": "LIVE",
+    "people": [
+      "伊藤美來"
+    ],
+    "relatedGroups": [
+      "Hello, Happy World!／弦卷心"
+    ],
+    "category": "擦邊",
+    "isFullBand": false,
+    "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "未確認",
     "city": "",
     "photos": [],
-    "cover": "",
+    "cover": "https://static.timable.com/image_c3823a8c-7e3d-42d2-b9ae-70989e01af65.webp",
     "ticketUrl": "",
     "organizer": "未確認",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {},
+    "lastUpdated": "2026-08-24"
   },
   {
-    "id": "evt-053",
-    "number": 53,
+    "id": "evt-059",
+    "stableId": 59,
+    "number": 59,
     "year": 2026,
     "startDate": "2026-12-05",
     "endDate": "2026-12-05",
@@ -1650,16 +2366,24 @@
     "category": "擦邊",
     "isFullBand": false,
     "attendanceCount": 1,
+    "urgency": "",
+    "isUrgent": false,
     "venue": "MOONDOG",
     "city": "",
     "photos": [],
-    "cover": "",
+    "cover": "https://scontent-tpe1-1.cdninstagram.com/v/t51.82787-15/776748233_17935813221360590_8461018228893182023_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ig_cache_key=Mzk2NTYzNzMwMDMzNDk5NjQ3MQ%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTkzMC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=qkwEQvG9LZsQ7kNvwEebE4z&_nc_oc=AdqC7F5JxtX9SDClzg2kyltSThTTO4re6t1AnbJPKeG-f5LACpV2M5Fn7YcYHgbJS0c&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe1-1.cdninstagram.com&_nc_gid=9OEca0_mKS6D4Ujbud2JHw&_nc_ss=7a22e&oh=00_AQHtyjlHWMAc87v3yIh9-WZLX9D_e0okuqtGPIPSFr-50w&oe=6A88C802",
     "ticketUrl": "",
-    "organizer": "未確認",
+    "organizer": "宝島制作委員会",
     "description": "",
     "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
     "sources": [],
     "notes": "",
-    "lastUpdated": "2026-07-04"
+    "extras": {
+      "座標": "25.04625425726183, 121.5443547977855"
+    },
+    "lastUpdated": "2026-08-24"
   }
 ]

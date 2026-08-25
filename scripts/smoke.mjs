@@ -37,7 +37,7 @@ import MePage from './src/components/MePage.jsx'
 import StatsPanel from './src/components/StatsPanel.jsx'
 import OtherHalf from './src/components/OtherHalf.jsx'
 import VenueMap from './src/components/VenueMap.jsx'
-import YearReview from './src/components/YearReview.jsx'
+import YearWall from './src/components/YearWall.jsx'
 import CollectionStrip from './src/components/CollectionStrip.jsx'
 import Footer from './src/components/Footer.jsx'
 import Contribute from './src/components/Contribute.jsx'
@@ -45,6 +45,15 @@ import CommandPalette from './src/components/CommandPalette.jsx'
 import UrgentBar from './src/components/UrgentBar.jsx'
 import ResultBar from './src/components/ResultBar.jsx'
 import PulsePage from './src/components/PulsePage.jsx'
+import LabsPage from './src/components/LabsPage.jsx'
+import OrganizerPage from './src/components/OrganizerPage.jsx'
+import YearTimeline from './src/components/YearTimeline.jsx'
+import StatsInsights from './src/components/StatsInsights.jsx'
+import LifeTimeline from './src/components/LifeTimeline.jsx'
+import Primer from './src/components/Primer.jsx'
+import Chronicle from './src/components/Chronicle.jsx'
+import { InstallHint, BottomNav, IOSInstallCard, PromptInstallCard } from './src/components/Chrome.jsx'
+import { JustAnnounced, ChangeFeed } from './src/components/JustAnnounced.jsx'
 import { parseRosterCsv, parsePulseCsv } from './src/utils/parsePulse.js'
 import { milestoneMap } from './src/utils/milestones.js'
 import { sortChrono } from './src/utils/context.js'
@@ -102,7 +111,7 @@ export const CASES = [
   ['OtherHalf', <OtherHalf events={events} />],
   ['VenueMap(無座標)', <VenueMap events={events} />],
   ['VenueMap(有座標)', <VenueMap events={events.map((e, i) => i % 4 ? e : ({ ...e, extras: { ...(e.extras || {}), '座標': (25.02 + i * 0.004) + ', ' + (121.5 + i * 0.006) } }))} />],
-  ['YearReview', <YearReview events={events} />],
+  ['YearWall', <YearWall events={events} onSelect={noop} />],
   ['CollectionStrip', <CollectionStrip chrono={chrono} isOn={(e) => attended.has(e.id)} onNavigate={noop} />],
   ['Footer', <Footer source="sheet" updatedAt={Date.now()} onRetry={noop} />],
   // REPORT_URL 沒設時本來就不該顯示，空輸出是正確行為
@@ -123,6 +132,21 @@ export const CASES = [
   // 聲優動態：名冊 + 動態兩張分頁的矩陣
   ['PulsePage', <PulsePage roster={pulseRoster} pulse={pulseRows} events={events} source="sheet" onSelectEvent={noop} />],
   ['PulsePage(沒資料)', <PulsePage roster={[]} pulse={[]} events={events} source="off" onSelectEvent={noop} />],
+  ['LabsPage', <LabsPage roster={pulseRoster} pulse={pulseRows} events={events} source="sheet" onSelectEvent={noop} />],
+  ['OrganizerPage', <OrganizerPage value={events.find(e => e.organizer)?.organizer?.split(/[、,，/／]/)[0] || '武士道'} events={events} onSelect={noop} onClose={noop} />],
+  ['OrganizerPage(找不到)', <OrganizerPage value="不存在的主辦" events={events} onSelect={noop} onClose={noop} />],
+  ['YearTimeline', <YearTimeline events={events} onSelect={noop} />],
+  ['StatsInsights', <StatsInsights events={events} />],
+  ['LifeTimeline', <LifeTimeline list={events} color="#8b5cf6" glow="139,92,246" onSelect={noop} />],
+  ['Primer', <Primer />],
+  ['InstallHint(沒觸發)', <InstallHint />, { mayBeEmpty: true }],
+  ['IOSInstallCard', <IOSInstallCard onClose={noop} />],
+  ['PromptInstallCard', <PromptInstallCard prompt={{ prompt: noop, userChoice: Promise.resolve() }} onClose={noop} />],
+  ['BottomNav', <BottomNav tabs={[['home','首頁','house'],['collection','活動','grid'],['me','我的','circle-check']]} page="home" onGo={noop} />],
+  ['Chronicle', <Chronicle event={events.find(e => e.startDate)} allEvents={events} pulse={pulseRows} color="#8b5cf6" glow="139,92,246" onNavigate={noop} />],
+  ['Chronicle(沒資料)', <Chronicle event={{ id: 'x', title: '孤島活動' }} allEvents={[]} pulse={[]} color="#8b5cf6" glow="139,92,246" onNavigate={noop} />, { mayBeEmpty: true }],
+  ['JustAnnounced', <JustAnnounced events={events} onSelect={noop} />],
+  ['ChangeFeed', <ChangeFeed events={events} onSelect={noop} />],
 ]
 
 export { renderToStaticMarkup }

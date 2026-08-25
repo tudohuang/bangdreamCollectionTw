@@ -51,7 +51,7 @@ for (const e of events) {
     if (!KNOWN_BANDS.some(b => root.startsWith(b))) warns.push(`${tag}：未知樂團「${g}」（會以「其他」灰色呈現）`)
   }
   if (e.isFullBand && (e.people || []).length < 3) warns.push(`${tag}：標記全團但聲優少於 3 位`)
-  // 緊急性只認得「普通 / 非常」，打錯字會安靜地不亮紅燈，所以要唸出來
+  // 緊急性只認得「普通 / 非常」；打錯字不會亮紅燈，所以在這裡提醒
   if (e.urgency && !['普通', '非常'].includes(e.urgency)) {
     warns.push(`${tag}：緊急性「${e.urgency}」看不懂（只認得「普通 / 非常」，其餘視為普通）`)
   }

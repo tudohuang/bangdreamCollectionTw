@@ -17,7 +17,7 @@ import { normalizeImageUrl } from '../src/utils/media.js'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
 const DATA = join(ROOT, 'src', 'data', 'events.json')
-const SITE = 'bangdream-collection-tw.vercel.app'
+const SITE = 'bangdream.tw'          // 換網域時改這裡
 
 // ── 參數 ─────────────────────────────────────────────
 const argv = process.argv.slice(2)

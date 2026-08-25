@@ -1,0 +1,84 @@
+{
+  "量測時間": "2026-08-25",
+  "封面網址數": 58,
+  "正常": 52,
+  "失效": 6,
+  "總大小KB": 27910,
+  "平均KB": 537,
+  "最大KB": 4518,
+  "超過40KB的張數": 48,
+  "失效清單": [
+    {
+      "why": "連不上",
+      "host": "s3-press.niusnews.com",
+      "url": "https://s3-press.niusnews.com/72023_2_15403380024680.jpg"
+    },
+    {
+      "why": "HTTP 403",
+      "host": "scontent-tpe1-1.cdninstagram.com",
+      "url": "https://scontent-tpe1-1.cdninstagram.com/v/t51.82787-15/722036686_17966935959096365_4221407263606805221_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=107&ig_cache_key=MzkxNjk1MjI4OTY4MDcyMjg2Mw%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuNTg4LnNkci5yZWd1bGFyX3Bob3RvLkMzIn0%3D&_nc_ohc=3lcaXcjBGBkQ7kNvwHCeTIQ&_nc_oc=AdpUkC_gPcmGbTUsT2mZumMtU0ja64lxo8Khmb04FRgG168rjNH7Z97pmnWsiIZ-wXk&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe1-1.cdninstagram.com&_nc_gid=420hzjt88XtPGOKd0jxhlw&_nc_ss=7a22e&oh=00_Af_0to9p3bcYrAn7IVgU9Z4w9uFNNgwUnAcSoHJQbIL9nA&oe=6A31714D"
+    },
+    {
+      "why": "HTTP 403",
+      "host": "scontent-tpe1-1.cdninstagram.com",
+      "url": "https://scontent-tpe1-1.cdninstagram.com/v/t51.82787-15/721104386_17972458905105379_5388919835645089101_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=111&ig_cache_key=MzkxNjkyNDU5MjMwMDU2NDk2MA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTAyNC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=0luuzIbmTO0Q7kNvwEk1_Wl&_nc_oc=AdpSM-37Js2AYd2BjWz67S3WAdqSm4Bfcm94-XMPf_B0fvYTsTu-2jIQThyJb9yXptM&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe1-1.cdninstagram.com&_nc_gid=mMh_t5IWeRfa2PbGcvSECg&_nc_ss=7a22e&oh=00_Af8lAmYh4kHW9NkMUbwzYK_0HPCqsbN3Lps00wp3LY7DAQ&oe=6A31715D"
+    },
+    {
+      "why": "HTTP 403",
+      "host": "instagram.ftpe8-1.fna.fbcdn.net",
+      "url": "https://instagram.ftpe8-1.fna.fbcdn.net/v/t51.82787-15/773556269_17891737860599312_3170672272355519654_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=109&ig_cache_key=Mzk2Njg3NTQ4NTQ0MjkzNDgxNg%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMjA3Mi5zZHIucmVndWxhcl9waG90by5DMiJ9&_nc_ohc=yHznckC0Ir0Q7kNvwHBpxOa&_nc_oc=AdrFVa6HgMQ60IK0OfXoVXszAYuH6KgHlXpAHNCh1aIJ0mHAXmhILZqdfvl47H_1124&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.ftpe8-1.fna&_nc_gid=JP0QdOJHxxhsh9tXWwTf_Q&_nc_ss=7a22e&oh=00_AQE0EpymJ66DYzMDyIHUHQE5OkjC1fRc8V-8xRulRaSIJw&oe=6A8B1D58"
+    },
+    {
+      "why": "HTTP 403",
+      "host": "instagram.ftpe8-3.fna.fbcdn.net",
+      "url": "https://instagram.ftpe8-3.fna.fbcdn.net/v/t51.82787-15/775446118_17936007927360590_3211033735839261065_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=106&ig_cache_key=Mzk2NjMzMTc1Mzc1NzYxOTY1NA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMjI1MC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=ql6PD2WqDN0Q7kNvwGD60Cn&_nc_oc=AdpWasBwNwmxb1-np-3Ffj7_O-3hCFb7A0So7ihuZQOagH-JD_3e7MUqvGjMBwgI1os&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.ftpe8-3.fna&_nc_gid=Vc2v8Qi6kNUnqOev1DfJyw&_nc_ss=7a22e&oh=00_AQGvuydtmWIOzgf1x9naPRd0cE7Fb1sbx_tQ1g0gN1BZxQ&oe=6A89E86A"
+    },
+    {
+      "why": "HTTP 403",
+      "host": "scontent-tpe1-1.cdninstagram.com",
+      "url": "https://scontent-tpe1-1.cdninstagram.com/v/t51.82787-15/776748233_17935813221360590_8461018228893182023_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ig_cache_key=Mzk2NTYzNzMwMDMzNDk5NjQ3MQ%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTkzMC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=qkwEQvG9LZsQ7kNvwEebE4z&_nc_oc=AdqC7F5JxtX9SDClzg2kyltSThTTO4re6t1AnbJPKeG-f5LACpV2M5Fn7YcYHgbJS0c&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe1-1.cdninstagram.com&_nc_gid=9OEca0_mKS6D4Ujbud2JHw&_nc_ss=7a22e&oh=00_AQHtyjlHWMAc87v3yIh9-WZLX9D_e0okuqtGPIPSFr-50w&oe=6A88C802"
+    }
+  ],
+  "最大的十張": [
+    {
+      "kb": 4518,
+      "host": "assets.kktix.io"
+    },
+    {
+      "kb": 1631,
+      "host": "s3-ap-northeast-1.amazonaws.com"
+    },
+    {
+      "kb": 1427,
+      "host": "bang-dream.com"
+    },
+    {
+      "kb": 1283,
+      "host": "assets.kktix.io"
+    },
+    {
+      "kb": 1202,
+      "host": "assets.kktix.io"
+    },
+    {
+      "kb": 1183,
+      "host": "assets.kktix.io"
+    },
+    {
+      "kb": 1077,
+      "host": "assets.kktix.io"
+    },
+    {
+      "kb": 1055,
+      "host": "assets.kktix.io"
+    },
+    {
+      "kb": 1016,
+      "host": "scontent-tpe5-1.cdninstagram.com"
+    },
+    {
+      "kb": 964,
+      "host": "p2.bahamut.com.tw"
+    }
+  ]
+}

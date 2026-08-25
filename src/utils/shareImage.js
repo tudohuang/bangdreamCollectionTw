@@ -84,78 +84,89 @@ export async function downloadShareImage(event, meta, personal, extra = {}) {
     x.restore()
   }
 
-  // ---------- 左半：樂團 → 標題 → 日期地點 → 照片（照片吃剩下的高度，標題折幾行都不爆版） ----------
+  // ---------- 左半：樂團 → 標題 → 日期地點 → 照片 ----------
+  // 照片吃文字排完後剩下的高度，所以標題折幾行都不會爆版。
   const textX = T.x + 34, textW = PERF - textX - 46
   const dateStr = formatDateRangeCompact(event.startDate, event.endDate)
   const wd = weekday(event.startDate)
-
-  x.fillStyle = meta.color
-  x.font = `700 22px ${SANS}`
-  x.fillText(wrap(x, personal ? `個人來台 · ${meta.name}` : meta.name, textW, 1)[0], textX, perfTop + 30)
-
-  const titleSize = (event.title || '').length > 24 ? 38 : 44
-  const step = titleSize + 12
-  x.fillStyle = '#2a2442'
-  x.font = `800 ${titleSize}px ${DISP}`
-  const lines = wrap(x, event.title || '未命名活動', textW, 2)
-  let cur = perfTop + 76 + titleSize / 2
-  lines.forEach((ln, i) => x.fillText(ln, textX, cur + i * step))
-  cur += (lines.length - 1) * step
-
-  // 手寫日期 + 地點
-  cur += 48
-  x.fillStyle = meta.color
-  x.font = `700 30px ${HAND}`
-  const dateLabel = `${dateStr}${wd ? `（${wd.replace('週', '')}）` : ''}`
-  x.fillText(dateLabel, textX, cur)
-  const dateW = x.measureText(dateLabel).width
-  if (event.venue) {
-    x.fillStyle = '#605882'
-    x.font = `400 25px ${HAND}`
-    x.fillText(wrap(x, `· ${event.venue}`, textW - dateW - 16, 1)[0] || '', textX + dateW + 16, cur)
-  }
-
   const people = (event.people || []).join('、')
-  if (people) {
-    cur += 34
-    x.fillStyle = '#9c94be'
-    x.font = `500 21px ${SANS}`
-    x.fillText(wrap(x, people, textW, 1)[0], textX, cur)
+  const bottomLimit = T.y + T.h - 22
+  const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n))
+
+  const drawText = (topY) => {
+    const put = (text, tx, ty) => { if (text) x.fillText(text, tx, ty) }
+
+    x.fillStyle = meta.color
+    x.font = `700 22px ${SANS}`
+    put(wrap(x, personal ? `個人來台 · ${meta.name}` : meta.name, textW, 1)[0], textX, topY + 30)
+
+    const titleSize = (event.title || '').length > 24 ? 38 : 44
+    const step = titleSize + 12
+    x.fillStyle = '#2a2442'
+    x.font = `800 ${titleSize}px ${DISP}`
+    const lines = wrap(x, event.title || '未命名活動', textW, 2)
+    let cur = topY + 76 + titleSize / 2
+    lines.forEach((ln, i) => put(ln, textX, cur + i * step))
+    cur += (lines.length - 1) * step
+
+    cur += 48
+    x.fillStyle = meta.color
+    x.font = `700 30px ${HAND}`
+    const dateLabel = `${dateStr}${wd ? `（${wd.replace('週', '')}）` : ''}`
+    put(dateLabel, textX, cur)
+    const dateW = x.measureText(dateLabel).width
+    if (event.venue) {
+      x.fillStyle = '#605882'
+      x.font = `400 25px ${HAND}`
+      put(wrap(x, `· ${event.venue}`, textW - dateW - 16, 1)[0], textX + dateW + 16, cur)
+    }
+
+    if (people) {
+      cur += 34
+      x.fillStyle = '#9c94be'
+      x.font = `500 21px ${SANS}`
+      put(wrap(x, people, textW, 1)[0], textX, cur)
+    }
+    return cur
   }
 
-  // 封面：像貼上去的照片，高度用剩餘空間，最矮 150 最高 300
-  const F = { x: T.x + 30, w: PERF - T.x - 74 }
-  F.y = cur + 24
-  F.h = Math.max(150, Math.min(300, T.y + T.h - 22 - F.y))
-  x.save()
-  x.shadowColor = 'rgba(60,40,90,0.30)'
-  x.shadowBlur = 14; x.shadowOffsetY = 5
-  roundRect(x, F.x, F.y, F.w, F.h, 10)
-  x.fillStyle = '#ffffff'; x.fill()
-  x.restore()
+  // 白框 + 照片（沒封面就畫樂團色底），順便蓋「我去過」的章
+  const drawFrame = (fy, fh) => {
+    const F = { x: T.x + 30, w: PERF - T.x - 74, y: fy, h: fh }
+    x.save()
+    x.shadowColor = 'rgba(60,40,90,0.30)'
+    x.shadowBlur = 14; x.shadowOffsetY = 5
+    roundRect(x, F.x, F.y, F.w, F.h, 10)
+    x.fillStyle = '#ffffff'; x.fill()
+    x.restore()
 
-  const P = { x: F.x + 9, y: F.y + 9, w: F.w - 18, h: F.h - 18 }
-  x.save()
-  roundRect(x, P.x, P.y, P.w, P.h, 5); x.clip()
-  if (cover) {
-    drawCover(x, cover, P.x, P.y, P.w, P.h)
-  } else {
-    const g = x.createLinearGradient(P.x, P.y, P.x + P.w, P.y + P.h)
-    g.addColorStop(0, meta.color)
-    g.addColorStop(1, `rgba(${meta.glow},0.55)`)
-    x.fillStyle = g; x.fillRect(P.x, P.y, P.w, P.h)
-    x.fillStyle = 'rgba(255,255,255,0.24)'
-    x.font = `800 56px ${DISP}`
-    x.textAlign = 'center'
-    x.fillText(personal ? '個人來台' : meta.name, P.x + P.w / 2, P.y + P.h / 2 + 20)
-    x.textAlign = 'left'
+    const P = { x: F.x + 9, y: F.y + 9, w: F.w - 18, h: F.h - 18 }
+    x.save()
+    roundRect(x, P.x, P.y, P.w, P.h, 5); x.clip()
+    if (cover) {
+      drawCover(x, cover, P.x, P.y, P.w, P.h)
+    } else {
+      const g = x.createLinearGradient(P.x, P.y, P.x + P.w, P.y + P.h)
+      g.addColorStop(0, meta.color)
+      g.addColorStop(1, `rgba(${meta.glow},0.55)`)
+      x.fillStyle = g; x.fillRect(P.x, P.y, P.w, P.h)
+      x.fillStyle = 'rgba(255,255,255,0.24)'
+      x.font = `800 56px ${DISP}`
+      x.textAlign = 'center'
+      x.fillText(personal ? '個人來台' : meta.name, P.x + P.w / 2, P.y + P.h / 2 + 20)
+      x.textAlign = 'left'
+    }
+    // 照片下緣一條樂團色（畫在裁切內，才不會壓到圓角外）
+    x.fillStyle = meta.color
+    x.fillRect(P.x, P.y + P.h - 4, P.w, 4)
+    x.restore()
+
+    if (extra.attended) drawStamp(x, P.x + P.w - 76, P.y + P.h - 68, 52)
   }
-  // 照片下緣一條樂團色（畫在裁切內，才不會壓到圓角外）
-  x.fillStyle = meta.color
-  x.fillRect(P.x, P.y + P.h - 4, P.w, 4)
-  x.restore()
 
-  if (extra.attended) drawStamp(x, P.x + P.w - 76, P.y + P.h - 68, 52)
+  const textEnd = drawText(perfTop)
+  const coverY = textEnd + 24
+  drawFrame(coverY, clamp(bottomLimit - coverY, 150, 300))
 
   // ---------- 右半：存根 ----------
   const sx = STUB.x, sw = STUB.w
