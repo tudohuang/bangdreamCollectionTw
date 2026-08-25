@@ -27,7 +27,6 @@ import { urgentEvents } from './utils/urgency.js'
 import { downloadIcs } from './utils/ics.js'
 import { getAttended, saveAttended } from './utils/attended.js'
 import { tap, done } from './utils/haptics.js'
-import { CF_ANALYTICS_TOKEN } from './config.js'
 import {
   DEFAULT_FILTERS, applyFilters, orderEvents,
   filtersToParams, paramsToFilters, buildAppliedChips,
@@ -464,7 +463,7 @@ export default function App() {
       <InstallHint />
       <BottomNav tabs={PAGE_TABS} page={profile ? null : page} onGo={goPage} />
       <FloatingDock onRandom={openRandom} />
-      <Analytics token={CF_ANALYTICS_TOKEN} />
+      <Analytics />
 
       <Suspense fallback={null}>
         <CommandPalette

@@ -257,13 +257,26 @@ Cloudflare Pages 與 Vercel 都能直接部署，兩邊共用同一份邏輯（`
 
 ### 流量數據
 
-用 Cloudflare Web Analytics（免費、不吃 cookie）：
+正式部署在 **Vercel**，量測用它自家的兩支：
 
-1. 後台 → Web Analytics → Add a site → 填網域
-2. 複製 beacon 的 token
-3. 貼進 `src/config.js` 的 `CF_ANALYTICS_TOKEN`
+| 套件 | 收什麼 | 後台位置 |
+|---|---|---|
+| `@vercel/analytics` | 有多少人、看哪一頁、從哪裡進來 | 專案 → Analytics |
+| `@vercel/speed-insights` | 真實使用者的載入與互動延遲（Core Web Vitals）| 專案 → Speed Insights |
 
-沒填 token 就完全不會載入任何分析程式；localhost 也不送資料，本機開發不會污染數據。
+程式端不用填任何 token，在後台各按一次開關就會開始收。
+兩支都不放 cookie、不做跨站追蹤，所以不需要同意橫幅。
+
+只有 production build 會載入（`import.meta.env.PROD`）——
+開發時的重新整理不該算進流量，本機的速度也不能代表使用者的。
+
+> 為什麼要收效能：行動版剛大改過，但「在真手機上快不快」目前
+> 完全沒有數據，只有自動化環境量到的數字。Speed Insights 收的
+> 是真裝置、真網路的結果。
+
+`functions/` 底下那份 Cloudflare Pages Functions 先留著 ——
+邏輯與 `api/` 共用 `src/server/`，留著不影響 Vercel 部署，
+之後若要搬也不用重寫。
 
 ## 看盤終端（scripts/watch.mjs）
 

@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import Icon from './Icon.jsx'
 import { tap, done } from '../utils/haptics.js'
 import { isStandalone, isIOSSafari } from '../utils/platform.js'
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 
 // 頁面外框的小零件：捲動進度條、右下浮動按鈕、換頁時的佔位。
 
@@ -323,17 +325,23 @@ export function FloatingDock({ onRandom }) {
   )
 }
 
-// Cloudflare Web Analytics：只有設了 token 才載入，開發時（localhost）不算流量。
-// 用動態插入而不是寫死在 index.html，是為了讓「沒設 token 就完全不載外部程式」成立。
-export function Analytics({ token }) {
-  useEffect(() => {
-    if (!token || location.hostname === 'localhost') return
-    const s = document.createElement('script')
-    s.defer = true
-    s.src = 'https://static.cloudflareinsights.com/beacon.min.js'
-    s.setAttribute('data-cf-beacon', JSON.stringify({ token }))
-    document.head.appendChild(s)
-    return () => { s.remove() }
-  }, [token])
-  return null
+// 流量與效能量測。
+//
+// 兩個都是 Vercel 自家的，不放 cookie、不做跨站追蹤，所以不需要同意橫幅。
+//   Analytics     ── 有多少人、看哪一頁、從哪裡進來
+//   SpeedInsights ── 真實使用者的載入與互動延遲（Core Web Vitals）
+//
+// 為什麼要後者：行動版剛大改過，但「快不快」目前完全沒有數據，
+// 只有我在自動化環境量到的數字。這支收的是真手機、真網路的結果。
+//
+// 只在正式站載入 —— 開發時的重新整理不該算進流量，
+// 本機的載入速度也不能代表使用者的。
+export function Analytics() {
+  if (!import.meta.env.PROD) return null
+  return (
+    <>
+      <VercelAnalytics />
+      <SpeedInsights />
+    </>
+  )
 }
