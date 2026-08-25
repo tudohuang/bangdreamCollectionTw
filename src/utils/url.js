@@ -1,9 +1,9 @@
 // URL hash state — 不需要 react-router 就能分享網址
-// 頁面：#/ ｜ #/collection?year=2026&type=FMT ｜ #/people ｜ #/stats ｜ #/me ｜ #/pulse
-// 內容：#/event/evt-034 ｜ #/person/愛美 ｜ #/band/Roselia
-// 舊網址相容：#/filter?… → collection ｜ #/year/2026 → collection?year=2026
+// 頁面：#/ ｜ #/collection?year=2026&type=FMT ｜ #/people ｜ #/stats ｜ #/me ｜ #/labs
+// 內容：#/event/evt-034 ｜ #/person/愛美 ｜ #/band/Roselia ｜ #/org/宝島制作委員会
+// 舊網址相容：#/filter?… → collection ｜ #/year/2026 → collection?year=2026 ｜ #/pulse → labs
 
-const PAGES = new Set(['collection', 'people', 'stats', 'me', 'pulse'])
+const PAGES = new Set(['collection', 'people', 'stats', 'me', 'labs', 'pulse'])
 
 export function readHash() {
   const raw = (window.location.hash || '').replace(/^#\/?/, '')
@@ -20,6 +20,9 @@ export function readHash() {
   }
   if (segments[0] === 'band' && segments[1]) {
     return { route: 'band', value: decodeURIComponent(segments[1]), params }
+  }
+  if (segments[0] === 'org' && segments[1]) {
+    return { route: 'org', value: decodeURIComponent(segments[1]), params }
   }
   if (PAGES.has(segments[0])) {
     return { route: segments[0], params }

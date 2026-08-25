@@ -1,4 +1,8 @@
 import { useMemo, useState } from 'react'
+import { countingSummary, COUNTING_NOTES } from '../utils/counting.js'
+import { organizerList } from '../utils/organizers.js'
+import { CAVEATS } from '../utils/conclusions.js'
+import StatsInsights from './StatsInsights.jsx'
 import { bandKey, BAND_META } from '../utils/bands.js'
 import { detectCity } from '../utils/derive.js'
 import Icon from './Icon.jsx'
@@ -54,10 +58,11 @@ function sortEntries(obj, limit) {
 
 export default function StatsPanel({ events }) {
   const s = useMemo(() => computeStats(events), [events])
+  const count = useMemo(() => countingSummary(events), [events])
   const [hoverYear, setHoverYear] = useState(null)
   const [hoverMonth, setHoverMonth] = useState(null)
 
-  // 年份軸要連續：中間完全沒場次的年份也要站在圖上，跳過去等於圖表在說謊
+  // 年份軸要連續：中間沒有場次的年份也要留位置，跳過會讓趨勢失真
   const present = Object.keys(s.byYear).map(Number).sort((a, b) => a - b)
   const years = present.length
     ? Array.from({ length: present[present.length - 1] - present[0] + 1 }, (_, i) => present[0] + i)
@@ -72,7 +77,7 @@ export default function StatsPanel({ events }) {
   const maxPerson = topPeople.length ? topPeople[0][1] : 1
   const topCities = Object.entries(s.byCity).sort((a, b) => b[1] - a[1])
   const maxCity = topCities.length ? topCities[0][1] : 1
-  const topOrganizers = Object.entries(s.byOrganizer).sort((a, b) => b[1] - a[1]).slice(0, 10)
+  const topOrganizers = useMemo(() => organizerList(events).slice(0, 10).map(o => [o.name, o.count]), [events])
   const maxOrganizer = topOrganizers.length ? topOrganizers[0][1] : 1
 
   return (
@@ -83,14 +88,44 @@ export default function StatsPanel({ events }) {
           <h2 className="section-h mt-2">應援數據</h2>
         </div>
         <div className="text-right shrink-0">
-          <div className="font-display text-2xl font-bold text-bloom-indigo leading-none">{s.total} 場</div>
+          <div className="font-display text-2xl font-bold text-bloom-indigo leading-none">{s.total} 筆</div>
           <div className="text-[11px] text-dream-faint mt-1">
             {years[0]}–{years[years.length - 1]} · 累計 {s.attendance} 人次
           </div>
         </div>
       </div>
 
+      <StatsInsights events={events} />
+
       <div className="grid lg:grid-cols-2 gap-6">
+        {/* 統計口徑：別人拿我們的數字去比對時，先講清楚一筆是什麼 */}
+        <div className="glass p-7 lg:col-span-2">
+          <h3 className="flex items-center gap-2.5 font-display font-bold text-lg text-dream-ink mb-5">
+            <Icon n="table" className="text-bloom-sky" /> 統計口徑
+          </h3>
+
+          <div className="grid grid-cols-3 gap-px rounded-xl overflow-hidden bg-dream-line dark:bg-white/10">
+            <CountBox n={count.records} label="活動紀錄" />
+            <CountBox n={count.activeDays} label="活動日" />
+            <CountBox n={count.sessions} label="推估場次" />
+          </div>
+
+          {/* 定義與但書都收在這裡：要對數字的人點得到，其他人不用被小字淹沒 */}
+          <details className="mt-4">
+            <summary className="cursor-pointer text-[13px] text-dream-sub hover:text-dream-ink marker:text-dream-faint">
+              這些數字怎麼算的
+            </summary>
+            <dl className="mt-3.5 grid sm:grid-cols-2 gap-x-8 gap-y-3 text-[13px] leading-relaxed">
+              {[...COUNTING_NOTES, ...CAVEATS].map(([term, note]) => (
+                <div key={term}>
+                  <dt className="font-semibold text-dream-ink">{term}</dt>
+                  <dd className="text-dream-sub mt-0.5">{note}</dd>
+                </div>
+              ))}
+            </dl>
+          </details>
+        </div>
+
         {/* 年份分布：本體 / 個人 堆疊，空白年份也留在軸上 */}
         <div className="glass p-7">
           <div className="flex items-start justify-between gap-4 mb-5">
@@ -275,11 +310,12 @@ export default function StatsPanel({ events }) {
             {topOrganizers.map(([org, v], i) => (
               <div key={org} className="grid grid-cols-[20px_1fr_auto] items-center gap-3">
                 <span className="font-bold text-[13px] text-bloom-indigo text-center">{i + 1}</span>
-                <span className="h-7 rounded bg-dream-line/60 overflow-hidden relative flex items-center">
+                <a href={`#/org/${encodeURIComponent(org)}`}
+                  className="h-7 rounded bg-dream-line/60 overflow-hidden relative flex items-center hover:brightness-95 transition-[filter]">
                   <span className="absolute inset-y-0 left-0 rounded" style={{ width: `${(v / maxOrganizer) * 100}%`, background: 'rgba(139,92,246,0.5)' }} />
                   <span className="relative px-3 text-[13px] font-medium text-dream-ink truncate">{org}</span>
-                </span>
-                <span className="text-[13px] font-bold text-dream-sub">{v} 場</span>
+                </a>
+                <span className="text-[13px] font-bold text-dream-sub">{v} 筆</span>
               </div>
             ))}
           </div>
@@ -290,6 +326,15 @@ export default function StatsPanel({ events }) {
 }
 
 // 兩個系列以上一定要有圖例，識別才不會只靠顏色
+function CountBox({ n, label }) {
+  return (
+    <div className="bg-white px-4 py-5 text-center dark:bg-white/[.04]">
+      <div className="font-display text-[28px] font-bold text-dream-ink leading-none tabular-nums">{n}</div>
+      <div className="text-[13px] font-medium text-dream-sub mt-2">{label}</div>
+    </div>
+  )
+}
+
 function Legend({ items }) {
   return (
     <div className="flex items-center gap-3 shrink-0 pt-1">
