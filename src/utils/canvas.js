@@ -1,5 +1,5 @@
 // 產圖用的共用零件：字體、斷行、圓角、印刷網點、條碼、封面載入。
-// shareImage（單場票根）與 passImage（個人季票）共用同一套，視覺才會是同一個世界。
+// shareImage（單場票根）與 passImage（個人季票）共用，維持一致的視覺。
 
 export const SANS = '"Noto Sans TC", "Microsoft JhengHei", sans-serif'
 export const DISP = 'Outfit, "Noto Sans TC", "Microsoft JhengHei", sans-serif'
@@ -81,15 +81,29 @@ export function drawBarcode(x, bx, by, bw, bh, seed, color) {
 }
 
 // 載入封面（要求 CORS，沒權限就視為失敗 → 退回無圖版，畫布不會被污染）
+// 要畫進可下載的 canvas，圖就得帶 CORS 載入（否則 canvas 會被污染、toDataURL 會擋）。
+//
+// 兩個坑：
+// 1. 同一個網址若先前被「不帶 CORS」載過（頁面上的 <img>），瀏覽器會重用那份沒有
+//    CORS 標頭的快取，讓帶 crossOrigin 的這次必定失敗 → 加一個參數逼它重抓。
+// 2. 有些圖床根本不送 Access-Control-Allow-Origin，那就真的畫不進去，只能回 null
+//    讓呼叫端改畫替代方塊。
 export function loadCover(url) {
-  return new Promise((resolve) => {
-    if (!url) return resolve(null)
+  const attempt = (src) => new Promise((resolve) => {
     const img = new Image()
     img.crossOrigin = 'anonymous'
     img.onload = () => resolve(img)
     img.onerror = () => resolve(null)
-    img.src = url
+    img.src = src
   })
+  if (!url) return Promise.resolve(null)
+  const busted = url + (url.includes('?') ? '&' : '?') + 'cors=1'
+  const proxied = '/api/img?u=' + encodeURIComponent(url)
+  // 少數圖床會對多餘的 query 參數回 404，失敗就退回原網址；
+  // 都不行才走自家代理（api/img.js）補上 CORS 標頭。
+  return attempt(busted)
+    .then(img => img || attempt(url))
+    .then(img => img || (/^https?:/.test(url) ? attempt(proxied) : null))
 }
 
 // object-cover：把圖鋪滿一塊矩形，超出的裁掉

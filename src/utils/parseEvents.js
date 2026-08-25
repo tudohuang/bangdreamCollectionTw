@@ -43,12 +43,13 @@ const fixName = (p) => NAME_FIX[p] || p
 // 程式認得的表頭（含中英別名）。不在這清單裡的欄一律進 extras，
 // 表頭名稱直接當網站上的顯示名稱 —— Sheet 加欄免改程式。
 const KNOWN_HEADERS = new Set([
-  '編號', 'number', '年份', '開始日期', '結束日期', '月份',
+  '編號', 'number', 'ID', 'id', '年份', '開始日期', '結束日期', '月份',
   '活動名稱', '類型', '人物', '團體／關聯', '本體／擦邊', '全團', '人次',
   '緊急性', 'urgency',
   '備註', 'notes', '地點', 'venue', '城市', 'city', '照片', 'photos',
   '封面', 'cover', '購票連結', '購票', '主辦', '主辦單位',
-  '簡介', 'description', '心得', 'impression', '來源', 'sources',
+  '簡介', 'description', '心得', 'impression', '一句話', 'oneLine',
+  '場次', 'sessions', '關聯', 'relation', '開賣', 'ticketDate', '來源', 'sources',
 ])
 
 // rows（含表頭）→ 活動陣列（不含手動欄位的合併，交給呼叫端）
@@ -59,6 +60,7 @@ export function parseCsvToEvents(text) {
   const col = (name) => header.indexOf(name)
   const idx = {
     number: col('編號') >= 0 ? col('編號') : col('number'),
+    stableId: col('ID') >= 0 ? col('ID') : col('id'),
     year: col('年份'), start: col('開始日期'), end: col('結束日期'), month: col('月份'),
     title: col('活動名稱'), type: col('類型'), people: col('人物'),
     groups: col('團體／關聯'), category: col('本體／擦邊'), full: col('全團'),
@@ -73,6 +75,10 @@ export function parseCsvToEvents(text) {
     organizer: col('主辦') >= 0 ? col('主辦') : col('主辦單位'),
     description: col('簡介') >= 0 ? col('簡介') : col('description'),
     impression: col('心得') >= 0 ? col('心得') : col('impression'),
+    oneLine: col('一句話') >= 0 ? col('一句話') : col('oneLine'),
+    sessions: col('場次') >= 0 ? col('場次') : col('sessions'),
+    relation: col('關聯') >= 0 ? col('關聯') : col('relation'),
+    ticketDate: col('開賣') >= 0 ? col('開賣') : col('ticketDate'),
     sources: col('來源') >= 0 ? col('來源') : col('sources'),
   }
   const extraCols = header
@@ -86,12 +92,16 @@ export function parseCsvToEvents(text) {
       const v = (r[ci] || '').trim()
       if (v) extras[name] = v
     }
-    // 編號優先用 Sheet 明確的「編號」欄（穩定 key，插入/排序/刪列都不會錯位）；
-    // 沒這欄才退回用列位置。id 也跟著編號走，照片/心得才綁得住。
+    // 「編號」是圖鑑上看到的 #042，可以隨你高興重排。
     const explicit = Number(get('number'))
     const number = Number.isFinite(explicit) && explicit > 0 ? explicit : i + 1
+
+    // 「ID」是永久鍵：照片、心得檔名、打卡備份碼、分享網址全都綁它，一旦給就不能再動。
+    // Sheet 還沒有這一欄時退回用編號 —— 行為跟以前完全一樣，只是從此可以把兩者拆開。
+    const stableId = Number(get('stableId')) || number
     return {
-      id: `evt-${String(number).padStart(3, '0')}`,
+      id: `evt-${String(stableId).padStart(3, '0')}`,
+      stableId,
       number,
       year: Number(get('year')) || null,
       startDate: get('start'),
@@ -115,6 +125,14 @@ export function parseCsvToEvents(text) {
       organizer: get('organizer'),
       description: get('description'),
       impression: get('impression'),
+      // 站長一句話：比完整心得低很多的門檻，先有這個也算有人味
+      oneLine: get('oneLine'),
+      // 場次：一筆紀錄實際有幾場演出。留空時由 utils/counting.js 用天數推
+      sessions: Number(get('sessions')) || 0,
+      // 關聯程度：留空時由 utils/relation.js 依規則推（見那支的說明）
+      relation: get('relation'),
+      // 開賣日：有填才畫得出「公布 → 開賣 → 演出」那條線
+      ticketDate: get('ticketDate'),
       sources: splitMedia(get('sources')),
       notes: get('notes'),
       extras,
@@ -123,13 +141,13 @@ export function parseCsvToEvents(text) {
 }
 
 // 這些欄位「以 JSON / 手動為準」，即時抓 Sheet 時用內建資料補回來，避免被洗掉
-const MANUAL_FIELDS = ['venue', 'city', 'description', 'impression', 'photos', 'sources', 'notes', 'cover', 'ticketUrl', 'organizer']
+const MANUAL_FIELDS = ['venue', 'city', 'description', 'impression', 'oneLine', 'photos', 'sources', 'notes', 'cover', 'ticketUrl', 'organizer']
 
 // 把 Sheet 解析結果與內建資料合併：核心欄位用 Sheet 的，手動欄位用內建的（Sheet 有填則優先）
 export function mergeWithBundled(sheetEvents, bundled) {
-  const byNumber = new Map(bundled.map(e => [e.number, e]))
+  const byId = new Map(bundled.map(e => [e.stableId ?? e.number, e]))
   return sheetEvents.map(e => {
-    const prev = byNumber.get(e.number)
+    const prev = byId.get(e.stableId ?? e.number)
     if (!prev) return e
     const merged = { ...e }
     for (const f of MANUAL_FIELDS) {

@@ -1,7 +1,7 @@
 // 場館座標：從 Sheet 的「座標」欄（或「緯度」「經度」兩欄）讀出來，聚合成地圖上的點。
 // 座標屬於「場館」不是「場次」，所以同一個場館只要在任一列填一次就夠了。
 import { primaryMeta } from './bands.js'
-import { detectCity } from './derive.js'
+import { detectCity, canonicalVenue } from './derive.js'
 
 export const COORD_KEYS = ['座標', '經緯度', 'coords', 'latlng']
 export const LAT_KEYS = ['緯度', 'lat', 'latitude']
@@ -40,7 +40,7 @@ export function eventCoords(event) {
 export function venuePoints(events = []) {
   const map = new Map()
   for (const e of events) {
-    const v = (e.venue || '').trim()
+    const v = canonicalVenue(e.venue)
     if (!v) continue
     if (!map.has(v)) {
       map.set(v, { venue: v, city: detectCity(e), count: 0, years: new Set(), bands: {}, lat: null, lng: null })
@@ -130,7 +130,7 @@ export function roughKm(a, b) {
 
 // 台灣的資料實際上九成擠在大台北，一兩個在中南部。
 // 全部畫在同一張圖 → 主要區域縮成一團、畫布八成是空的。
-// 所以：離中位數 radiusKm 以內的畫在圖上，其餘另外列出來，不要犧牲主圖的可讀性。
+// 所以：離中位數 radiusKm 以內的畫在圖上，其餘另外列出，避免主圖被拉到看不清。
 export function splitByProximity(points, radiusKm = 60) {
   if (points.length < 3) return { near: points, far: [] }
   const center = { lat: median(points.map(p => p.lat)), lng: median(points.map(p => p.lng)) }

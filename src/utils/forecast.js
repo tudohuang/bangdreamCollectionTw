@@ -1,9 +1,8 @@
-// 來台指數 —— 把「這個人現在來台的條件成不成熟」壓成一個 0–100 的分數。
+// 來台指數：把「這個人來台的條件成不成熟」量化成 0–100。
 //
-// 老實話寫在前面：這不是統計意義上的機率。日本動態才累積幾個月，
-// 樣本撐不起機率模型；這裡做的是把幾個看得見的因子加起來的「指數」，
-// 每一分都攤開給你看是哪來的，你自己判斷要不要信。
-// 等動態表累積滿一年，才有本錢談回測與校準。
+// 這不是統計意義上的機率。日本動態只累積了幾個月，樣本量撐不起機率模型，
+// 所以這裡算的是幾個可觀測因子的加權和，並把每個因子的來源一併回傳，
+// 讓 UI 可以攤開解釋分數怎麼來的。資料滿一年後才有條件做回測與校準。
 import { todayStr, parseDate } from './datetime.js'
 
 const monthsBetween = (fromYm, toYm) => {
@@ -24,7 +23,7 @@ export function twEventsOf(name, events, isBand) {
   })
 }
 
-// 全站季節性：歷年各月的來台場次佔比（0–1），用來當「這個月本來就容易有活動」的加成
+// 全站季節性：歷年各月的來台場次佔比（0–1）
 export function monthSeasonality(events) {
   const per = {}
   let total = 0
@@ -50,7 +49,7 @@ export function taiwanIndex(name, {
 
   const mine = twEventsOf(name, events, isBand)
 
-  // ── 0. 已經公告了就不用猜 ──
+  // 0. 已經公告的場次不需要估
   const scheduled = mine.filter(e => e.startDate.slice(0, 7) === ym)
   if (scheduled.length) {
     return { name, ym, scheduled: true, score: 100, level: 'confirmed', events: scheduled, factors: [] }
@@ -59,10 +58,10 @@ export function taiwanIndex(name, {
   const factors = []
   const add = (label, pts, detail) => { if (pts > 0) factors.push({ label, pts: Math.round(pts), detail }) }
 
-  // ── 1. 底分：有在名冊上、還在活動 ──
+  // 1. 底分：在追蹤名單上
   add('基本分', 6, '在追蹤名單上')
 
-  // ── 2. 空窗：上次來台隔多久（越久越到期，但封頂，不會無限累積）──
+  // 2. 空窗：距上次來台多久（封頂，避免無限累積）
   const past = mine.filter(e => e.startDate.slice(0, 7) < ym).map(e => e.startDate.slice(0, 7)).sort()
   const lastYm = past[past.length - 1] || null
   const gap = lastYm ? monthsBetween(lastYm, ym) : null
@@ -72,10 +71,12 @@ export function taiwanIndex(name, {
     add('距上次來台', clamp(gap * 2.2, 0, 30), `${gap} 個月前來過（${lastYm}）`)
   }
 
-  // ── 3. 日本活躍度：最近 60 天有幾筆行程（有在動的人才有機會被排到海外）──
+  // 3. 日本活躍度：最近 60 天的行程數。
+  // 團體的行程也算在成員頭上：動態表把整團的 LIVE 記成團名一列，但成員那天都在場。
   const t = parseDate(today)
   const recent = pulse.filter(p => {
-    if (p.name !== name || !p.date) return false
+    if (!p.date) return false
+    if (p.name !== name && !(band && p.name === band)) return false
     const d = parseDate(p.date)
     if (!d || !t) return false
     const days = (t - d) / 86400000
@@ -83,11 +84,11 @@ export function taiwanIndex(name, {
   })
   add('日本近況', clamp(recent.length * 4.5, 0, 24), `近 60 天 ${recent.length} 筆行程`)
 
-  // ── 4. 檔期：全站歷史上這個月來台的密度 ──
+  // 4. 檔期：歷年這個月的來台密度
   const season = monthSeasonality(events)[month] || 0
   add('月份檔期', clamp(season * 100 * 1.6, 0, 18), `歷年 ${month} 月佔全部場次 ${(season * 100).toFixed(0)}%`)
 
-  // ── 5. 同團動能：同團近 12 個月來過幾次（團在跑，成員被帶來的機會就高）──
+  // 5. 同團動能：同團近 12 個月的來台次數
   if (band) {
     const cutoff = shiftYm(ym, -12)
     const bandTw = twEventsOf(band, events, true)
@@ -119,7 +120,7 @@ export const LEVEL_LABEL = {
   cold: '沒什麼跡象',
 }
 
-// 一次算整份名冊，分數高的排前面
+// 一次算整份名冊，依分數由高到低排序
 export function rankIndex(roster, opts) {
   return roster
     .filter(r => r.tracked)

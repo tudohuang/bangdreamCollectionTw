@@ -11,7 +11,7 @@ export function detectCity(e) {
   if (e.city) return norm(e.city)
 
   const hay = `${e.venue || ''} ${e.title || ''}`
-  // 「新北」要比「台北」先判，否則 Zepp New Taipei 會被 Taipei 規則吃掉
+  // 「新北」要比「台北」先判，否則 Zepp New Taipei 會先命中 Taipei
   if (hay.includes('新北')) return '新北'
   for (const c of CITY_KEYS) {
     if (hay.includes(c)) return norm(c)
@@ -33,8 +33,23 @@ export function uniqueCharacters(events) {
   return [...new Set(events.flatMap(eventCharacters))].sort()
 }
 
+// 同一個場館被寫成兩種名字時，統計會拆成兩筆。
+// 這是程式該吸收的髒資料，不值得為它去 Sheet 開一張場館表 ——
+// 發現新的重複寫法就往這裡加一行。左邊是要被取代的寫法，右邊是正式名稱。
+const VENUE_ALIAS = new Map([
+  ['南港展覽館一館', '台北南港展覽館一館'],
+  ['台北南港展覽館一館 4 樓', '台北南港展覽館一館'],
+  ['clapper studio', '三創生活園區 CLAPPER STUDIO'],
+])
+
+export function canonicalVenue(venue) {
+  const raw = String(venue || '').trim()
+  if (!raw) return ''
+  return VENUE_ALIAS.get(raw) || VENUE_ALIAS.get(raw.toLowerCase()) || raw
+}
+
 export function uniqueVenues(events) {
-  return [...new Set(events.map(e => e.venue).filter(Boolean))].sort()
+  return [...new Set(events.map(e => canonicalVenue(e.venue)).filter(Boolean))].sort()
 }
 
 export function uniqueCities(events) {

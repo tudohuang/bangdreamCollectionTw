@@ -1,5 +1,5 @@
 // Web Mercator 與 OpenStreetMap 圖磚計算。
-// 自己算，不裝 Leaflet：整張地圖就是一堆 <image> 疊在 SVG 裡，旗子用同一套投影疊上去。
+// 不使用 Leaflet：地圖是一組 <image> 圖磚疊在 SVG 裡，標記用同一套投影計算位置。
 //
 // 圖磚來自 OpenStreetMap，授權 ODbL —— 使用時必須標註出處，畫面上那行不能拿掉。
 export const TILE_SIZE = 256

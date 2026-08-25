@@ -54,7 +54,7 @@ export function milestoneMap(events = []) {
     }
   }
 
-  // 依重要性排序，卡片取第一個就是最有份量的那個
+  // 依重要性排序；卡片只顯示第一個
   for (const list of map.values()) {
     list.sort((a, b) => ORDER.indexOf(a.key) - ORDER.indexOf(b.key))
   }

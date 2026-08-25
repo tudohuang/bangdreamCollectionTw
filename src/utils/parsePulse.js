@@ -145,6 +145,56 @@ export function monthRange(start, end, cap = 14) {
   return out
 }
 
+// 某個月的月曆格子：補滿前後空格，湊成整週（週日起算）
+export function monthGrid(ym) {
+  if (!ym) return []
+  const [y, m] = ym.split('-').map(Number)
+  const first = new Date(y, m - 1, 1)
+  const days = new Date(y, m, 0).getDate()
+  const cells = Array(first.getDay()).fill(null)
+  for (let d = 1; d <= days; d++) {
+    cells.push(`${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`)
+  }
+  while (cells.length % 7) cells.push(null)
+  return Array.from({ length: cells.length / 7 }, (_, i) => cells.slice(i * 7, i * 7 + 7))
+}
+
+// 這個月每個人有幾筆行程 → [{ name, count, own, viaBand, first, last }]，忙的排前面。
+//
+// 給了 roster 就只算「人」，並把團體的行程算到成員頭上：動態表把
+// 「Poppin'Party 12/13 京 Premium Live」記成團名一列，但那天五個成員都走不開。
+// 沒給 roster 就照 對象 欄原樣統計。
+export function monthLoad(pulse, ym, roster = []) {
+  const membersOf = new Map()
+  const bandNames = new Set()
+  for (const r of roster) {
+    if (r.kind === 'band') bandNames.add(r.name)
+    else if (r.band) {
+      if (!membersOf.has(r.band)) membersOf.set(r.band, [])
+      membersOf.get(r.band).push(r.name)
+    }
+  }
+  const peopleOnly = roster.length > 0
+
+  const per = new Map()
+  const add = (name, date, viaBand) => {
+    if (!per.has(name)) per.set(name, { name, count: 0, own: 0, viaBand: 0, first: date, last: date })
+    const row = per.get(name)
+    row.count++
+    row[viaBand ? 'viaBand' : 'own']++
+    if (date < row.first) row.first = date
+    if (date > row.last) row.last = date
+  }
+
+  for (const p of pulse) {
+    if (!p.date || p.date.slice(0, 7) !== ym) continue
+    const isBand = bandNames.has(p.name)
+    if (!peopleOnly || !isBand) add(p.name, p.date, false)
+    if (isBand) for (const member of (membersOf.get(p.name) || [])) add(member, p.date, true)
+  }
+  return [...per.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
+}
+
 // 矩陣要顯示哪些月：從動態最早的月份開始，到「動態最後一個月」與
 // 「那之後還有來台場次的最後一個月」之中比較晚的那個為止。
 export function pulseMonths(pulse, events = [], cap = 14) {
