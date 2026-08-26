@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { primaryMeta, isPersonal } from '../utils/bands.js'
-import { coverOf } from '../utils/media.js'
+import { coverSrc } from '../utils/cover.js'
 import { todayStr, weekday } from '../utils/datetime.js'
 import Icon from './Icon.jsx'
 import Img from './Img.jsx'
@@ -44,7 +44,7 @@ export default function OnThisDay({ events, onSelect }) {
   const e = list[0]
   const yearsAgo = thisYear - e.year
   const m = primaryMeta(e)
-  const cover = coverOf(e)
+  const cover = coverSrc(e)
   const personal = isPersonal(e)
   const rest = list.slice(1)
 

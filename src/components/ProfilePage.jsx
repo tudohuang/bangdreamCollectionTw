@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { bandMeta, rootGroup, primaryMeta, isPersonal, BAND_META } from '../utils/bands.js'
-import { coverOf } from '../utils/media.js'
+import { coverSrc } from '../utils/cover.js'
 import { personBandMap, detectCity } from '../utils/derive.js'
 import { eventStatus, daysUntil } from '../utils/datetime.js'
 import { formatMonthDay, copyText, formatDateRangeCompact, shareUrl } from '../utils/share.js'
@@ -286,7 +286,7 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
 // 一列場次
 function EventRow({ e, attended, onSelect, onToggleAttended }) {
   const m = primaryMeta(e)
-  const cover = coverOf(e)
+  const cover = coverSrc(e)
   const status = eventStatus(e)
   const att = attended?.has(e.id)
   return (

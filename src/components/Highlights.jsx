@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { primaryMeta, isPersonal } from '../utils/bands.js'
 import { eventStatus, todayStr } from '../utils/datetime.js'
-import { coverOf } from '../utils/media.js'
+import { coverSrc } from '../utils/cover.js'
 import Icon from './Icon.jsx'
 import Img from './Img.jsx'
 
@@ -10,7 +10,7 @@ export default function Highlights({ events, onSelect }) {
   const picks = useMemo(() => {
     const today = todayStr()
     return events
-      .filter(e => eventStatus(e, today) === 'past' && coverOf(e))
+      .filter(e => eventStatus(e, today) === 'past' && coverSrc(e))
       .sort((a, b) => (b.startDate || '').localeCompare(a.startDate || ''))
       .slice(0, 9)
   }, [events])
@@ -40,7 +40,7 @@ export default function Highlights({ events, onSelect }) {
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-5">
         {picks.map((e, i) => {
           const m = primaryMeta(e)
-          const cover = coverOf(e)
+          const cover = coverSrc(e)
           const tilt = ['-rotate-1', 'rotate-[0.8deg]', 'rotate-0', 'rotate-1', '-rotate-[0.6deg]', 'rotate-[1.2deg]'][i % 6]
           return (
             <button key={e.id} onClick={() => onSelect(e.id)}

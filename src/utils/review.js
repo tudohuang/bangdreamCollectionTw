@@ -1,7 +1,7 @@
 // 年度回顧資料：給年度結算牆與 Wrapped 分享圖共用
 import { bandKey, BAND_META } from './bands.js'
 import { detectCity } from './derive.js'
-import { coverOf } from './media.js'
+import { coverSrc } from './cover.js'
 
 function topTally(pairs, limit) {
   return Object.entries(pairs).sort((a, b) => b[1] - a[1]).slice(0, limit)
@@ -75,7 +75,7 @@ export function wallGaps(events) {
 // 場次總數與封面張數會另外標在抬頭，不會讓人以為那一年只有這幾場。
 export function yearTiles(events, year) {
   return events
-    .filter(e => e.year === Number(year) && coverOf(e))
+    .filter(e => e.year === Number(year) && coverSrc(e))
     .sort((a, b) => (a.startDate || '').localeCompare(b.startDate || ''))
-    .map(event => ({ key: event.id, url: coverOf(event), event }))
+    .map(event => ({ key: event.id, url: coverSrc(event), event }))
 }

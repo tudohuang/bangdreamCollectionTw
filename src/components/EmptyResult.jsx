@@ -1,5 +1,5 @@
 import { primaryMeta, isPersonal } from '../utils/bands.js'
-import { coverOf } from '../utils/media.js'
+import { coverSrc } from '../utils/cover.js'
 import Icon from './Icon.jsx'
 import Img from './Img.jsx'
 
@@ -31,7 +31,7 @@ export default function EmptyResult({ onReset, suggestions = [], onSelect, searc
           <ul className="grid sm:grid-cols-3 gap-3">
             {suggestions.map(e => {
               const m = primaryMeta(e)
-              const cover = coverOf(e)
+              const cover = coverSrc(e)
               return (
                 <li key={e.id}>
                   <button onClick={() => onSelect(e.id)}

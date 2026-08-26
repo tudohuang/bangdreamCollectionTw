@@ -1,5 +1,5 @@
 import { bandMeta } from '../utils/bands.js'
-import { coverOf } from '../utils/media.js'
+import { coverSrc } from '../utils/cover.js'
 import Icon from './Icon.jsx'
 import Img from './Img.jsx'
 
@@ -98,7 +98,7 @@ export function RelatedStrip({ items, color, onNavigate }) {
     <div className="-mx-1 px-1 flex gap-3 overflow-x-auto scrollbar-none snap-x">
       {items.map(o => {
         const m = bandMeta((o.relatedGroups || [])[0] || '')
-        const c = coverOf(o)
+        const c = coverSrc(o)
         return (
           <button key={o.id} onClick={() => onNavigate(o.id)}
             className="snap-start shrink-0 w-[168px] text-left rounded-xl border border-dream-line dark:border-white/10 overflow-hidden hover:border-bloom-violet transition-colors group/rel">

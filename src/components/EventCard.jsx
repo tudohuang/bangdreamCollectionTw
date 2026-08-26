@@ -1,17 +1,17 @@
 import { useState } from 'react'
 import { formatMonthDay } from '../utils/share.js'
 import { primaryMeta, isPersonal } from '../utils/bands.js'
-import { coverOf } from '../utils/media.js'
+import { coverSrc } from '../utils/cover.js'
 import { eventStatus, countdownLabel, weekday } from '../utils/datetime.js'
 import { detectCity } from '../utils/derive.js'
 import { isUrgent, URGENT_LABEL } from '../utils/urgency.js'
 import Icon from './Icon.jsx'
-import Img from './Img.jsx'
+import Cover from './Cover.jsx'
 
 // 活動卡的資訊分級：封面 → 標題 → 日期與場館 → 樂團。
 // 第二層（類型、人物、人次）平常收在封面下緣，滑過才浮出。
 // 字級只用三階：15（標題）/ 13（日期行）/ 11（標籤與編號）。
-export default function EventCard({ event, attended, onToggleAttended, onClick, milestone }) {
+export default function EventCard({ event, attended, onToggleAttended, onClick, milestone, priority = false }) {
   const [imgOk, setImgOk] = useState(true)
   const dex = `#${String(event.number ?? 0).padStart(3, '0')}`
   const sameDay = event.startDate === event.endDate
@@ -19,7 +19,7 @@ export default function EventCard({ event, attended, onToggleAttended, onClick, 
   const dayLabel = sameDay ? monthDay : `${monthDay} → ${formatMonthDay(event.endDate)}`
   const meta = primaryMeta(event)
   const personal = isPersonal(event)
-  const cover = imgOk ? coverOf(event) : null
+  const cover = imgOk ? coverSrc(event) : null
   const status = eventStatus(event)
   const countdown = countdownLabel(event)
   const wd = weekday(event.startDate)
@@ -49,8 +49,11 @@ export default function EventCard({ event, attended, onToggleAttended, onClick, 
       <div className="p-2.5 pb-0">
       <div className="relative w-full aspect-[3/2] overflow-hidden rounded-xl shadow-[0_2px_8px_-4px_rgba(60,40,90,0.45)]">
         {cover ? (
-          <Img src={cover} onError={() => setImgOk(false)}
-            className={`absolute inset-0 w-full h-full object-cover transition-[transform,filter] duration-500 ease-out group-hover:scale-[1.04] motion-reduce:transform-none ${pastTone}`} />
+          // sizes 告訴瀏覽器這張圖實際會顯示多寬，它才挑得到正確的檔案。
+          // 手機一張佔滿一欄、平板兩欄、桌機三到四欄。
+          <Cover event={event} size="sm" priority={priority}
+            sizes="(max-width: 639px) 100vw, (max-width: 1279px) 50vw, 25vw"
+            className={`absolute inset-0 w-full h-full transition-[transform,filter] duration-500 ease-out group-hover:scale-[1.04] motion-reduce:transform-none ${pastTone}`} />
         ) : (
           <NoCover meta={meta} dex={dex} icon={personal ? 'user' : meta.icon} />
         )}

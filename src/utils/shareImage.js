@@ -1,7 +1,7 @@
 // 在前端用 canvas 把單一活動畫成一張票根並下載（#21）
 // 版型與站上的詳情浮層同一套語言：紙、印刷網點、撕票打孔、存根、條碼、蓋章。
 import { formatDateRangeCompact } from './share.js'
-import { coverOf } from './media.js'
+import { coverSrc } from './cover.js'
 import { weekday } from './datetime.js'
 import {
   SANS, DISP, HAND, ensureFonts, wrap, roundRect, dotPattern,
@@ -13,7 +13,7 @@ export async function downloadShareImage(event, meta, personal, extra = {}) {
   const W = 1200, H = 630
   await ensureFonts()
 
-  const cover = await loadCover(coverOf(event))
+  const cover = await loadCover(coverSrc(event, 'lg'))
   const c = document.createElement('canvas')
   c.width = W; c.height = H
   const x = c.getContext('2d')

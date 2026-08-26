@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { buildSummary, copyText, formatDateRangeCompact, shareUrl } from '../utils/share.js'
 import { primaryMeta, bandMeta, parseGroup, isPersonal, rootGroup } from '../utils/bands.js'
-import { photoUrl, coverOf, photoCredit, PHOTO_CREDIT_KEYS } from '../utils/media.js'
+import { photoUrl, photoCredit, PHOTO_CREDIT_KEYS } from '../utils/media.js'
+import { coverSrc, coverSources } from '../utils/cover.js'
 import { eventStatus, countdownLabel, weekday, STATUS_LABEL } from '../utils/datetime.js'
 import { eventContext, typeTags } from '../utils/context.js'
 import { downloadIcs } from '../utils/ics.js'
@@ -143,7 +144,9 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
   const groups = event.relatedGroups || []
   const people = event.people || []
   const photos = event.photos || []
-  const cover = coverOk ? coverOf(event) : null
+  // 詳情頁用大尺寸；沒有本地檔的會自動退回原本的外連網址
+  const cover = coverOk ? coverSrc(event, 'lg') : null
+  const lgSources = coverSources(event, 'lg')
   // 封面已經是上方的 banner，照片牆不再重複顯示
   const galleryPhotos = cover ? photos.filter(p => photoUrl(p) !== cover) : photos
   const roles = groups.flatMap(g => parseGroup(g).parts)
@@ -184,10 +187,16 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
             // 改成 letterbox：背景放同一張圖放大模糊，前景完整顯示。
             <button onClick={() => setLightbox(cover)} aria-label="放大封面"
               className="block w-full text-left group/cover relative h-60 sm:h-80 overflow-hidden bg-black/10">
-              <img aria-hidden src={cover} alt=""
+              {/* 背景那張只是模糊的襯底，用小尺寸就夠 —— 反正要 blur 掉 */}
+              <img aria-hidden src={coverSrc(event, 'sm')} alt=""
                 className="absolute inset-0 w-full h-full object-cover scale-125 blur-2xl opacity-70" />
-              <Img src={cover} onError={() => setCoverOk(false)}
-                className="relative w-full h-full object-contain group-hover/cover:scale-[1.03] motion-reduce:transform-none" />
+              <picture className="relative block w-full h-full">
+                {lgSources && <source type="image/avif" srcSet={lgSources.avif} />}
+                {lgSources && <source type="image/webp" srcSet={lgSources.webp} />}
+                <img src={cover} alt="" decoding="async"
+                  onError={() => setCoverOk(false)}
+                  className="w-full h-full object-contain group-hover/cover:scale-[1.03] motion-reduce:transform-none" />
+              </picture>
             </button>
           ) : (
             <div aria-hidden className="w-full h-44 sm:h-56 relative"
