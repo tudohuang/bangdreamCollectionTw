@@ -428,7 +428,7 @@ export default function App() {
 
         ) : page === 'labs' ? (
           <ErrorBoundary><Suspense fallback={<PageFallback h={520} />}>
-            <LabsPage roster={roster} pulse={pulse} events={events}
+            <LabsPage roster={roster} pulse={pulse} events={events} attended={attended}
               source={pulseSource} onSelectEvent={openDetail} />
           </Suspense></ErrorBoundary>
 
