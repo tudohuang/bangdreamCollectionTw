@@ -2,6 +2,13 @@
 
 一份關於 BanG Dream! 相關聲優、樂團與活動在台灣的收藏紀錄（2018–2026）。
 
+## 資料庫（選用）
+
+站本身不需要資料庫 —— 它讀建置時產的 JSON。
+`db/` 底下是一層 PostgreSQL：schema、約束、ETL 與分析查詢，
+用來把資料當成資料來管。本機用 PGlite（真的 Postgres 編成 WASM，
+免安裝免開帳號），設 `DATABASE_URL` 就切到雲端。詳見 [db/README.md](db/README.md)。
+
 ## 專案結構
 
 React + Vite + Tailwind，沒有後端；資料放在 Google Sheet，前端直接抓發布出來的 CSV。

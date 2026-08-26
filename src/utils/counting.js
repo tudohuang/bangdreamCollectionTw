@@ -5,7 +5,7 @@
 // 所以這裡把「筆數 / 日數 / 場次」拆開算，並且把定義一起回傳給畫面顯示。
 
 // 這些類型是「一段期間」而不是「一場演出」，跨很多天也只算一場
-const SPAN_TYPES = new Set(['快閃店', '展覽', '特展', 'EXPO'])
+export const SPAN_TYPES = new Set(['快閃店', '展覽', '特展', 'EXPO'])
 
 const primaryType = (e) => String(e?.type || '').split(/[／/、]/)[0].trim()
 

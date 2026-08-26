@@ -10,7 +10,7 @@
     "postbuild": "node scripts/build-og.mjs",
     "preview": "vite preview",
     "verify": "npm test && npm run build",
-    "test": "node --test && node scripts/smoke.mjs",
+    "test": "node --test \"tests/**/*.test.mjs\" && node scripts/smoke.mjs",
     "smoke": "node scripts/smoke.mjs",
     "validate": "node scripts/validate.mjs",
     "import": "node scripts/import-csv.mjs",
@@ -20,7 +20,12 @@
     "report": "node scripts/weekly-report.mjs",
     "watch": "node scripts/watch.mjs",
     "watch:resolve": "node scripts/watch/resolve.mjs",
-    "preview:cf": "npm run build && wrangler pages dev dist"
+    "preview:cf": "npm run build && wrangler pages dev dist",
+    "db:migrate": "node db/migrate.mjs",
+    "db:reset": "node db/reset.mjs",
+    "db:ingest": "node db/ingest.mjs",
+    "db:export": "node db/export.mjs",
+    "db:sql": "node db/sql.mjs"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
@@ -33,6 +38,7 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.7",
     "@resvg/resvg-js": "^2.6.2",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
