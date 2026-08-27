@@ -266,8 +266,14 @@ Cloudflare Pages 與 Vercel 都能直接部署，兩邊共用同一份邏輯（`
 
 連 repo 就好，`vercel.json` 已經把 /e /p /b 轉到 `api/share.js`。
 
-> **`SITE_URL` 一定要設。** 沒設的話 sitemap 不會產生（相對路徑的 sitemap
-> 不符規格，會被搜尋引擎整份忽略），og:image 也會變成相對路徑抓不到縮圖。
+**不用買網域。** Vercel 免費給的 `xxx.vercel.app` 就是正式網址，
+建置時會自動從 `VERCEL_PROJECT_PRODUCTION_URL` 讀出來，sitemap 與
+og:image 都會是絕對路徑，什麼都不用設。
+
+只有換成自己的網域時才要手動設 `SITE_URL`。
+
+> 用 `VERCEL_PROJECT_PRODUCTION_URL` 而不是 `VERCEL_URL`：後者每次部署
+> 都是新的網址，拿它當 canonical 會讓搜尋引擎每次都看到不同的頁。
 
 ### 被搜尋引擎找得到
 

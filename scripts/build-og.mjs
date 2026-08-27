@@ -17,9 +17,20 @@ import { personBandMap } from '../src/utils/derive.js'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
 const DIST = join(ROOT, 'dist')
-// 優先用明確的 SITE_URL；Cloudflare Pages 上自動用該次部署的網址，
-// 讓 og:image / og:url 是絕對網址（相對路徑在爬蟲那邊不會動）
-const SITE_URL = (process.env.SITE_URL || process.env.CF_PAGES_URL || '').replace(/\/$/, '')
+// 網址從哪來（依序）：
+//   1. SITE_URL          自訂網域時手動設
+//   2. VERCEL_PROJECT_PRODUCTION_URL   Vercel 免費給的 xxx.vercel.app，每次部署都一樣
+//   3. CF_PAGES_URL      Cloudflare Pages 的部署網址
+//
+// 有第 2 項就不用手動設任何東西 —— 不買網域也能有 sitemap 與絕對路徑的 og:image。
+// 用 PRODUCTION_URL 而不是 VERCEL_URL：後者每次部署都不一樣，
+// 拿它當 canonical 會讓搜尋引擎每次都看到新網址。
+const rawSiteUrl =
+  process.env.SITE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL && 'https://' + process.env.VERCEL_PROJECT_PRODUCTION_URL) ||
+  process.env.CF_PAGES_URL ||
+  ''
+const SITE_URL = rawSiteUrl.replace(new RegExp(String.fromCharCode(47) + '$'), '')
 
 if (!existsSync(DIST)) {
   console.log('（跳過 OG：尚未 build，找不到 dist/）')
@@ -327,7 +338,7 @@ if (base) {
   console.log('✓ sitemap.xml（' + urls.length + ' 個絕對網址，含人物與樂團頁）+ robots.txt')
 } else {
   writeFileSync(join(DIST, 'robots.txt'), 'User-agent: *' + NL + 'Allow: /' + NL, 'utf8')
-  console.log('✗ 沒設 SITE_URL，跳過 sitemap —— 相對路徑的 sitemap 會被整份忽略')
+  console.log('（本機沒有網址，跳過 sitemap；部署到 Vercel 會自動用 xxx.vercel.app）')
 }
 
 console.log(`✓ OG：${events.length} 個場次分享頁、${pngCount} 張預覽圖（其中 ${coverUris.size} 張用真的封面照）${SITE_URL ? `（網域 ${SITE_URL}）` : '（未設 SITE_URL，og:image 為相對路徑）'}`)
