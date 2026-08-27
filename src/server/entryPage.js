@@ -88,7 +88,7 @@ export function renderEntryPage({ event, origin = '', roleOf, hasLocalCover = fa
 
   const appUrl = `${origin}/#/event/${event.id}`
   const selfUrl = `${origin}/e/${event.id}`
-  const ogImage = `${origin}/og/${event.id}.png`
+  const ogImage = `${origin}/og/${event.id}.jpg`
 
   // 本地封面才放進頁面 —— 外連的那些有六張已經失效，破圖比沒圖糟
   const id = pad(event.stableId ?? event.number)
@@ -192,7 +192,7 @@ export function renderProfilePage({ kind, name, events, origin = '', roleOf }) {
 
   const info = isPerson ? roleOf?.(name) : null
   const selfUrl = `${origin}/${seg}/${encodeURIComponent(name)}`
-  const ogImage = `${origin}/og/${seg}-${Buffer.from(name, 'utf8').toString('base64url')}.png`
+  const ogImage = `${origin}/og/${seg}-${Buffer.from(name, 'utf8').toString('base64url')}.jpg`
 
   const desc = [`${label} ${name}`, `來台 ${list.length} 場`, span,
     info?.char ? `飾 ${info.char}` : '',

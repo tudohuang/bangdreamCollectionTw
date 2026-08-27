@@ -49,6 +49,9 @@ if (!existsSync(DIST)) {
   process.exit(0)
 }
 
+let sharp = null
+try { ({ default: sharp } = await import('sharp')) } catch { /* 沒有就輸出 PNG */ }
+
 let Resvg
 try {
   ({ Resvg } = await import('@resvg/resvg-js'))
@@ -62,22 +65,59 @@ const esc = (s = '') => String(s).replace(/[&<>"']/g, c => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
 
 // CJK 友善斷行（以「視覺寬度」估算，全形 2、半形 1）
+// 標題換行。
+//
+// 原本是按字元數硬切，不管是不是在單詞中間 —— 所以
+// 「DREAMS GO ON」會被切成「DRE / AMS GO ON」，看起來就是壞的。
+// 中文可以在任何地方斷，英數不行，所以先切成「可斷的片段」再組。
 function wrap(text, maxUnits, maxLines) {
+  const width = (s) => [...s].reduce((n, ch) => n + (/[\x00-\xff]/.test(ch) ? 1 : 2), 0)
+
+  // 切成片段：連續的英數視為一個不可拆的字，中文一字一片段
+  const chunks = String(text).match(/[A-Za-z0-9][A-Za-z0-9'’.!?&:-]*|s+|[^s]/g) || []
+
   const lines = []
-  let line = '', units = 0
-  for (const ch of text) {
-    const w = /[\x00-\xff]/.test(ch) ? 1 : 2
-    if (units + w > maxUnits) {
-      lines.push(line); line = ''; units = 0
-      if (lines.length >= maxLines) break
+  let line = ''
+  let overflow = false
+  for (const chunk of chunks) {
+    if (lines.length >= maxLines) { overflow = true; break }
+    // 行首不留空白
+    if (!line && /^s+$/.test(chunk)) continue
+    const next = line + chunk
+    if (width(next) <= maxUnits) { line = next; continue }
+    // 單一個字就超過一行寬（超長英文）→ 只好硬切
+    if (!line && width(chunk) > maxUnits) {
+      let take = ''
+      for (const ch of chunk) {
+        if (width(take + ch) > maxUnits) break
+        take += ch
+      }
+      lines.push(take)
+      line = chunk.slice(take.length)
+      continue
     }
-    line += ch; units += w
+    lines.push(line.trim())
+    line = /^s+$/.test(chunk) ? '' : chunk
   }
-  if (line && lines.length < maxLines) lines.push(line)
-  if (lines.length === maxLines) {
-    // 還有剩 → 末行加省略號
-    const consumed = lines.join('').length
-    if (consumed < [...text].length) lines[maxLines - 1] = lines[maxLines - 1].replace(/.$/, '…')
+  if (line.trim()) {
+    if (lines.length < maxLines) lines.push(line.trim())
+    else overflow = true
+  }
+
+  // 收尾標點不該落在行首（中文排版的禁則）。把它拉回上一行 ——
+  // 「」）』】 掛在下一行開頭看起來就是排版壞掉。
+  const CLOSERS = '」』）】〉》，、。：；!?'
+  for (let k = 1; k < lines.length; k++) {
+    while (lines[k] && CLOSERS.includes(lines[k][0])) {
+      lines[k - 1] += lines[k][0]
+      lines[k] = lines[k].slice(1)
+    }
+  }
+
+  // 有字沒放進去 → 末行加省略號
+  if (overflow && lines.length) {
+    const last = lines[lines.length - 1]
+    lines[lines.length - 1] = last.slice(0, Math.max(1, last.length - 1)) + '…'
   }
   return lines
 }
@@ -88,14 +128,14 @@ function ogSvg(e, coverUri = null) {
   const m = primaryMetaOf(e)
   const dex = `#${String(e.number ?? 0).padStart(3, '0')}`
   const personal = e.category === '擦邊'
-  const titleLines = wrap(e.title || '未命名活動', 34, 3)
+  const titleLines = wrap(e.title || '未命名活動', 30, 3)
   const date = e.startDate === e.endDate ? e.startDate : `${e.startDate} → ${e.endDate}`
   const meta = [date, e.type, personal ? '個人來台' : m.name].filter(Boolean).join('   ·   ')
   const people = (e.people || []).slice(0, 6).join('、')
 
   // 壓在花俏海報上要有陰影才讀得出來
   const titleSvg = titleLines.map((ln, i) =>
-    `<text x="80" y="${292 + i * 78}" font-size="64" font-weight="800" fill="#ffffff" filter="url(#tsh)" font-family="'Noto Sans TC','Microsoft JhengHei',sans-serif">${esc(ln)}</text>`
+    `<text x="80" y="${300 + i * 74}" font-size="60" font-weight="800" fill="#ffffff" filter="url(#tsh)" font-family="'Noto Sans TC','Microsoft JhengHei',sans-serif">${esc(ln)}</text>`
   ).join('')
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
@@ -105,11 +145,26 @@ function ogSvg(e, coverUri = null) {
       <stop offset="0.55" stop-color="#a855f7"/>
       <stop offset="1" stop-color="#7c3aed"/>
     </linearGradient>
-    <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#0a0616" stop-opacity="0.72"/>
-      <stop offset="0.26" stop-color="#0a0616" stop-opacity="0.44"/>
-      <stop offset="0.62" stop-color="#0a0616" stop-opacity="0.74"/>
-      <stop offset="1" stop-color="#0a0616" stop-opacity="0.92"/>
+    <!-- 由左而右的遮罩：文字都在左側，那邊要壓夠深才讀得出來；
+         右側留亮，海報還是看得到。原本只有上下漸層，壓不住花俏的主視覺 -->
+    <linearGradient id="scrimX" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0a0616" stop-opacity="0.94"/>
+      <stop offset="0.42" stop-color="#0a0616" stop-opacity="0.86"/>
+      <stop offset="0.70" stop-color="#0a0616" stop-opacity="0.46"/>
+      <stop offset="1" stop-color="#0a0616" stop-opacity="0.20"/>
+    </linearGradient>
+    <linearGradient id="scrimY" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a0616" stop-opacity="0.30"/>
+      <stop offset="0.34" stop-color="#0a0616" stop-opacity="0.08"/>
+      <stop offset="0.80" stop-color="#0a0616" stop-opacity="0.30"/>
+      <stop offset="1" stop-color="#0a0616" stop-opacity="0.66"/>
+    </linearGradient>
+    <!-- 頂帶：站名與編號那一列要有自己的底。
+         少了它，原圖的上緣會從標題上方漏出來，看起來像貼歪的另一塊 -->
+    <linearGradient id="topBar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a0616" stop-opacity="0.88"/>
+      <stop offset="0.72" stop-color="#0a0616" stop-opacity="0.80"/>
+      <stop offset="1" stop-color="#0a0616" stop-opacity="0"/>
     </linearGradient>
     <filter id="tsh" x="-10%" y="-10%" width="130%" height="130%">
       <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000000" flood-opacity="0.75"/>
@@ -119,7 +174,9 @@ function ogSvg(e, coverUri = null) {
   ${coverUri ? `
   <image href="${coverUri}" x="0" y="0" width="1200" height="630"
          preserveAspectRatio="xMidYMid slice"/>
-  <rect width="1200" height="630" fill="url(#shade)"/>
+  <rect width="1200" height="630" fill="url(#scrimX)"/>
+  <rect width="1200" height="630" fill="url(#scrimY)"/>
+  <rect width="1200" height="150" fill="url(#topBar)"/>
   <rect x="0" y="0" width="14" height="630" fill="${m.color}"/>` : `
   <rect width="1200" height="630" fill="#1a1233" opacity="0.18"/>
   <circle cx="1050" cy="120" r="220" fill="#ffffff" opacity="0.10"/>
@@ -134,12 +191,30 @@ function ogSvg(e, coverUri = null) {
 </svg>`
 }
 
+// JPEG 轉檔是非同步的，收集起來最後一起等
+const pending = []
+
+// OG 圖輸出。
+//
+// resvg 只吐 PNG，而 1200×630 疊上動漫海報的 PNG 會到 1 MB ——
+// Twitter 的上限是 5 MB，但那麼大的圖抓取會慢、預覽常常來不及顯示。
+// 所以一律轉成 JPEG，通常小一個數量級。
+//
+// 沒有 sharp 就整個跳過不產圖 —— 寧可沒有 og:image，
+// 也不要輸出副檔名與內容對不上的檔案（有些平台會直接拒絕）。
 function renderPng(svg, outPath) {
-  if (!Resvg) return false
+  if (!Resvg || !sharp) return false
   const r = new Resvg(svg, { fitTo: { mode: 'width', value: 1200 }, font: { loadSystemFonts: true } })
-  writeFileSync(outPath, r.render().asPng())
+  const png = r.render().asPng()
+  pending.push(
+    sharp(png).jpeg({ quality: 82, mozjpeg: true, chromaSubsampling: '4:4:4' })
+      .toBuffer()
+      .then(buf => writeFileSync(outPath, buf))
+      .catch(() => {}))
   return true
 }
+
+
 
 // ---- 封面照抓下來當 OG 底圖（resvg 不會自己抓遠端圖，得先轉成 data URI） ----
 const COVER_TIMEOUT = 8000
@@ -194,7 +269,7 @@ const coverUris = new Map()
 
 let pngCount = 0
 for (const e of events) {
-  if (renderPng(ogSvg(e, coverUris.get(e.id)), join(DIST, 'og', `${e.id}.png`))) pngCount++
+  if (renderPng(ogSvg(e, coverUris.get(e.id)), join(DIST, 'og', `${e.id}.jpg`))) pngCount++
   // 靜態主機：產出真的有內容的條目頁（Vercel / Cloudflare 由函式即時產同一份）
   if (!ON_EDGE) {
     writeFileSync(join(DIST, 'e', `${e.id}.html`), renderEntryPage({
@@ -280,7 +355,7 @@ const skippedStubs = []
 if (!ON_EDGE) { mkdirSync(join(DIST, 'p'), { recursive: true }); mkdirSync(join(DIST, 'b'), { recursive: true }) }
 for (const pr of profiles) {
   const seg = pr.kind === 'person' ? 'p' : 'b'
-  if (renderPng(profileSvg(pr), join(DIST, 'og', `${seg}-${slug(pr.name)}.png`))) profilePng++
+  if (renderPng(profileSvg(pr), join(DIST, 'og', `${seg}-${slug(pr.name)}.jpg`))) profilePng++
   if (ON_EDGE) continue
   if (UNSAFE_PATH.test(pr.name)) { skippedStubs.push(pr.name); continue }
   // 檔名要用原字（UTF-8）。網址是 percent-encoded，靜態主機會先解碼再找檔，
@@ -306,7 +381,7 @@ const defaultSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height=
   <text x="600" y="380" text-anchor="middle" font-size="40" fill="#ffffff" opacity="0.95" font-family="sans-serif">Taiwan BanG Dream! Event Collection</text>
   <text x="600" y="450" text-anchor="middle" font-size="30" fill="#ffffff" opacity="0.85" font-family="sans-serif">2018 — 2026</text>
 </svg>`
-renderPng(defaultSvg, join(DIST, 'og-default.png'))
+renderPng(defaultSvg, join(DIST, 'og-default.jpg'))
 
 const idxPath = join(DIST, 'index.html')
 let idx = readFileSync(idxPath, 'utf8')
@@ -315,14 +390,17 @@ let idx = readFileSync(idxPath, 'utf8')
 if (SITE_URL) {
   const ogTags = [
     '<meta property="og:url" content="' + SITE_URL + '/"/>',
-    '<meta property="og:image" content="' + SITE_URL + '/og-default.png"/>',
+    '<meta property="og:image" content="' + SITE_URL + '/og-default.jpg"/>',
     '<meta property="og:image:width" content="1200"/>',
     '<meta property="og:image:height" content="630"/>',
-    '<meta name="twitter:image" content="' + SITE_URL + '/og-default.png"/>',
+    '<meta name="twitter:image" content="' + SITE_URL + '/og-default.jpg"/>',
   ].join(String.fromCharCode(10) + '    ')
   idx = idx.replace('</head>', '    ' + ogTags + String.fromCharCode(10) + '  </head>')
 }
 writeFileSync(idxPath, idx, 'utf8')
+
+// JPEG 轉檔是非同步的，要等它們寫完才算 build 結束
+await Promise.all(pending)
 
 // ---------------------------------------------------------------- sitemap + robots
 //
