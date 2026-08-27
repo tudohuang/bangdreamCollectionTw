@@ -29,8 +29,20 @@ const rawSiteUrl =
   process.env.SITE_URL ||
   (process.env.VERCEL_PROJECT_PRODUCTION_URL && 'https://' + process.env.VERCEL_PROJECT_PRODUCTION_URL) ||
   process.env.CF_PAGES_URL ||
+  // 最後才用 VERCEL_URL：它每次部署都不一樣，當 canonical 會讓搜尋引擎
+  // 每次看到新網址。但有總比沒有好 —— 沒有的話連 sitemap 都不會產。
+  (process.env.VERCEL_URL && 'https://' + process.env.VERCEL_URL) ||
   ''
 const SITE_URL = rawSiteUrl.replace(new RegExp(String.fromCharCode(47) + '$'), '')
+
+// 印出網址是從哪個變數來的 —— sitemap 沒產出來時，這一行就是第一個要看的地方
+const urlFrom =
+  process.env.SITE_URL ? 'SITE_URL' :
+  process.env.VERCEL_PROJECT_PRODUCTION_URL ? 'VERCEL_PROJECT_PRODUCTION_URL' :
+  process.env.CF_PAGES_URL ? 'CF_PAGES_URL' :
+  process.env.VERCEL_URL ? 'VERCEL_URL（每次部署都不同，建議改設 SITE_URL）' :
+  '（沒有任何來源）'
+console.log('網址來源：' + urlFrom + ' → ' + (SITE_URL || '(空)'))
 
 if (!existsSync(DIST)) {
   console.log('（跳過 OG：尚未 build，找不到 dist/）')
@@ -298,14 +310,18 @@ renderPng(defaultSvg, join(DIST, 'og-default.png'))
 
 const idxPath = join(DIST, 'index.html')
 let idx = readFileSync(idxPath, 'utf8')
-const ogTags = [
-  `<meta property="og:image" content="${SITE_URL}/og-default.png"/>`,
-  `<meta property="og:image:width" content="1200"/>`,
-  `<meta property="og:image:height" content="630"/>`,
-  `<meta name="twitter:card" content="summary_large_image"/>`,
-  `<meta name="twitter:image" content="${SITE_URL}/og-default.png"/>`,
-].join('\n    ')
-if (!idx.includes('og:image')) idx = idx.replace('</head>', `    ${ogTags}\n  </head>`)
+// 首頁的絕對網址標籤在這裡注入，不寫死在 index.html ——
+// 寫死的話會蓋掉自動偵測，分享出去的縮圖指向不存在的網域。
+if (SITE_URL) {
+  const ogTags = [
+    '<meta property="og:url" content="' + SITE_URL + '/"/>',
+    '<meta property="og:image" content="' + SITE_URL + '/og-default.png"/>',
+    '<meta property="og:image:width" content="1200"/>',
+    '<meta property="og:image:height" content="630"/>',
+    '<meta name="twitter:image" content="' + SITE_URL + '/og-default.png"/>',
+  ].join(String.fromCharCode(10) + '    ')
+  idx = idx.replace('</head>', '    ' + ogTags + String.fromCharCode(10) + '  </head>')
+}
 writeFileSync(idxPath, idx, 'utf8')
 
 // ---------------------------------------------------------------- sitemap + robots
