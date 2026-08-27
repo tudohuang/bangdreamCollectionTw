@@ -46,10 +46,6 @@ import UrgentBar from './src/components/UrgentBar.jsx'
 import ResultBar from './src/components/ResultBar.jsx'
 import PulsePage from './src/components/PulsePage.jsx'
 import LabsPage from './src/components/LabsPage.jsx'
-import DexGrid from './src/components/variants/DexGrid.jsx'
-import EventNotes from './src/components/variants/EventNotes.jsx'
-import PrepBoard from './src/components/variants/PrepBoard.jsx'
-import VariantsPage from './src/components/variants/VariantsPage.jsx'
 import OrganizerPage from './src/components/OrganizerPage.jsx'
 import YearTimeline from './src/components/YearTimeline.jsx'
 import StatsInsights from './src/components/StatsInsights.jsx'
@@ -143,11 +139,6 @@ export const CASES = [
   ['StatsInsights', <StatsInsights events={events} />],
   ['LifeTimeline', <LifeTimeline list={events} color="#8b5cf6" glow="139,92,246" onSelect={noop} />],
   ['Primer', <Primer />],
-  ['DexGrid', <DexGrid events={events} attended={new Set([events[0]?.id])} notes={{}} filter={null} onFilter={noop} onSelect={noop} />],
-  ['DexGrid(只看缺封面)', <DexGrid events={events} attended={new Set()} notes={{}} filter="covered" onFilter={noop} onSelect={noop} />],
-  ['EventNotes', <EventNotes events={events} notes={{ '43': { line: '表演神', ticket: 'done' } }} onChange={noop} onSelect={noop} />],
-  ['PrepBoard', <PrepBoard events={events} notes={{}} onChange={noop} onSelect={noop} />],
-  ['VariantsPage', <VariantsPage events={events} attended={new Set()} onSelect={noop} />],
   ['InstallHint(沒觸發)', <InstallHint />, { mayBeEmpty: true }],
   ['IOSInstallCard', <IOSInstallCard onClose={noop} />],
   ['PromptInstallCard', <PromptInstallCard prompt={{ prompt: noop, userChoice: Promise.resolve() }} onClose={noop} />],

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { buildSummary, copyText, formatDateRangeCompact, shareUrl } from '../utils/share.js'
-import { primaryMeta, bandMeta, parseGroup, isPersonal, rootGroup } from '../utils/bands.js'
+import { primaryMeta, parseGroup, isPersonal, rootGroup } from '../utils/bands.js'
 import { photoUrl, photoCredit, PHOTO_CREDIT_KEYS } from '../utils/media.js'
 import { coverSrc, coverSources } from '../utils/cover.js'
 import { eventStatus, countdownLabel, weekday, STATUS_LABEL } from '../utils/datetime.js'
@@ -9,20 +9,22 @@ import { downloadIcs } from '../utils/ics.js'
 import { downloadShareImage } from '../utils/shareImage.js'
 import { isUrgent, URGENT_LABEL } from '../utils/urgency.js'
 import { organizersOf } from '../utils/organizers.js'
+import { personBandMap } from '../utils/derive.js'
 import { tap } from '../utils/haptics.js'
 import { renderMarkdown } from '../utils/markdown.js'
 import { REPORT_URL } from '../config.js'
 import Icon from './Icon.jsx'
 import Img from './Img.jsx'
 import CollectionStrip from './CollectionStrip.jsx'
+import EntryPlate, { CastList, BandRow } from './EntryPlate.jsx'
 import Chronicle from './Chronicle.jsx'
 import {
-  PhotoCredit, Punch, OverBtn, StubRow, Stat,
+  PhotoCredit, Punch, OverBtn, Stat,
   NeighborBtn, RelatedStrip, RelatedList, Section,
 } from './DetailParts.jsx'
 
 // 場次詳情浮層：頭圖、撕票線，左欄是這場的基本資料，右欄是它在收藏史裡的位置。
-export default function EventDetail({ event, allEvents = [], attended, onToggleAttended, onClose, prevId, nextId, onNavigate, milestones = [], pulse = [] }) {
+export default function EventDetail({ event, allEvents = [], attended, onToggleAttended, onClose, prevId, nextId, onNavigate, milestones = [], pulse = [], sheetRoster = [] }) {
   const [toast, setToast] = useState('')
   const [lightbox, setLightbox] = useState(null)
   const [swipeX, setSwipeX] = useState(0)
@@ -32,6 +34,8 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
   const personal = isPersonal(event)
   const isAttended = attended?.has(event.id)
   const ctx = useMemo(() => eventContext(event, allEvents), [event, allEvents])
+  // 誰飾演誰。以名冊為準，名冊沒有的人才用活動表推（見 utils/derive.js）
+  const castRoster = useMemo(() => personBandMap(allEvents, sheetRoster), [allEvents, sheetRoster])
 
   useEffect(() => { setLightbox(null); setCoverOk(true) }, [event.id])
 
@@ -314,102 +318,86 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
         <div className="flex flex-col lg:grid lg:grid-cols-[286px_14px_minmax(0,1fr)] lg:items-stretch">
 
           <aside className="order-2 lg:order-none w-full px-5 sm:px-8 lg:pl-6 lg:pr-0 py-5 lg:py-6 lg:self-start lg:sticky lg:top-0">
-            <div className="rounded-2xl border border-dream-line dark:border-white/10 overflow-hidden divide-y divide-dashed divide-dream-line dark:divide-white/10"
-              style={{ background: `rgba(${meta.glow},0.05)` }}>
+            {/* 銘牌：用排版呈現資料，不用有邊框的欄位盒。
+                原本這裡每一列是「圖示＋標籤＋值」，那是後台系統的長相。 */}
+            <div className="flex items-baseline justify-between gap-3 mb-2">
+              <span className="text-[10px] font-bold tracking-[0.32em] uppercase text-dream-faint">Entry</span>
+              <span className="font-display font-extrabold text-[22px] leading-none tabular-nums"
+                style={{ color: meta.color }}>{dex}</span>
+            </div>
 
-              <div className="flex items-center justify-between px-4 py-2">
-                <span className="text-[9px] font-bold tracking-[0.3em] uppercase text-dream-faint">Stub · 存根</span>
-                <span className="font-round font-bold text-[11px]" style={{ color: meta.color }}>{dex}</span>
-              </div>
-
-              <StubRow icon="calendar" label="日期" color={meta.color} glow={meta.glow}>
-                <div className="font-display font-bold text-[16px] text-dream-ink leading-tight">
-                  {formatDateRangeCompact(event.startDate, event.endDate) || '—'}
-                </div>
-                <div className="text-[13px] text-dream-faint mt-0.5">
-                  {[weekday(event.startDate), ctx.ago].filter(Boolean).join(' · ')}
-                </div>
-              </StubRow>
-
-              {event.venue && (
-                <StubRow icon="location-dot" label="地點" color={meta.color} glow={meta.glow}>
+            <EntryPlate color={meta} rows={[
+              {
+                label: '日期',
+                value: formatDateRangeCompact(event.startDate, event.endDate) || '—',
+                note: [weekday(event.startDate), ctx.ago].filter(Boolean).join(' · '),
+              },
+              event.venue && {
+                label: '會場',
+                value: (
                   <a href={`https://www.google.com/maps/search/${encodeURIComponent(event.venue)}`}
                     target="_blank" rel="noopener noreferrer"
-                    className="font-display font-bold text-[15px] text-dream-ink leading-tight hover:text-bloom-violet transition-colors inline-flex items-start gap-1.5">
-                    {event.venue}<Icon n="link" className="text-[9px] mt-1.5 shrink-0 opacity-60" />
+                    className="hover:text-bloom-violet transition-colors inline-flex items-start gap-1.5">
+                    {event.venue}<Icon n="link" className="text-[9px] mt-1.5 shrink-0 opacity-50" />
                   </a>
-                  {ctx.venueTotal > 1 && (
-                    <div className="text-[13px] text-dream-faint mt-0.5">這裡的第 {ctx.venueNth} 場 · 共 {ctx.venueTotal} 場</div>
-                  )}
-                </StubRow>
-              )}
-
-              {event.attendanceCount > 0 && (
-                <StubRow icon="users" label="人次" color={meta.color} glow={meta.glow}>
-                  <span className="font-display font-bold text-[18px] text-dream-ink leading-none">
-                    {event.attendanceCount}<span className="text-[13px] font-normal text-dream-faint ml-1">人</span>
+                ),
+                note: ctx.venueTotal > 1 ? `這裡的第 ${ctx.venueNth} 場` : null,
+              },
+              {
+                label: '編制',
+                value: (
+                  <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    {urgent && <span className="urgent-badge"><Icon n="triangle-exclamation" className="text-[9px]" /> {URGENT_LABEL}</span>}
+                    <span>{event.category === '擦邊' ? '個人' : '本體'}</span>
+                    {event.isFullBand && <span style={{ color: meta.color }}>· 全團</span>}
+                    {tags.length > 0 && <span className="text-dream-sub">· {tags.join('・')}</span>}
                   </span>
-                </StubRow>
-              )}
-
-              <StubRow icon="tag" label="性質" color={meta.color} glow={meta.glow}>
-                <div className="flex flex-wrap gap-1.5">
-                  {urgent && <span className="urgent-badge"><Icon n="triangle-exclamation" className="text-[9px]" /> {URGENT_LABEL}</span>}
-                  {event.category && <span className={`badge ${event.category === '本體' ? 'badge-core' : 'badge-side'}`}>{event.category === '擦邊' ? '個人' : '本體'}</span>}
-                  {event.isFullBand && <span className="badge badge-full"><Icon n="star" className="text-[9px]" /> 全團</span>}
-                  {tags.map(t => (
-                    <span key={t} className="badge" style={{ background: `rgba(${meta.glow},0.14)`, color: meta.color }}>{t}</span>
-                  ))}
-                </div>
-              </StubRow>
-
-              {event.organizer && (
-                <StubRow icon="user-group" label="主辦" color={meta.color} glow={meta.glow}>
-                  <div className="flex flex-wrap gap-x-2 gap-y-1">
+                ),
+                note: event.attendanceCount > 0 ? `${event.attendanceCount} 人` : null,
+              },
+              event.organizer && {
+                label: '主辦',
+                value: (
+                  <span className="flex flex-wrap gap-x-2 gap-y-1">
                     {organizersOf(event).map(name => (
                       <a key={name} href={`#/org/${encodeURIComponent(name)}`}
-                        className="text-[15px] text-dream-ink underline underline-offset-2 decoration-dream-line hover:decoration-current transition-colors">
-                        {name}
-                      </a>
+                        className="hover:text-bloom-violet transition-colors">{name}</a>
                     ))}
-                  </div>
-                  {ctx.organizerTotal > 1 && (
-                    <div className="text-[13px] text-dream-faint mt-0.5">辦過的第 {ctx.organizerNth} 場</div>
-                  )}
-                </StubRow>
-              )}
-
-              {event.ticketUrl && (
-                <StubRow icon="link" label="購票" color={meta.color} glow={meta.glow}>
-                  <a className="text-bloom-violet hover:underline break-all text-[13px]" target="_blank" rel="noopener noreferrer" href={event.ticketUrl}>
-                    {event.ticketUrl}
+                  </span>
+                ),
+                note: ctx.organizerTotal > 1 ? `辦過的第 ${ctx.organizerNth} 場` : null,
+              },
+              event.ticketUrl && {
+                label: '購票',
+                value: (
+                  <a href={event.ticketUrl} target="_blank" rel="noopener noreferrer"
+                    className="text-[13.5px] font-normal text-bloom-violet hover:underline break-all">
+                    {(() => { try { return new URL(event.ticketUrl).hostname.replace(/^www./, '') } catch { return event.ticketUrl } })()}
                   </a>
-                </StubRow>
-              )}
-
-              {extras.map(([name, value]) => (
-                <StubRow key={name} icon="tag" label={name} color={meta.color} glow={meta.glow}>
-                  {/^https?:\/\//i.test(value)
-                    ? <a className="text-bloom-violet hover:underline break-all text-[13px]" target="_blank" rel="noopener noreferrer" href={value}>{value}</a>
-                    : <span className="text-[13px] text-dream-sub whitespace-pre-line">{value}</span>}
-                </StubRow>
-              ))}
-
-              {event.sources?.length > 0 && (
-                <StubRow icon="link" label="來源" color={meta.color} glow={meta.glow}>
-                  <div className="flex flex-col gap-1.5">
+                ),
+              },
+              ...extras.map(([name, value]) => ({
+                label: name,
+                value: /^https?:///i.test(value)
+                  ? <a className="text-[13.5px] font-normal text-bloom-violet hover:underline break-all" target="_blank" rel="noopener noreferrer" href={value}>{value}</a>
+                  : <span className="text-[13.5px] font-normal text-dream-sub whitespace-pre-line">{value}</span>,
+              })),
+              event.sources?.length > 0 && {
+                label: '來源',
+                value: (
+                  <span className="flex flex-col gap-1">
                     {event.sources.map((src, i) => {
                       let host = src
-                      try { host = new URL(src).hostname.replace(/^www\./, '') } catch {}
+                      try { host = new URL(src).hostname.replace(/^www./, '') } catch {}
                       return (
                         <a key={i} href={src} target="_blank" rel="noopener noreferrer"
-                          className="text-[13px] text-dream-sub hover:text-bloom-violet transition-colors truncate">{host}</a>
+                          className="text-[13.5px] font-normal text-dream-sub hover:text-bloom-violet transition-colors truncate">{host}</a>
                       )
                     })}
-                  </div>
-                </StubRow>
-              )}
-            </div>
+                  </span>
+                ),
+              },
+            ]} />
           </aside>
 
           <div aria-hidden className="hidden lg:block perf-v" />
@@ -491,38 +479,13 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
             </div>
 
             {/* 陣容：聲優帶累積次數，首次來台掛 NEW */}
-            <Section title="陣容" color={meta.color}>
-              {ctx.people.length > 0 ? (
-                <div className="flex flex-wrap gap-1.5">
-                  {ctx.people.map(p => (
-                    <a key={p.name} href={`#/person/${encodeURIComponent(p.name)}`}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-dream-line dark:border-white/10 bg-white/70 dark:bg-white/[.06] pl-3 pr-1.5 py-1 text-[13px] text-dream-ink hover:border-bloom-violet transition-colors">
-                      {p.name}
-                      {p.isFirst ? (
-                        <span className="rounded-full px-1.5 py-0.5 text-[11px] font-bold text-white" style={{ background: meta.color }}>首次</span>
-                      ) : (
-                        <span className="rounded-full px-1.5 py-0.5 text-[11px] font-bold"
-                          style={{ background: `rgba(${meta.glow},0.16)`, color: meta.color }}>第 {p.nth} 次</span>
-                      )}
-                    </a>
-                  ))}
-                </div>
-              ) : <p className="text-[13px] text-dream-faint">尚無聲優資料</p>}
-
-              {groups.length > 0 && (
-                <div className="mt-2.5 flex flex-wrap gap-1.5">
-                  {groups.map(g => {
-                    const m = bandMeta(g)
-                    return (
-                      <a key={g} href={`#/band/${encodeURIComponent(rootGroup(g))}`}
-                        className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[13px] font-medium hover:opacity-80 transition-opacity"
-                        style={{ background: `rgba(${m.glow},0.14)`, color: m.color, border: `1px solid rgba(${m.glow},0.3)` }}>
-                        <span className="w-2 h-2 rounded-full" style={{ background: m.color }} />{g}
-                      </a>
-                    )
-                  })}
-                </div>
-              )}
+            {/* 陣容：像設定集的角色表 —— 誰、飾演誰、第幾次來。
+                原本是一排圓角標籤，那讀起來像篩選器不像名單。 */}
+            <Section title={`陣容 ${ctx.people.length ? ctx.people.length + ' 人' : ''}`} color={meta.color}>
+              {ctx.people.length > 0
+                ? <CastList people={ctx.people} roster={castRoster} color={meta} />
+                : <p className="text-[13px] text-dream-faint">尚無聲優資料</p>}
+              <BandRow groups={groups} />
             </Section>
 
             {/* 收藏軌：53 場排成一條，這場亮起來，點任何一格直接跳過去 */}

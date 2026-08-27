@@ -41,20 +41,6 @@ export function OverBtn({ children, active, disabled, className = '', ...rest })
   )
 }
 
-// 存根的一列：左側樂團色圖示方塊 + 小標，下面放值
-export function StubRow({ icon, label, color, glow, children }) {
-  return (
-    <div className="flex items-start gap-3 px-4 py-3.5">
-      <span className="grid place-items-center w-8 h-8 shrink-0 rounded-lg text-[13px]"
-        style={{ background: `rgba(${glow},0.16)`, color }}><Icon n={icon} /></span>
-      <div className="min-w-0 flex-1">
-        <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-dream-faint mb-1">{label}</div>
-        <div className="text-[15px] text-dream-ink">{children}</div>
-      </div>
-    </div>
-  )
-}
-
 // 脈絡卡裡的一個數字：大字、團色漸層墨水、底下一條細髮線
 export function Stat({ value, label, meta }) {
   return (

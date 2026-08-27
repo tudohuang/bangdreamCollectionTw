@@ -487,6 +487,7 @@ export default function App() {
             milestones={milestones.get(detailEvent.id) || []}
             onNavigate={openDetail}
             pulse={pulse}
+            sheetRoster={roster}
           />
         </Suspense>
       )}
