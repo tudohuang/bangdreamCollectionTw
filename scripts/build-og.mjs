@@ -11,7 +11,8 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { BAND_META, bandKey } from '../src/utils/bands.js'
-import { renderEntryPage, renderProfilePage } from '../src/server/entryPage.js'
+import { renderEntryPage, renderProfilePage, renderListPage } from '../src/server/entryPage.js'
+import { canonicalVenue } from '../src/utils/derive.js'
 import { personBandMap } from '../src/utils/derive.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -267,6 +268,21 @@ const coverUris = new Map()
   }))
 }
 
+// 哪些清單頁真的會存在 —— 條目頁靠它決定要不要做連結。
+// 先算出來，因為條目頁比清單頁早產。
+const hubKeys = new Set()
+{
+  const count = (keyOf) => {
+    const m = new Map()
+    for (const e of events) for (const k of [].concat(keyOf(e)).filter(Boolean))
+      m.set(k, (m.get(k) || 0) + 1)
+    return m
+  }
+  for (const [y] of count(e => e.year && String(e.year))) hubKeys.add('y:' + y)
+  for (const [v, n] of count(e => canonicalVenue(e.venue))) if (n >= 2) hubKeys.add('v:' + v)
+  for (const [t, n] of count(e => String(e.type || '').split(/[／/、]/)[0].trim())) if (n >= 3) hubKeys.add('t:' + t)
+}
+
 let pngCount = 0
 for (const e of events) {
   if (renderPng(ogSvg(e, coverUris.get(e.id)), join(DIST, 'og', `${e.id}.jpg`))) pngCount++
@@ -276,6 +292,7 @@ for (const e of events) {
       event: e, origin: SITE_URL,
       roleOf: (n) => rosterMap.get(n),
       hasLocalCover: !!coversManifest[String(e.stableId ?? e.number).padStart(3, '0')],
+      hubs: hubKeys, venueKey: canonicalVenue(e.venue),
     }), 'utf8')
   }
 }
@@ -402,6 +419,75 @@ writeFileSync(idxPath, idx, 'utf8')
 // JPEG 轉檔是非同步的，要等它們寫完才算 build 結束
 await Promise.all(pending)
 
+// ---------------------------------------------------------------- 清單頁
+//
+// 這站原本只有「單筆」頁面。但人在 Google 打的是「2026 邦邦 台灣」、
+// 「台北世貿一館 演唱會」、「邦邦 見面會」—— 那種查詢單筆頁排不上去。
+//
+// 門檻刻意設高：只有兩三筆以上才產。一筆的清單頁跟單筆頁內容重複，
+// 反而會被判定為薄內容，拖累整站。
+const hubs = []
+{
+  const by = (keyOf) => {
+    const m = new Map()
+    for (const e of events) {
+      for (const k of [].concat(keyOf(e)).filter(Boolean)) {
+        if (!m.has(k)) m.set(k, [])
+        m.get(k).push(e)
+      }
+    }
+    return m
+  }
+
+  const years = by(e => e.year && String(e.year))
+  const venues = by(e => canonicalVenue(e.venue))
+  const types = by(e => String(e.type || '').split(/[／/、]/)[0].trim())
+
+  const yearKeys = [...years.keys()].sort((a, b) => b - a)
+  for (const y of yearKeys) {
+    hubs.push({
+      kind: 'y', key: y,
+      title: y + ' 年台灣的邦邦活動',
+      lead: y + ' 年 BanG Dream! 相關聲優與樂團在台灣的活動，共 ' + years.get(y).length + ' 場。',
+      events: years.get(y),
+      related: yearKeys.filter(k => k !== y).slice(0, 8).map(k => ({ kind: 'y', key: k, label: k + ' 年' })),
+    })
+  }
+
+  for (const [v, list] of venues) {
+    if (list.length < 2) continue
+    hubs.push({
+      kind: 'v', key: v,
+      title: v + ' 的邦邦活動',
+      lead: 'BanG Dream! 相關聲優與樂團在 ' + v + ' 辦過的活動，共 ' + list.length + ' 場。',
+      events: list,
+      related: [...venues].filter(([k, l]) => k !== v && l.length >= 2).slice(0, 6)
+        .map(([k]) => ({ kind: 'v', key: k, label: k })),
+    })
+  }
+
+  for (const [t, list] of types) {
+    if (list.length < 3) continue
+    hubs.push({
+      kind: 't', key: t,
+      title: '台灣的邦邦 ' + t + ' 一覽',
+      lead: 'BanG Dream! 相關聲優與樂團在台灣的 ' + t + ' 場次，共 ' + list.length + ' 場。',
+      events: list,
+      related: [...types].filter(([k, l]) => k !== t && l.length >= 3).slice(0, 6)
+        .map(([k]) => ({ kind: 't', key: k, label: k })),
+    })
+  }
+
+  for (const kind of ['y', 'v', 't']) mkdirSync(join(DIST, kind), { recursive: true })
+  for (const h of hubs) {
+    writeFileSync(join(DIST, h.kind, h.key + '.html'),
+      renderListPage({ ...h, origin: SITE_URL }), 'utf8')
+  }
+  console.log('✓ 清單頁：' + hubs.filter(h => h.kind === 'y').length + ' 個年份、' +
+    hubs.filter(h => h.kind === 'v').length + ' 個場館、' +
+    hubs.filter(h => h.kind === 't').length + ' 個類型')
+}
+
 // ---------------------------------------------------------------- sitemap + robots
 //
 // sitemap 的 <loc> 一定要是絕對網址 —— 規格如此，相對路徑會讓整份被忽略。
@@ -414,6 +500,7 @@ if (base) {
   const urls = [
     { loc: base + '/', pr: '1.0' },
     ...events.map(e => ({ loc: base + '/e/' + e.id + ext, pr: '0.8' })),
+    ...hubs.map(h => ({ loc: base + '/' + h.kind + '/' + encodeURIComponent(h.key) + ext, pr: '0.9' })),
     ...profiles.map(x => ({
       loc: base + '/' + (x.kind === 'person' ? 'p' : 'b') + '/' + encodeURIComponent(x.name) + ext,
       pr: '0.7',

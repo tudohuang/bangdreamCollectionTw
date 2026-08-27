@@ -12,7 +12,22 @@ import { SHEET_CSV_URL } from '../config.js'
 import { parseCsvToEvents } from '../utils/parseEvents.js'
 import { renderEntryPage, renderProfilePage } from './entryPage.js'
 import covers from '../data/covers.json' with { type: 'json' }
-import { personBandMap } from '../utils/derive.js'
+import { personBandMap, canonicalVenue } from '../utils/derive.js'
+
+// 哪些清單頁存在。門檻要跟 scripts/build-og.mjs 一致，
+// 不然條目頁會連到不存在的頁。
+function hubKeysOf(events) {
+  const keys = new Set()
+  const count = (fn) => {
+    const m = new Map()
+    for (const e of events) { const k = fn(e); if (k) m.set(k, (m.get(k) || 0) + 1) }
+    return m
+  }
+  for (const [y] of count(e => e.year && String(e.year))) keys.add('y:' + y)
+  for (const [v, n] of count(e => canonicalVenue(e.venue))) if (n >= 2) keys.add('v:' + v)
+  for (const [t, n] of count(e => String(e.type || '').split(/[／/、]/)[0].trim())) if (n >= 3) keys.add('t:' + t)
+  return keys
+}
 
 const BUNDLED_IDS = new Set(bundled.map(e => e.id))
 
@@ -96,6 +111,8 @@ export async function renderSharePage({ kind, id = '', value = '', origin }) {
     origin,
     roleOf: (name) => roster.get(name),
     hasLocalCover: !!covers[String(event.stableId ?? event.number).padStart(3, '0')],
+    hubs: hubKeysOf(events),
+    venueKey: canonicalVenue(event.venue),
   })
 
 }

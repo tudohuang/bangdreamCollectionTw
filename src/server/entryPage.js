@@ -73,8 +73,14 @@ function castHtml(event, roleOf) {
   return `<h2>陣容 ${people.length} 人</h2><ul class="cast">${rows}</ul>`
 }
 
-export function renderEntryPage({ event, origin = '', roleOf, hasLocalCover = false }) {
+export function renderEntryPage({ event, origin = '', roleOf, hasLocalCover = false, hubs, venueKey }) {
   const dex = `#${pad(event.number)}`
+  // 搜尋結果只顯示 30 字左右，開頭要放使用者在找的東西。
+  // 編號他不知道，日期與場館才是他要確認的 —— 所以編號讓給日期。
+  const pageTitle = [
+    event.title || '未命名活動',
+    [dot(event.startDate), event.venue].filter(Boolean).join(' '),
+  ].filter(Boolean).join(' — ')
   const title = `${dex} ${event.title || '未命名活動'}`
   const date = event.startDate === event.endDate
     ? dot(event.startDate)
@@ -99,10 +105,19 @@ export function renderEntryPage({ event, origin = '', roleOf, hasLocalCover = fa
 <img src="${origin}/covers/${id}-lg.jpg" alt="${esc(event.title || '')}" loading="eager">
 </picture></span>` : ''
 
+  // 這幾欄同時是導覽：指向該年份／該場館／該類型的清單頁。
+  // hubs 由呼叫端給（哪些清單頁真的存在），沒有的就只顯示文字不做連結。
+  const link = (kind, key, text) =>
+    hubs?.has(kind + ':' + key)
+      ? '<a href="../' + kind + '/' + encodeURIComponent(key) + '">' + esc(text) + '</a>'
+      : esc(text)
+
+  const mainType = String(event.type || '').split(/[／/、]/)[0].trim()
   const rows = [
-    ['日期', esc(date), event.year ? `${event.year} 年` : ''],
-    event.venue && ['會場', esc(event.venue), ''],
-    ['性質', esc([personal ? '個人來台' : '本體', event.type].filter(Boolean).join(' · ')),
+    ['日期', esc(date), event.year ? link('y', String(event.year), event.year + ' 年') : ''],
+    event.venue && ['會場', link('v', venueKey || event.venue, event.venue), ''],
+    ['性質', [esc(personal ? '個人來台' : '本體'), mainType ? link('t', mainType, mainType) : '']
+      .filter(Boolean).join(' · '),
       bands.length ? esc(bands.join('、')) : ''],
     event.organizer && ['主辦', esc(event.organizer), ''],
   ].filter(Boolean).map(([k, v, sub]) =>
@@ -132,10 +147,26 @@ export function renderEntryPage({ event, origin = '', roleOf, hasLocalCover = fa
     description: desc,
   })
 
+  // BreadcrumbList：搜尋結果會顯示「邦邦來台圖鑑 › 2026 年 › 這場」
+  const crumbs = [
+    { name: '邦邦來台圖鑑', url: origin + '/' },
+    event.year && hubs?.has('y:' + event.year)
+      ? { name: event.year + ' 年', url: origin + '/y/' + event.year }
+      : null,
+    { name: event.title, url: selfUrl },
+  ].filter(Boolean)
+  const breadcrumbLd = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: crumbs.map((c, i) => ({
+      '@type': 'ListItem', position: i + 1, name: c.name, item: c.url,
+    })),
+  })
+
   return `<!doctype html><html lang="zh-Hant"><head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>${esc(title)}｜邦邦來台圖鑑</title>
+<title>${esc(pageTitle)}｜邦邦來台圖鑑</title>
 <meta name="description" content="${esc(desc)}"/>
 <link rel="canonical" href="${esc(selfUrl || `/e/${event.id}`)}"/>
 <meta property="og:type" content="article"/>
@@ -151,9 +182,13 @@ ${origin ? `<meta property="og:url" content="${esc(selfUrl)}"/>` : ''}
 <meta name="twitter:image" content="${esc(ogImage)}"/>
 <style>${STYLE}</style>
 <script type="application/ld+json">${jsonLd}</script>
+<script type="application/ld+json">${breadcrumbLd}</script>
 </head><body>
 <div class="wrap">
-<nav class="top"><a href="../">邦邦來台圖鑑</a> <span>/</span> <span>活動</span></nav>
+<nav class="top"><a href="../">邦邦來台圖鑑</a> <span>/</span> ${
+  event.year && hubs?.has('y:' + event.year)
+    ? `<a href="../y/${event.year}">${event.year} 年</a>`
+    : `<span>${event.year || '活動'}</span>`}</nav>
 ${cover}
 <div class="no" style="color:${meta.color}">${dex}</div>
 <h1>${esc(event.title || '未命名活動')}</h1>
@@ -249,4 +284,90 @@ ${info?.char ? `<div class="row"><dt>角色</dt><dd>飾 ${esc(info.char)}${info.
 </p>
 </div>
 </body></html>`
+}
+
+
+// 清單頁（年份／場館／類型）。
+//
+// 為什麼要有：這站原本只有「單筆」頁面 —— 一場活動、一個人。
+// 但人在 Google 打的是「2026 邦邦 台灣」「台北世貿一館 演唱會」
+// 「邦邦 見面會」，那種查詢單筆頁排不上去，清單頁才排得上。
+//
+// 每一頁都要有實質內容才值得存在，所以只產「有兩三筆以上」的，
+// 一筆的清單頁跟單筆頁重複，反而會被判定為薄內容。
+export function renderListPage({ kind, key, title, lead, events, origin = '', related = [] }) {
+  const list = [...events].sort((a, b) =>
+    String(b.startDate || '').localeCompare(String(a.startDate || '')))
+
+  const years = list.map(e => e.year).filter(Boolean)
+  const span = years.length
+    ? (Math.min(...years) === Math.max(...years)
+        ? String(Math.min(...years))
+        : Math.min(...years) + '–' + Math.max(...years))
+    : ''
+  const people = [...new Set(list.flatMap(e => e.people || []))]
+
+  const selfUrl = origin + '/' + kind + '/' + encodeURIComponent(key)
+  const desc = [title, list.length + ' 場', span,
+    people.slice(0, 5).join('、')].filter(Boolean).join(' · ')
+
+  const rows = list.map(e => {
+    const who = (e.people || []).slice(0, 3).join('、')
+    return '<li><a href="../e/' + e.id + '">' +
+      '<span class="d">' + (dot(e.startDate) || '日期未定') + '</span>' +
+      '<span class="t">' + esc(e.title || '') + '</span></a>' +
+      '<span class="role">' + esc([e.venue, who].filter(Boolean).join(' · ')) + '</span></li>'
+  }).join('')
+
+  // ItemList 讓 Google 知道這是一份清單，不是散落的文字
+  const jsonLd = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: title,
+    description: desc,
+    url: origin ? selfUrl : undefined,
+    numberOfItems: list.length,
+    itemListElement: list.slice(0, 30).map((e, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: origin ? origin + '/e/' + e.id : undefined,
+      name: e.title,
+    })),
+  })
+
+  const relatedHtml = related.length
+    ? '<h2>其他</h2><p class="rel">' + related.map(r =>
+        '<a href="../' + r.kind + '/' + encodeURIComponent(r.key) + '">' + esc(r.label) + '</a>').join('') + '</p>'
+    : ''
+
+  return '<!doctype html><html lang="zh-Hant"><head>' +
+'<meta charset="UTF-8"/>' +
+'<meta name="viewport" content="width=device-width, initial-scale=1.0"/>' +
+'<title>' + esc(title) + '｜邦邦來台圖鑑</title>' +
+'<meta name="description" content="' + esc(desc) + '"/>' +
+'<link rel="canonical" href="' + esc(selfUrl || ('/' + kind + '/' + key)) + '"/>' +
+'<meta property="og:type" content="website"/>' +
+'<meta property="og:title" content="' + esc(title) + '"/>' +
+'<meta property="og:description" content="' + esc(desc) + '"/>' +
+'<meta property="og:image" content="' + origin + '/og-default.jpg"/>' +
+(origin ? '<meta property="og:url" content="' + esc(selfUrl) + '"/>' : '') +
+'<meta name="twitter:card" content="summary_large_image"/>' +
+'<meta name="twitter:title" content="' + esc(title) + '"/>' +
+'<meta name="twitter:description" content="' + esc(desc) + '"/>' +
+'<meta name="twitter:image" content="' + origin + '/og-default.jpg"/>' +
+'<style>' + STYLE + 'ul.cast .d{display:inline-block;min-width:82px;color:var(--faint);font-size:13px;font-variant-numeric:tabular-nums}ul.cast a{text-decoration:none;display:flex;gap:10px;min-width:0}ul.cast .t{min-width:0}p.rel a{display:inline-block;margin:0 14px 6px 0;color:var(--sub)}</style>' +
+'<script type="application/ld+json">' + jsonLd + '</script>' +
+'</head><body><div class="wrap">' +
+'<nav class="top"><a href="../">邦邦來台圖鑑</a> <span>/</span> <span>' + esc(title) + '</span></nav>' +
+'<h1>' + esc(title) + '</h1>' +
+'<p>' + esc(lead) + '</p>' +
+'<dl>' +
+'<div class="row"><dt>場次</dt><dd>' + list.length + ' 場' + (span ? '<span class="sub">' + span + '</span>' : '') + '</dd></div>' +
+'<div class="row"><dt>出演者</dt><dd>' + people.length + ' 人</dd></div>' +
+'</dl>' +
+'<h2>全部場次</h2><ul class="cast">' + rows + '</ul>' +
+relatedHtml +
+'<a class="cta" href="../#/collection">在圖鑑裡篩選 →</a>' +
+'<p class="foot">邦邦來台圖鑑 —— BanG Dream! 相關聲優與樂團的來台活動紀錄，粉絲整理，非官方。 <a href="../">回到圖鑑</a></p>' +
+'</div></body></html>'
 }
