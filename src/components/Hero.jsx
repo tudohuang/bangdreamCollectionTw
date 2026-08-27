@@ -128,7 +128,9 @@ function TicketCountdown({ events, onSelect }) {
     : 'REPLAY'
   const unit = upcoming && status !== 'ongoing' && d > 0 ? '天後開演' : ''
 
-  const rest = queue.filter(x => x.id !== e.id).slice(0, 3)
+  // 這個框會撐滿欄高，所以要放得夠多才不會留一大塊空白。
+  // 6 筆是量出來的：桌機那一欄剛好放得下，再多會被截斷。
+  const rest = queue.filter(x => x.id !== e.id).slice(0, 6)
 
   return (
     <div className="w-full min-w-0 flex flex-col gap-3">
@@ -179,7 +181,10 @@ function TicketCountdown({ events, onSelect }) {
     {/* 再來還有誰 —— 「最近公布」講的是新消息，這裡講的是即將發生 */}
     {rest.length > 0 && (
       <div className="glass px-4 py-3 flex-1">
-        <div className="text-[11px] font-bold text-dream-faint mb-1.5">再來還有</div>
+        <div className="flex items-baseline justify-between gap-2 mb-1.5">
+          <span className="text-[11px] font-bold text-dream-faint">再來還有</span>
+          <span className="text-[11px] text-dream-faint tabular-nums">{queue.length} 場已公布</span>
+        </div>
         <ul className="space-y-1">
           {rest.map(x => {
             const xm = primaryMeta(x)
@@ -191,9 +196,14 @@ function TicketCountdown({ events, onSelect }) {
                   <span className="shrink-0 w-11 text-right font-round font-bold tabular-nums" style={{ color: xm.color }}>
                     {left != null ? `${left}天` : '未定'}
                   </span>
-                  <span className="min-w-0 truncate text-dream-sub group-hover:text-dream-ink transition-colors">
+                  <span className="min-w-0 flex-1 truncate text-dream-sub group-hover:text-dream-ink transition-colors">
                     {x.title}
                   </span>
+                  {x.venue && (
+                    <span className="hidden lg:block shrink-0 max-w-[38%] truncate text-[11.5px] text-dream-faint">
+                      {x.venue}
+                    </span>
+                  )}
                 </button>
               </li>
             )

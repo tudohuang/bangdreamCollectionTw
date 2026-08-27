@@ -16,12 +16,14 @@ import { canonicalVenue } from '../src/utils/derive.js'
 import { personBandMap } from '../src/utils/derive.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
+const pkg = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'package.json'), 'utf8'))
 const ROOT = join(__dirname, '..')
 const DIST = join(ROOT, 'dist')
 // 網址從哪來（依序）：
 //   1. SITE_URL          自訂網域時手動設
 //   2. VERCEL_PROJECT_PRODUCTION_URL   Vercel 免費給的 xxx.vercel.app，每次部署都一樣
 //   3. CF_PAGES_URL      Cloudflare Pages 的部署網址
+//   4. package.json 的 homepage   本機 build 用，讓產物跟正式站同形狀
 //
 // 有第 2 項就不用手動設任何東西 —— 不買網域也能有 sitemap 與絕對路徑的 og:image。
 // 用 PRODUCTION_URL 而不是 VERCEL_URL：後者每次部署都不一樣，
@@ -33,6 +35,10 @@ const rawSiteUrl =
   // 最後才用 VERCEL_URL：它每次部署都不一樣，當 canonical 會讓搜尋引擎
   // 每次看到新網址。但有總比沒有好 —— 沒有的話連 sitemap 都不會產。
   (process.env.VERCEL_URL && 'https://' + process.env.VERCEL_URL) ||
+  // 本機 build 沒有任何環境變數，就用 package.json 的 homepage。
+  // 少了它，本機產出的 dist 沒有 sitemap、canonical 是相對路徑，
+  // SEO 測試等於在測一個跟正式站不一樣的東西 —— 那個 gate 就沒有意義了。
+  pkg.homepage ||
   ''
 const SITE_URL = rawSiteUrl.replace(new RegExp(String.fromCharCode(47) + '$'), '')
 
@@ -42,6 +48,7 @@ const urlFrom =
   process.env.VERCEL_PROJECT_PRODUCTION_URL ? 'VERCEL_PROJECT_PRODUCTION_URL' :
   process.env.CF_PAGES_URL ? 'CF_PAGES_URL' :
   process.env.VERCEL_URL ? 'VERCEL_URL（每次部署都不同，建議改設 SITE_URL）' :
+  pkg.homepage ? 'package.json 的 homepage（本機 build）' :
   '（沒有任何來源）'
 console.log('網址來源：' + urlFrom + ' → ' + (SITE_URL || '(空)'))
 

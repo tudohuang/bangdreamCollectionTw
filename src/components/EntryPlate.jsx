@@ -18,10 +18,12 @@ export default function EntryPlate({ rows, color }) {
   return (
     <dl className="border-t" style={{ borderColor: `rgba(${color.glow},0.35)` }}>
       {shown.map(r => (
+        // 側欄只有 286px，硬排三欄會讓值只剩不到 120px，
+        // 「台北大佳河濱公園」就被斷成兩行。兩欄 + 附註換行才讀得順。
         <div key={r.label}
-          className="grid grid-cols-[52px_minmax(0,1fr)] sm:grid-cols-[64px_minmax(0,1fr)_auto] gap-x-3 gap-y-0.5 py-2.5 border-b"
+          className="grid grid-cols-[46px_minmax(0,1fr)] gap-x-3 gap-y-0.5 py-2.5 border-b"
           style={{ borderColor: `rgba(${color.glow},0.18)` }}>
-          <dt className="pt-[3px] text-[10.5px] font-bold tracking-[0.18em] text-dream-faint self-start">
+          <dt className="pt-[3px] text-[10.5px] font-bold tracking-[0.14em] text-dream-faint self-start">
             {r.label}
           </dt>
           <dd className="min-w-0 font-display font-semibold text-[15px] leading-snug text-dream-ink">
@@ -29,7 +31,7 @@ export default function EntryPlate({ rows, color }) {
           </dd>
           {/* 這一格在歷史裡的位置。手機沒有第三欄，改排到值的下面 */}
           {r.note && (
-            <dd className="col-start-2 sm:col-start-3 sm:text-right text-[12px] text-dream-faint tabular-nums self-center">
+            <dd className="col-start-2 text-[12px] text-dream-faint tabular-nums">
               {r.note}
             </dd>
           )}

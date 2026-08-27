@@ -9,7 +9,7 @@
     "prebuild": "node scripts/build-impressions.mjs",
     "postbuild": "node scripts/build-og.mjs",
     "preview": "vite preview",
-    "verify": "npm test && npm run build",
+    "verify": "npm run build && npm test",
     "test": "node --test \"tests/**/*.test.mjs\" && node scripts/smoke.mjs",
     "smoke": "node scripts/smoke.mjs",
     "validate": "node scripts/validate.mjs",
@@ -47,5 +47,6 @@
     "sharp": "^0.35.3",
     "tailwindcss": "^3.4.16",
     "vite": "^5.4.11"
-  }
+  },
+  "homepage": "https://bangdream-collection-tw.vercel.app"
 }

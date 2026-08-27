@@ -9,6 +9,7 @@ import { downloadIcs } from '../utils/ics.js'
 import { downloadShareImage } from '../utils/shareImage.js'
 import { isUrgent, URGENT_LABEL } from '../utils/urgency.js'
 import { organizersOf } from '../utils/organizers.js'
+import { COORD_KEYS, LAT_KEYS, LNG_KEYS } from '../utils/geo.js'
 import { personBandMap } from '../utils/derive.js'
 import { tap } from '../utils/haptics.js'
 import { renderMarkdown } from '../utils/markdown.js'
@@ -160,7 +161,10 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
   const urgent = isUrgent(event)
   // 照片出處顯示在圖片旁，不與存根的其他欄位混在一起
   const credit = photoCredit(event)
-  const extras = Object.entries(event.extras || {}).filter(([k]) => !PHOTO_CREDIT_KEYS.includes(k))
+  // 座標與照片出處都是機器資料：前者給地圖與結構化資料用，後者顯示在照片旁。
+  // 原樣列在銘牌上只會佔位置 —— 沒有人想讀 17 位小數。
+  const HIDDEN_KEYS = [...PHOTO_CREDIT_KEYS, ...COORD_KEYS, ...LAT_KEYS, ...LNG_KEYS]
+  const extras = Object.entries(event.extras || {}).filter(([k]) => !HIDDEN_KEYS.includes(k))
 
   // 相關場次：同樂團 / 同聲優 / 同場館
   const band = rootGroup(groups[0] || '')
