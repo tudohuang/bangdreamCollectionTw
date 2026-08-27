@@ -1,5 +1,5 @@
 // build 後處理（postbuild）：為每場活動產生
-//   1) dist/og/<id>.png  — 1200×630 樂團色 OG 分享預覽圖
+//   1) dist/og/<id>.jpg  — 1200×630 的 SNS 分享預覽圖
 //   2) dist/e/<id>.html  — 帶正確 og:title/description/image 的靜態分享頁，
 //                          開啟後自動轉址回 SPA 的 #/event/<id>
 // 並把預設 OG 圖注入 dist/index.html。
