@@ -10,7 +10,9 @@
 import bundled from '../data/events.json' with { type: 'json' }
 import { SHEET_CSV_URL } from '../config.js'
 import { parseCsvToEvents } from '../utils/parseEvents.js'
-import { bandKey, BAND_META } from '../utils/bands.js'
+import { renderEntryPage, renderProfilePage } from './entryPage.js'
+import covers from '../data/covers.json' with { type: 'json' }
+import { personBandMap } from '../utils/derive.js'
 
 const BUNDLED_IDS = new Set(bundled.map(e => e.id))
 
@@ -74,14 +76,11 @@ export async function renderSharePage({ kind, id = '', value = '', origin }) {
       : (e.relatedGroups || []).some(g => rootGroupOf(g) === value))
     if (!list.length) return redirectOnly(hash)
 
-    const years = list.map(e => e.year).filter(Boolean).sort((a, b) => a - b)
-    return page({
-      type: 'profile',
-      hash,
-      appUrl: `${origin}${hash.slice(1)}`,
-      title: `${value}｜${kind === 'person' ? '聲優' : '樂團'}來台紀錄`,
-      desc: `${list.length} 場來台紀錄${years.length ? ` · ${years[0]}–${years[years.length - 1]}` : ''}`,
-      img: `${origin}/og/${kind === 'person' ? 'p' : 'b'}-${slug(value)}.png`,
+    // 這一頁是搜「愛美 台北」的人最該落地的地方，所以要有真的內容
+    const roster = personBandMap(events)
+    return renderProfilePage({
+      kind, name: value, events: list, origin,
+      roleOf: (n) => roster.get(n),
     })
   }
 
@@ -89,17 +88,14 @@ export async function renderSharePage({ kind, id = '', value = '', origin }) {
   const event = events.find(e => e.id === id)
   if (!event) return redirectOnly(hash)
 
-  const meta = BAND_META[bandKey((event.relatedGroups || [])[0] || '')] || BAND_META.other
-  const dex = `#${String(event.number ?? 0).padStart(3, '0')}`
-  const date = event.startDate === event.endDate ? event.startDate : `${event.startDate} → ${event.endDate}`
-  return page({
-    type: 'article',
-    hash,
-    appUrl: `${origin}${hash.slice(1)}`,
-    title: `${dex} ${event.title || '未命名活動'}`,
-    desc: [date, event.type, event.category === '擦邊' ? '個人來台' : meta.name, (event.people || []).join('、')]
-      .filter(Boolean).join(' · '),
-    // OG 圖是 build 時產的，只有內建那批有；Sheet 後來新增的場次退回預設圖
-    img: BUNDLED_IDS.has(id) ? `${origin}/og/${id}.png` : `${origin}/og-default.png`,
+  // 這一頁改成真的有內容，不再是「立刻跳走的空頁」——
+  // 之前搜尋引擎看到的是沒有內容的轉址頁，59 場活動等於全部沒被收錄。
+  const roster = personBandMap(events)
+  return renderEntryPage({
+    event,
+    origin,
+    roleOf: (name) => roster.get(name),
+    hasLocalCover: !!covers[String(event.stableId ?? event.number).padStart(3, '0')],
   })
+
 }

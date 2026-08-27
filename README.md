@@ -265,7 +265,22 @@ Cloudflare Pages 與 Vercel 都能直接部署，兩邊共用同一份邏輯（`
 ### Vercel
 
 連 repo 就好，`vercel.json` 已經把 /e /p /b 轉到 `api/share.js`。
-環境變數一樣設 `SITE_URL`。
+
+> **`SITE_URL` 一定要設。** 沒設的話 sitemap 不會產生（相對路徑的 sitemap
+> 不符規格，會被搜尋引擎整份忽略），og:image 也會變成相對路徑抓不到縮圖。
+
+### 被搜尋引擎找得到
+
+這站是 hash 路由，`#` 後面永遠不會送到伺服器，所以 Google 只看得到首頁一頁。
+`/e/<id>` 與 `/p/<名字>` 就是為了補這個 —— 它們是**真的有內容的靜態頁**，
+不需要 JavaScript 就讀得完，並帶 JSON-LD（`Event` / `Person` / `MusicGroup`）。
+
+> 這兩種頁曾經只有 1448 bytes，body 裡一個連結然後 `location.replace` 跳走。
+> 搜尋引擎看到的是沒有內容的轉址頁 —— 等於 59 場活動與 53 個人物全部沒被收錄。
+> 現在活動頁約 6 KB、人物頁約 6 KB，都是可索引的內容。
+
+渲染邏輯在 `src/server/entryPage.js`，三個地方共用同一份：
+Vercel 的函式、Cloudflare 的函式、以及靜態主機的建置產物。
 
 ### 流量數據
 

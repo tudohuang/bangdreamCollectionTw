@@ -11,6 +11,8 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { BAND_META, bandKey } from '../src/utils/bands.js'
+import { renderEntryPage, renderProfilePage } from '../src/server/entryPage.js'
+import { personBandMap } from '../src/utils/derive.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -139,40 +141,15 @@ async function fetchCoverDataUri(url) {
   }
 }
 
-// 分享頁 stub
-function stubHtml(e) {
-  const m = primaryMetaOf(e)
-  const dex = `#${String(e.number ?? 0).padStart(3, '0')}`
-  const title = `${dex} ${e.title || '未命名活動'}`
-  const date = e.startDate === e.endDate ? e.startDate : `${e.startDate} → ${e.endDate}`
-  const desc = [date, e.type, e.category === '擦邊' ? '個人來台' : m.name, (e.people || []).join('、')]
-    .filter(Boolean).join(' · ')
-  const img = `${SITE_URL}/og/${e.id}.png`
-  const url = `${SITE_URL}/#/event/${e.id}`
-  return `<!doctype html><html lang="zh-Hant"><head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>${esc(title)}｜邦邦來台圖鑑</title>
-<meta name="description" content="${esc(desc)}"/>
-<meta property="og:type" content="article"/>
-<meta property="og:title" content="${esc(title)}"/>
-<meta property="og:description" content="${esc(desc)}"/>
-<meta property="og:image" content="${esc(img)}"/>
-<meta property="og:image:width" content="1200"/>
-<meta property="og:image:height" content="630"/>
-${SITE_URL ? `<meta property="og:url" content="${esc(url)}"/>` : ''}
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="${esc(title)}"/>
-<meta name="twitter:description" content="${esc(desc)}"/>
-<meta name="twitter:image" content="${esc(img)}"/>
-<link rel="canonical" href="${esc(url || `../#/event/${e.id}`)}"/>
-<script>location.replace('../#/event/${e.id}');</script>
-</head><body>前往 <a href="../#/event/${e.id}">${esc(title)}</a>…</body></html>`
-}
 
 // 有 serverless 的平台（Cloudflare Pages）由 functions/e/[id].js 即時處理 /e/<id>，
 // 不需要 build 時的靜態 stub；純靜態主機（GitHub Pages）才要
 const ON_EDGE = !!(process.env.CF_PAGES || process.env.VERCEL)
+
+// 角色對照與本地封面清單，靜態頁要用
+const rosterMap = personBandMap(events)
+let coversManifest = {}
+try { coversManifest = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'covers.json'), 'utf8')) } catch {}
 
 mkdirSync(join(DIST, 'og'), { recursive: true })
 if (!ON_EDGE) mkdirSync(join(DIST, 'e'), { recursive: true })
@@ -195,7 +172,14 @@ const coverUris = new Map()
 let pngCount = 0
 for (const e of events) {
   if (renderPng(ogSvg(e, coverUris.get(e.id)), join(DIST, 'og', `${e.id}.png`))) pngCount++
-  if (!ON_EDGE) writeFileSync(join(DIST, 'e', `${e.id}.html`), stubHtml(e), 'utf8')
+  // 靜態主機：產出真的有內容的條目頁（Vercel / Cloudflare 由函式即時產同一份）
+  if (!ON_EDGE) {
+    writeFileSync(join(DIST, 'e', `${e.id}.html`), renderEntryPage({
+      event: e, origin: SITE_URL,
+      roleOf: (n) => rosterMap.get(n),
+      hasLocalCover: !!coversManifest[String(e.stableId ?? e.number).padStart(3, '0')],
+    }), 'utf8')
+  }
 }
 
 // ---- 聲優／樂團的分享頁與 OG 圖 ----
@@ -259,33 +243,6 @@ function profileSvg({ kind, name, list }) {
 </svg>`
 }
 
-function profileStub({ kind, name, list }) {
-  const seg = kind === 'person' ? 'p' : 'b'
-  const enc = encodeURIComponent(name)
-  const img = `${SITE_URL}/og/${seg}-${slug(name)}.png`
-  const url = `${SITE_URL}/#/${kind}/${enc}`
-  const title = `${name}｜${kind === 'person' ? '聲優' : '樂團'}來台紀錄`
-  const years = list.map(e => e.year).filter(Boolean).sort((a, b) => a - b)
-  const desc = `${list.length} 場來台紀錄${years.length ? ` · ${years[0]}–${years[years.length - 1]}` : ''}`
-  return `<!doctype html><html lang="zh-Hant"><head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>${esc(title)}｜邦邦來台圖鑑</title>
-<meta name="description" content="${esc(desc)}"/>
-<meta property="og:type" content="profile"/>
-<meta property="og:title" content="${esc(title)}"/>
-<meta property="og:description" content="${esc(desc)}"/>
-<meta property="og:image" content="${esc(img)}"/>
-<meta property="og:image:width" content="1200"/>
-<meta property="og:image:height" content="630"/>
-${SITE_URL ? `<meta property="og:url" content="${esc(url)}"/>` : ''}
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="${esc(title)}"/>
-<meta name="twitter:description" content="${esc(desc)}"/>
-<meta name="twitter:image" content="${esc(img)}"/>
-<script>location.replace('../#/${kind}/${enc}');</script>
-</head><body>前往 <a href="../#/${kind}/${enc}">${esc(title)}</a>…</body></html>`
-}
 
 // 檔名安全的 slug（中文/日文檔名在部分主機會出事，用編碼過的短碼）
 function slug(name) {
@@ -305,7 +262,10 @@ for (const pr of profiles) {
   if (UNSAFE_PATH.test(pr.name)) { skippedStubs.push(pr.name); continue }
   // 檔名要用原字（UTF-8）。網址是 percent-encoded，靜態主機會先解碼再找檔，
   // 若把檔名也寫成 %E6%84%9B%E7%BE%8E.html 就永遠對不上。
-  writeFileSync(join(DIST, seg, `${pr.name}.html`), profileStub(pr), 'utf8')
+  writeFileSync(join(DIST, seg, `${pr.name}.html`), renderProfilePage({
+    kind: pr.kind, name: pr.name, events: pr.list, origin: SITE_URL,
+    roleOf: (n) => rosterMap.get(n),
+  }), 'utf8')
 }
 if (skippedStubs.length) {
   console.log(`⚠ ${skippedStubs.length} 個名字含有無法當檔名的字元，靜態分享頁已略過：${skippedStubs.join('、')}`)
@@ -337,18 +297,38 @@ const ogTags = [
 if (!idx.includes('og:image')) idx = idx.replace('</head>', `    ${ogTags}\n  </head>`)
 writeFileSync(idxPath, idx, 'utf8')
 
-// sitemap.xml + robots.txt（#20）
+// ---------------------------------------------------------------- sitemap + robots
+//
+// sitemap 的 <loc> 一定要是絕對網址 —— 規格如此，相對路徑會讓整份被忽略。
+// 沒設 SITE_URL 時乾脆不要產，不然是在騙自己「有 sitemap」。
 const base = SITE_URL || ''
-const urls = [`${base}/`, ...events.map(e => `${base}/e/${e.id}${ON_EDGE ? '' : '.html'}`)]
-const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map(u => `  <url><loc>${u}</loc></url>`).join('\n')}
-</urlset>
-`
-writeFileSync(join(DIST, 'sitemap.xml'), sitemap, 'utf8')
-writeFileSync(join(DIST, 'robots.txt'),
-  `User-agent: *\nAllow: /\n${base ? `Sitemap: ${base}/sitemap.xml\n` : ''}`, 'utf8')
+const NL = String.fromCharCode(10)
+if (base) {
+  // 人物與樂團頁也要進 sitemap：搜「某位聲優 台北」的人最該落地在那裡
+  const ext = ON_EDGE ? '' : '.html'
+  const urls = [
+    { loc: base + '/', pr: '1.0' },
+    ...events.map(e => ({ loc: base + '/e/' + e.id + ext, pr: '0.8' })),
+    ...profiles.map(x => ({
+      loc: base + '/' + (x.kind === 'person' ? 'p' : 'b') + '/' + encodeURIComponent(x.name) + ext,
+      pr: '0.7',
+    })),
+  ]
+  const body = urls
+    .map(u => '  <url><loc>' + u.loc + '</loc><priority>' + u.pr + '</priority></url>')
+    .join(NL)
+  const sitemap =
+    '<?xml version="1.0" encoding="UTF-8"?>' + NL +
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + NL +
+    body + NL + '</urlset>' + NL
+  writeFileSync(join(DIST, 'sitemap.xml'), sitemap, 'utf8')
+  writeFileSync(join(DIST, 'robots.txt'),
+    'User-agent: *' + NL + 'Allow: /' + NL + 'Sitemap: ' + base + '/sitemap.xml' + NL, 'utf8')
+  console.log('✓ sitemap.xml（' + urls.length + ' 個絕對網址，含人物與樂團頁）+ robots.txt')
+} else {
+  writeFileSync(join(DIST, 'robots.txt'), 'User-agent: *' + NL + 'Allow: /' + NL, 'utf8')
+  console.log('✗ 沒設 SITE_URL，跳過 sitemap —— 相對路徑的 sitemap 會被整份忽略')
+}
 
 console.log(`✓ OG：${events.length} 個場次分享頁、${pngCount} 張預覽圖（其中 ${coverUris.size} 張用真的封面照）${SITE_URL ? `（網域 ${SITE_URL}）` : '（未設 SITE_URL，og:image 為相對路徑）'}`)
 console.log(`✓ OG：${profiles.length} 個聲優／樂團分享頁、${profilePng} 張預覽圖`)
-console.log(`✓ sitemap.xml（${urls.length} 連結）+ robots.txt`)
