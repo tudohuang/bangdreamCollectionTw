@@ -11,6 +11,7 @@
 // 樣式內嵌而不是連外部 CSS：這一頁要能單獨、極快地開起來，
 // 而且建置產物的 CSS 檔名帶雜湊，靜態頁引用不到穩定的路徑。
 import { bandKey, BAND_META, rootGroup } from '../utils/bands.js'
+import { detectCity } from '../utils/derive.js'
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
@@ -18,11 +19,27 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => (
 const pad = (n) => String(n ?? 0).padStart(3, '0')
 const dot = (d) => String(d || '').replace(/-/g, '.')
 
+// Sheet 的「座標」欄是「緯度, 經度」一串。抓得出來才放進結構化資料，
+// 格式不對就整個略過 —— 給錯的座標比不給更糟。
+function geoOf(event) {
+  const raw = String(event?.extras?.['座標'] ?? '').trim()
+  const m = raw.match(new RegExp('^(-?\\d+(?:\\.\\d+)?)\\s*,\\s*(-?\\d+(?:\\.\\d+)?)$'))
+  if (!m) return null
+  const lat = Number(m[1]), lng = Number(m[2])
+  if (!(lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180)) return null
+  return { '@type': 'GeoCoordinates', latitude: lat, longitude: lng }
+}
+
 const hostOf = (url) => {
   try { return new URL(url).hostname.replace(/^www\./, '') } catch { return url }
 }
 
 // 這一頁的樣式。刻意寫得少 —— 它的工作是把內容講清楚，不是重現整個 App。
+// 讓搜尋結果可以放大張縮圖與完整摘要。預設是小圖 + 截斷的摘要，
+// 差別在點擊率，而且使用者在站上完全感覺不到。
+const ROBOTS = '<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"/>'
+const LOCALE = '<meta property="og:locale" content="zh_TW"/><meta property="og:site_name" content="邦邦來台圖鑑"/>'
+
 const STYLE = `
 :root{color-scheme:light dark;--ink:#2a2442;--sub:#5b5478;--faint:#918ab0;--line:#ece7f4;--bg:#fdfaff;--card:#fff}
 @media(prefers-color-scheme:dark){:root{--ink:#eeeafe;--sub:#a8a2c8;--faint:#726c9a;--line:#2a2550;--bg:#0b0a1e;--card:#151230}}
@@ -136,9 +153,22 @@ export function renderEntryPage({ event, origin = '', roleOf, hasLocalCover = fa
     startDate: /^\d{4}-\d{2}-\d{2}$/.test(event.startDate) ? event.startDate : undefined,
     endDate: /^\d{4}-\d{2}-\d{2}$/.test(event.endDate) ? event.endDate : undefined,
     eventStatus: 'https://schema.org/EventScheduled',
+    // 已結束的場次也要有結束時間，Google 才不會一直把它當成即將舉行
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    // 座標讓 Google 認得出這是實體場地，地圖類的結果才有機會出現。
+    // 58/59 場的 Sheet 裡有座標，不用白不用。
     location: event.venue
-      ? { '@type': 'Place', name: event.venue, address: { '@type': 'PostalAddress', addressCountry: 'TW' } }
+      ? {
+          '@type': 'Place',
+          name: event.venue,
+          address: {
+            '@type': 'PostalAddress',
+            addressCountry: 'TW',
+            // Sheet 的城市欄目前全空，從場館名推（見 utils/derive.js）
+            addressLocality: detectCity(event) || undefined,
+          },
+          geo: geoOf(event) || undefined,
+        }
       : undefined,
     image: origin ? [ogImage] : undefined,
     performer: (event.people || []).map(p => ({ '@type': 'Person', name: p })),
@@ -166,10 +196,11 @@ export function renderEntryPage({ event, origin = '', roleOf, hasLocalCover = fa
   return `<!doctype html><html lang="zh-Hant"><head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+${ROBOTS}
 <title>${esc(pageTitle)}｜邦邦來台圖鑑</title>
 <meta name="description" content="${esc(desc)}"/>
 <link rel="canonical" href="${esc(selfUrl || `/e/${event.id}`)}"/>
-<meta property="og:type" content="article"/>
+<meta property="og:type" content="article"/>${LOCALE}
 <meta property="og:title" content="${esc(title)}"/>
 <meta property="og:description" content="${esc(desc)}"/>
 <meta property="og:image" content="${esc(ogImage)}"/>
@@ -252,10 +283,11 @@ export function renderProfilePage({ kind, name, events, origin = '', roleOf }) {
   return `<!doctype html><html lang="zh-Hant"><head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+${ROBOTS}
 <title>${esc(name)}｜${label}來台紀錄｜邦邦來台圖鑑</title>
 <meta name="description" content="${esc(desc)}"/>
 <link rel="canonical" href="${esc(selfUrl || `/${seg}/${name}`)}"/>
-<meta property="og:type" content="profile"/>
+<meta property="og:type" content="profile"/>${LOCALE}
 <meta property="og:title" content="${esc(name)}｜${label}來台紀錄"/>
 <meta property="og:description" content="${esc(desc)}"/>
 <meta property="og:image" content="${esc(ogImage)}"/>
@@ -343,10 +375,11 @@ export function renderListPage({ kind, key, title, lead, events, origin = '', re
   return '<!doctype html><html lang="zh-Hant"><head>' +
 '<meta charset="UTF-8"/>' +
 '<meta name="viewport" content="width=device-width, initial-scale=1.0"/>' +
+ROBOTS +
 '<title>' + esc(title) + '｜邦邦來台圖鑑</title>' +
 '<meta name="description" content="' + esc(desc) + '"/>' +
 '<link rel="canonical" href="' + esc(selfUrl || ('/' + kind + '/' + key)) + '"/>' +
-'<meta property="og:type" content="website"/>' +
+'<meta property="og:type" content="website"/>' + LOCALE +
 '<meta property="og:title" content="' + esc(title) + '"/>' +
 '<meta property="og:description" content="' + esc(desc) + '"/>' +
 '<meta property="og:image" content="' + origin + '/og-default.jpg"/>' +

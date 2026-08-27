@@ -299,6 +299,24 @@ Vercel 的函式、Cloudflare 的函式、以及靜態主機的建置產物。
 > 門檻寫在兩個地方（`scripts/build-og.mjs` 與 `src/server/shareHtml.js`），
 > 兩邊要一致 —— 不然條目頁會連到不存在的清單頁。
 
+每一頁都帶的東西（使用者看不到，只影響搜尋結果）：
+
+| 項目 | 作用 |
+|---|---|
+| `max-image-preview:large` | 搜尋結果放大張縮圖而不是小方塊，差在點擊率 |
+| `max-snippet:-1` | 摘要不被截斷 |
+| `og:locale` / `og:site_name` | 分享卡片顯示站名 |
+| `BreadcrumbList` | 結果顯示「邦邦來台圖鑑 › 2026 年 › 這場」 |
+| `Event` 帶 `geo` | 58 場有座標，Google 認得出是實體場地 |
+| `ItemList` | 清單頁被認出是清單 |
+| `WebSite` + `SearchAction`（首頁）| 有機會在結果下方出現站內搜尋框 |
+| sitemap `lastmod` | 從更新日誌算，Google 不用整份重爬 |
+| sitemap `image:image` | 110 張圖進 Google 圖片，那是另一條進站來源 |
+
+首頁還有一段 `<noscript>` 的分類連結。這站是 hash 路由，首頁對
+不執行 JS 的爬蟲來說是空的 —— 沒有那一段，138 個頁面只能靠 sitemap
+被發現，彼此之間沒有連結關係。有 JS 的使用者永遠看不到它。
+
 目前的頁面數：
 
 | 種類 | 數量 |

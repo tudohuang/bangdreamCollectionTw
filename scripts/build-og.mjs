@@ -247,6 +247,8 @@ const ON_EDGE = !!(process.env.CF_PAGES || process.env.VERCEL)
 
 // 角色對照與本地封面清單，靜態頁要用
 const rosterMap = personBandMap(events)
+let changelog = []
+try { changelog = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'changelog.json'), 'utf8')) } catch {}
 let coversManifest = {}
 try { coversManifest = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'covers.json'), 'utf8')) } catch {}
 
@@ -400,21 +402,6 @@ const defaultSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height=
 </svg>`
 renderPng(defaultSvg, join(DIST, 'og-default.jpg'))
 
-const idxPath = join(DIST, 'index.html')
-let idx = readFileSync(idxPath, 'utf8')
-// 首頁的絕對網址標籤在這裡注入，不寫死在 index.html ——
-// 寫死的話會蓋掉自動偵測，分享出去的縮圖指向不存在的網域。
-if (SITE_URL) {
-  const ogTags = [
-    '<meta property="og:url" content="' + SITE_URL + '/"/>',
-    '<meta property="og:image" content="' + SITE_URL + '/og-default.jpg"/>',
-    '<meta property="og:image:width" content="1200"/>',
-    '<meta property="og:image:height" content="630"/>',
-    '<meta name="twitter:image" content="' + SITE_URL + '/og-default.jpg"/>',
-  ].join(String.fromCharCode(10) + '    ')
-  idx = idx.replace('</head>', '    ' + ogTags + String.fromCharCode(10) + '  </head>')
-}
-writeFileSync(idxPath, idx, 'utf8')
 
 // JPEG 轉檔是非同步的，要等它們寫完才算 build 結束
 await Promise.all(pending)
@@ -488,6 +475,55 @@ const hubs = []
     hubs.filter(h => h.kind === 't').length + ' 個類型')
 }
 
+// 首頁的 head 注入要放在清單頁之後 —— noscript 的爬蟲入口需要 hubs
+const idxPath = join(DIST, 'index.html')
+let idx = readFileSync(idxPath, 'utf8')
+// 首頁的絕對網址標籤在這裡注入，不寫死在 index.html ——
+// 寫死的話會蓋掉自動偵測，分享出去的縮圖指向不存在的網域。
+if (SITE_URL) {
+  // 首頁的結構化資料。SearchAction 讓 Google 有機會在結果下方
+  // 直接放一個站內搜尋框（sitelinks searchbox）。
+  const siteLd = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: '邦邦來台圖鑑',
+    alternateName: 'Taiwan BanG Dream! Event Collection',
+    url: SITE_URL + '/',
+    inLanguage: 'zh-Hant-TW',
+    description: 'BanG Dream! 相關聲優與樂團在台灣的活動紀錄，從 2018 記到現在。粉絲整理，非官方。',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: { '@type': 'EntryPoint', urlTemplate: SITE_URL + '/#/collection?search={search_term_string}' },
+      'query-input': 'required name=search_term_string',
+    },
+  })
+
+  // 爬蟲的入口。這站是 hash 路由，首頁對不執行 JS 的爬蟲來說是空的 ——
+  // 沒有這一段，138 個頁面就只能靠 sitemap 被發現，彼此之間沒有連結關係。
+  // 放在 <noscript> 裡，正常使用者永遠看不到。
+  const crawlLinks = hubs.map(h =>
+    '<a href="/' + h.kind + '/' + encodeURIComponent(h.key) + '">' + h.title + '</a>').join(' ')
+  const noscript =
+    '<noscript><nav aria-label="全部分類">' + crawlLinks +
+    '<a href="/sitemap.xml">網站地圖</a></nav></noscript>'
+
+  const ogTags = [
+    '<meta property="og:url" content="' + SITE_URL + '/"/>',
+    '<meta property="og:image" content="' + SITE_URL + '/og-default.jpg"/>',
+    '<meta property="og:image:width" content="1200"/>',
+    '<meta property="og:image:height" content="630"/>',
+    '<meta name="twitter:image" content="' + SITE_URL + '/og-default.jpg"/>',
+    '<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1"/>',
+    '<meta property="og:locale" content="zh_TW"/>',
+    '<meta property="og:site_name" content="邦邦來台圖鑑"/>',
+    '<link rel="canonical" href="' + SITE_URL + '/"/>',
+    '<script type="application/ld+json">' + siteLd + '</script>',
+  ].join(String.fromCharCode(10) + '    ')
+  idx = idx.replace('</head>', '    ' + ogTags + String.fromCharCode(10) + '  </head>')
+  idx = idx.replace('<div id="root"></div>', noscript + String.fromCharCode(10) + '    <div id="root"></div>')
+}
+writeFileSync(idxPath, idx, 'utf8')
+
 // ---------------------------------------------------------------- sitemap + robots
 //
 // sitemap 的 <loc> 一定要是絕對網址 —— 規格如此，相對路徑會讓整份被忽略。
@@ -497,21 +533,55 @@ const NL = String.fromCharCode(10)
 if (base) {
   // 人物與樂團頁也要進 sitemap：搜「某位聲優 台北」的人最該落地在那裡
   const ext = ON_EDGE ? '' : '.html'
+  // lastmod：從更新日誌算每一場最後一次異動的日期。
+  // 有它 Google 才知道哪些頁變了，不用整份重爬。
+  const lastmod = new Map()
+  for (const entry of changelog) {
+    for (const item of [...(entry.added || []), ...(entry.changed || [])]) {
+      const id = item.id ?? item.number
+      const prev = lastmod.get(id)
+      if (!prev || entry.date > prev) lastmod.set(id, entry.date)
+    }
+  }
+  const modOf = (e) => lastmod.get(e.stableId ?? e.number) || null
+
   const urls = [
     { loc: base + '/', pr: '1.0' },
-    ...events.map(e => ({ loc: base + '/e/' + e.id + ext, pr: '0.8' })),
+    ...events.map(e => ({
+      loc: base + '/e/' + e.id + ext,
+      pr: '0.8',
+      mod: modOf(e),
+      // 圖片也放進 sitemap —— Google 圖片是另一條進站來源，
+      // 而這站的封面正是別人在搜的東西
+      img: [
+        base + '/og/' + e.id + '.jpg',
+        coversManifest[String(e.stableId ?? e.number).padStart(3, '0')]
+          ? base + '/covers/' + String(e.stableId ?? e.number).padStart(3, '0') + '-lg.jpg'
+          : null,
+      ].filter(Boolean),
+      title: e.title,
+    })),
     ...hubs.map(h => ({ loc: base + '/' + h.kind + '/' + encodeURIComponent(h.key) + ext, pr: '0.9' })),
     ...profiles.map(x => ({
       loc: base + '/' + (x.kind === 'person' ? 'p' : 'b') + '/' + encodeURIComponent(x.name) + ext,
       pr: '0.7',
     })),
   ]
+  const xesc = (t) => String(t ?? '').replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' }[c]))
   const body = urls
-    .map(u => '  <url><loc>' + u.loc + '</loc><priority>' + u.pr + '</priority></url>')
+    .map(u => '  <url><loc>' + u.loc + '</loc>' +
+      (u.mod ? '<lastmod>' + u.mod + '</lastmod>' : '') +
+      '<priority>' + u.pr + '</priority>' +
+      (u.img || []).map(src =>
+        '<image:image><image:loc>' + src + '</image:loc>' +
+        '<image:title>' + xesc(u.title) + '</image:title></image:image>').join('') +
+      '</url>')
     .join(NL)
   const sitemap =
     '<?xml version="1.0" encoding="UTF-8"?>' + NL +
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + NL +
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' +
+    ' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">' + NL +
     body + NL + '</urlset>' + NL
   writeFileSync(join(DIST, 'sitemap.xml'), sitemap, 'utf8')
   writeFileSync(join(DIST, 'robots.txt'),
