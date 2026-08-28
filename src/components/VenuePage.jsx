@@ -109,7 +109,7 @@ export default function VenuePage({ value, events, onSelect, onClose }) {
           <h3 className="font-display font-bold text-[15px] text-dream-ink mb-3">其他常用的場館</h3>
           <div className="flex flex-wrap gap-2">
             {others.map(o => (
-              <a key={o.key} href={`#/venue/${encodeURIComponent(o.key)}`} className="pill">
+              <a key={o.key} href={`#/venue/${encodeURIComponent(o.name)}`} className="pill">
                 {o.name} <span className="text-dream-faint">×{o.events.length}</span>
               </a>
             ))}

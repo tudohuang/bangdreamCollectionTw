@@ -135,7 +135,7 @@ export function renderEntryPage({ event, origin = '', roleOf, hasLocalCover = fa
     event.venue && ['會場', link('v', venueKey || event.venue, event.venue), ''],
     ['性質', [esc(personal ? '個人來台' : '本體'), mainType ? link('t', mainType, mainType) : '']
       .filter(Boolean).join(' · '),
-      bands.length ? esc(bands.join('、')) : ''],
+      bands.length ? bands.map(b => link('b', b, b)).join('、') : ''],
     event.organizer && ['主辦', esc(event.organizer), ''],
   ].filter(Boolean).map(([k, v, sub]) =>
     `<div class="row"><dt>${k}</dt><dd>${v}${sub ? `<span class="sub">${sub}</span>` : ''}</dd></div>`).join('')
@@ -257,6 +257,19 @@ export function renderProfilePage({ kind, name, events, origin = '', roleOf }) {
     : ''
 
   const info = isPerson ? roleOf?.(name) : null
+
+  // 橫向連結：人物頁列他關聯過的團，樂團頁列同台過的人。
+  // 沒有這一段的話，樂團頁是站內孤兒，而人物頁只連得出去 1–2 條。
+  const related = isPerson
+    ? [...new Set(list.flatMap(e => (e.relatedGroups || []).map(g => String(g).split('／')[0].trim())))]
+        .filter(Boolean)
+        .map(g => `<a href="../b/${encodeURIComponent(g)}">${esc(g)}</a>`)
+    : [...new Set(list.flatMap(e => e.people || []))]
+        .map(p => `<a href="../p/${encodeURIComponent(p)}">${esc(p)}</a>`)
+  const relatedBlock = related.length
+    ? `<h2>${isPerson ? '關聯的團' : '同台過的聲優'}</h2><p class="rel">${related.join('　')}</p>`
+    : ''
+
   const selfUrl = `${origin}/${seg}/${encodeURIComponent(name)}`
   const ogImage = `${origin}/og/${seg}-${Buffer.from(name, 'utf8').toString('base64url')}.jpg`
 
@@ -296,7 +309,7 @@ ${origin ? `<meta property="og:url" content="${esc(selfUrl)}"/>` : ''}
 <meta name="twitter:title" content="${esc(name)}｜${label}來台紀錄"/>
 <meta name="twitter:description" content="${esc(desc)}"/>
 <meta name="twitter:image" content="${esc(ogImage)}"/>
-<style>${STYLE}ul.cast li{align-items:baseline}ul.cast .d{display:inline-block;min-width:82px;color:var(--faint);font-size:13px;font-variant-numeric:tabular-nums}ul.cast a{text-decoration:none;display:flex;gap:10px;min-width:0}ul.cast .t{min-width:0}</style>
+<style>${STYLE}p.rel{line-height:2.1}p.rel a{white-space:nowrap}ul.cast li{align-items:baseline}ul.cast .d{display:inline-block;min-width:82px;color:var(--faint);font-size:13px;font-variant-numeric:tabular-nums}ul.cast a{text-decoration:none;display:flex;gap:10px;min-width:0}ul.cast .t{min-width:0}</style>
 <script type="application/ld+json">${jsonLd}</script>
 </head><body>
 <div class="wrap">
@@ -309,6 +322,7 @@ ${info?.char ? `<div class="row"><dt>角色</dt><dd>飾 ${esc(info.char)}${info.
 </dl>
 <h2>全部場次</h2>
 <ul class="cast">${rows}</ul>
+${relatedBlock}
 <a class="cta" href="../#/${kind}/${encodeURIComponent(name)}">在圖鑑裡開啟 →</a>
 <p class="foot">
 邦邦來台圖鑑 —— BanG Dream! 相關聲優與樂團的來台活動紀錄，粉絲整理，非官方。

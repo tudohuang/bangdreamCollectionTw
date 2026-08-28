@@ -40,7 +40,7 @@ export default function CityBars({ events }) {
         <div className="text-[11px] font-bold text-dream-faint mb-2">最常用的場館</div>
         <div className="flex flex-wrap gap-2">
           {venues.slice(0, 6).map(v => (
-            <a key={v.key} href={`#/venue/${encodeURIComponent(v.key)}`} className="pill">
+            <a key={v.key} href={`#/venue/${encodeURIComponent(v.name)}`} className="pill">
               {v.name} <span className="text-dream-faint">×{v.events.length}</span>
             </a>
           ))}

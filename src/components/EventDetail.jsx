@@ -10,7 +10,7 @@ import { downloadShareImage } from '../utils/shareImage.js'
 import { isUrgent, URGENT_LABEL } from '../utils/urgency.js'
 import { organizersOf } from '../utils/organizers.js'
 import { COORD_KEYS, LAT_KEYS, LNG_KEYS } from '../utils/geo.js'
-import { venueKey } from '../utils/venues.js'
+import { canonicalVenue } from '../utils/derive.js'
 import { personBandMap } from '../utils/derive.js'
 import { tap } from '../utils/haptics.js'
 import { renderMarkdown } from '../utils/markdown.js'
@@ -20,6 +20,7 @@ import Img from './Img.jsx'
 import CollectionStrip from './CollectionStrip.jsx'
 import EntryPlate, { CastList, BandRow } from './EntryPlate.jsx'
 import ArchiveSection from './ArchiveSection.jsx'
+import MissingLine from './MissingLine.jsx'
 import Chronicle from './Chronicle.jsx'
 import {
   PhotoCredit, Punch, OverBtn, Stat,
@@ -343,7 +344,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
                 label: '會場',
                 value: (
                   <span className="inline-flex items-start gap-1.5">
-                    <a href={`#/venue/${encodeURIComponent(venueKey(event.venue))}`} onClick={onClose}
+                    <a href={`#/venue/${encodeURIComponent(canonicalVenue(event.venue))}`} onClick={onClose}
                       className="hover:text-bloom-violet transition-colors">
                       {event.venue}
                     </a>
@@ -503,6 +504,8 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
 
             {/* 史料層：曲目、票價、周邊、主視覺。沒資料整塊不出現 */}
             <ArchiveSection event={event} allEvents={allEvents} color={meta.color} glow={meta.glow} />
+            {/* 缺什麼就講缺什麼。設定集不會因為一頁資料不全就把那頁抽掉 */}
+            <MissingLine event={event} color={meta.color} />
 
             {/* 收藏軌：53 場排成一條，這場亮起來，點任何一格直接跳過去 */}
             <Section title="收藏軌" color={meta.color}>

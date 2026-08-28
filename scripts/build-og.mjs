@@ -279,6 +279,9 @@ const coverUris = new Map()
 
 // 哪些清單頁真的會存在 —— 條目頁靠它決定要不要做連結。
 // 先算出來，因為條目頁比清單頁早產。
+// 「Pastel＊Palettes／白鷺千聖」→ 主團名。hubKeys 與 profiles 都要用，所以放在兩者之前。
+const rootGroupOf = (g) => String(g).split('／')[0].trim()
+
 const hubKeys = new Set()
 {
   const count = (keyOf) => {
@@ -290,6 +293,11 @@ const hubKeys = new Set()
   for (const [y] of count(e => e.year && String(e.year))) hubKeys.add('y:' + y)
   for (const [v, n] of count(e => canonicalVenue(e.venue))) if (n >= 2) hubKeys.add('v:' + v)
   for (const [t, n] of count(e => String(e.type || '').split(/[／/、]/)[0].trim())) if (n >= 3) hubKeys.add('t:' + t)
+  // 樂團頁與人物頁：只要那個名字出現過就一定會產頁，不設門檻。
+  // 少了這兩行，13 個樂團頁一條站內連結都沒有，只能靠 sitemap ——
+  // 那比內部連結弱得多。（是 npm run build 之後量出來的：14 個孤兒頁）
+  for (const [g] of count(e => (e.relatedGroups || []).map(rootGroupOf))) hubKeys.add('b:' + g)
+  for (const [p] of count(e => e.people || [])) hubKeys.add('p:' + p)
 }
 
 let pngCount = 0
@@ -307,7 +315,6 @@ for (const e of events) {
 }
 
 // ---- 聲優／樂團的分享頁與 OG 圖 ----
-const rootGroupOf = (g) => String(g).split('／')[0].trim()
 const profiles = []
 {
   const byPerson = new Map(), byBand = new Map()

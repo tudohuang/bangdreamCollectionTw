@@ -22,9 +22,12 @@ const sheetTab = (name) => `${SHEET_CSV_URL}&sheet=${encodeURIComponent(name)}`
 export const SHEET_ROSTER_CSV_URL = sheetTab('名冊')
 export const SHEET_PULSE_CSV_URL = sheetTab('動態')
 
-// 資料回報入口（選填）：填了頁尾才會出現「資料回報」連結。
-// 可填信箱（mailto:你的信箱）、Google 表單、或 GitHub issues 連結。留空＝不顯示。
-export const REPORT_URL = ''
+// 資料回報入口：頁尾的「資料回報」、以及詳情頁「這一格還缺…」都指到這裡。
+// 可填信箱（mailto:）、Google 表單、或 GitHub issues。留空＝整個入口不顯示。
+//
+// 原本是空字串，所以那些入口從來沒出現過 —— 全站唯一「發現錯了怎麼講」
+// 的路是隱形的。先接自己的 issues，之後想換 Google 表單改這一行就好。
+export const REPORT_URL = 'https://github.com/tudohuang/bangdreamCollectionTw/issues/new'
 
 // 流量與效能量測不需要在這裡設定 —— 用的是 Vercel 自家的
 // @vercel/analytics 與 @vercel/speed-insights，在 Vercel 後台

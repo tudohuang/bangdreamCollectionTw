@@ -49,6 +49,7 @@ import LabsPage from './src/components/LabsPage.jsx'
 import OrganizerPage from './src/components/OrganizerPage.jsx'
 import VenuePage from './src/components/VenuePage.jsx'
 import ArchiveSection from './src/components/ArchiveSection.jsx'
+import MissingLine from './src/components/MissingLine.jsx'
 import YearRing from './src/components/YearRing.jsx'
 import GapChart from './src/components/GapChart.jsx'
 import CityBars from './src/components/CityBars.jsx'
@@ -163,6 +164,8 @@ export const CASES = [
     goods: ['場刊 400', '台版限定壓克力立牌 800'].join('\\n'),
     keyVisual: '某某繪師 https://example.tw/kv',
   }} />],
+  ['MissingLine', <MissingLine event={one} color="#8b5cf6" />],
+  ['MissingLine(未來場次)', <MissingLine event={{ ...one, startDate: '2099-01-01' }} color="#8b5cf6" />, { mayBeEmpty: true }],
   ['ArchiveSection(沒資料)', <ArchiveSection event={{ id: 'x', title: 'demo' }} allEvents={[]} color="#8b5cf6" glow="139,92,246" />, { mayBeEmpty: true }],
   ['FirstsTable(空資料)', <FirstsTable events={[]} roster={new Map()} onSelect={noop} />],
   ['YearTimeline', <YearTimeline events={events} onSelect={noop} />],
