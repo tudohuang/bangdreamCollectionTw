@@ -115,8 +115,33 @@ export function keyVisualOf(event) {
   return { artist: (m ? raw.replace(m[1], '') : raw).trim().replace(/[·・\-–—]\s*$/, ''), url: m ? m[1] : '' }
 }
 
+// ------------------------------------------------------------------ 售票狀況
+//
+// 寫法：自由文字。「完售」「開賣 3 分鐘完售」「當日仍有餘票」
+//
+// 為什麼要記：完售與否是台灣邦邦熱度唯一的客觀指標，而且事後完全查不到 ——
+// 售票頁會下架，社群貼文會被洗掉。當下不記，之後就沒有了。
+export function salesOf(event) {
+  const raw = String(event?.soldOut || event?.extras?.['售票狀況'] || event?.extras?.['完售'] || '').trim()
+  if (!raw) return null
+  // 「完售」兩個字出現在任何地方就算完售，前面的修飾語（開賣 3 分鐘）留著當說明
+  const sold = /完售|售罄|sold\s*out/i.test(raw)
+  return { raw, sold }
+}
+
+// ------------------------------------------------------------------ 場刊
+//
+// 寫法：一行一項，就是場刊的目次。
+//   聲優訪談 愛美 × 伊藤彩沙
+//   設定資料集
+//   台北公演特別寫真
+export function programmeOf(event) {
+  return splitLines(event?.programme || event?.extras?.['場刊'] || event?.extras?.['目次'])
+}
+
 // 這一場有沒有任何史料層的資料。用來決定整個區塊要不要出現。
 export function hasArchive(event) {
   return setlistOf(event).length > 0 || !!pricesOf(event) ||
-         goodsOf(event).length > 0 || !!keyVisualOf(event)
+         goodsOf(event).length > 0 || !!keyVisualOf(event) ||
+         !!salesOf(event) || programmeOf(event).length > 0
 }

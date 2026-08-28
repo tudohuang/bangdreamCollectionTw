@@ -9,6 +9,7 @@ import { yearGaps } from '../utils/insights.js'
 import { downloadIcs } from '../utils/ics.js'
 import { downloadPassCard } from '../utils/passImage.js'
 import Icon from './Icon.jsx'
+import OfficialLinks from './OfficialLinks.jsx'
 import Img from './Img.jsx'
 import CollectionStrip from './CollectionStrip.jsx'
 import LifeTimeline from './LifeTimeline.jsx'
@@ -58,10 +59,15 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
         longest = { days: d, from: chrono[i - 1], to: chrono[i] }
       }
     }
-    return { list, chrono, ids, years, attendance, cities, fullBand, related, roster, gaps, next, longest }
+    // 官方連結來自名冊的「連結」欄。人物頁比對「對象」，樂團頁也一樣 ——
+    // 名冊裡團體自己就是一列。
+    const rosterRow = (sheetRoster || []).find(r => r.name === value)
+    const officialLinks = rosterRow?.links || []
+
+    return { list, chrono, ids, years, attendance, cities, fullBand, related, roster, gaps, next, longest, officialLinks }
   }, [kind, value, events, sheetRoster])
 
-  const { list, chrono, ids, years, attendance, cities, fullBand, related, roster, gaps, next, longest } = data
+  const { list, chrono, ids, years, attendance, cities, fullBand, related, roster, gaps, next, longest, officialLinks } = data
   const allChrono = useMemo(() => sortChrono(events), [events])
 
   // 場次依年份分組（新到舊），沒有年份的歸到最後
@@ -243,6 +249,10 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
           {cities.map(([c, n]) => <span key={c} className="text-dream-ink">{c}<span className="text-dream-faint"> ×{n}</span></span>)}
         </div>
       )}
+
+      {/* 官方連結：查完「來過幾次」之後，下一步就是想知道本人現在在幹嘛。
+          資料來自名冊的「連結」欄，沒填就整塊不出現。 */}
+      <OfficialLinks links={officialLinks} />
 
       {/* 全部場次：新到舊，年份分組，中間空掉的年份也標出來 */}
       <div className="mt-9">

@@ -1,4 +1,4 @@
-import { setlistOf, pricesOf, goodsOf, keyVisualOf, songIndex } from '../utils/archive.js'
+import { setlistOf, pricesOf, goodsOf, keyVisualOf, salesOf, programmeOf, songIndex } from '../utils/archive.js'
 import Icon from './Icon.jsx'
 
 // 史料層的四塊：曲目、票價、周邊、主視覺。
@@ -8,7 +8,9 @@ export default function ArchiveSection({ event, allEvents = [], color, glow }) {
   const price = pricesOf(event)
   const goods = goodsOf(event)
   const kv = keyVisualOf(event)
-  if (!songs.length && !price && !goods.length && !kv) return null
+  const sales = salesOf(event)
+  const programme = programmeOf(event)
+  if (!songs.length && !price && !goods.length && !kv && !sales && !programme.length) return null
 
   // 這場的每一首歌在台灣被唱過幾次。只有曲目資料多起來才有意義，
   // 所以第二場以上才顯示次數。
@@ -58,6 +60,31 @@ export default function ArchiveSection({ event, allEvents = [], color, glow }) {
               </div>
             ))}
           </div>
+        </section>
+      )}
+
+      {sales && (
+        <section>
+          <Head icon="tag" color={color}>售票狀況</Head>
+          <p className="pt-2 text-[15px] text-dream-ink">
+            {sales.sold && (
+              <span className="mr-2 text-[14px] font-bold px-2 py-0.5 rounded"
+                style={{ background: `rgba(${glow},0.16)`, color }}>完售</span>
+            )}
+            {sales.raw}
+          </p>
+        </section>
+      )}
+
+      {programme.length > 0 && (
+        <section>
+          <Head icon="note-sticky" color={color}>場刊目次 {programme.length} 項</Head>
+          <ul className="border-t" style={{ borderColor: `rgba(${glow},0.35)` }}>
+            {programme.map(p => (
+              <li key={p} className="py-2 border-b text-[15px] text-dream-ink"
+                style={{ borderColor: `rgba(${glow},0.18)` }}>{p}</li>
+            ))}
+          </ul>
         </section>
       )}
 

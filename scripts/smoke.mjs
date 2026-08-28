@@ -48,6 +48,8 @@ import PulsePage from './src/components/PulsePage.jsx'
 import LabsPage from './src/components/LabsPage.jsx'
 import OrganizerPage from './src/components/OrganizerPage.jsx'
 import VenuePage from './src/components/VenuePage.jsx'
+import SeriesPage from './src/components/SeriesPage.jsx'
+import { seriesIndex } from './src/utils/series.js'
 import ArchiveSection from './src/components/ArchiveSection.jsx'
 import MissingLine from './src/components/MissingLine.jsx'
 import YearRing from './src/components/YearRing.jsx'
@@ -145,6 +147,9 @@ export const CASES = [
   ['OrganizerPage(找不到)', <OrganizerPage value="不存在的主辦" events={events} onSelect={noop} onClose={noop} />],
   ['VenuePage', <VenuePage value={venueIndex(events)[0]?.key || ''} events={events} onSelect={noop} onClose={noop} />],
   ['VenuePage(找不到)', <VenuePage value="不存在的場館" events={events} onSelect={noop} onClose={noop} />],
+  ['SeriesPage', <SeriesPage value={seriesIndex(events)[0]?.key || ''} events={events} onSelect={noop} onClose={noop} />],
+  ['SeriesPage(找不到)', <SeriesPage value="不存在的系列" events={events} onSelect={noop} onClose={noop} />],
+  ['SeriesPage(空資料)', <SeriesPage value="x" events={[]} onSelect={noop} onClose={noop} />],
   ['YearRing', <YearRing events={events} onSelect={noop} />],
   ['GapChart', <GapChart events={events} onSelect={noop} />],
   ['CityBars', <CityBars events={events} />],

@@ -29,6 +29,11 @@ export function readHash() {
   if (segments[0] === 'venue' && segments[1]) {
     return { route: 'venue', value: decodeURIComponent(segments[1]), params }
   }
+  // 系列：segment 是 utils/series.js 定的 key（bushiroad-expo 這種），
+  // 用系列名稱也進得去 —— findSeries 兩種都認。
+  if (segments[0] === 'series' && segments[1]) {
+    return { route: 'series', value: decodeURIComponent(segments[1]), params }
+  }
   if (PAGES.has(segments[0])) {
     return { route: segments[0], params }
   }
@@ -50,6 +55,7 @@ export function writeHash(route, opts = {}, { replace = false } = {}) {
   else if (route === 'person') hash = `#/person/${encodeURIComponent(opts.value)}`
   else if (route === 'band') hash = `#/band/${encodeURIComponent(opts.value)}`
   else if (route === 'venue') hash = `#/venue/${encodeURIComponent(opts.value)}`
+  else if (route === 'series') hash = `#/series/${encodeURIComponent(opts.value)}`
   else if (route === 'year') hash = `#/collection?year=${opts.year}`
   else if (route === 'collection' || route === 'filter') {
     const qs = new URLSearchParams(opts.params || {}).toString()

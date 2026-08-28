@@ -11,6 +11,7 @@ import { isUrgent, URGENT_LABEL } from '../utils/urgency.js'
 import { organizersOf } from '../utils/organizers.js'
 import { COORD_KEYS, LAT_KEYS, LNG_KEYS } from '../utils/geo.js'
 import { canonicalVenue } from '../utils/derive.js'
+import { seriesPosition } from '../utils/series.js'
 import { personBandMap } from '../utils/derive.js'
 import { tap } from '../utils/haptics.js'
 import { renderMarkdown } from '../utils/markdown.js'
@@ -40,6 +41,8 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
   const ctx = useMemo(() => eventContext(event, allEvents), [event, allEvents])
   // 誰飾演誰。以名冊為準，名冊沒有的人才用活動表推（見 utils/derive.js）
   const castRoster = useMemo(() => personBandMap(allEvents, sheetRoster), [allEvents, sheetRoster])
+  // 這一場在它的系列裡是第幾次（Bushiroad EXPO 的第 4 次）。不屬於任何系列就是 null。
+  const seriesPos = useMemo(() => seriesPosition(event, allEvents), [event, allEvents])
 
   useEffect(() => { setLightbox(null); setCoverOk(true) }, [event.id])
 
@@ -356,6 +359,17 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
                   </span>
                 ),
                 note: ctx.venueTotal > 1 ? `這裡的第 ${ctx.venueNth} 場` : null,
+              },
+              // 系列：「Bushiroad EXPO 的第 4 次」是這站才查得到的東西
+              seriesPos && {
+                label: '系列',
+                value: (
+                  <a href={`#/series/${encodeURIComponent(seriesPos.series.key)}`} onClick={onClose}
+                    className="hover:text-bloom-violet transition-colors">
+                    {seriesPos.series.name}
+                  </a>
+                ),
+                note: `這個系列的第 ${seriesPos.nth} 次・共 ${seriesPos.total} 次`,
               },
               {
                 label: '編制',

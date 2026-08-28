@@ -28,6 +28,8 @@ export function parseRosterCsv(text) {
   const idx = {
     name: h.indexOf('對象'), kind: h.indexOf('類別'),
     band: h.indexOf('樂團'), role: h.indexOf('角色'), tracked: h.indexOf('追蹤中'),
+    // 官方連結：官推、官網、Eventernote。多條用空白或換行分隔。
+    links: h.indexOf('連結') >= 0 ? h.indexOf('連結') : h.indexOf('官方連結'),
   }
   return rows.slice(1).map(r => ({
     name: cell(r, idx.name),
@@ -36,6 +38,7 @@ export function parseRosterCsv(text) {
     role: cell(r, idx.role),
     // 「追蹤中」留空視為要追蹤；只有明確填「否」才排除
     tracked: cell(r, idx.tracked) !== '否',
+    links: cell(r, idx.links).split(/[\s,、|]+/).filter(u => /^https?:\/\//.test(u)),
   })).filter(x => x.name)
 }
 

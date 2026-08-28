@@ -52,6 +52,7 @@ const KNOWN_HEADERS = new Set([
   '場次', 'sessions', '關聯', 'relation', '開賣', 'ticketDate', '來源', 'sources',
   // 史料層：別的地方查不到的四樣東西
   '曲目', 'setlist', '票價', 'price', '周邊', '場販', 'goods', '主視覺', '繪師', 'keyVisual',
+  '系列', 'series', '售票狀況', '完售', 'soldOut', '場刊', '目次', 'programme',
 ])
 
 // rows（含表頭）→ 活動陣列（不含手動欄位的合併，交給呼叫端）
@@ -86,6 +87,9 @@ export function parseCsvToEvents(text) {
     price: col('票價') >= 0 ? col('票價') : col('price'),
     goods: col('周邊') >= 0 ? col('周邊') : (col('場販') >= 0 ? col('場販') : col('goods')),
     keyVisual: col('主視覺') >= 0 ? col('主視覺') : (col('繪師') >= 0 ? col('繪師') : col('keyVisual')),
+    series: col('系列') >= 0 ? col('系列') : col('series'),
+    soldOut: col('售票狀況') >= 0 ? col('售票狀況') : (col('完售') >= 0 ? col('完售') : col('soldOut')),
+    programme: col('場刊') >= 0 ? col('場刊') : (col('目次') >= 0 ? col('目次') : col('programme')),
   }
   const extraCols = header
     .map((h, i) => ({ name: h, i }))
@@ -146,6 +150,11 @@ export function parseCsvToEvents(text) {
       price: get('price'),
       goods: get('goods'),
       keyVisual: get('keyVisual'),
+      // 系列：留空時由 utils/series.js 依標題判斷（Bushiroad EXPO 那種）
+      series: get('series'),
+      // 售票狀況：「完售」「開賣 3 分鐘完售」這種。事後查不到，所以要記
+      soldOut: get('soldOut'),
+      programme: get('programme'),
       notes: get('notes'),
       extras,
     }
@@ -154,7 +163,7 @@ export function parseCsvToEvents(text) {
 
 // 這些欄位「以 JSON / 手動為準」，即時抓 Sheet 時用內建資料補回來，避免被洗掉
 const MANUAL_FIELDS = ['venue', 'city', 'description', 'impression', 'oneLine', 'photos', 'sources', 'notes', 'cover', 'ticketUrl', 'organizer',
-  'setlist', 'price', 'goods', 'keyVisual']
+  'setlist', 'price', 'goods', 'keyVisual', 'series', 'soldOut', 'programme']
 
 // 把 Sheet 解析結果與內建資料合併：核心欄位用 Sheet 的，手動欄位用內建的（Sheet 有填則優先）
 export function mergeWithBundled(sheetEvents, bundled) {

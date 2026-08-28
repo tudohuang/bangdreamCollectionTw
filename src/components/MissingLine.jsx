@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { REPORT_URL } from '../config.js'
-import { setlistOf, pricesOf, goodsOf, keyVisualOf } from '../utils/archive.js'
+import { setlistOf, pricesOf, goodsOf, keyVisualOf, salesOf } from '../utils/archive.js'
 import Icon from './Icon.jsx'
 
 // 「這一格還缺什麼」。
@@ -25,6 +25,7 @@ export default function MissingLine({ event, color }) {
     !pricesOf(event) && '票價',
     !goodsOf(event).length && '周邊',
     !keyVisualOf(event) && '主視覺',
+    !salesOf(event) && '售票狀況',
     !(event.sources || []).length && '來源',
   ].filter(Boolean)
   if (!missing.length) return null
@@ -36,6 +37,7 @@ export default function MissingLine({ event, color }) {
     票價: '你買的是哪一區、多少錢？',
     周邊: '場販有賣什麼？台版限定的特別想知道。',
     主視覺: '主視覺是誰畫的？',
+    售票狀況: '完售了嗎？開賣多久賣完的？',
     來源: '你是在哪裡看到這場的公告？貼網址就好。',
   }
 

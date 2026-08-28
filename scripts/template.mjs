@@ -61,6 +61,21 @@ const COLUMNS = [
     eg: '2026-01-15',
   },
   {
+    header: '售票狀況', field: 'soldOut',
+    how: '完售了嗎？多久賣完的？這件事事後完全查不到 —— 售票頁會下架、貼文會被洗掉。',
+    eg: '開賣 3 分鐘完售',
+  },
+  {
+    header: '場刊', field: 'programme',
+    how: '場刊的目次，一行一項。',
+    eg: '聲優訪談 愛美 × 伊藤彩沙 / 設定資料集 / 台北公演特別寫真',
+  },
+  {
+    header: '系列', field: 'series',
+    how: '留空會自動從標題判斷（Bushiroad EXPO 那種）。判錯才填。',
+    eg: 'bushiroad-expo',
+  },
+  {
     header: '關聯', field: 'relation',
     how: 'official（官方本體）／ strong（強關聯）／ weak（弱關聯）。留空會由規則推。',
     eg: 'official',
