@@ -37,6 +37,7 @@ const ProfilePage = lazy(() => import('./components/ProfilePage.jsx'))
 const PeoplePage = lazy(() => import('./components/PeoplePage.jsx'))
 const LabsPage = lazy(() => import('./components/LabsPage.jsx'))
 const OrganizerPage = lazy(() => import('./components/OrganizerPage.jsx'))
+const VenuePage = lazy(() => import('./components/VenuePage.jsx'))
 const MePage = lazy(() => import('./components/MePage.jsx'))
 const StatsPanel = lazy(() => import('./components/StatsPanel.jsx'))
 const VenueMap = lazy(() => import('./components/VenueMap.jsx'))
@@ -137,7 +138,7 @@ export default function App() {
         return
       }
       setDetailId(null)
-      if (h.route === 'person' || h.route === 'band' || h.route === 'org') {
+      if (h.route === 'person' || h.route === 'band' || h.route === 'org' || h.route === 'venue') {
         setProfile({ kind: h.route, value: h.value })
         return
       }
@@ -353,7 +354,17 @@ export default function App() {
       </header>
 
       <main key={viewKey} className="view-enter relative z-10 max-w-6xl xl:max-w-[1400px] 2xl:max-w-[1560px] w-full mx-auto px-4 sm:px-8 pt-8 sm:pt-10 pb-28 sm:pb-24 flex-1">
-        {profile?.kind === 'org' ? (
+        {profile?.kind === 'venue' ? (
+          <ErrorBoundary><Suspense fallback={<PageFallback h={520} />}>
+            <VenuePage
+              value={profile.value}
+              events={events}
+              onSelect={openDetail}
+              onClose={closeProfile}
+            />
+          </Suspense></ErrorBoundary>
+
+        ) : profile?.kind === 'org' ? (
           <ErrorBoundary><Suspense fallback={<PageFallback h={520} />}>
             <OrganizerPage
               value={profile.value}

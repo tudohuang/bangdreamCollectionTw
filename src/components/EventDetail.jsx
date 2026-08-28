@@ -10,6 +10,7 @@ import { downloadShareImage } from '../utils/shareImage.js'
 import { isUrgent, URGENT_LABEL } from '../utils/urgency.js'
 import { organizersOf } from '../utils/organizers.js'
 import { COORD_KEYS, LAT_KEYS, LNG_KEYS } from '../utils/geo.js'
+import { venueKey } from '../utils/venues.js'
 import { personBandMap } from '../utils/derive.js'
 import { tap } from '../utils/haptics.js'
 import { renderMarkdown } from '../utils/markdown.js'
@@ -339,11 +340,17 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
               event.venue && {
                 label: '會場',
                 value: (
-                  <a href={`https://www.google.com/maps/search/${encodeURIComponent(event.venue)}`}
-                    target="_blank" rel="noopener noreferrer"
-                    className="hover:text-bloom-violet transition-colors inline-flex items-start gap-1.5">
-                    {event.venue}<Icon n="link" className="text-[9px] mt-1.5 shrink-0 opacity-50" />
-                  </a>
+                  <span className="inline-flex items-start gap-1.5">
+                    <a href={`#/venue/${encodeURIComponent(venueKey(event.venue))}`} onClick={onClose}
+                      className="hover:text-bloom-violet transition-colors">
+                      {event.venue}
+                    </a>
+                    <a href={`https://www.google.com/maps/search/${encodeURIComponent(event.venue)}`}
+                      target="_blank" rel="noopener noreferrer" aria-label="在 Google 地圖上開啟"
+                      className="mt-1.5 shrink-0 opacity-50 hover:opacity-100 transition-opacity">
+                      <Icon n="link" className="text-[9px]" />
+                    </a>
+                  </span>
                 ),
                 note: ctx.venueTotal > 1 ? `這裡的第 ${ctx.venueNth} 場` : null,
               },

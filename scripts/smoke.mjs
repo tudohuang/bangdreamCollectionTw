@@ -47,6 +47,12 @@ import ResultBar from './src/components/ResultBar.jsx'
 import PulsePage from './src/components/PulsePage.jsx'
 import LabsPage from './src/components/LabsPage.jsx'
 import OrganizerPage from './src/components/OrganizerPage.jsx'
+import VenuePage from './src/components/VenuePage.jsx'
+import YearRing from './src/components/YearRing.jsx'
+import GapChart from './src/components/GapChart.jsx'
+import CityBars from './src/components/CityBars.jsx'
+import FirstsTable from './src/components/FirstsTable.jsx'
+import { venueIndex } from './src/utils/venues.js'
 import YearTimeline from './src/components/YearTimeline.jsx'
 import StatsInsights from './src/components/StatsInsights.jsx'
 import LifeTimeline from './src/components/LifeTimeline.jsx'
@@ -135,6 +141,18 @@ export const CASES = [
   ['LabsPage', <LabsPage roster={pulseRoster} pulse={pulseRows} events={events} source="sheet" onSelectEvent={noop} />],
   ['OrganizerPage', <OrganizerPage value={events.find(e => e.organizer)?.organizer?.split(/[、,，/／]/)[0] || '武士道'} events={events} onSelect={noop} onClose={noop} />],
   ['OrganizerPage(找不到)', <OrganizerPage value="不存在的主辦" events={events} onSelect={noop} onClose={noop} />],
+  ['VenuePage', <VenuePage value={venueIndex(events)[0]?.key || ''} events={events} onSelect={noop} onClose={noop} />],
+  ['VenuePage(找不到)', <VenuePage value="不存在的場館" events={events} onSelect={noop} onClose={noop} />],
+  ['YearRing', <YearRing events={events} onSelect={noop} />],
+  ['GapChart', <GapChart events={events} onSelect={noop} />],
+  ['CityBars', <CityBars events={events} />],
+  ['FirstsTable', <FirstsTable events={events} roster={new Map()} onSelect={noop} />],
+  // 空資料：新頁面最容易在「還沒載到資料」那一瞬間爆掉
+  ['VenuePage(空資料)', <VenuePage value="x" events={[]} onSelect={noop} onClose={noop} />],
+  ['YearRing(空資料)', <YearRing events={[]} onSelect={noop} />],
+  ['GapChart(空資料)', <GapChart events={[]} onSelect={noop} />, { mayBeEmpty: true }],
+  ['CityBars(空資料)', <CityBars events={[]} />, { mayBeEmpty: true }],
+  ['FirstsTable(空資料)', <FirstsTable events={[]} roster={new Map()} onSelect={noop} />],
   ['YearTimeline', <YearTimeline events={events} onSelect={noop} />],
   ['StatsInsights', <StatsInsights events={events} />],
   ['LifeTimeline', <LifeTimeline list={events} color="#8b5cf6" glow="139,92,246" onSelect={noop} />],

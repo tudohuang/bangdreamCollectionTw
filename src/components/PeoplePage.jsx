@@ -12,6 +12,8 @@ const ORDERS = [
 ]
 
 // 聲優目錄：每張卡帶自己的最近一場，避免所有卡片內容雷同
+import FirstsTable from './FirstsTable.jsx'
+
 export default function PeoplePage({ events, onSelect, sheetRoster = [] }) {
   const [q, setQ] = useState('')
   const [order, setOrder] = useState('count')
@@ -257,6 +259,14 @@ export default function PeoplePage({ events, onSelect, sheetRoster = [] }) {
       {shown.length === 0 && (
         <div className="glass px-6 py-16 text-center text-dream-sub text-[15px]">
           找不到符合的聲優{q && <>「{q}」</>}
+        </div>
+      )}
+
+      {/* 目錄回答「有誰」，這張表回答「什麼時候」。搜尋中就收起來，
+          免得上面篩了三個人、下面還列著四十個。 */}
+      {!q && (
+        <div className="mt-9">
+          <FirstsTable events={events} roster={roster} onSelect={onSelect} />
         </div>
       )}
     </section>

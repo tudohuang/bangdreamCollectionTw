@@ -3,6 +3,9 @@ import { countingSummary, COUNTING_NOTES } from '../utils/counting.js'
 import { organizerList } from '../utils/organizers.js'
 import { CAVEATS } from '../utils/conclusions.js'
 import StatsInsights from './StatsInsights.jsx'
+import YearRing from './YearRing.jsx'
+import GapChart from './GapChart.jsx'
+import CityBars from './CityBars.jsx'
 import { bandKey, BAND_META } from '../utils/bands.js'
 import { detectCity } from '../utils/derive.js'
 import Icon from './Icon.jsx'
@@ -56,7 +59,7 @@ function sortEntries(obj, limit) {
   return Object.entries(obj).sort((a, b) => b[1] - a[1]).slice(0, limit ?? 99)
 }
 
-export default function StatsPanel({ events }) {
+export default function StatsPanel({ events, onSelect = () => {} }) {
   const s = useMemo(() => computeStats(events), [events])
   const count = useMemo(() => countingSummary(events), [events])
   const [hoverYear, setHoverYear] = useState(null)
@@ -97,7 +100,14 @@ export default function StatsPanel({ events }) {
 
       <StatsInsights events={events} />
 
-      <div className="grid lg:grid-cols-2 gap-6">
+      <YearRing events={events} onSelect={onSelect} />
+
+      <div className="grid lg:grid-cols-2 gap-6 mt-6">
+        <GapChart events={events} onSelect={onSelect} />
+        <CityBars events={events} />
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-6 mt-6">
         {/* 統計口徑：別人拿我們的數字去比對時，先講清楚一筆是什麼 */}
         <div className="glass p-7 lg:col-span-2">
           <h3 className="flex items-center gap-2.5 font-display font-bold text-lg text-dream-ink mb-5">
