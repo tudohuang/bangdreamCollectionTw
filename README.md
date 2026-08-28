@@ -46,6 +46,9 @@ npm test         # utils 單元測試 + 把每個畫面在 Node 裡 render 一�
 npm run validate # 檢查 events.json 的資料品質
 npm run health   # 資料缺在哪：欄位覆蓋率 + 具體待辦（寫成 docs/health.md）
 npm run template # 產出照編號排好的空白 TSV，填完貼回 Sheet
+npm run snapshot # 把 Sheet 的「名冊」「動態」兩張分頁存成本機副本
+npm run splash   # 產 iOS 加到主畫面的啟動畫面（改圖案時才要跑）
+npm run icons:data # 從 FontAwesome 抽出用到的圖示路徑（加圖示時才要跑）
 ```
 
 `npm run health` 刻意不是測試 —— 資料不完整不是錯誤，是待辦，
@@ -81,6 +84,12 @@ npm run template # 產出照編號排好的空白 TSV，填完貼回 Sheet
 | `票價` | 分區用 `/` 隔開，可帶區名：`搖滾區 3800 / 座位區 2800` |
 | `周邊` | 場販清單，一行一項，價格接在後面。名字含「台版限定」會自動標出來 |
 | `主視覺` | 繪師名，後面可接來源網址 |
+| `售票狀況` | 「完售」「開賣 3 分鐘完售」。事後查不到的東西，當下不記就沒了 |
+| `場刊` | 場刊目次，一行一項 |
+| `系列` | 留空會自動判斷（Bushiroad EXPO 那種跨年度的）。判錯才填 |
+
+「名冊」分頁也多認一欄 `連結`：官推、官網、Eventernote，多條用空白分隔。
+人物頁與樂團頁會多出一排出口，名字依網域自動判斷。
 
 > 上面這四欄目前 Sheet 還沒有，直接在最右邊加欄、表頭照著寫就會生效。
 > 解析規則在 `src/utils/archive.js`，四塊都是沒資料就整塊不出現。
