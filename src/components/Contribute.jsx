@@ -15,7 +15,7 @@ export default function Contribute() {
           </span>
           <div>
             <h2 className="font-display font-bold text-xl text-dream-ink">幫忙補一筆</h2>
-            <p className="mt-1.5 text-[13px] leading-relaxed text-dream-sub max-w-lg">
+            <p className="mt-1.5 text-[14px] leading-relaxed text-dream-sub max-w-lg">
               缺場次、有現場照片、或看到寫錯的地方？資料就是一張 Google Sheet，回報後很快會更新到站上。
             </p>
           </div>

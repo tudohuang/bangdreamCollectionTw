@@ -59,7 +59,7 @@ export default function MissingLine({ event, color }) {
   }
 
   return (
-    <p className="mt-6 pt-4 border-t border-dream-line dark:border-white/10 text-[13px] text-dream-faint flex flex-wrap items-center gap-x-2 gap-y-1">
+    <p className="mt-6 pt-4 border-t border-dream-line dark:border-white/10 text-[14px] text-dream-faint flex flex-wrap items-center gap-x-2 gap-y-1">
       <span>這一格還缺 {missing.join('、')}。</span>
       <button onClick={copy}
         className="inline-flex items-center gap-1.5 font-medium hover:underline"

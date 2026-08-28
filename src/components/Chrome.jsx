@@ -102,11 +102,11 @@ export function PromptInstallCard({ prompt, onClose }) {
       <div className="flex items-center gap-3">
         <CardIcon />
         <span className="min-w-0 flex-1">
-          <span className="block text-[13.5px] font-semibold text-dream-ink">裝到手機上</span>
-          <span className="block text-[12px] text-dream-faint">開起來沒有網址列，離線也看得到</span>
+          <span className="block text-[14px] font-semibold text-dream-ink">裝到手機上</span>
+          <span className="block text-[14px] text-dream-faint">開起來沒有網址列，離線也看得到</span>
         </span>
         <button onClick={async () => { prompt.prompt(); await prompt.userChoice; onClose() }}
-          className="btn-primary shrink-0 !h-9 !px-3.5 !text-[13px]">安裝</button>
+          className="btn-primary shrink-0 !h-9 !px-3.5 !text-[14px]">安裝</button>
         <CloseX onClose={onClose} />
       </div>
     </CardShell>
@@ -121,8 +121,8 @@ export function IOSInstallCard({ onClose }) {
       <div className="flex items-start gap-3">
         <CardIcon />
         <div className="min-w-0 flex-1">
-          <div className="text-[13.5px] font-semibold text-dream-ink">裝到主畫面</div>
-          <div className="text-[12.5px] text-dream-sub mt-1 leading-relaxed">
+          <div className="text-[14px] font-semibold text-dream-ink">裝到主畫面</div>
+          <div className="text-[14px] text-dream-sub mt-1 leading-relaxed">
             按下面的
             <span className="inline-flex items-center justify-center align-middle mx-1 w-5 h-5 rounded border border-dream-line text-bloom-indigo dark:border-white/20">
               <Icon n="arrow-up" className="text-[9px]" />
@@ -234,16 +234,16 @@ export function MobileAppBar({ title, onBack, onSearch, onToggleDark, dark }) {
         <button onClick={onBack} aria-label="回上一頁"
           className="shrink-0 inline-flex items-center gap-0.5 h-11 pl-1 pr-2 text-bloom-indigo">
           <Icon n="chevron-left" className="text-[15px]" />
-          <span className="text-[15px]">返回</span>
+          <span className="text-[16px]">返回</span>
         </button>
       ) : (
-        <span className="shrink-0 grid place-items-center w-9 h-9 ml-1.5 rounded-lg bg-gradient-to-br from-bloom-rose to-bloom-indigo text-white text-[13px]">
+        <span className="shrink-0 grid place-items-center w-9 h-9 ml-1.5 rounded-lg bg-gradient-to-br from-bloom-rose to-bloom-indigo text-white text-[14px]">
           <Icon n="music" />
         </span>
       )}
 
       <span aria-hidden={!scrolled}
-        className={`min-w-0 flex-1 text-center font-display font-bold text-[15px] text-dream-ink truncate transition-opacity duration-200 ${scrolled ? 'opacity-100' : 'opacity-0'}`}>
+        className={`min-w-0 flex-1 text-center font-display font-bold text-[16px] text-dream-ink truncate transition-opacity duration-200 ${scrolled ? 'opacity-100' : 'opacity-0'}`}>
         {title}
       </span>
 
@@ -279,7 +279,7 @@ export function BottomNav({ tabs, page, onGo }) {
                   <span aria-hidden className="absolute top-0 w-8 h-[2.5px] rounded-b-full bg-bloom-indigo" />
                 )}
                 <Icon n={icon} className="text-[15px]" />
-                <span className="text-[10.5px] font-medium leading-none">{label}</span>
+                <span className="text-[14px] font-medium leading-none">{label}</span>
               </button>
             </li>
           )

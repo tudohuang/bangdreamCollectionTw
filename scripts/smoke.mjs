@@ -148,7 +148,7 @@ export const CASES = [
   ['YearRing', <YearRing events={events} onSelect={noop} />],
   ['GapChart', <GapChart events={events} onSelect={noop} />],
   ['CityBars', <CityBars events={events} />],
-  ['FirstsTable', <FirstsTable events={events} roster={new Map()} onSelect={noop} />],
+  ['FirstsTable', <FirstsTable events={events} onSelect={noop} />],
   // 空資料：新頁面最容易在「還沒載到資料」那一瞬間爆掉
   ['VenuePage(空資料)', <VenuePage value="x" events={[]} onSelect={noop} onClose={noop} />],
   ['YearRing(空資料)', <YearRing events={[]} onSelect={noop} />],
@@ -167,7 +167,7 @@ export const CASES = [
   ['MissingLine', <MissingLine event={one} color="#8b5cf6" />],
   ['MissingLine(未來場次)', <MissingLine event={{ ...one, startDate: '2099-01-01' }} color="#8b5cf6" />, { mayBeEmpty: true }],
   ['ArchiveSection(沒資料)', <ArchiveSection event={{ id: 'x', title: 'demo' }} allEvents={[]} color="#8b5cf6" glow="139,92,246" />, { mayBeEmpty: true }],
-  ['FirstsTable(空資料)', <FirstsTable events={[]} roster={new Map()} onSelect={noop} />],
+  ['FirstsTable(空資料)', <FirstsTable events={[]} onSelect={noop} />],
   ['YearTimeline', <YearTimeline events={events} onSelect={noop} />],
   ['StatsInsights', <StatsInsights events={events} />],
   ['LifeTimeline', <LifeTimeline list={events} color="#8b5cf6" glow="139,92,246" onSelect={noop} />],

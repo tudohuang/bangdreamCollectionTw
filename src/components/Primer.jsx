@@ -21,12 +21,12 @@ const ABBR = [
 export default function Primer() {
   return (
     <details className="glass mt-6 px-5 py-4 group">
-      <summary className="flex items-center gap-2 cursor-pointer text-[13.5px] font-semibold text-dream-ink marker:text-dream-faint">
+      <summary className="flex items-center gap-2 cursor-pointer text-[14px] font-semibold text-dream-ink marker:text-dream-faint">
         <Icon n="note-sticky" className="text-bloom-sky text-[12px]" />
         第一次來？這個站收什麼
       </summary>
 
-      <dl className="mt-4 grid sm:grid-cols-3 gap-x-6 gap-y-3 text-[13px] leading-relaxed">
+      <dl className="mt-4 grid sm:grid-cols-3 gap-x-6 gap-y-3 text-[14px] leading-relaxed">
         {TERMS.map(([term, note]) => (
           <div key={term}>
             <dt className="font-semibold text-dream-ink">{term}</dt>
@@ -36,8 +36,8 @@ export default function Primer() {
       </dl>
 
       <div className="mt-4 pt-3.5 border-t border-dream-line dark:border-white/10">
-        <div className="text-[11px] font-bold text-dream-faint mb-2">常見縮寫</div>
-        <div className="flex flex-wrap gap-x-5 gap-y-1.5 text-[12.5px]">
+        <div className="text-[14px] font-bold text-dream-faint mb-2">常見縮寫</div>
+        <div className="flex flex-wrap gap-x-5 gap-y-1.5 text-[14px]">
           {ABBR.map(([k, v]) => (
             <span key={k}>
               <span className="font-semibold text-dream-ink">{k}</span>

@@ -15,7 +15,7 @@ export default function UrgentBar({ events, onSelect }) {
         {shown.map(e => <UrgentRow key={e.id} event={e} onSelect={onSelect} />)}
         {rest > 0 && (
           <a href="#/collection?urgent=yes"
-            className="py-1.5 text-[13px] font-bold text-white/85 hover:text-white">
+            className="py-1.5 text-[14px] font-bold text-white/85 hover:text-white">
             還有 {rest} 場緊急情報 →
           </a>
         )}
@@ -35,16 +35,16 @@ function UrgentRow({ event, onSelect }) {
       onClick={() => onSelect(event.id)}
       className="group w-full py-1.5 flex items-center gap-2.5 text-left text-white"
     >
-      <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-white/25 px-2 py-0.5 text-[11px] font-bold tracking-wide">
+      <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-white/25 px-2 py-0.5 text-[14px] font-bold tracking-wide">
         <Icon n="triangle-exclamation" className="text-[10px]" />
         {URGENT_LABEL}
       </span>
-      <span className="min-w-0 flex-1 truncate text-[13px] font-bold group-hover:underline underline-offset-2">
+      <span className="min-w-0 flex-1 truncate text-[14px] font-bold group-hover:underline underline-offset-2">
         {event.title || '未命名活動'}
       </span>
-      <span className="shrink-0 hidden sm:inline text-[13px] text-white/85">{when}</span>
+      <span className="shrink-0 hidden sm:inline text-[14px] text-white/85">{when}</span>
       {countdown && (
-        <span className="shrink-0 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-bold text-rose-700">
+        <span className="shrink-0 rounded-full bg-white/90 px-2 py-0.5 text-[14px] font-bold text-rose-700">
           {countdown}
         </span>
       )}

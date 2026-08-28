@@ -102,7 +102,7 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
   return (
     <div className="animate-riseIn">
       {/* 手機的 App Bar 左上角已經有「返回」，這顆是給桌機的 */}
-      <button onClick={onClose} className="hidden sm:inline-flex items-center gap-1.5 text-[13px] text-dream-sub hover:text-dream-ink mb-6">
+      <button onClick={onClose} className="hidden sm:inline-flex items-center gap-1.5 text-[14px] text-dream-sub hover:text-dream-ink mb-6">
         <Icon n="chevron-left" className="text-[11px]" /> 回首頁
       </button>
 
@@ -120,13 +120,13 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
             <Icon n={kind === 'person' ? 'microphone' : meta.icon} />
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-[13px] font-bold tracking-wide" style={{ color: meta.color }}>
+            <div className="text-[14px] font-bold tracking-wide" style={{ color: meta.color }}>
               {kind === 'person' ? '聲優' : '樂團'}
             </div>
             <h1 className="font-display font-extrabold text-dream-ink leading-tight mt-0.5"
               style={{ fontSize: 'clamp(26px,5vw,40px)' }}>{value}</h1>
             {kind === 'person' && roster && (
-              <div className="mt-1 text-[13px] text-dream-sub">
+              <div className="mt-1 text-[14px] text-dream-sub">
                 飾 <span className="font-semibold text-dream-ink">{roster.char}</span>
                 <span className="text-dream-faint"> · {roster.band}</span>
               </div>
@@ -144,14 +144,14 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
 
         {/* 操作列獨立一行，手機上才不會被頭像擠成三行 */}
         <div className="relative px-6 sm:px-8 pb-6 sm:pb-8 -mt-1 flex flex-wrap gap-2">
-          <button onClick={copyLink} className="btn-primary !h-10 !px-5 !text-[13px]">
+          <button onClick={copyLink} className="btn-primary !h-10 !px-5 !text-[14px]">
             <Icon n="link" /> 複製連結
           </button>
-          <button className="pill !px-4 !py-2 !text-[13px]"
+          <button className="pill !px-4 !py-2 !text-[14px]"
             onClick={() => flash(downloadIcs(list, `${value}.ics`) ? '已下載行事曆檔' : '沒有確定日期的場次')}>
             <Icon n="calendar" /> 加行事曆
           </button>
-          <button className="pill !px-4 !py-2 !text-[13px]"
+          <button className="pill !px-4 !py-2 !text-[14px]"
             onClick={() => downloadPassCard(events, ids, {
               title: `${value} 的來台紀錄`,
               header: `${kind === 'person' ? 'VOICE ACTOR' : 'BAND'} · TAIWAN BANG DREAM!`,
@@ -170,12 +170,12 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
             <span className="block font-display font-extrabold text-[30px] leading-none" style={{ color: meta.color }}>
               {Math.max(0, daysUntil(next.startDate) ?? 0)}
             </span>
-            <span className="block text-[11px] text-dream-faint mt-1">天後</span>
+            <span className="block text-[14px] text-dream-faint mt-1">天後</span>
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-[13px] font-bold" style={{ color: meta.color }}>下一次來台</span>
-            <span className="block font-display font-bold text-[15px] text-dream-ink line-clamp-2 mt-0.5">{next.title}</span>
-            <span className="block text-[13px] text-dream-faint mt-0.5">
+            <span className="block text-[14px] font-bold" style={{ color: meta.color }}>下一次來台</span>
+            <span className="block font-display font-bold text-[16px] text-dream-ink line-clamp-2 mt-0.5">{next.title}</span>
+            <span className="block text-[14px] text-dream-faint mt-0.5">
               {formatDateRangeCompact(next.startDate, next.endDate)}{next.venue && ` · ${next.venue}`}
             </span>
           </span>
@@ -187,13 +187,13 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
       {(gaps.length > 0 || (longest && longest.days >= 365)) && (
         <div className="mt-4 flex flex-wrap gap-2">
           {gaps.map(g => (
-            <span key={g.from} className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-dream-line dark:border-white/15 px-3 py-1.5 text-[13px] text-dream-sub">
+            <span key={g.from} className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-dream-line dark:border-white/15 px-3 py-1.5 text-[14px] text-dream-sub">
               <Icon n="calendar" className="text-[10px] text-dream-faint" />
               {g.length === 1 ? `${g.from} 年` : `${g.from}–${g.to}`} 沒有場次
             </span>
           ))}
           {longest && longest.days >= 365 && (
-            <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium"
+            <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[14px] font-medium"
               style={{ background: `rgba(${meta.glow},0.12)`, color: meta.color }}>
               <Icon n="bolt" className="text-[10px]" />
               最久隔了 {Math.floor(longest.days / 365)} 年
@@ -207,7 +207,7 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
       {/* 收藏軌：在全站 {allChrono.length} 場裡，這個人／團站在哪些位置 */}
       {allChrono.length > 1 && (
         <div className="mt-7">
-          <div className="flex items-center justify-between text-[11px] font-bold text-dream-faint mb-2.5">
+          <div className="flex items-center justify-between text-[14px] font-bold text-dream-faint mb-2.5">
             <span>在全站的位置</span>
             <span className="font-normal">{list.length} / {allChrono.length} 場</span>
           </div>
@@ -218,7 +218,7 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
       {/* 關聯 chips */}
       {related.length > 0 && (
         <div className="mt-7">
-          <div className="text-[11px] font-bold text-dream-faint mb-2.5">
+          <div className="text-[14px] font-bold text-dream-faint mb-2.5">
             {kind === 'person' ? '看過的樂團／關聯' : '登場成員（依次數）'}
           </div>
           <div className="flex flex-wrap gap-2">
@@ -238,7 +238,7 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
       )}
 
       {cities.length > 0 && (
-        <div className="mt-5 flex flex-wrap items-center gap-2 text-[13px] text-dream-sub">
+        <div className="mt-5 flex flex-wrap items-center gap-2 text-[14px] text-dream-sub">
           <Icon n="location-dot" className="text-bloom-rose text-[11px]" />
           {cities.map(([c, n]) => <span key={c} className="text-dream-ink">{c}<span className="text-dream-faint"> ×{n}</span></span>)}
         </div>
@@ -253,7 +253,7 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
           return (
             <div key={year} className={gi ? 'mt-6' : ''}>
               {skipped && (
-                <div className="mb-4 flex items-center gap-3 text-[13px] text-dream-faint">
+                <div className="mb-4 flex items-center gap-3 text-[14px] text-dream-faint">
                   <span className="h-px flex-1 border-t border-dashed border-dream-line dark:border-white/15" />
                   {year + 1 === prev[0] - 1
                     ? `${year + 1} 年沒有場次`
@@ -262,8 +262,8 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
                 </div>
               )}
               <div className="flex items-center gap-3 mb-2.5">
-                <span className="font-display font-bold text-[15px]" style={{ color: meta.color }}>{year}</span>
-                <span className="text-[13px] text-dream-faint">{arr.length} 場</span>
+                <span className="font-display font-bold text-[16px]" style={{ color: meta.color }}>{year}</span>
+                <span className="text-[14px] text-dream-faint">{arr.length} 場</span>
                 <span className="h-px flex-1 bg-dream-line dark:bg-white/10" />
               </div>
               <ul className="space-y-2.5">
@@ -275,7 +275,7 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
       </div>
 
       {toast && (
-        <div className="pointer-events-none fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] inline-flex items-center gap-2 rounded bg-dream-ink text-white text-[13px] font-medium px-4 py-2">
+        <div className="pointer-events-none fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] inline-flex items-center gap-2 rounded bg-dream-ink text-white text-[14px] font-medium px-4 py-2">
           <Icon n="circle-check" className="text-bloom-pink" />{toast}
         </div>
       )}
@@ -301,14 +301,14 @@ function EventRow({ e, attended, onSelect, onToggleAttended }) {
             : <span className="text-lg" style={{ color: m.color }}><Icon n={isPersonal(e) ? 'user' : m.icon} /></span>}
         </div>
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 text-[13px] text-dream-sub">
+          <div className="flex items-center gap-2 text-[14px] text-dream-sub">
             <span className="font-round font-bold" style={{ color: m.color }}>#{String(e.number ?? 0).padStart(3, '0')}</span>
             <span>{e.year}.{formatMonthDay(e.startDate).replace(/^\d{4}\./, '')}</span>
             {status === 'past' && <span className="text-dream-faint">已結束</span>}
             {(status === 'upcoming' || status === 'ongoing') && <span className="text-bloom-indigo font-bold">即將</span>}
           </div>
-          <div className="font-display font-bold text-[15px] text-dream-ink line-clamp-1 mt-0.5 group-hover:text-bloom-indigo transition-colors">{e.title}</div>
-          {e.type && <div className="text-[13px] text-dream-faint mt-0.5 truncate">{e.type}</div>}
+          <div className="font-display font-bold text-[16px] text-dream-ink line-clamp-1 mt-0.5 group-hover:text-bloom-indigo transition-colors">{e.title}</div>
+          {e.type && <div className="text-[14px] text-dream-faint mt-0.5 truncate">{e.type}</div>}
         </div>
         <span
           role="button" tabIndex={0}
@@ -331,9 +331,9 @@ function Stat({ n, unit, label, color }) {
     <div>
       <div className="font-display font-bold text-dream-ink leading-none">
         <span className="text-xl" style={{ color }}>{n}</span>
-        {unit && <span className="text-[13px] text-dream-sub ml-0.5">{unit}</span>}
+        {unit && <span className="text-[14px] text-dream-sub ml-0.5">{unit}</span>}
       </div>
-      <div className="text-[11px] text-dream-faint mt-1">{label}</div>
+      <div className="text-[14px] text-dream-faint mt-1">{label}</div>
     </div>
   )
 }

@@ -84,21 +84,21 @@ export default function CommandPalette({ open, onClose, events, onSelectEvent })
           <Icon n="magnifying-glass" className="text-dream-faint" />
           <input ref={inputRef} value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={onKey}
             placeholder="搜尋活動、聲優、樂團…（愛美 / Aimi / Roselia）"
-            className="flex-1 bg-transparent py-4 text-[15px] text-dream-ink outline-none placeholder:text-dream-faint" />
-          <kbd className="text-[11px] text-dream-faint border border-dream-line rounded px-1.5 py-0.5">Esc</kbd>
+            className="flex-1 bg-transparent py-4 text-[16px] text-dream-ink outline-none placeholder:text-dream-faint" />
+          <kbd className="text-[14px] text-dream-faint border border-dream-line rounded px-1.5 py-0.5">Esc</kbd>
         </div>
 
         <div ref={listRef} className="max-h-[52vh] overflow-y-auto scrollbar-thin py-2">
           {q && results.length === 0 && (
-            <div className="px-4 py-10 text-center text-[15px] text-dream-faint">找不到「{q}」</div>
+            <div className="px-4 py-10 text-center text-[16px] text-dream-faint">找不到「{q}」</div>
           )}
           {!q && results.length > 0 && (
-            <div className="px-4 pt-1 pb-2 text-[11px] font-bold tracking-[0.18em] uppercase text-dream-faint">
+            <div className="px-4 pt-1 pb-2 text-[14px] font-bold tracking-[0.18em] uppercase text-dream-faint">
               先看這些
             </div>
           )}
           {!q && results.length === 0 && (
-            <div className="px-4 py-10 text-center text-[13px] text-dream-faint">
+            <div className="px-4 py-10 text-center text-[14px] text-dream-faint">
               輸入關鍵字快速跳轉 · <kbd className="border border-dream-line rounded px-1">↑</kbd><kbd className="border border-dream-line rounded px-1 ml-0.5">↓</kbd> 選擇 · <kbd className="border border-dream-line rounded px-1">↵</kbd> 前往
             </div>
           )}
@@ -108,7 +108,7 @@ export default function CommandPalette({ open, onClose, events, onSelectEvent })
               <button key={r.key} data-active={isA}
                 onMouseEnter={() => setActive(i)} onClick={() => go(r)}
                 className={`w-full text-left px-4 py-2.5 flex items-center gap-3 ${isA ? 'bg-bloom-indigo/10' : ''}`}>
-                <span className="grid place-items-center w-7 h-7 rounded shrink-0 text-[13px]"
+                <span className="grid place-items-center w-7 h-7 rounded shrink-0 text-[14px]"
                   style={(r.type === 'band' || (r.type === 'filter' && r.color))
                     ? { background: `${r.color}22`, color: r.color }
                     : r.type === 'event'
@@ -117,7 +117,7 @@ export default function CommandPalette({ open, onClose, events, onSelectEvent })
                   <Icon n={r.type === 'person' ? 'microphone' : r.type === 'band' ? 'guitar' : r.type === 'filter' ? 'sliders' : (isPersonal(r.event) ? 'user' : 'calendar')} />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="flex items-center gap-1.5 text-[15px] text-dream-ink">
+                  <span className="flex items-center gap-1.5 text-[16px] text-dream-ink">
                     {r.type === 'event' && isUrgent(r.event) && (
                       <span className="urgent-badge shrink-0">
                         <Icon n="triangle-exclamation" className="text-[9px]" /> {URGENT_LABEL}
@@ -127,7 +127,7 @@ export default function CommandPalette({ open, onClose, events, onSelectEvent })
                       {r.type === 'filter' ? <>在圖鑑中篩選：<span className="font-semibold">{r.label}</span></> : r.label}
                     </span>
                   </span>
-                  <span className="block text-[11px] text-dream-faint">
+                  <span className="block text-[14px] text-dream-faint">
                     {r.type === 'person' ? '聲優圖鑑頁' : r.type === 'band' ? '樂團圖鑑頁' : r.type === 'filter' ? '套用篩選'
                       : `${r.hint ? r.hint + ' · ' : ''}#${String(r.event.number).padStart(3, '0')} · ${r.event.year}`}
                   </span>

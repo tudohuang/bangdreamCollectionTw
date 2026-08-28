@@ -51,7 +51,7 @@ export default function PulsePage({ roster, pulse, events, source, onSelectEvent
         <h3 className="flex items-center gap-2 font-display font-bold text-[19px] text-dream-ink">
           <Icon n="bolt" className="text-bloom-rose text-[15px]" /> 聲優動態
         </h3>
-        <p className="mt-2 text-[13px] text-dream-sub max-w-2xl">
+        <p className="mt-2 text-[14px] text-dream-sub max-w-2xl">
           追蹤名單在日本的行程。每個月一根柱子，柱子越高那個月越忙；
           <span className="mx-1 font-bold" style={{ color: 'rgb(var(--c-urgent))' }}>粉紅</span>
         </p>
@@ -60,22 +60,22 @@ export default function PulsePage({ roster, pulse, events, source, onSelectEvent
       {/* ── 來台指數：不是機率，是幾個可觀測因子的加權和（見 utils/forecast.js） ── */}
       <div>
         <div className="flex items-baseline justify-between gap-3 mb-3">
-          <h3 className="font-display font-bold text-[15px] text-dream-ink">
+          <h3 className="font-display font-bold text-[16px] text-dream-ink">
             {Number(nextYm.slice(5))} 月來台指數
-            <span className="ml-2 text-[11px] font-medium text-dream-faint">加權觀測值，不是機率</span>
+            <span className="ml-2 text-[14px] font-medium text-dream-faint">加權觀測值，不是機率</span>
           </h3>
         </div>
         {/* 已公告的不用猜，收成一行就好，指數卡的位子留給真的要判斷的 */}
         {confirmed.length > 0 && (
-          <div className="mb-3 flex flex-wrap items-center gap-2 text-[13px]">
-            <span className="rounded-full px-2.5 py-0.5 text-[11px] font-bold text-white"
+          <div className="mb-3 flex flex-wrap items-center gap-2 text-[14px]">
+            <span className="rounded-full px-2.5 py-0.5 text-[14px] font-bold text-white"
               style={{ background: 'rgb(var(--c-urgent))' }}>已公告</span>
             {confirmed.map(r => (
               <button key={r.name}
                 onClick={() => onSelectEvent?.(r.events[0].id)}
                 className="text-dream-ink hover:text-bloom-violet transition-colors">
                 {r.name}
-                <span className="text-dream-faint text-[11px] ml-1">
+                <span className="text-dream-faint text-[14px] ml-1">
                   {r.events[0].startDate?.slice(5).replace('-', '/')}
                 </span>
               </button>
@@ -91,13 +91,13 @@ export default function PulsePage({ roster, pulse, events, source, onSelectEvent
               onSelectEvent={onSelectEvent} />
           ))}
         </div>
-        <p className="mt-2.5 text-[11px] text-dream-faint leading-relaxed">
+        <p className="mt-2.5 text-[14px] text-dream-faint leading-relaxed">
         </p>
       </div>
 
       {/* ── 月曆 ────────────────────────────────── */}
       <div>
-        <h3 className="font-display font-bold text-[15px] text-dream-ink mb-3">月曆</h3>
+        <h3 className="font-display font-bold text-[16px] text-dream-ink mb-3">月曆</h3>
         <PulseCalendar months={months} pulse={pulse} events={events}
           roster={roster} onSelectEvent={onSelectEvent} />
       </div>
@@ -112,7 +112,7 @@ export default function PulsePage({ roster, pulse, events, source, onSelectEvent
             <div key={g.band} className="glass p-4 sm:p-5 border-l-4" style={{ borderLeftColor: m.color }}>
               <div className="flex items-center gap-2 mb-3">
                 <Icon n={m.icon} className="text-[11px]" style={{ color: m.color }} />
-                <span className="font-display font-bold text-[15px]" style={{ color: m.color }}>{g.band}</span>
+                <span className="font-display font-bold text-[16px]" style={{ color: m.color }}>{g.band}</span>
                 <span className="flex-1 h-px bg-dream-line dark:bg-white/10" />
               </div>
 
@@ -121,7 +121,7 @@ export default function PulsePage({ roster, pulse, events, source, onSelectEvent
                 <span className="w-[104px] sm:w-[124px] shrink-0" />
                 <div className="flex gap-[3px]">
                   {months.map(ym => (
-                    <span key={ym} className="w-[26px] sm:w-[30px] text-center font-round text-[11px] text-dream-faint">
+                    <span key={ym} className="w-[26px] sm:w-[30px] text-center font-round text-[14px] text-dream-faint">
                       {Number(ym.slice(5))}
                     </span>
                   ))}
@@ -144,19 +144,19 @@ export default function PulsePage({ roster, pulse, events, source, onSelectEvent
       {sel && (
         <div className="glass p-5">
           <div className="flex items-baseline gap-2.5 flex-wrap mb-3">
-            <span className="font-display font-bold text-[17px] text-dream-ink">{sel.name}</span>
-            <span className="text-[13px] text-dream-faint">
+            <span className="font-display font-bold text-[18px] text-dream-ink">{sel.name}</span>
+            <span className="text-[14px] text-dream-faint">
               {sel.ym ? `${Number(sel.ym.slice(5))} 月` : '全部'} · {selList.length} 筆
             </span>
-            <button onClick={() => setSel(null)} className="ml-auto text-[11px] text-dream-faint hover:text-bloom-rose">關閉</button>
+            <button onClick={() => setSel(null)} className="ml-auto text-[14px] text-dream-faint hover:text-bloom-rose">關閉</button>
           </div>
           {selList.length === 0 ? (
-            <p className="text-[13px] text-dream-faint">這個月沒有紀錄。</p>
+            <p className="text-[14px] text-dream-faint">這個月沒有紀錄。</p>
           ) : (
             <ul className="flex flex-col gap-2.5">
               {[...selList].sort((a, b) => (a.date || '').localeCompare(b.date || '')).map((it, i) => (
-                <li key={i} className="flex items-start gap-2.5 text-[13px]">
-                  <span className="shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold"
+                <li key={i} className="flex items-start gap-2.5 text-[14px]">
+                  <span className="shrink-0 rounded-full px-2 py-0.5 text-[14px] font-bold"
                     style={it.where === 'tw'
                       ? { background: 'rgb(var(--c-urgent))', color: '#fff' }
                       : { background: 'rgba(139,92,246,0.14)', color: '#8b5cf6' }}>
@@ -170,7 +170,7 @@ export default function PulsePage({ roster, pulse, events, source, onSelectEvent
                     ) : (
                       <span className="text-dream-ink">{it.title}</span>
                     )}
-                    <span className="text-[11px] text-dream-faint ml-1.5">
+                    <span className="text-[14px] text-dream-faint ml-1.5">
                       {it.date?.replace(/-/g, '.')}{it.place && ` · ${it.place}`}
                     </span>
                   </span>
@@ -192,7 +192,7 @@ function TrackRow({ entry, color, glow, months, get, maxCount, sel, onSelect }) 
       <button
         onClick={() => onSelect(active && !sel.ym ? null : { name: entry.name, ym: null })}
         title={entry.role || entry.name}
-        className={`w-[104px] sm:w-[124px] shrink-0 text-left text-[13px] truncate transition-colors ${
+        className={`w-[104px] sm:w-[124px] shrink-0 text-left text-[14px] truncate transition-colors ${
           entry.kind === 'band' ? 'font-display font-bold' : ''
         } ${active ? 'text-bloom-violet' : 'text-dream-ink hover:text-bloom-violet'}`}
       >
@@ -248,8 +248,8 @@ function IndexCard({ item, open, onToggle, onSelectEvent }) {
   return (
     <div className="glass p-4 flex flex-col gap-2.5">
       <div className="flex items-baseline justify-between gap-2">
-        <span className="font-display font-bold text-[15px] text-dream-ink truncate">{item.name}</span>
-        <span className="text-[11px] font-bold shrink-0" style={{ color: tone }}>
+        <span className="font-display font-bold text-[16px] text-dream-ink truncate">{item.name}</span>
+        <span className="text-[14px] font-bold shrink-0" style={{ color: tone }}>
           {LEVEL_LABEL[item.level]}
         </span>
       </div>
@@ -259,7 +259,7 @@ function IndexCard({ item, open, onToggle, onSelectEvent }) {
           <div className="h-full rounded-full transition-[width] duration-700"
             style={{ width: `${item.score}%`, background: done ? tone : `linear-gradient(90deg,#ec4899,${tone})` }} />
         </div>
-        <span className="font-display font-extrabold text-[15px] tabular-nums" style={{ color: tone }}>
+        <span className="font-display font-extrabold text-[16px] tabular-nums" style={{ color: tone }}>
           {done ? '定' : item.score}
         </span>
       </div>
@@ -267,7 +267,7 @@ function IndexCard({ item, open, onToggle, onSelectEvent }) {
       {done ? (
         <button
           onClick={() => onSelectEvent?.(item.events[0].id)}
-          className="text-left text-[12px] text-dream-sub hover:text-dream-ink transition-colors truncate">
+          className="text-left text-[14px] text-dream-sub hover:text-dream-ink transition-colors truncate">
           已公告：{item.events[0].title}
         </button>
       ) : (
@@ -275,7 +275,7 @@ function IndexCard({ item, open, onToggle, onSelectEvent }) {
           {open && (
             <ul className="flex flex-col gap-1.5 pt-1 border-t border-dashed border-dream-line dark:border-white/10">
               {item.factors.map(f => (
-                <li key={f.label} className="flex items-baseline gap-2 text-[12px]">
+                <li key={f.label} className="flex items-baseline gap-2 text-[14px]">
                   <span className="font-round font-bold w-7 shrink-0 tabular-nums" style={{ color: tone }}>+{f.pts}</span>
                   <span className="text-dream-ink shrink-0">{f.label}</span>
                   <span className="text-dream-faint truncate">{f.detail}</span>

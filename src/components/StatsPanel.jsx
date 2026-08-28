@@ -92,7 +92,7 @@ export default function StatsPanel({ events, onSelect = () => {} }) {
         </div>
         <div className="text-right shrink-0">
           <div className="font-display text-2xl font-bold text-bloom-indigo leading-none">{s.total} 筆</div>
-          <div className="text-[11px] text-dream-faint mt-1">
+          <div className="text-[14px] text-dream-faint mt-1">
             {years[0]}–{years[years.length - 1]} · 累計 {s.attendance} 人次
           </div>
         </div>
@@ -122,10 +122,10 @@ export default function StatsPanel({ events, onSelect = () => {} }) {
 
           {/* 定義與但書都收在這裡：要對數字的人點得到，其他人不用被小字淹沒 */}
           <details className="mt-4">
-            <summary className="cursor-pointer text-[13px] text-dream-sub hover:text-dream-ink marker:text-dream-faint">
+            <summary className="cursor-pointer text-[14px] text-dream-sub hover:text-dream-ink marker:text-dream-faint">
               這些數字怎麼算的
             </summary>
-            <dl className="mt-3.5 grid sm:grid-cols-2 gap-x-8 gap-y-3 text-[13px] leading-relaxed">
+            <dl className="mt-3.5 grid sm:grid-cols-2 gap-x-8 gap-y-3 text-[14px] leading-relaxed">
               {[...COUNTING_NOTES, ...CAVEATS].map(([term, note]) => (
                 <div key={term}>
                   <dt className="font-semibold text-dream-ink">{term}</dt>
@@ -155,7 +155,7 @@ export default function StatsPanel({ events, onSelect = () => {} }) {
                 <li key={y}
                   onMouseEnter={() => setHoverYear(y)} onMouseLeave={() => setHoverYear(null)}
                   className="relative grid grid-cols-[48px_1fr_30px] items-center gap-3">
-                  <span className={`font-round font-bold text-[13px] ${v ? 'text-dream-sub' : 'text-dream-faint'}`}>{y}</span>
+                  <span className={`font-round font-bold text-[14px] ${v ? 'text-dream-sub' : 'text-dream-faint'}`}>{y}</span>
                   {v ? (
                     <span className="h-3 flex items-stretch gap-[2px]">
                       {cv > 0 && <span className="rounded-full" style={{ width: `${(cv / maxYear) * 100}%`, background: SERIES.core.color }} />}
@@ -166,12 +166,12 @@ export default function StatsPanel({ events, onSelect = () => {} }) {
                       <span className="w-full border-t border-dashed border-dream-line dark:border-white/15" />
                     </span>
                   )}
-                  <span className={`text-[13px] font-round font-bold text-right ${v ? 'text-dream-ink' : 'text-dream-faint'}`}>
+                  <span className={`text-[14px] font-round font-bold text-right ${v ? 'text-dream-ink' : 'text-dream-faint'}`}>
                     {v || '—'}
                   </span>
 
                   {on && v > 0 && (
-                    <span className="absolute right-12 -top-1 z-10 rounded-lg bg-dream-ink text-white text-[11px] px-2.5 py-1.5 shadow-lg whitespace-nowrap pointer-events-none">
+                    <span className="absolute right-12 -top-1 z-10 rounded-lg bg-dream-ink text-white text-[14px] px-2.5 py-1.5 shadow-lg whitespace-nowrap pointer-events-none">
                       本體 {cv} · 個人 {sv}
                     </span>
                   )}
@@ -180,7 +180,7 @@ export default function StatsPanel({ events, onSelect = () => {} }) {
             })}
           </ul>
 
-          <div className="mt-6 pt-4 border-t border-dream-line dark:border-white/10 text-[13px] text-dream-sub space-y-1">
+          <div className="mt-6 pt-4 border-t border-dream-line dark:border-white/10 text-[14px] text-dream-sub space-y-1">
             <div>最熱鬧的一年是 <span className="font-bold text-gradient">{peakYear}（{maxYear} 場）</span></div>
             {emptyYears.length > 0 && (
               <div className="text-dream-faint">
@@ -197,16 +197,16 @@ export default function StatsPanel({ events, onSelect = () => {} }) {
               <Icon n="bullseye" className="text-bloom-rose" /> 本體 / 個人
             </h3>
             <div className="flex h-9 rounded-full overflow-hidden border border-white/60">
-              <div className="flex items-center justify-center text-[13px] font-bold text-white"
+              <div className="flex items-center justify-center text-[14px] font-bold text-white"
                    style={{ width: `${(s.core / s.total) * 100}%`, background: 'linear-gradient(135deg, #ec4899, #8b5cf6)' }}>
                 {s.core > 0 && `本體 ${s.core}`}
               </div>
-              <div className="flex items-center justify-center text-[13px] font-semibold text-dream-sub bg-white/60"
+              <div className="flex items-center justify-center text-[14px] font-semibold text-dream-sub bg-white/60"
                    style={{ width: `${(s.side / s.total) * 100}%` }}>
                 {s.side > 0 && `個人 ${s.side}`}
               </div>
             </div>
-            <div className="mt-4 flex items-center justify-between text-[13px] text-dream-sub">
+            <div className="mt-4 flex items-center justify-between text-[14px] text-dream-sub">
               <span>本體 {(s.core / s.total * 100).toFixed(0)}% · 個人 {(s.side / s.total * 100).toFixed(0)}%</span>
               <span className="font-semibold">全團 {s.fullBand} 場</span>
             </div>
@@ -222,14 +222,14 @@ export default function StatsPanel({ events, onSelect = () => {} }) {
                 const m = BAND_META[k]
                 return (
                   <li key={k} className="grid grid-cols-[130px_1fr_28px] items-center gap-3">
-                    <span className="flex items-center gap-1.5 text-[13px] font-medium text-dream-ink truncate">
+                    <span className="flex items-center gap-1.5 text-[14px] font-medium text-dream-ink truncate">
                       <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: m.color }} />
                       <span className="truncate">{m.name}</span>
                     </span>
                     <span className="h-2.5 rounded-full bg-white/55 overflow-hidden">
                       <span className="block h-full rounded-full" style={{ width: `${(v / maxBand) * 100}%`, background: m.color }} />
                     </span>
-                    <span className="text-[13px] font-round font-bold text-dream-sub text-right">{v}</span>
+                    <span className="text-[14px] font-round font-bold text-dream-sub text-right">{v}</span>
                   </li>
                 )
               })}
@@ -251,7 +251,7 @@ export default function StatsPanel({ events, onSelect = () => {} }) {
               <div key={mo} className="relative flex-1 h-full flex flex-col justify-end items-center gap-2"
                 onMouseEnter={() => setHoverMonth(mo)} onMouseLeave={() => setHoverMonth(null)}>
                 {on && v > 0 && (
-                  <span className="absolute -top-1 z-10 rounded-lg bg-dream-ink text-white text-[11px] px-2.5 py-1.5 shadow-lg whitespace-nowrap pointer-events-none">
+                  <span className="absolute -top-1 z-10 rounded-lg bg-dream-ink text-white text-[14px] px-2.5 py-1.5 shadow-lg whitespace-nowrap pointer-events-none">
                     {mo} 月 · {v} 場
                   </span>
                 )}
@@ -261,13 +261,13 @@ export default function StatsPanel({ events, onSelect = () => {} }) {
                     background: v ? SERIES.core.color : 'rgb(var(--c-line))',
                     opacity: hoverMonth && !on ? 0.45 : 1,
                   }} />
-                <span className="text-[11px] font-round font-bold text-dream-faint">{mo}</span>
+                <span className="text-[14px] font-round font-bold text-dream-faint">{mo}</span>
               </div>
             )
           })}
         </div>
         {peakMonth && (
-          <div className="mt-5 pt-4 border-t border-dream-line dark:border-white/10 text-[13px] text-dream-sub">
+          <div className="mt-5 pt-4 border-t border-dream-line dark:border-white/10 text-[14px] text-dream-sub">
             最常來的是 <span className="font-bold text-gradient">{peakMonth[0]} 月（{peakMonth[1]} 場）</span>
           </div>
         )}
@@ -281,12 +281,12 @@ export default function StatsPanel({ events, onSelect = () => {} }) {
         <div className="grid sm:grid-cols-2 gap-x-8 gap-y-2.5">
           {topPeople.map(([p, v], i) => (
             <div key={p} className="grid grid-cols-[20px_1fr_auto] items-center gap-3">
-              <span className="font-round font-extrabold text-[13px] text-bloom-violet text-center">{i + 1}</span>
+              <span className="font-round font-extrabold text-[14px] text-bloom-violet text-center">{i + 1}</span>
               <span className="h-7 rounded bg-dream-line/60 overflow-hidden relative flex items-center">
                 <span className="absolute inset-y-0 left-0 rounded" style={{ width: `${(v / maxPerson) * 100}%`, background: 'rgba(168,85,247,0.55)' }} />
-                <span className="relative px-3 text-[13px] font-medium text-dream-ink truncate">{p}</span>
+                <span className="relative px-3 text-[14px] font-medium text-dream-ink truncate">{p}</span>
               </span>
-              <span className="text-[13px] font-bold text-dream-sub">{v} 次</span>
+              <span className="text-[14px] font-bold text-dream-sub">{v} 次</span>
             </div>
           ))}
         </div>
@@ -300,11 +300,11 @@ export default function StatsPanel({ events, onSelect = () => {} }) {
           <div className="grid sm:grid-cols-2 gap-x-8 gap-y-2.5">
             {topCities.map(([city, v]) => (
               <div key={city} className="grid grid-cols-[64px_1fr_auto] items-center gap-3">
-                <span className="text-[13px] font-medium text-dream-ink">{city}</span>
+                <span className="text-[14px] font-medium text-dream-ink">{city}</span>
                 <span className="h-2.5 rounded bg-dream-line/60 overflow-hidden">
                   <span className="block h-full rounded" style={{ width: `${(v / maxCity) * 100}%`, background: 'linear-gradient(90deg, #ec4899, #8b5cf6)' }} />
                 </span>
-                <span className="text-[13px] font-bold text-dream-sub">{v}</span>
+                <span className="text-[14px] font-bold text-dream-sub">{v}</span>
               </div>
             ))}
           </div>
@@ -319,13 +319,13 @@ export default function StatsPanel({ events, onSelect = () => {} }) {
           <div className="grid sm:grid-cols-2 gap-x-8 gap-y-2.5">
             {topOrganizers.map(([org, v], i) => (
               <div key={org} className="grid grid-cols-[20px_1fr_auto] items-center gap-3">
-                <span className="font-bold text-[13px] text-bloom-indigo text-center">{i + 1}</span>
+                <span className="font-bold text-[14px] text-bloom-indigo text-center">{i + 1}</span>
                 <a href={`#/org/${encodeURIComponent(org)}`}
                   className="h-7 rounded bg-dream-line/60 overflow-hidden relative flex items-center hover:brightness-95 transition-[filter]">
                   <span className="absolute inset-y-0 left-0 rounded" style={{ width: `${(v / maxOrganizer) * 100}%`, background: 'rgba(139,92,246,0.5)' }} />
-                  <span className="relative px-3 text-[13px] font-medium text-dream-ink truncate">{org}</span>
+                  <span className="relative px-3 text-[14px] font-medium text-dream-ink truncate">{org}</span>
                 </a>
-                <span className="text-[13px] font-bold text-dream-sub">{v} 筆</span>
+                <span className="text-[14px] font-bold text-dream-sub">{v} 筆</span>
               </div>
             ))}
           </div>
@@ -340,7 +340,7 @@ function CountBox({ n, label }) {
   return (
     <div className="bg-white px-4 py-5 text-center dark:bg-white/[.04]">
       <div className="font-display text-[28px] font-bold text-dream-ink leading-none tabular-nums">{n}</div>
-      <div className="text-[13px] font-medium text-dream-sub mt-2">{label}</div>
+      <div className="text-[14px] font-medium text-dream-sub mt-2">{label}</div>
     </div>
   )
 }
@@ -349,7 +349,7 @@ function Legend({ items }) {
   return (
     <div className="flex items-center gap-3 shrink-0 pt-1">
       {items.map(it => (
-        <span key={it.key} className="inline-flex items-center gap-1.5 text-[13px] text-dream-sub">
+        <span key={it.key} className="inline-flex items-center gap-1.5 text-[14px] text-dream-sub">
           <span className="w-2.5 h-2.5 rounded-full" style={{ background: it.color }} />
           {it.label}
         </span>

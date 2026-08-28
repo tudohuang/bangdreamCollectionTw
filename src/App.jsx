@@ -303,7 +303,7 @@ export default function App() {
       <PullToRefresh onRefresh={retry} />
 
       <a href="#wall"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:rounded-full focus:bg-bloom-indigo focus:text-white focus:text-[13px]">
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:rounded-full focus:bg-bloom-indigo focus:text-white focus:text-[14px]">
         跳到活動圖鑑
       </a>
 
@@ -317,7 +317,7 @@ export default function App() {
         />
         <div className="hidden sm:flex max-w-6xl xl:max-w-[1400px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-8 h-14 items-center justify-between gap-3">
           <a href="#/" onClick={(e) => { e.preventDefault(); goPage('home') }} className="flex items-center gap-2.5 group shrink-0">
-            <span className="grid place-items-center w-8 h-8 rounded-lg bg-gradient-to-br from-bloom-rose to-bloom-indigo text-white text-[13px] shadow-sm dark:shadow-[0_0_14px_-2px_rgba(217,70,239,0.6)]">
+            <span className="grid place-items-center w-8 h-8 rounded-lg bg-gradient-to-br from-bloom-rose to-bloom-indigo text-white text-[14px] shadow-sm dark:shadow-[0_0_14px_-2px_rgba(217,70,239,0.6)]">
               <Icon n="music" />
             </span>
             <span className="font-display font-bold text-[16px] text-dream-ink group-hover:text-bloom-indigo transition-colors hidden min-[380px]:block">
@@ -325,7 +325,7 @@ export default function App() {
             </span>
           </a>
 
-          <nav className="flex items-center gap-1 sm:gap-1.5 text-[13px] min-w-0 flex-1 sm:flex-none justify-end">
+          <nav className="flex items-center gap-1 sm:gap-1.5 text-[14px] min-w-0 flex-1 sm:flex-none justify-end">
             <div className="hidden sm:flex items-center gap-0.5">
               {PAGE_TABS.map(([p, label, icon]) => (
                 <button key={p} onClick={() => goPage(p)}
@@ -342,8 +342,8 @@ export default function App() {
             <button onClick={() => setPaletteOpen(true)} aria-label="快速搜尋"
               className="inline-flex items-center gap-2 h-9 flex-1 sm:flex-none px-3.5 sm:px-3.5 rounded-full border border-dream-line bg-white/60 text-dream-sub hover:text-dream-ink hover:border-bloom-sky hover:bg-white transition-colors dark:bg-white/[.06] dark:border-white/15 dark:hover:bg-white/10">
               <Icon n="magnifying-glass" className="text-[12px] shrink-0" />
-              <span className="sm:hidden truncate text-[13px]">搜尋聲優、樂團、活動</span>
-              <kbd className="hidden sm:inline text-[11px] text-dream-faint font-sans">⌘K</kbd>
+              <span className="sm:hidden truncate text-[14px]">搜尋聲優、樂團、活動</span>
+              <kbd className="hidden sm:inline text-[14px] text-dream-faint font-sans">⌘K</kbd>
             </button>
             <button onClick={toggleDark} aria-label="切換夜場模式" title={dark ? '切回淺色' : '夜場模式'} className="icon-btn">
               <Icon n={dark ? 'sun' : 'moon'} />

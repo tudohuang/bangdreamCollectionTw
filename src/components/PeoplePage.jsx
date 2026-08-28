@@ -104,7 +104,7 @@ export default function PeoplePage({ events, onSelect, sheetRoster = [] }) {
         <div>
           <div className="eyebrow"><Icon n="microphone" className="text-[10px]" /> Voice Actors</div>
           <h2 className="section-h mt-1.5">聲優目錄</h2>
-          <p className="mt-2 text-[13px] text-dream-sub">
+          <p className="mt-2 text-[14px] text-dream-sub">
             <span className="font-bold text-dream-ink">{people.length}</span> 位來過台灣 ·
             其中 <span className="font-bold text-dream-ink">{onceCount}</span> 位只來過一次
             {topPerson && <> · 最常來的是 <span className="font-bold text-dream-ink">{topPerson.name}</span>（{topPerson.count} 次）</>}
@@ -120,10 +120,10 @@ export default function PeoplePage({ events, onSelect, sheetRoster = [] }) {
       {/* 快要來的人：排在最前面，這頁才不只是回顧 */}
       {upcoming.length > 0 && (
         <div className="mb-8">
-          <h3 className="flex items-center gap-2 font-display font-bold text-[15px] text-dream-ink mb-3">
+          <h3 className="flex items-center gap-2 font-display font-bold text-[16px] text-dream-ink mb-3">
             <span className="w-1.5 h-4 rounded bg-bloom-indigo" />
             即將來台
-            <span className="text-[13px] font-normal text-dream-faint">{upcomingCount} 位</span>
+            <span className="text-[14px] font-normal text-dream-faint">{upcomingCount} 位</span>
           </h3>
           <ul className="space-y-2.5">
             {upcoming.map(({ event: e, names }) => {
@@ -133,22 +133,22 @@ export default function PeoplePage({ events, onSelect, sheetRoster = [] }) {
                 <li key={e.id}
                   className="rounded-2xl border border-dream-line dark:border-white/10 bg-white/70 dark:bg-white/[.06] px-4 py-3">
                   <div className="flex items-center gap-2.5 flex-wrap">
-                    <span className="shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-bold text-white"
+                    <span className="shrink-0 rounded-full px-2.5 py-0.5 text-[14px] font-bold text-white"
                       style={{ background: 'rgba(139,92,246,0.92)' }}>
                       {dleft <= 0 ? '就是這幾天' : `${dleft} 天後`}
                     </span>
-                    <span className="font-round font-bold text-[13px]" style={{ color: m.color }}>
+                    <span className="font-round font-bold text-[14px]" style={{ color: m.color }}>
                       {e.startDate.replace(/-/g, '.')}
                     </span>
                     <button onClick={() => onSelect?.(e.id)}
-                      className="min-w-0 flex-1 text-left font-display font-semibold text-[15px] text-dream-ink truncate hover:text-bloom-violet transition-colors">
+                      className="min-w-0 flex-1 text-left font-display font-semibold text-[16px] text-dream-ink truncate hover:text-bloom-violet transition-colors">
                       {e.title}
                     </button>
                   </div>
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {names.map(n => (
                       <a key={n} href={`#/person/${encodeURIComponent(n)}`}
-                        className="rounded-full border border-dream-line dark:border-white/10 px-2.5 py-0.5 text-[13px] text-dream-sub hover:text-dream-ink hover:border-bloom-violet transition-colors">
+                        className="rounded-full border border-dream-line dark:border-white/10 px-2.5 py-0.5 text-[14px] text-dream-sub hover:text-dream-ink hover:border-bloom-violet transition-colors">
                         {n}
                       </a>
                     ))}
@@ -162,20 +162,20 @@ export default function PeoplePage({ events, onSelect, sheetRoster = [] }) {
 
       {/* 排序 + 樂團快篩 */}
       <div className="mb-5 flex flex-wrap items-center gap-2">
-        <span className="text-[11px] font-bold text-dream-faint mr-0.5">排序</span>
+        <span className="text-[14px] font-bold text-dream-faint mr-0.5">排序</span>
         {ORDERS.map(([l, v]) => (
           <button key={v} onClick={() => setOrder(v)}
-            className={`pill !py-1 !px-3 !text-[13px] ${order === v ? 'pill-active' : ''}`}>{l}</button>
+            className={`pill !py-1 !px-3 !text-[14px] ${order === v ? 'pill-active' : ''}`}>{l}</button>
         ))}
         <span className="w-px h-5 bg-dream-line mx-1.5" />
         <button onClick={() => setBand('all')}
-          className={`pill !py-1 !px-3 !text-[13px] ${band === 'all' ? 'pill-active' : ''}`}>全部樂團</button>
+          className={`pill !py-1 !px-3 !text-[14px] ${band === 'all' ? 'pill-active' : ''}`}>全部樂團</button>
         {bands.map(b => {
           const m = bandMeta(b)
           const on = band === b
           return (
             <button key={b} onClick={() => setBand(on ? 'all' : b)}
-              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] font-medium transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[14px] font-medium transition-colors"
               style={on
                 ? { background: m.color, color: '#fff', border: `1px solid ${m.color}` }
                 : { background: `rgba(${m.glow},0.12)`, color: m.color, border: `1px solid rgba(${m.glow},0.28)` }}>
@@ -184,7 +184,7 @@ export default function PeoplePage({ events, onSelect, sheetRoster = [] }) {
           )
         })}
         {filtering && (
-          <span className="ml-auto text-[13px] text-dream-faint">符合 {shown.length} 位</span>
+          <span className="ml-auto text-[14px] text-dream-faint">符合 {shown.length} 位</span>
         )}
       </div>
 
@@ -202,14 +202,14 @@ export default function PeoplePage({ events, onSelect, sheetRoster = [] }) {
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="font-display font-bold text-[17px] text-dream-ink truncate group-hover:text-bloom-violet transition-colors">
+                    <span className="font-display font-bold text-[18px] text-dream-ink truncate group-hover:text-bloom-violet transition-colors">
                       {p.name}
                     </span>
                     {p.count >= 5 && (
-                      <span className="shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold text-white" style={{ background: m.color }}>常客</span>
+                      <span className="shrink-0 rounded-full px-2 py-0.5 text-[14px] font-bold text-white" style={{ background: m.color }}>常客</span>
                     )}
                   </div>
-                  <div className="mt-1 flex items-center gap-1.5 text-[13px] min-w-0">
+                  <div className="mt-1 flex items-center gap-1.5 text-[14px] min-w-0">
                     <span className="w-2 h-2 rounded-full shrink-0" style={{ background: m.color }} />
                     <span className="truncate" style={{ color: m.color }}>{mainBand || '—'}</span>
                     {info?.char && <span className="text-dream-faint truncate">／{info.char}</span>}
@@ -217,7 +217,7 @@ export default function PeoplePage({ events, onSelect, sheetRoster = [] }) {
                 </div>
                 <span className="text-right shrink-0">
                   <span className="block font-display font-extrabold text-[24px] leading-none" style={{ color: m.color }}>{p.count}</span>
-                  <span className="block text-[11px] text-dream-faint mt-0.5">{p.count === 1 ? '一期一會' : '次'}</span>
+                  <span className="block text-[14px] text-dream-faint mt-0.5">{p.count === 1 ? '一期一會' : '次'}</span>
                 </span>
               </div>
 
@@ -230,24 +230,24 @@ export default function PeoplePage({ events, onSelect, sheetRoster = [] }) {
               {/* 最近一場：每張卡都有自己的內容 */}
               {p.lastEvent && (
                 <div className="min-w-0">
-                  <div className="text-[11px] text-dream-faint">
+                  <div className="text-[14px] text-dream-faint">
                     最近 · {p.last.replace(/-/g, '.')}
                   </div>
-                  <div className="text-[13px] text-dream-sub line-clamp-2 leading-snug mt-0.5">
+                  <div className="text-[14px] text-dream-sub line-clamp-2 leading-snug mt-0.5">
                     {p.lastEvent.title}
                   </div>
                 </div>
               )}
 
               {dleft != null && (
-                <span className="inline-flex self-start items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold text-white"
+                <span className="inline-flex self-start items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[14px] font-bold text-white"
                   style={{ background: 'rgba(139,92,246,0.92)' }}>
                   <Icon n="calendar" className="text-[9px]" />
                   {dleft <= 0 ? '就是這幾天' : `${dleft} 天後再來`}
                 </span>
               )}
 
-              <div className="mt-auto pt-2.5 border-t border-dream-line text-[11px] text-dream-faint flex items-center justify-between gap-2">
+              <div className="mt-auto pt-2.5 border-t border-dream-line text-[14px] text-dream-faint flex items-center justify-between gap-2">
                 <span className="truncate">{p.first ? `${p.first.slice(0, 4)} 初登場` : '—'}</span>
                 <Icon n="chevron-right" className="text-[10px] shrink-0 group-hover:text-bloom-violet transition-colors" />
               </div>
@@ -257,7 +257,7 @@ export default function PeoplePage({ events, onSelect, sheetRoster = [] }) {
       </div>
 
       {shown.length === 0 && (
-        <div className="glass px-6 py-16 text-center text-dream-sub text-[15px]">
+        <div className="glass px-6 py-16 text-center text-dream-sub text-[16px]">
           找不到符合的聲優{q && <>「{q}」</>}
         </div>
       )}
@@ -266,7 +266,7 @@ export default function PeoplePage({ events, onSelect, sheetRoster = [] }) {
           免得上面篩了三個人、下面還列著四十個。 */}
       {!q && (
         <div className="mt-9">
-          <FirstsTable events={events} roster={roster} onSelect={onSelect} />
+          <FirstsTable events={events} onSelect={onSelect} />
         </div>
       )}
     </section>

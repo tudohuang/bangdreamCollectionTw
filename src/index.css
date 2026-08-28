@@ -193,7 +193,7 @@
   /* ---------- 按鈕 / 標籤 ---------- */
   .pill {
     /* shrink-0：篩選列在手機是橫滑的，pill 被壓縮就會擠成一團看不懂 */
-    @apply inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-150;
+    @apply inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[14px] font-medium transition-colors duration-150;
     background: #fff;
     border: 1px solid theme('colors.dream.line');
     color: theme('colors.dream.sub');
@@ -215,7 +215,7 @@
 
   /* 主要／次要按鈕 */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 h-11 text-[15px] font-bold text-white transition-all duration-150;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 h-11 text-[16px] font-bold text-white transition-all duration-150;
     background: linear-gradient(135deg, #ec4899, #8b5cf6);
     box-shadow: 0 10px 26px -10px rgba(217, 70, 239, 0.7);
   }
@@ -226,7 +226,7 @@
   }
   .btn-primary:active { transform: translateY(0); }
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 h-11 text-[15px] font-bold transition-colors duration-150;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 h-11 text-[16px] font-bold transition-colors duration-150;
     background: #fff;
     border: 1px solid theme('colors.dream.line');
     color: theme('colors.dream.sub');
@@ -254,7 +254,7 @@
   }
 
   .band-chip {
-    @apply inline-flex items-center gap-1.5 rounded-full pl-1.5 pr-3 py-1 text-[13px] font-medium;
+    @apply inline-flex items-center gap-1.5 rounded-full pl-1.5 pr-3 py-1 text-[14px] font-medium;
     background: rgba(var(--dot), 0.12);
     color: var(--dotText);
     border: 1px solid rgba(var(--dot), 0.28);
@@ -262,7 +262,7 @@
 
   /* 類別小標 */
   .badge {
-    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold;
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[12px] font-semibold;
   }
   .badge-core {
     background: linear-gradient(135deg, #ec4899, #8b5cf6);
@@ -280,7 +280,7 @@
 
   /* 區塊小標題 */
   .eyebrow {
-    @apply inline-flex items-center gap-1.5 text-[11px] font-bold text-dream-faint tracking-[0.18em] uppercase;
+    @apply inline-flex items-center gap-1.5 text-[12px] font-bold text-dream-faint tracking-[0.16em] uppercase;
   }
   /* 手機上這就是 iOS 的 large title：大、粗、貼齊左邊 */
   .section-h {
@@ -302,7 +302,7 @@
 
   /* 輸入框 */
   .dream-input {
-    @apply w-full rounded-xl px-4 py-2.5 text-[15px] text-dream-ink transition-colors;
+    @apply w-full rounded-xl px-4 py-2.5 text-[16px] text-dream-ink transition-colors;
     background: #fff;
     border: 1px solid theme('colors.dream.line');
   }
@@ -428,7 +428,7 @@
     z-index: 1;
     text-align: left;
     font-weight: 700;
-    font-size: 11px;
+    font-size: 13px;
     letter-spacing: 0.06em;
     padding: 8px 10px;
     color: rgb(var(--c-sub));
@@ -486,7 +486,7 @@
 
   /* 緊急小標：卡片、時間軸、月曆共用的那顆紅籤 */
   .urgent-badge {
-    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold text-white whitespace-nowrap;
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[12px] font-bold text-white whitespace-nowrap;
     background: rgb(var(--c-urgent));
     box-shadow: 0 0 0 2px rgba(var(--c-urgent), 0.22), 0 2px 8px -2px rgba(var(--c-urgent), 0.8);
     animation: urgentPulse 1.8s ease-in-out infinite;
@@ -521,7 +521,7 @@
 
   /* 緊急提示塊：詳情浮層 / 首頁票根上方那條說明 */
   .urgent-note {
-    @apply flex items-start gap-2.5 rounded-xl px-4 py-3 text-[13px];
+    @apply flex items-start gap-2.5 rounded-xl px-4 py-3 text-[14px];
     background: rgba(var(--c-urgent), 0.09);
     border: 1px solid rgba(var(--c-urgent), 0.35);
     color: rgb(var(--c-ink));
@@ -679,12 +679,12 @@
     margin-top: 1.5em;
     line-height: 1.4;
   }
-  .prose-note h3 { @apply text-[17px]; }
-  .prose-note h4 { @apply text-[15px]; }
+  .prose-note h3 { @apply text-[18px]; }
+  .prose-note h4 { @apply text-[16px]; }
   .prose-note h5 { @apply text-[14px]; }
   .prose-note strong { @apply font-semibold text-dream-ink; }
   .prose-note a { @apply text-bloom-indigo underline underline-offset-2 decoration-bloom-indigo/40 hover:decoration-bloom-indigo; }
-  .prose-note code { @apply font-mono text-[13px] px-1.5 py-0.5 rounded bg-dream-line/70 text-dream-ink dark:bg-white/10; }
+  .prose-note code { @apply font-mono text-[14px] px-1.5 py-0.5 rounded bg-dream-line/70 text-dream-ink dark:bg-white/10; }
   .prose-note blockquote {
     @apply pl-4 border-l-2 border-dream-line text-dream-faint italic dark:border-white/15;
   }

@@ -73,7 +73,7 @@ export default function LifeTimeline({ list, color, glow, onSelect }) {
 
   return (
     <div className="mt-7">
-      <div className="flex items-center justify-between text-[11px] font-bold text-dream-faint mb-3">
+      <div className="flex items-center justify-between text-[14px] font-bold text-dream-faint mb-3">
         <span>來台時間軸</span>
         <span className="font-normal">{t.firstYear}–{t.lastYear}</span>
       </div>
@@ -119,13 +119,13 @@ export default function LifeTimeline({ list, color, glow, onSelect }) {
         {/* 年份文字 */}
         {t.years.map(({ y, left }, i) => (
           (t.years.length <= 10 || i % 2 === 0) && (
-            <span key={y} className="absolute top-[46px] -translate-x-1/2 text-[10.5px] text-dream-faint tabular-nums"
+            <span key={y} className="absolute top-[46px] -translate-x-1/2 text-[14px] text-dream-faint tabular-nums"
               style={{ left: `${left}%` }}>{y}</span>
           )
         ))}
       </div>
 
-      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-dream-sub">
+      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[14px] text-dream-sub">
         <span className="inline-flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded-full" style={{ background: color }} /> 本體
         </span>
@@ -138,13 +138,13 @@ export default function LifeTimeline({ list, color, glow, onSelect }) {
       <dl className="mt-4 grid grid-cols-3 sm:grid-cols-6 gap-px rounded-xl overflow-hidden bg-dream-line dark:bg-white/10">
         {stats.map(([k, v]) => (
           <div key={k} className="bg-white px-2 py-2.5 text-center dark:bg-white/[.04]">
-            <dd className="font-round font-bold text-[15px] text-dream-ink tabular-nums">{v}</dd>
-            <dt className="text-[10.5px] text-dream-faint mt-0.5">{k}</dt>
+            <dd className="font-round font-bold text-[16px] text-dream-ink tabular-nums">{v}</dd>
+            <dt className="text-[14px] text-dream-faint mt-0.5">{k}</dt>
           </div>
         ))}
       </dl>
 
-      <p className="mt-2.5 text-[12px] text-dream-faint flex items-start gap-1.5">
+      <p className="mt-2.5 text-[14px] text-dream-faint flex items-start gap-1.5">
         <Icon n="calendar" className="text-[10px] mt-1" />
         第一場 {formatMonthDay(t.first.startDate)}「{t.first.title}」
       </p>

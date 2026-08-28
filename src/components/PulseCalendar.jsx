@@ -60,7 +60,7 @@ export default function PulseCalendar({ months, pulse, events, roster, onSelectE
           aria-label="上個月" className="icon-btn disabled:opacity-30 disabled:pointer-events-none">
           <Icon n="chevron-left" />
         </button>
-        <span className="font-display font-bold text-[17px] text-dream-ink w-[124px] text-center">
+        <span className="font-display font-bold text-[18px] text-dream-ink w-[124px] text-center">
           {ym.slice(0, 4)} 年 {Number(ym.slice(5))} 月
         </span>
         <button onClick={() => setYm(months[i + 1])} disabled={i >= months.length - 1}
@@ -71,7 +71,7 @@ export default function PulseCalendar({ months, pulse, events, roster, onSelectE
         <div className="flex gap-1.5 overflow-x-auto scrollbar-none ml-1">
           {months.map(m => (
             <button key={m} onClick={() => { setYm(m); setDay(null) }}
-              className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-round font-bold transition-colors ${
+              className={`shrink-0 rounded-full px-2.5 py-1 text-[14px] font-round font-bold transition-colors ${
                 m === ym
                   ? 'bg-bloom-indigo text-white'
                   : 'text-dream-faint hover:text-dream-ink hover:bg-dream-line/60 dark:hover:bg-white/10'}`}>
@@ -86,7 +86,7 @@ export default function PulseCalendar({ months, pulse, events, roster, onSelectE
         <div className="glass p-3 sm:p-4">
           <div className="grid grid-cols-7 mb-1">
             {WEEK.map((w, wi) => (
-              <div key={w} className={`text-center text-[11px] font-bold pb-1.5 ${
+              <div key={w} className={`text-center text-[14px] font-bold pb-1.5 ${
                 wi === 0 || wi === 6 ? 'text-bloom-rose/70' : 'text-dream-faint'}`}>{w}</div>
             ))}
           </div>
@@ -111,12 +111,12 @@ export default function PulseCalendar({ months, pulse, events, roster, onSelectE
                       } ${on ? 'border-dream-ink ring-1 ring-dream-ink' : 'border-dream-line dark:border-white/10'} ${
                         tw ? 'bg-[rgba(var(--c-urgent),0.07)]' : ''}`}
                     >
-                      <span className={`inline-grid place-items-center w-5 h-5 rounded-full font-round text-[11px] font-bold ${
+                      <span className={`inline-grid place-items-center w-5 h-5 rounded-full font-round text-[14px] font-bold ${
                         isToday ? 'bg-bloom-indigo text-white' : 'text-dream-sub'}`}>
                         {Number(date.slice(8))}
                       </span>
                       {tw && (
-                        <span className="absolute right-1.5 top-1.5 rounded-full px-1.5 text-[9px] font-bold text-white"
+                        <span className="absolute right-1.5 top-1.5 rounded-full px-1.5 text-[14px] font-bold text-white"
                           style={{ background: 'rgb(var(--c-urgent))' }}>台</span>
                       )}
                       <span className="mt-1 flex flex-wrap gap-[3px]">
@@ -125,7 +125,7 @@ export default function PulseCalendar({ months, pulse, events, roster, onSelectE
                             style={{ background: colorOf(it.name) }} />
                         ))}
                         {jp.length > 6 && (
-                          <span className="text-[9px] font-round text-dream-faint leading-none">+{jp.length - 6}</span>
+                          <span className="text-[14px] font-round text-dream-faint leading-none">+{jp.length - 6}</span>
                         )}
                       </span>
                     </button>
@@ -137,12 +137,12 @@ export default function PulseCalendar({ months, pulse, events, roster, onSelectE
 
           {day && (
             <div className="mt-3 pt-3 border-t border-dashed border-dream-line dark:border-white/10">
-              <div className="text-[12px] font-bold text-dream-ink mb-2">
+              <div className="text-[14px] font-bold text-dream-ink mb-2">
                 {Number(day.slice(5, 7))} / {Number(day.slice(8))} · {dayItems.length} 筆
               </div>
               <ul className="flex flex-col gap-1.5">
                 {dayItems.map((it, k) => (
-                  <li key={k} className="flex items-start gap-2 text-[13px]">
+                  <li key={k} className="flex items-start gap-2 text-[14px]">
                     <span className="shrink-0 w-1.5 h-1.5 rounded-full mt-[7px]"
                       style={{ background: it.where === 'tw' ? 'rgb(var(--c-urgent))' : colorOf(it.name) }} />
                     <span className="min-w-0">
@@ -156,7 +156,7 @@ export default function PulseCalendar({ months, pulse, events, roster, onSelectE
                       ) : (
                         <span className="text-dream-sub">{it.title}</span>
                       )}
-                      {it.place && <span className="text-[11px] text-dream-faint ml-1.5">{it.place}</span>}
+                      {it.place && <span className="text-[14px] text-dream-faint ml-1.5">{it.place}</span>}
                     </span>
                   </li>
                 ))}
@@ -168,31 +168,31 @@ export default function PulseCalendar({ months, pulse, events, roster, onSelectE
         {/* 當月忙碌程度 */}
         <div className="glass p-4 flex flex-col gap-3">
           <div>
-            <div className="font-display font-bold text-[15px] text-dream-ink">
+            <div className="font-display font-bold text-[16px] text-dream-ink">
               {Number(ym.slice(5))} 月沒空的人
             </div>
-            <p className="text-[11px] text-dream-faint mt-0.5">
+            <p className="text-[14px] text-dream-faint mt-0.5">
               依日本行程數排，排滿的人這個月大概走不開
             </p>
           </div>
 
           {busy.length === 0 ? (
-            <p className="text-[13px] text-dream-faint">這個月還沒有任何行程紀錄。</p>
+            <p className="text-[14px] text-dream-faint">這個月還沒有任何行程紀錄。</p>
           ) : (
             <ul className="flex flex-col gap-2">
               {busy.map(b => (
-                <li key={b.name} className="flex items-center gap-2.5 text-[13px]">
+                <li key={b.name} className="flex items-center gap-2.5 text-[14px]">
                   <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: colorOf(b.name) }} />
                   <span className="min-w-0 flex-1 truncate text-dream-ink">{b.name}</span>
                   {/* 只有團體行程的人標一下，才知道這個「沒空」是跟著團走的 */}
                   {b.own === 0 && b.viaBand > 0 && (
-                    <span className="shrink-0 rounded-full bg-dream-line/70 dark:bg-white/10 px-1.5 text-[10px] text-dream-faint">團</span>
+                    <span className="shrink-0 rounded-full bg-dream-line/70 dark:bg-white/10 px-1.5 text-[14px] text-dream-faint">團</span>
                   )}
-                  <span className="shrink-0 text-[11px] text-dream-faint font-round">
+                  <span className="shrink-0 text-[14px] text-dream-faint font-round">
                     {b.first.slice(5).replace('-', '/')}
                     {b.last !== b.first && `–${b.last.slice(8)}`}
                   </span>
-                  <span className="shrink-0 font-display font-bold text-[13px]" style={{ color: colorOf(b.name) }}>
+                  <span className="shrink-0 font-display font-bold text-[14px]" style={{ color: colorOf(b.name) }}>
                     {b.count}
                   </span>
                 </li>
@@ -202,13 +202,13 @@ export default function PulseCalendar({ months, pulse, events, roster, onSelectE
 
           {free.length > 0 && (
             <div className="pt-3 border-t border-dashed border-dream-line dark:border-white/10">
-              <div className="text-[11px] font-bold text-dream-faint mb-2">
+              <div className="text-[14px] font-bold text-dream-faint mb-2">
                 本月沒有行程紀錄（{free.length} 位）
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {free.map(r => (
                   <span key={r.name}
-                    className="rounded-full border border-dream-line dark:border-white/10 px-2 py-0.5 text-[11px] text-dream-sub">
+                    className="rounded-full border border-dream-line dark:border-white/10 px-2 py-0.5 text-[14px] text-dream-sub">
                     {r.name}
                   </span>
                 ))}

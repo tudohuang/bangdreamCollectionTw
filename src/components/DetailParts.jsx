@@ -8,7 +8,7 @@ import Img from './Img.jsx'
 // 照片出處：網址就做成可點的連結，回得去原始出處
 export function PhotoCredit({ credit, color }) {
   return (
-    <div className="mt-3 flex items-start gap-2 text-[13px] text-dream-faint">
+    <div className="mt-3 flex items-start gap-2 text-[14px] text-dream-faint">
       <Icon n="images" className="text-[10px] mt-1 shrink-0" style={{ color }} />
       <span className="min-w-0">
         <span className="font-semibold">{credit.label}：</span>
@@ -52,7 +52,7 @@ export function Stat({ value, label, meta }) {
         }}>
         {value}
       </div>
-      <div className="mt-2 pt-2 border-t text-[11px] leading-snug text-dream-sub"
+      <div className="mt-2 pt-2 border-t text-[14px] leading-snug text-dream-sub"
         style={{ borderColor: `rgba(${meta.glow},0.28)` }}>{label}</div>
     </div>
   )
@@ -65,12 +65,12 @@ export function NeighborBtn({ side, item, color, onNavigate }) {
   return (
     <button onClick={() => onNavigate(item.id)}
       className={`min-w-0 rounded-xl border border-dream-line dark:border-white/10 px-3 py-2.5 hover:border-bloom-violet transition-colors ${next ? 'text-right' : 'text-left'}`}>
-      <div className={`flex items-center gap-1.5 text-[11px] text-dream-faint mb-1 ${next ? 'justify-end' : ''}`}>
+      <div className={`flex items-center gap-1.5 text-[14px] text-dream-faint mb-1 ${next ? 'justify-end' : ''}`}>
         {!next && <Icon n="chevron-left" className="text-[9px]" />}
         {next ? '下一場' : '前一場'}
         {next && <Icon n="chevron-right" className="text-[9px]" />}
       </div>
-      <div className="truncate text-[13px] text-dream-ink">
+      <div className="truncate text-[14px] text-dream-ink">
         <span className="font-round font-bold mr-1.5" style={{ color }}>#{String(item.number ?? 0).padStart(3, '0')}</span>
         {item.title}
       </div>
@@ -98,10 +98,10 @@ export function RelatedStrip({ items, color, onNavigate }) {
                   </span>}
             </span>
             <span className="block px-2.5 py-2">
-              <span className="block text-[11px] font-round font-bold" style={{ color }}>
+              <span className="block text-[14px] font-round font-bold" style={{ color }}>
                 {o.startDate ? o.startDate.replace(/-/g, '.') : `${o.year || ''}`}
               </span>
-              <span className="block text-[13px] text-dream-ink leading-snug line-clamp-2 mt-0.5">{o.title}</span>
+              <span className="block text-[14px] text-dream-ink leading-snug line-clamp-2 mt-0.5">{o.title}</span>
             </span>
           </button>
         )
@@ -116,7 +116,7 @@ export function RelatedList({ items, color, onNavigate }) {
     <ul className="space-y-1.5">
       {items.map(o => (
         <li key={o.id}>
-          <button onClick={() => onNavigate(o.id)} className="w-full text-left flex items-center gap-2 text-[13px] text-dream-sub hover:text-dream-ink py-1">
+          <button onClick={() => onNavigate(o.id)} className="w-full text-left flex items-center gap-2 text-[14px] text-dream-sub hover:text-dream-ink py-1">
             <span className="font-round font-bold shrink-0" style={{ color }}>#{String(o.number).padStart(3, '0')}</span>
             <span className="text-dream-faint shrink-0">{o.year}</span>
             <span className="truncate">{o.title}</span>
@@ -130,7 +130,7 @@ export function RelatedList({ items, color, onNavigate }) {
 export function Section({ title, color, children }) {
   return (
     <section className="mt-6">
-      <h3 className="flex items-center gap-2 font-display font-bold text-[15px] text-dream-ink mb-2">
+      <h3 className="flex items-center gap-2 font-display font-bold text-[16px] text-dream-ink mb-2">
         <span className="w-1.5 h-4 rounded" style={{ background: color }} />{title}
       </h3>
       {children}

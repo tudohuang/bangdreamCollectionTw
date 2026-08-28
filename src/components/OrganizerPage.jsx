@@ -30,14 +30,14 @@ export default function OrganizerPage({ value, events, onSelect, onClose }) {
     <section>
       {/* 同上：手機用 App Bar 的返回 */}
       <button onClick={onClose}
-        className="hidden sm:inline-flex items-center gap-1.5 text-[13px] text-dream-sub hover:text-dream-ink transition-colors">
+        className="hidden sm:inline-flex items-center gap-1.5 text-[14px] text-dream-sub hover:text-dream-ink transition-colors">
         <Icon n="chevron-left" className="text-[11px]" /> 回上一頁
       </button>
 
       <div className="mt-4">
         <div className="eyebrow"><Icon n="users" className="text-[10px]" /> Organizer</div>
         <h2 className="section-h mt-1.5">{p.name}</h2>
-        <p className="mt-2 text-[13.5px] text-dream-sub">
+        <p className="mt-2 text-[14px] text-dream-sub">
           {p.firstYear === p.lastYear ? `${p.firstYear} 年` : `${p.firstYear}–${p.lastYear}`}
           ，主辦或協辦 {p.count} 筆收錄活動。
         </p>
@@ -47,17 +47,17 @@ export default function OrganizerPage({ value, events, onSelect, onClose }) {
         {stats.map(([k, v]) => (
           <div key={k} className="bg-white px-3 py-3.5 text-center dark:bg-white/[.04]">
             <dd className="font-display font-bold text-[20px] text-dream-ink tabular-nums leading-none">{v}</dd>
-            <dt className="text-[11px] text-dream-faint mt-1.5">{k}</dt>
+            <dt className="text-[14px] text-dream-faint mt-1.5">{k}</dt>
           </div>
         ))}
       </dl>
 
       <div className="mt-6 grid lg:grid-cols-2 gap-5">
         <div className="glass p-6">
-          <h3 className="font-display font-bold text-[15px] text-dream-ink mb-4">年份分布</h3>
+          <h3 className="font-display font-bold text-[16px] text-dream-ink mb-4">年份分布</h3>
           <div className="space-y-2">
             {p.byYear.map(([year, n]) => (
-              <div key={year} className="flex items-center gap-3 text-[13px]">
+              <div key={year} className="flex items-center gap-3 text-[14px]">
                 <span className="w-10 shrink-0 text-dream-faint tabular-nums">{year}</span>
                 <span className="flex-1 h-2.5 rounded-full bg-dream-line dark:bg-white/10 overflow-hidden">
                   <span className="block h-full rounded-full bg-gradient-to-r from-bloom-sky to-bloom-indigo"
@@ -78,7 +78,7 @@ export default function OrganizerPage({ value, events, onSelect, onClose }) {
 
       {p.people.length > 0 && (
         <div className="mt-5 glass p-6">
-          <h3 className="font-display font-bold text-[15px] text-dream-ink mb-3.5">合作藝人</h3>
+          <h3 className="font-display font-bold text-[16px] text-dream-ink mb-3.5">合作藝人</h3>
           <div className="flex flex-wrap gap-2">
             {p.people.slice(0, 24).map(([name, n]) => (
               <a key={name} href={`#/person/${encodeURIComponent(name)}`} className="pill">
@@ -100,16 +100,16 @@ export default function OrganizerPage({ value, events, onSelect, onClose }) {
                   className="event-card group w-full flex items-center gap-3 p-3.5 text-left"
                   style={{ '--band': m.glow }}>
                   <span className="shrink-0 w-16 text-center">
-                    <span className="block font-round font-bold text-[13px]" style={{ color: m.color }}>{e.year}</span>
-                    <span className="block text-[11px] text-dream-faint">
+                    <span className="block font-round font-bold text-[14px]" style={{ color: m.color }}>{e.year}</span>
+                    <span className="block text-[14px] text-dream-faint">
                       {e.startDate ? formatMonthDay(e.startDate).replace(/^\d{4}\./, '') : '未定'}
                     </span>
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block font-display font-semibold text-[15px] text-dream-ink line-clamp-1 group-hover:text-bloom-violet transition-colors">
+                    <span className="block font-display font-semibold text-[16px] text-dream-ink line-clamp-1 group-hover:text-bloom-violet transition-colors">
                       {e.title}
                     </span>
-                    <span className="flex items-center gap-1.5 text-[13px] text-dream-sub">
+                    <span className="flex items-center gap-1.5 text-[14px] text-dream-sub">
                       <Icon n={isPersonal(e) ? 'user' : m.icon} className="text-[9px]" style={{ color: m.color }} />
                       {isPersonal(e) ? '個人' : m.name}
                       {e.venue && <span className="text-dream-faint truncate hidden sm:inline">· {e.venue}</span>}
@@ -130,7 +130,7 @@ function Chips({ title, items }) {
   if (!items.length) return null
   return (
     <div>
-      <div className="text-[11px] font-bold text-dream-faint mb-2">{title}</div>
+      <div className="text-[14px] font-bold text-dream-faint mb-2">{title}</div>
       <div className="flex flex-wrap gap-2">
         {items.map(([name, n]) => (
           <span key={name} className="pill">{name} <span className="text-dream-faint">×{n}</span></span>

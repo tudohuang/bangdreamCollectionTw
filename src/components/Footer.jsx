@@ -22,11 +22,11 @@ export default function Footer({ source = 'bundled', updatedAt, onRetry }) {
             <div className="hidden sm:flex items-center gap-3">
               <span className="grid place-items-center w-9 h-9 rounded-lg bg-gradient-to-br from-bloom-rose to-bloom-indigo text-white text-[14px] shadow-sm dark:shadow-[0_0_14px_-2px_rgba(217,70,239,0.6)]"><Icon n="music" /></span>
               <div>
-                <div className="font-display font-bold text-[15px] text-dream-ink">邦邦來台圖鑑</div>
-                <div className="text-[11px] text-dream-faint">Taiwan BanG Dream! Collection</div>
+                <div className="font-display font-bold text-[16px] text-dream-ink">邦邦來台圖鑑</div>
+                <div className="text-[14px] text-dream-faint">Taiwan BanG Dream! Collection</div>
               </div>
             </div>
-            <nav className="hidden sm:flex items-center gap-1 text-[13px] text-dream-sub">
+            <nav className="hidden sm:flex items-center gap-1 text-[14px] text-dream-sub">
               {NAV.map(([href, label]) => (
                 <a key={href} href={href}
                   className="rounded-full px-3 py-1.5 hover:text-dream-ink hover:bg-dream-line/60 transition-colors dark:hover:bg-white/10">
@@ -35,17 +35,17 @@ export default function Footer({ source = 'bundled', updatedAt, onRetry }) {
               ))}
               {REPORT_URL && (
                 <a href={REPORT_URL} target="_blank" rel="noopener noreferrer"
-                  className="ml-1 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-bold text-bloom-indigo bg-bloom-indigo/10 hover:bg-bloom-indigo hover:text-white transition-colors">
+                  className="ml-1 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[14px] font-bold text-bloom-indigo bg-bloom-indigo/10 hover:bg-bloom-indigo hover:text-white transition-colors">
                   <Icon n="heart" className="text-[10px]" /> 資料回報
                 </a>
               )}
             </nav>
           </div>
 
-          <div className="mt-5 pt-4 border-t border-dream-line/70 dark:border-white/10 flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between text-[13px] text-dream-faint">
+          <div className="mt-5 pt-4 border-t border-dream-line/70 dark:border-white/10 flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between text-[14px] text-dream-faint">
             <span>
               看到錯漏跟我們說一聲 Threads:tsty1215.bdforever
-              <span className="font-hand text-[13px] ml-2 text-dream-faint">（手動更新）</span>
+              <span className="font-hand text-[14px] ml-2 text-dream-faint">（手動更新）</span>
             </span>
             {txt && (
               <span>

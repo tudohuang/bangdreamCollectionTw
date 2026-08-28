@@ -15,7 +15,7 @@ export default function EmptyResult({ onReset, suggestions = [], onSelect, searc
       <div className="font-display font-bold text-xl text-dream-ink">
         {search ? <>找不到「{search}」</> : '沒有符合的條目'}
       </div>
-      <div className="text-[13px] text-dream-sub mt-2">
+      <div className="text-[14px] text-dream-sub mt-2">
         {search ? '換個關鍵字，或放寬一點篩選條件試試' : '放寬一點篩選條件試試'}
       </div>
       {onReset && (
@@ -45,10 +45,10 @@ export default function EmptyResult({ onReset, suggestions = [], onSelect, searc
                           </span>}
                     </span>
                     <span className="block px-3 py-2.5">
-                      <span className="block text-[11px] font-round font-bold" style={{ color: m.color }}>
+                      <span className="block text-[14px] font-round font-bold" style={{ color: m.color }}>
                         {e.startDate ? e.startDate.replace(/-/g, '.') : '日期未定'}
                       </span>
-                      <span className="block text-[13px] text-dream-ink line-clamp-2 leading-snug mt-0.5">{e.title}</span>
+                      <span className="block text-[14px] text-dream-ink line-clamp-2 leading-snug mt-0.5">{e.title}</span>
                     </span>
                   </button>
                 </li>

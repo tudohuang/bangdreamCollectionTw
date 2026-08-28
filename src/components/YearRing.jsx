@@ -30,8 +30,8 @@ export default function YearRing({ events, onSelect }) {
 
   return (
     <div className="glass p-6">
-      <h3 className="font-display font-bold text-[15px] text-dream-ink">一年裡的邦邦</h3>
-      <p className="mt-1 text-[13px] text-dream-sub">
+      <h3 className="font-display font-bold text-[16px] text-dream-ink">一年裡的邦邦</h3>
+      <p className="mt-1 text-[14px] text-dream-sub">
         {events.length} 筆全部疊在同一年上。有活動的只有 {activeDays} 天，
         最密的是 <strong className="text-dream-ink">{peakMonth} 月</strong>（{totals[peakMonth]} 場）。
       </p>
@@ -74,7 +74,7 @@ export default function YearRing({ events, onSelect }) {
             return (
               <text key={i} x={x} y={y} textAnchor="middle" dominantBaseline="middle"
                 className={hot ? 'fill-bloom-violet font-bold' : 'fill-current text-dream-faint'}
-                style={{ fontSize: 11 }}>
+                style={{ fontSize: 13 }}>
                 {i + 1}
               </text>
             )
@@ -86,14 +86,14 @@ export default function YearRing({ events, onSelect }) {
             {hover ? labelOfDay(hover) : `${activeDays} 天`}
           </text>
           <text x={CX} y={CY + 12} textAnchor="middle" className="fill-current text-dream-faint"
-            style={{ fontSize: 11 }}>
+            style={{ fontSize: 13 }}>
             {hover ? `${shown.length} 場` : '有活動'}
           </text>
         </svg>
 
         {/* 滑到的那天有哪些場次。沒滑的時候列最密的那個月，畫面才不會空著 */}
         <div className="min-w-0 flex-1 w-full">
-          <div className="text-[11px] font-bold text-dream-faint mb-2">
+          <div className="text-[14px] font-bold text-dream-faint mb-2">
             {hover ? labelOfDay(hover) : `${peakMonth} 月的場次`}
           </div>
           <ul className="space-y-1.5">
@@ -103,7 +103,7 @@ export default function YearRing({ events, onSelect }) {
             ).slice(0, 8).map(e => (
               <li key={e.id}>
                 <button onClick={() => onSelect(e.id)}
-                  className="w-full text-left flex items-center gap-2 text-[13px] text-dream-sub hover:text-dream-ink py-0.5">
+                  className="w-full text-left flex items-center gap-2 text-[14px] text-dream-sub hover:text-dream-ink py-0.5">
                   <span className="font-round font-bold shrink-0 tabular-nums"
                     style={{ color: primaryMeta(e).color }}>{e.year}</span>
                   <span className="truncate">{e.title}</span>

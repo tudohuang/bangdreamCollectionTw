@@ -42,7 +42,7 @@ export default function CollectionStrip({ chrono, isOn, onNavigate, tall = 40, s
           <span key={m.year} className="absolute top-0 flex flex-col items-start"
             style={{ left: `${(m.i / chrono.length) * 100}%` }}>
             <span aria-hidden className="w-px h-1.5 bg-dream-line dark:bg-white/15" />
-            <span className="text-[9.5px] font-round font-bold text-dream-faint -ml-1 mt-0.5">{m.year}</span>
+            <span className="text-[14px] font-round font-bold text-dream-faint -ml-1 mt-0.5">{m.year}</span>
           </span>
         ))}
       </div>

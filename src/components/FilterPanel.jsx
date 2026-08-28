@@ -71,8 +71,8 @@ export default function FilterPanel({ events, filters, onChange, onReset, result
         <div>
           <div className="eyebrow"><Icon n="grid" className="text-[10px]" /> Collection</div>
           <h2 className="font-display font-bold text-[26px] text-dream-ink leading-tight mt-1.5">活動圖鑑</h2>
-          <div className="mt-1.5 text-[13px] text-dream-faint" aria-live="polite">
-            <span className="font-display font-bold text-[17px] text-bloom-indigo">{resultCount}</span> 筆結果
+          <div className="mt-1.5 text-[14px] text-dream-faint" aria-live="polite">
+            <span className="font-display font-bold text-[18px] text-bloom-indigo">{resultCount}</span> 筆結果
           </div>
         </div>
 
@@ -90,7 +90,7 @@ export default function FilterPanel({ events, filters, onChange, onReset, result
           <QuickPills filters={filters} onChange={onChange} advCount={advCount} onOpenSheet={openSheet} onExportIcs={onExportIcs} hasUrgent={hasUrgent} />
         </div>
 
-        <label className="flex items-center gap-2 text-[11px] text-dream-faint">
+        <label className="flex items-center gap-2 text-[14px] text-dream-faint">
           排序
           <SortSelect filters={filters} onChange={onChange} className="flex-1" />
         </label>
@@ -115,7 +115,7 @@ export default function FilterPanel({ events, filters, onChange, onReset, result
         </div>
         <div className="text-right shrink-0" aria-live="polite">
           <div className="font-display text-2xl font-bold text-bloom-indigo leading-none">{resultCount}</div>
-          <div className="text-[11px] text-dream-faint mt-1">筆結果</div>
+          <div className="text-[14px] text-dream-faint mt-1">筆結果</div>
         </div>
       </div>
 
@@ -138,14 +138,14 @@ export default function FilterPanel({ events, filters, onChange, onReset, result
           </div>
           <button onClick={openSheet}
             aria-label={mobileCount ? `篩選，目前 ${mobileCount} 個條件` : '篩選'}
-            className={`shrink-0 inline-flex items-center gap-1.5 h-10 px-3.5 rounded-full text-[13px] font-medium transition-colors ${
+            className={`shrink-0 inline-flex items-center gap-1.5 h-10 px-3.5 rounded-full text-[14px] font-medium transition-colors ${
               mobileCount
                 ? 'bg-bloom-indigo text-white'
                 : 'border border-dream-line text-dream-sub dark:border-white/15'}`}>
             <Icon n="sliders" className="text-[12px]" />
             篩選
             {mobileCount > 0 && (
-              <span className="grid place-items-center min-w-[18px] h-[18px] px-1 rounded-full bg-white/25 text-[11px] font-bold tabular-nums">
+              <span className="grid place-items-center min-w-[18px] h-[18px] px-1 rounded-full bg-white/25 text-[14px] font-bold tabular-nums">
                 {mobileCount}
               </span>
             )}
@@ -158,7 +158,7 @@ export default function FilterPanel({ events, filters, onChange, onReset, result
           <span className="shrink-0 w-px h-5 bg-dream-line mx-1" />
           <QuickPills filters={filters} onChange={onChange} advCount={advCount} onOpenSheet={openSheet} onExportIcs={onExportIcs} hasUrgent={hasUrgent} />
           <span className="shrink-0 sm:ml-auto flex items-center gap-2">
-            <span className="hidden sm:inline text-[11px] text-dream-faint">排序</span>
+            <span className="hidden sm:inline text-[14px] text-dream-faint">排序</span>
             <SortSelect filters={filters} onChange={onChange} />
           </span>
         </div>
@@ -199,7 +199,7 @@ function SearchBox({ filters, onChange, resultCount, compact }) {
       />
       {has && (
         <span className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-          <span aria-live="polite" className="text-[12px] font-medium text-dream-faint tabular-nums">
+          <span aria-live="polite" className="text-[14px] font-medium text-dream-faint tabular-nums">
             {resultCount} 筆
           </span>
           <button type="button" onClick={() => onChange({ search: '' })} aria-label="清除搜尋"
@@ -254,7 +254,7 @@ function QuickPills({ filters, onChange, advCount, onOpenSheet, onExportIcs, has
 function SortSelect({ filters, onChange, className = '' }) {
   return (
     <select
-      className={`rounded-md border border-dream-line bg-white text-[13px] text-dream-ink px-2 py-1.5 dark:bg-white/5 ${className}`}
+      className={`rounded-md border border-dream-line bg-white text-[14px] text-dream-ink px-2 py-1.5 dark:bg-white/5 ${className}`}
       value={filters.order} onChange={(e) => onChange({ order: e.target.value })}
     >
       {ORDERS.map(([l, v]) => <option key={v} value={v}>{l}</option>)}
@@ -265,7 +265,7 @@ function SortSelect({ filters, onChange, className = '' }) {
 function AppliedChips({ chips, filters, onChange, onReset }) {
   return (
     <>
-      <span className="text-[11px] text-dream-faint self-center">已套用：</span>
+      <span className="text-[14px] text-dream-faint self-center">已套用：</span>
       {chips.map(c => (
         <button key={c.key + c.val} className="pill !text-bloom-indigo"
           onClick={() => onChange(removeChipPatch(filters, c))}>
@@ -361,7 +361,7 @@ function FilterSheet({ events, filters, onChange, onClose, onReset, resultCount 
             <Icon n="sliders" className="text-bloom-indigo text-[13px]" /> 篩選
           </h3>
           <div className="flex items-center gap-2">
-            <button className="text-[13px] text-dream-faint hover:text-bloom-rose" onClick={onReset}>重設</button>
+            <button className="text-[14px] text-dream-faint hover:text-bloom-rose" onClick={onReset}>重設</button>
             <button className="icon-btn" onClick={onClose} aria-label="關閉"><Icon n="xmark" /></button>
           </div>
         </div>
@@ -451,7 +451,7 @@ function FilterSheet({ events, filters, onChange, onClose, onReset, resultCount 
 function Row({ label, children }) {
   return (
     <div>
-      <div className="text-[11px] font-bold text-dream-faint mb-2">{label}</div>
+      <div className="text-[14px] font-bold text-dream-faint mb-2">{label}</div>
       <div>{children}</div>
     </div>
   )
@@ -481,7 +481,7 @@ function ChipGroup({ options, value, onChange, values, onToggle, colored, single
         <input
           type="search" value={q} onChange={(e) => setQ(e.target.value)}
           placeholder={`在 ${options.length} 個選項中找…`}
-          className="dream-input !py-1.5 !text-[13px] mb-2.5"
+          className="dream-input !py-1.5 !text-[14px] mb-2.5"
         />
       )}
       <div className="flex flex-wrap gap-2">
@@ -505,7 +505,7 @@ function ChipGroup({ options, value, onChange, values, onToggle, colored, single
           <button className="pill !text-dream-faint" onClick={() => setOpen(false)}>收合</button>
         )}
         {q && shown.length === 0 && (
-          <span className="text-[13px] text-dream-faint py-1.5">找不到「{q}」</span>
+          <span className="text-[14px] text-dream-faint py-1.5">找不到「{q}」</span>
         )}
       </div>
     </div>
@@ -517,7 +517,7 @@ function Segmented({ value, onChange, options, full }) {
     <div className={`flex shrink-0 p-1 rounded-full bg-white border border-dream-line overflow-x-auto scrollbar-none max-w-full dark:bg-white/[.06] dark:border-white/15 ${full ? 'w-full' : ''}`}>
       {options.map(([l, v, icon]) => (
         <button key={v}
-          className={`${full ? 'flex-1 justify-center' : 'shrink-0'} whitespace-nowrap inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-medium transition-colors ${
+          className={`${full ? 'flex-1 justify-center' : 'shrink-0'} whitespace-nowrap inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[14px] font-medium transition-colors ${
             value === v
               ? 'bg-bloom-indigo text-white shadow-sm'
               : 'text-dream-sub hover:text-dream-ink hover:bg-dream-line/50 dark:hover:bg-white/10'}`}

@@ -16,7 +16,7 @@ function StickyNote({ text }) {
       <span aria-hidden
         className="absolute -top-2.5 left-1/2 -translate-x-1/2 rotate-3 w-16 h-4 bg-white/60 border border-black/[.06] shadow-sm" />
       <div className="bg-[#fff8c4] dark:bg-[#4a4420] px-4 py-3 shadow-[0_6px_16px_-6px_rgba(120,80,20,0.35)] rounded-[3px]">
-        <p className="font-hand text-[15px] leading-6 text-[#5b4a12] dark:text-[#f0e6b0]">{text}</p>
+        <p className="font-hand text-[16px] leading-6 text-[#5b4a12] dark:text-[#f0e6b0]">{text}</p>
       </div>
     </div>
   )
@@ -28,14 +28,10 @@ function StickyNote({ text }) {
 
 function computeStats(events) {
   const years = events.map(e => e.year).filter(Boolean)
-  const yearCount = events.reduce((acc, e) => ((acc[e.year] = (acc[e.year] || 0) + 1), acc), {})
-  const busiestYear = Object.entries(yearCount).sort((a, b) => b[1] - a[1])[0]
   const bands = new Set(events.flatMap(e => e.relatedGroups.map(bandKey)))
   return {
     total: events.length,
     yearRange: years.length ? `${Math.min(...years)}–${Math.max(...years)}` : '—',
-    busiestYear: busiestYear ? `${busiestYear[0]}` : '—',
-    busiestCount: busiestYear ? busiestYear[1] : 0,
     bandCount: bands.size,
   }
 }
@@ -76,7 +72,6 @@ function YearSnapshot({ events, onYearJump }) {
 
   const rows = [
     ['活動紀錄', `${s.count} 筆`],
-    ['佔全站', `${s.share}%`],
     ['推估場次', `${s.sessions} 場`],
     ['出演者', `${s.people} 人`],
     ['還沒發生', `${s.ahead} 場`],
@@ -86,12 +81,12 @@ function YearSnapshot({ events, onYearJump }) {
     <div className="glass p-5 sm:p-6 h-full w-full min-w-0 flex flex-col">
       <div className="flex items-baseline gap-2">
         <span className="font-display font-extrabold text-[26px] leading-none text-gradient tabular-nums">{year}</span>
-        <span className="text-[13px] font-medium text-dream-sub">到目前為止</span>
+        <span className="text-[14px] font-medium text-dream-sub">到目前為止</span>
       </div>
 
       <dl className="mt-4 flex-1 space-y-2">
         {rows.map(([k, v]) => (
-          <div key={k} className="flex items-baseline justify-between gap-3 text-[13px]">
+          <div key={k} className="flex items-baseline justify-between gap-3 text-[14px]">
             <dt className="text-dream-sub">{k}</dt>
             <dd className="font-round font-bold text-dream-ink tabular-nums">{v}</dd>
           </div>
@@ -99,7 +94,7 @@ function YearSnapshot({ events, onYearJump }) {
       </dl>
 
       <button onClick={() => onYearJump && onYearJump(year)}
-        className="mt-4 w-full inline-flex items-center justify-center gap-1.5 rounded-full border border-dream-line py-2 text-[13px] font-medium text-dream-sub hover:text-dream-ink hover:border-bloom-sky transition-colors dark:border-white/15">
+        className="mt-4 w-full inline-flex items-center justify-center gap-1.5 rounded-full border border-dream-line py-2 text-[14px] font-medium text-dream-sub hover:text-dream-ink hover:border-bloom-sky transition-colors dark:border-white/15">
         看今年全部 <Icon n="arrow-right" className="text-[11px]" />
       </button>
     </div>
@@ -142,20 +137,20 @@ function TicketCountdown({ events, onSelect }) {
         <span aria-hidden className="absolute -right-2 -top-2.5 w-4 h-4 rounded-full bg-dream-bg border border-dream-line dark:border-white/15" />
         <span aria-hidden className="absolute -right-2 -bottom-2.5 w-4 h-4 rounded-full bg-dream-bg border border-dream-line dark:border-white/15" />
         <div className="text-center">
-          <div className="text-[11px] font-bold tracking-[0.25em]" style={{ color: accent }}>
+          <div className="text-[14px] font-bold tracking-[0.25em]" style={{ color: accent }}>
             {urgent ? 'URGENT' : upcoming ? 'UP NEXT' : 'LAST SHOW'}
           </div>
           <div className="font-display font-extrabold leading-none mt-1.5 text-dream-ink"
             style={{ fontSize: unit ? 'clamp(34px,4.5vw,46px)' : 'clamp(19px,2.4vw,26px)' }}>
             {big}
           </div>
-          {unit && <div className="text-[13px] font-bold text-dream-sub mt-1">{unit}</div>}
+          {unit && <div className="text-[14px] font-bold text-dream-sub mt-1">{unit}</div>}
         </div>
       </div>
       {/* 場次資訊 */}
       <div className="min-w-0 flex-1 p-4 sm:p-5 flex items-center gap-4">
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5 text-[13px] mb-1 flex-wrap" style={{ color: m.color }}>
+          <div className="flex items-center gap-1.5 text-[14px] mb-1 flex-wrap" style={{ color: m.color }}>
             {urgent && (
               <span className="urgent-badge">
                 <Icon n="triangle-exclamation" className="text-[9px]" /> {URGENT_LABEL}
@@ -164,10 +159,10 @@ function TicketCountdown({ events, onSelect }) {
             <Icon n={isPersonal(e) ? 'user' : m.icon} className="text-[10px]" />
             {isPersonal(e) ? '個人來台' : m.name}
           </div>
-          <div className="font-display font-bold text-[15px] sm:text-[16px] text-dream-ink line-clamp-2 group-hover:text-bloom-violet transition-colors">
+          <div className="font-display font-bold text-[16px] sm:text-[16px] text-dream-ink line-clamp-2 group-hover:text-bloom-violet transition-colors">
             {e.title}
           </div>
-          <div className="text-[13px] text-dream-sub mt-1.5 flex items-center gap-1.5 flex-wrap">
+          <div className="text-[14px] text-dream-sub mt-1.5 flex items-center gap-1.5 flex-wrap">
             <Icon n="calendar" className="text-bloom-violet text-[10px]" />
             {e.year}.{formatMonthDay(e.startDate).replace(/^\d{4}\./, '')}
             {weekday(e.startDate) && `（${weekday(e.startDate).replace('週', '')}）`}
@@ -182,8 +177,7 @@ function TicketCountdown({ events, onSelect }) {
     {rest.length > 0 && (
       <div className="glass px-4 py-3 flex-1">
         <div className="flex items-baseline justify-between gap-2 mb-1.5">
-          <span className="text-[11px] font-bold text-dream-faint">再來還有</span>
-          <span className="text-[11px] text-dream-faint tabular-nums">{queue.length} 場已公布</span>
+          <span className="text-[14px] font-bold text-dream-faint">再來還有</span>
         </div>
         <ul className="space-y-1">
           {rest.map(x => {
@@ -192,18 +186,13 @@ function TicketCountdown({ events, onSelect }) {
             return (
               <li key={x.id}>
                 <button onClick={() => onSelect?.(x.id)}
-                  className="group w-full flex items-baseline gap-2.5 text-left text-[13px]">
+                  className="group w-full flex items-baseline gap-2.5 text-left text-[14px]">
                   <span className="shrink-0 w-11 text-right font-round font-bold tabular-nums" style={{ color: xm.color }}>
                     {left != null ? `${left}天` : '未定'}
                   </span>
                   <span className="min-w-0 flex-1 truncate text-dream-sub group-hover:text-dream-ink transition-colors">
                     {x.title}
                   </span>
-                  {x.venue && (
-                    <span className="hidden lg:block shrink-0 max-w-[38%] truncate text-[11.5px] text-dream-faint">
-                      {x.venue}
-                    </span>
-                  )}
                 </button>
               </li>
             )
@@ -231,7 +220,7 @@ export default function Hero({ events, onSelect, onYearJump }) {
               <span className="text-dream-ink">邦邦來台</span>
               <span className="text-gradient">圖鑑</span>
             </h1>
-            <p className="mt-2.5 text-[15px] text-dream-sub max-w-md">
+            <p className="mt-2.5 text-[16px] text-dream-sub max-w-md">
               邦邦聲優與樂團來台的活動紀錄，從 2018 記到現在。
             </p>
           </div>
@@ -253,13 +242,8 @@ export default function Hero({ events, onSelect, onYearJump }) {
       </div>
 
       {/* 全站規模：從第一屏降級成一行字，不再佔四塊磚 */}
-      <p className="mt-4 text-[13px] text-dream-faint">
+      <p className="mt-4 text-[14px] text-dream-faint">
         全站 {stats.total} 筆活動紀錄 · {stats.bandCount} 個樂團 · {stats.yearRange}
-        <span className="hidden sm:inline"> · 最熱的一年是 </span>
-        <button onClick={() => onYearJump && onYearJump(Number(stats.busiestYear))}
-          className="hidden sm:inline underline underline-offset-2 decoration-dream-line hover:text-dream-ink hover:decoration-bloom-indigo transition-colors">
-          {stats.busiestYear}（{stats.busiestCount} 筆）
-        </button>
       </p>
     </section>
   )

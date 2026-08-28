@@ -32,7 +32,7 @@ export default function Highlights({ events, onSelect }) {
           </svg>
         </div>
         <a href="#/collection?photos=yes&order=date-desc"
-          className="text-[13px] font-semibold text-bloom-indigo hover:underline shrink-0">
+          className="text-[14px] font-semibold text-bloom-indigo hover:underline shrink-0">
           看全部 <Icon n="arrow-right" className="text-[10px]" />
         </a>
       </div>
@@ -53,11 +53,11 @@ export default function Highlights({ events, onSelect }) {
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transform-none" />
                 <span className="absolute inset-x-0 bottom-0 h-1 z-10" style={{ background: m.color }} />
                 <div className="absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-black/70 via-black/10 to-transparent">
-                  <div className="text-[11px] font-round font-bold text-white/80 flex items-center gap-1.5">
+                  <div className="text-[14px] font-round font-bold text-white/80 flex items-center gap-1.5">
                     <Icon n={isPersonal(e) ? 'user' : m.icon} className="text-[9px]" />
                     {e.year}
                   </div>
-                  <div className="text-[13px] font-bold text-white line-clamp-2 leading-snug">{e.title}</div>
+                  <div className="text-[14px] font-bold text-white line-clamp-2 leading-snug">{e.title}</div>
                 </div>
               </div>
             </button>

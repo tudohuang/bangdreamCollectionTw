@@ -24,7 +24,7 @@ export default function YearWall({ events, onSelect }) {
       <div className="mb-6">
         <div className="eyebrow"><Icon n="images" className="text-[10px]" /> Encore</div>
         <h2 className="section-h mt-2">年度結算牆</h2>
-        <p className="mt-2 text-[13px] text-dream-sub">
+        <p className="mt-2 text-[14px] text-dream-sub">
           一年一格一場，用該場的封面拼成一面牆。點任一張進那場的詳情。
         </p>
       </div>
@@ -54,15 +54,15 @@ function YearSection({ s, events, onSelect }) {
           style={{ fontSize: 'clamp(34px,5vw,50px)', color: accent }}>
           {s.year}
         </a>
-        <span className="font-display font-bold text-[17px] text-dream-ink">{s.total} 場</span>
-        <span className="text-[13px] text-dream-faint">{withPhoto} 張封面</span>
+        <span className="font-display font-bold text-[18px] text-dream-ink">{s.total} 場</span>
+        <span className="text-[14px] text-dream-faint">{withPhoto} 張封面</span>
         {s.delta != null && s.delta !== 0 && (
-          <span className={`text-[13px] font-bold ${s.delta > 0 ? 'text-bloom-indigo' : 'text-dream-faint'}`}>
+          <span className={`text-[14px] font-bold ${s.delta > 0 ? 'text-bloom-indigo' : 'text-dream-faint'}`}>
             {s.delta > 0 ? '▲' : '▼'} {Math.abs(s.delta)} 比 {s.year - 1}
           </span>
         )}
         <button onClick={() => downloadWrapped(events, s.year)}
-          className="ml-auto pill !py-1 !px-3 !text-[11px]" title="存成回顧卡">
+          className="ml-auto pill !py-1 !px-3 !text-[14px]" title="存成回顧卡">
           <Icon n="star" className="text-[10px]" /> 回顧卡
         </button>
       </div>
@@ -82,7 +82,7 @@ function YearSection({ s, events, onSelect }) {
           s.fullBand > 0 && `全團 ${s.fullBand} 場`,
           s.attendance > 0 && `${s.attendance} 人次`,
         ].filter(Boolean).map(t => (
-          <span key={t} className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium"
+          <span key={t} className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[14px] font-medium"
             style={{ background: `${accent}1a`, color: accent }}>{t}</span>
         ))}
       </div>
@@ -113,7 +113,7 @@ function Tile({ tile, onSelect }) {
         className="block w-full h-auto transition-transform duration-500 group-hover:scale-[1.04] motion-reduce:transform-none" />
 
       {/* 滑過才浮出標題，平常讓封面自己說話 */}
-      <span className="absolute inset-x-0 bottom-0 p-2 text-left text-[10px] leading-tight text-white
+      <span className="absolute inset-x-0 bottom-0 p-2 text-left text-[14px] leading-tight text-white
         bg-gradient-to-t from-black/85 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
         <span className="line-clamp-2">{event.title}</span>
       </span>
@@ -126,8 +126,8 @@ function GapNote({ years }) {
   const label = years.length === 1 ? `${years[0]}` : `${Math.min(...years)} – ${Math.max(...years)}`
   return (
     <div className="mt-8 rounded-2xl border border-dashed border-dream-line dark:border-white/15 px-5 py-4">
-      <div className="font-display font-bold text-[17px] text-dream-faint tracking-wide">{label}</div>
-      <p className="mt-1 font-hand text-[15px] text-dream-sub">整整 {years.length} 年，一場都沒有。</p>
+      <div className="font-display font-bold text-[18px] text-dream-faint tracking-wide">{label}</div>
+      <p className="mt-1 font-hand text-[16px] text-dream-sub">整整 {years.length} 年，一場都沒有。</p>
     </div>
   )
 }

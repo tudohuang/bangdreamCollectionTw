@@ -50,10 +50,10 @@ export default function YearGlance({ year, byMonth, thisYear, thisMonth, openMon
                 <span aria-hidden className="absolute top-1 left-1 w-1.5 h-1.5 rounded-full"
                   style={{ background: 'rgb(var(--c-urgent))' }} />
               )}
-              <span className="font-display font-bold text-[15px] leading-none tabular-nums">{m}</span>
-              <span className="text-[10.5px] leading-none tabular-nums">
-                {has ? `${list.length} 場` : '—'}
-              </span>
+              <span className="font-display font-bold text-[16px] leading-none tabular-nums">{m}</span>
+              {has && (
+                <span className="text-[14px] leading-none tabular-nums">{list.length} 場</span>
+              )}
             </button>
           )
         })}
@@ -63,12 +63,12 @@ export default function YearGlance({ year, byMonth, thisYear, thisMonth, openMon
       {openMonth ? (
         <div className="mt-3 rounded-xl bg-dream-line/30 dark:bg-white/[.04] px-3.5 py-3">
           <div className="flex items-baseline justify-between mb-2">
-            <span className="font-display font-bold text-[15px] text-dream-ink">
+            <span className="font-display font-bold text-[16px] text-dream-ink">
               {year} 年 {openMonth} 月
-              <span className="ml-2 text-[12px] font-normal text-dream-faint">{opened.length} 場</span>
+              <span className="ml-2 text-[14px] font-normal text-dream-faint">{opened.length} 場</span>
             </span>
             <button onClick={() => onOpenMonth(null)} aria-label="收起"
-              className="text-[12px] text-dream-faint hover:text-dream-ink">收起</button>
+              className="text-[14px] text-dream-faint hover:text-dream-ink">收起</button>
           </div>
           <ul className="flex flex-col">
             {opened.map(e => {
@@ -80,14 +80,14 @@ export default function YearGlance({ year, byMonth, thisYear, thisMonth, openMon
                 <li key={e.id} className="border-b border-dream-line/70 last:border-0 dark:border-white/10">
                   <button onClick={() => onSelect(e.id)}
                     className="row-press w-full flex items-center gap-2.5 py-2.5 text-left">
-                    <span className="shrink-0 w-9 text-right font-round font-bold text-[13px] tabular-nums" style={{ color }}>
+                    <span className="shrink-0 w-9 text-right font-round font-bold text-[14px] tabular-nums" style={{ color }}>
                       {day ? `${day}日` : '未定'}
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block text-[13.5px] text-dream-ink truncate">
+                      <span className="block text-[14px] text-dream-ink truncate">
                         {(e.people || []).join('、') || e.title}
                       </span>
-                      <span className="block text-[11.5px] text-dream-faint truncate">
+                      <span className="block text-[14px] text-dream-faint truncate">
                         {isPersonal(e) ? '個人' : meta.name}{e.venue ? ` · ${e.venue}` : ''}
                       </span>
                     </span>
@@ -99,7 +99,7 @@ export default function YearGlance({ year, byMonth, thisYear, thisMonth, openMon
           </ul>
         </div>
       ) : (
-        <p className="mt-2.5 text-[12px] text-dream-faint text-center">點一個月份看當月場次</p>
+        <p className="mt-2.5 text-[14px] text-dream-faint text-center">點一個月份看當月場次</p>
       )}
     </div>
   )

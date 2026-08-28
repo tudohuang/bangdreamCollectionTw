@@ -68,7 +68,7 @@ export default function EventCard({ event, attended, onToggleAttended, onClick, 
               </span>
             )}
             {countdown && (
-              <span className="rounded-full bg-bloom-indigo text-white px-2 py-0.5 text-[11px] font-bold shadow-sm">
+              <span className="rounded-full bg-bloom-indigo text-white px-2 py-0.5 text-[14px] font-bold shadow-sm">
                 {countdown}
               </span>
             )}
@@ -86,12 +86,12 @@ export default function EventCard({ event, attended, onToggleAttended, onClick, 
               : 'w-7 h-7 bg-black/25 text-white/85 backdrop-blur-sm hover:bg-bloom-indigo'}`}
         >
           {attended
-            ? <span className="font-hand font-bold text-[11px] leading-none">去過</span>
+            ? <span className="font-hand font-bold text-[14px] leading-none">去過</span>
             : <Icon n="circle-check" className="text-[11px]" />}
         </span>
         {/* 里程碑：這場在收藏史上是個「第一次」或「隔最久」 */}
         {milestone && (
-          <span className="absolute left-2.5 bottom-3 z-10 max-w-[calc(100%-24px)] inline-flex items-center gap-1.5 rounded-full bg-black/45 backdrop-blur-sm pl-2 pr-2.5 py-1 text-[11px] font-bold text-white">
+          <span className="absolute left-2.5 bottom-3 z-10 max-w-[calc(100%-24px)] inline-flex items-center gap-1.5 rounded-full bg-black/45 backdrop-blur-sm pl-2 pr-2.5 py-1 text-[14px] font-bold text-white">
             <Icon n="star" className="text-[8px] shrink-0" style={{ color: meta.color }} />
             <span className="truncate">{milestone.label}</span>
           </span>
@@ -101,7 +101,7 @@ export default function EventCard({ event, attended, onToggleAttended, onClick, 
         {extraBits.length > 0 && (
           <div aria-hidden
             className="pointer-events-none absolute inset-x-0 bottom-0 z-20 hidden sm:flex items-center gap-2 px-3 py-2
-              bg-gradient-to-t from-black/80 to-black/0 text-[11px] text-white/90
+              bg-gradient-to-t from-black/80 to-black/0 text-[14px] text-white/90
               translate-y-full opacity-0 transition-[transform,opacity] duration-300 ease-out
               group-hover:translate-y-0 group-hover:opacity-100 motion-reduce:transition-none">
             {extraBits.map((b, i) => (
@@ -114,11 +114,11 @@ export default function EventCard({ event, attended, onToggleAttended, onClick, 
 
       <div className="flex flex-col gap-1.5 px-4 pt-3 pb-4">
         {/* 標題固定兩行高：一行的卡片不會讓底下那排 meta 高低不齊 */}
-        <h3 className="font-display font-bold text-[15px] leading-snug text-dream-ink line-clamp-2 min-h-[2.6em] group-hover:text-bloom-violet transition-colors">
+        <h3 className="font-display font-bold text-[16px] leading-snug text-dream-ink line-clamp-2 min-h-[2.6em] group-hover:text-bloom-violet transition-colors">
           {event.title || '未命名活動'}
         </h3>
         {/* 手寫那行：像自己在照片下面補記的日期與地點 */}
-        <div className="font-hand text-[13px] leading-snug text-dream-sub flex items-baseline gap-1.5 min-w-0">
+        <div className="font-hand text-[14px] leading-snug text-dream-sub flex items-baseline gap-1.5 min-w-0">
           {event.startDate ? (
             <span className="shrink-0 font-bold" style={{ color: meta.color }}>
               {event.year}.{dayLabel.replace(/^\d{4}\./, '')}{wd && `（${wd.replace('週', '')}）`}
@@ -128,7 +128,7 @@ export default function EventCard({ event, attended, onToggleAttended, onClick, 
           )}
           {place && <span className="truncate text-dream-faint">· {place}</span>}
         </div>
-        <div className="flex items-center justify-between gap-2 text-[11px] pt-0.5">
+        <div className="flex items-center justify-between gap-2 text-[14px] pt-0.5">
           <span className="inline-flex items-center gap-1.5 min-w-0" style={{ color: meta.color }}>
             <Icon n={personal ? 'user' : meta.icon} className="text-[10px] shrink-0" />
             <span className="truncate font-medium">{personal ? `個人 · ${meta.name}` : meta.name}</span>
@@ -157,7 +157,7 @@ function NoCover({ meta, dex, icon }) {
         }}>
         {dex}
       </span>
-      <span className="absolute left-3 bottom-3 text-[15px]" style={{ color: meta.color }}>
+      <span className="absolute left-3 bottom-3 text-[16px]" style={{ color: meta.color }}>
         <Icon n={icon} />
       </span>
     </div>

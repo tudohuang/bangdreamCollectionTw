@@ -52,7 +52,7 @@ export function CoverFallback({ event, className = '' }) {
       style={{ background: `linear-gradient(150deg, rgba(${meta.glow},0.30), rgba(${meta.glow},0.10))` }}>
       <Icon n={isPersonal(event) ? 'user' : meta.icon}
         className="text-[34px] opacity-70" style={{ color: meta.color }} />
-      <span className="absolute bottom-1.5 right-2 font-round font-bold text-[11px] opacity-45"
+      <span className="absolute bottom-1.5 right-2 font-round font-bold text-[14px] opacity-45"
         style={{ color: meta.color }}>
         #{dex}
       </span>

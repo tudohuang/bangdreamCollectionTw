@@ -75,7 +75,7 @@ export default function YearTimeline({ events, onSelect }) {
         </div>
         <div className="text-right shrink-0">
           <div className={`font-display text-2xl font-bold leading-none ${TONE[v.tone]}`}>{v.text}</div>
-          <div className="text-[11px] text-dream-faint mt-1">
+          <div className="text-[14px] text-dream-faint mt-1">
             {mine.length} 筆 · {count.sessions} 場 · {count.activeDays} 天
           </div>
         </div>
@@ -88,11 +88,11 @@ export default function YearTimeline({ events, onSelect }) {
           const on = y === year
           return (
             <button key={y} onClick={() => setYear(y)}
-              className={`rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
+              className={`rounded-full px-3 py-1.5 text-[14px] font-medium transition-colors ${
                 on ? 'bg-bloom-indigo text-white shadow-sm'
                   : n ? 'text-dream-sub hover:text-dream-ink hover:bg-dream-line/60 dark:hover:bg-white/10'
                       : 'text-dream-faint/70 line-through decoration-dream-line'}`}>
-              {y}<span className={`ml-1.5 text-[11px] ${on ? 'text-white/70' : 'text-dream-faint'}`}>{n}</span>
+              {y}<span className={`ml-1.5 text-[14px] ${on ? 'text-white/70' : 'text-dream-faint'}`}>{n}</span>
             </button>
           )
         })}
@@ -107,7 +107,7 @@ export default function YearTimeline({ events, onSelect }) {
           <ol className="space-y-1">
             {byMonth.map(({ month, list }) => (
               <li key={month} className="grid grid-cols-[38px_minmax(0,1fr)] gap-3 items-start py-1.5">
-                <span className={`pt-1 text-right font-round font-bold text-[13px] tabular-nums ${
+                <span className={`pt-1 text-right font-round font-bold text-[14px] tabular-nums ${
                   list.length ? 'text-dream-ink' : 'text-dream-faint/50'}`}>
                   {month}月
                 </span>
@@ -126,13 +126,13 @@ export default function YearTimeline({ events, onSelect }) {
                         return (
                           <button key={e.id} onClick={() => onSelect(e.id)}
                             title={`${e.startDate}｜${e.title}`}
-                            className="group inline-flex items-center gap-1.5 max-w-full rounded-full border px-2.5 py-[7px] sm:py-1 text-[12.5px] transition-colors hover:border-current"
+                            className="group inline-flex items-center gap-1.5 max-w-full rounded-full border px-2.5 py-[7px] sm:py-1 text-[14px] transition-colors hover:border-current"
                             style={{
                               borderColor: tier === 'official' ? m.color : `rgba(${m.glow},0.35)`,
                               background: tier === 'official' ? `rgba(${m.glow},0.12)` : 'transparent',
                               color: tier === 'weak' ? undefined : m.color,
                             }}>
-                            <span className="shrink-0 text-[10.5px] text-dream-faint tabular-nums">
+                            <span className="shrink-0 text-[14px] text-dream-faint tabular-nums">
                               {e.startDate.slice(8, 10)}
                             </span>
                             <span className="truncate text-dream-ink">{e.title}</span>
@@ -149,7 +149,7 @@ export default function YearTimeline({ events, onSelect }) {
         )}
       </div>
 
-      <p className="mt-2.5 text-[12px] text-dream-faint">
+      <p className="mt-2.5 text-[14px] text-dream-faint">
         實心＝官方本體 · 外框＝聲優個人或其他企劃 · 條越長那個月越滿
       </p>
     </section>

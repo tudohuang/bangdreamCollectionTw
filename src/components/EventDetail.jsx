@@ -241,9 +241,9 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
               className="sm:hidden pointer-events-auto inline-flex items-center gap-0.5 h-9 pl-1.5 pr-3 rounded-full text-[14px] font-semibold text-white backdrop-blur-sm bg-black/35">
               <Icon n="chevron-left" className="text-[13px]" /> 返回
             </button>
-            <span className="hidden sm:inline-flex pointer-events-auto items-center gap-2 rounded-full pl-1.5 pr-3 py-1 text-[13px] font-bold text-white backdrop-blur-sm"
+            <span className="hidden sm:inline-flex pointer-events-auto items-center gap-2 rounded-full pl-1.5 pr-3 py-1 text-[14px] font-bold text-white backdrop-blur-sm"
               style={{ background: personal ? 'rgba(139,92,246,0.85)' : `rgba(${meta.glow},0.85)` }}>
-              <span className="grid place-items-center w-5 h-5 rounded-full bg-white/30 text-[11px]"><Icon n={personal ? 'user' : meta.icon} /></span>
+              <span className="grid place-items-center w-5 h-5 rounded-full bg-white/30 text-[14px]"><Icon n={personal ? 'user' : meta.icon} /></span>
               {personal ? '個人來台' : meta.name}
             </span>
             <div className="pointer-events-auto flex items-center gap-1.5">
@@ -263,7 +263,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
             <div aria-hidden className="absolute right-5 sm:right-8 bottom-16 sm:bottom-20 z-10 pointer-events-none -rotate-[11deg]">
               <div className="stamp grid place-items-center w-24 h-24 sm:w-28 sm:h-28 rounded-full text-white">
                 <span className="font-hand font-bold text-[19px] sm:text-[22px] leading-none">我去過</span>
-                <span className="mt-1 text-[7.5px] sm:text-[8px] font-bold tracking-[0.28em] uppercase">Attended</span>
+                <span className="mt-1 text-[14px] sm:text-[14px] font-bold tracking-[0.28em] uppercase">Attended</span>
               </div>
             </div>
           )}
@@ -275,17 +275,17 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
           <div className="absolute inset-x-0 bottom-0 px-5 sm:px-8 pb-4 sm:pb-5 pointer-events-none">
             <div className="flex items-center gap-2 mb-1.5 flex-wrap">
               {urgent && (
-                <span className="urgent-badge !text-[11px]">
+                <span className="urgent-badge !text-[14px]">
                   <Icon n="triangle-exclamation" className="text-[10px]" /> {URGENT_LABEL}
                 </span>
               )}
-              <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold text-white"
+              <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[14px] font-bold text-white"
                 style={{ background: status === 'past' ? 'rgba(0,0,0,0.5)' : meta.color }}>{STATUS_LABEL[status]}</span>
-              <span className="text-[13px] font-semibold text-white/90 drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)]">
+              <span className="text-[14px] font-semibold text-white/90 drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)]">
                 {formatDateRangeCompact(event.startDate, event.endDate) || ''}{weekday(event.startDate) && ` ・ ${weekday(event.startDate)}`}
               </span>
               {countdown && (
-                <span className="rounded-full px-2 py-0.5 text-[11px] font-bold text-white" style={{ background: 'rgba(139,92,246,0.92)' }}>
+                <span className="rounded-full px-2 py-0.5 text-[14px] font-bold text-white" style={{ background: 'rgba(139,92,246,0.92)' }}>
                   {countdown}
                 </span>
               )}
@@ -298,13 +298,13 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
 
         {/* ---------- 撕票線：ADMIT ONE 微型字 + 條碼，下面一排打孔 ---------- */}
         <div className="flex items-center justify-between gap-3 px-5 sm:px-8 pt-3 pb-2 text-dream-faint">
-          <span className="text-[9.5px] font-bold tracking-[0.3em] uppercase truncate">
+          <span className="text-[14px] font-bold tracking-[0.3em] uppercase truncate">
             Admit One · Taiwan BanG Dream! Collection
           </span>
           <span className="flex items-center gap-2 shrink-0">
             <span aria-hidden className="h-5 w-16 opacity-40"
               style={{ backgroundImage: 'repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 5px)' }} />
-            <span className="font-round font-bold text-[11px]" style={{ color: meta.color }}>{dex}</span>
+            <span className="font-round font-bold text-[14px]" style={{ color: meta.color }}>{dex}</span>
           </span>
         </div>
         <div className="relative h-3.5">
@@ -315,10 +315,10 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
 
         {/* 站長一句話：全站唯一沒辦法從公開資料重建的東西，所以放在最前面 */}
         {event.oneLine && (
-          <blockquote className="mx-5 sm:mx-8 mt-4 -mb-1 pl-4 border-l-[3px] text-[15px] sm:text-[17px] leading-relaxed font-hand text-dream-ink"
+          <blockquote className="mx-5 sm:mx-8 mt-4 -mb-1 pl-4 border-l-[3px] text-[16px] sm:text-[18px] leading-relaxed font-hand text-dream-ink"
             style={{ borderColor: meta.color }}>
             {event.oneLine}
-            <cite className="block mt-1 not-italic text-[11px] tracking-widest uppercase text-dream-faint">站長一句話</cite>
+            <cite className="block mt-1 not-italic text-[14px] tracking-widest uppercase text-dream-faint">站長一句話</cite>
           </blockquote>
         )}
 
@@ -329,7 +329,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
             {/* 銘牌：用排版呈現資料，不用有邊框的欄位盒。
                 原本這裡每一列是「圖示＋標籤＋值」，那是後台系統的長相。 */}
             <div className="flex items-baseline justify-between gap-3 mb-2">
-              <span className="text-[10px] font-bold tracking-[0.32em] uppercase text-dream-faint">Entry</span>
+              <span className="text-[14px] font-bold tracking-[0.32em] uppercase text-dream-faint">Entry</span>
               <span className="font-display font-extrabold text-[22px] leading-none tabular-nums"
                 style={{ color: meta.color }}>{dex}</span>
             </div>
@@ -385,7 +385,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
                 label: '購票',
                 value: (
                   <a href={event.ticketUrl} target="_blank" rel="noopener noreferrer"
-                    className="text-[13.5px] font-normal text-bloom-violet hover:underline break-all">
+                    className="text-[14px] font-normal text-bloom-violet hover:underline break-all">
                     {(() => { try { return new URL(event.ticketUrl).hostname.replace(/^www./, '') } catch { return event.ticketUrl } })()}
                   </a>
                 ),
@@ -393,8 +393,8 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
               ...extras.map(([name, value]) => ({
                 label: name,
                 value: /^https?:///i.test(value)
-                  ? <a className="text-[13.5px] font-normal text-bloom-violet hover:underline break-all" target="_blank" rel="noopener noreferrer" href={value}>{value}</a>
-                  : <span className="text-[13.5px] font-normal text-dream-sub whitespace-pre-line">{value}</span>,
+                  ? <a className="text-[14px] font-normal text-bloom-violet hover:underline break-all" target="_blank" rel="noopener noreferrer" href={value}>{value}</a>
+                  : <span className="text-[14px] font-normal text-dream-sub whitespace-pre-line">{value}</span>,
               })),
               event.sources?.length > 0 && {
                 label: '來源',
@@ -405,7 +405,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
                       try { host = new URL(src).hostname.replace(/^www./, '') } catch {}
                       return (
                         <a key={i} href={src} target="_blank" rel="noopener noreferrer"
-                          className="text-[13.5px] font-normal text-dream-sub hover:text-bloom-violet transition-colors truncate">{host}</a>
+                          className="text-[14px] font-normal text-dream-sub hover:text-bloom-violet transition-colors truncate">{host}</a>
                       )
                     })}
                   </span>
@@ -438,7 +438,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
             )}
 
             {personal && (
-              <div className="mb-5 flex items-start gap-2.5 rounded-xl px-4 py-3 text-[13px] text-dream-sub"
+              <div className="mb-5 flex items-start gap-2.5 rounded-xl px-4 py-3 text-[14px] text-dream-sub"
                 style={{ background: `rgba(${meta.glow},0.10)`, border: `1px solid rgba(${meta.glow},0.22)` }}>
                 <Icon n="user" className="mt-0.5" style={{ color: meta.color }} />
                 <span>聲優以<span className="font-semibold text-dream-ink">個人身分</span>來台；與
@@ -456,7 +456,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
                 <div className="mb-4 flex flex-wrap gap-2">
                   {milestones.map(m => (
                     <span key={m.key}
-                      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] font-bold text-white"
+                      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[14px] font-bold text-white"
                       style={{ background: meta.color }}>
                       <Icon n="star" className="text-[9px]" />{m.label}
                     </span>
@@ -478,7 +478,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
 
               {ctx.prevBandEvent && (
                 <button onClick={() => onNavigate(ctx.prevBandEvent.id)}
-                  className="mt-3.5 w-full text-left text-[13px] text-dream-sub hover:text-dream-ink transition-colors">
+                  className="mt-3.5 w-full text-left text-[14px] text-dream-sub hover:text-dream-ink transition-colors">
                   上一次是 <span className="font-round font-bold" style={{ color: meta.color }}>#{String(ctx.prevBandEvent.number).padStart(3, '0')}</span>
                   <span className="ml-1.5">{ctx.prevBandEvent.title}</span>
                 </button>
@@ -486,7 +486,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
 
               {ctx.sameDay.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-dashed" style={{ borderColor: `rgba(${meta.glow},0.28)` }}>
-                  <div className="text-[13px] font-semibold text-dream-faint mb-1.5">同一天還有 {ctx.sameDay.length} 場</div>
+                  <div className="text-[14px] font-semibold text-dream-faint mb-1.5">同一天還有 {ctx.sameDay.length} 場</div>
                   <RelatedList items={ctx.sameDay} color={meta.color} onNavigate={onNavigate} />
                 </div>
               )}
@@ -498,7 +498,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
             <Section title={`陣容 ${ctx.people.length ? ctx.people.length + ' 人' : ''}`} color={meta.color}>
               {ctx.people.length > 0
                 ? <CastList people={ctx.people} roster={castRoster} color={meta} />
-                : <p className="text-[13px] text-dream-faint">尚無聲優資料</p>}
+                : <p className="text-[14px] text-dream-faint">尚無聲優資料</p>}
               <BandRow groups={groups} />
             </Section>
 
@@ -510,9 +510,9 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
             {/* 收藏軌：53 場排成一條，這場亮起來，點任何一格直接跳過去 */}
             <Section title="收藏軌" color={meta.color}>
               <CollectionStrip chrono={ctx.chrono} isOn={(o) => o.id === event.id} onNavigate={onNavigate} />
-              <div className="mt-2.5 flex items-center justify-between text-[13px] text-dream-faint">
+              <div className="mt-2.5 flex items-center justify-between text-[14px] text-dream-faint">
                 <span>全站第 <span className="font-round font-bold" style={{ color: meta.color }}>{ctx.index + 1}</span> 場 · 共 {ctx.total} 場</span>
-                <span className="hidden sm:inline font-hand text-[13px]">點任一格跳過去</span>
+                <span className="hidden sm:inline font-hand text-[14px]">點任一格跳過去</span>
               </div>
               <div className="mt-3 grid grid-cols-2 gap-2">
                 <NeighborBtn side="prev" item={ctx.prevChrono} color={meta.color} onNavigate={onNavigate} />
@@ -520,14 +520,14 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
               </div>
             </Section>
 
-            {event.description && <Section title="活動簡介" color={meta.color}><p className="text-[15px] leading-7 text-dream-sub whitespace-pre-line">{event.description}</p></Section>}
+            {event.description && <Section title="活動簡介" color={meta.color}><p className="text-[16px] leading-7 text-dream-sub whitespace-pre-line">{event.description}</p></Section>}
             {event.impression && (
               <Section title="個人心得" color={meta.color}>
-                <div className="prose-note text-[15px] leading-7 text-dream-sub"
+                <div className="prose-note text-[16px] leading-7 text-dream-sub"
                   dangerouslySetInnerHTML={{ __html: renderMarkdown(event.impression) }} />
               </Section>
             )}
-            {event.notes && <Section title="備註" color={meta.color}><p className="text-[15px] leading-7 text-dream-sub whitespace-pre-line">{event.notes}</p></Section>}
+            {event.notes && <Section title="備註" color={meta.color}><p className="text-[16px] leading-7 text-dream-sub whitespace-pre-line">{event.notes}</p></Section>}
 
             {/* 史料層：這場周圍發生過什麼。基本資料任何人都查得到，這一層查不到 */}
             <Chronicle event={event} allEvents={allEvents} pulse={pulse}
@@ -579,7 +579,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
             {/* 缺照片/心得就給一條低調的補資料出口（config 沒設 REPORT_URL 就不出現） */}
             {REPORT_URL && !event.impression && galleryPhotos.length === 0 && (
               <a href={REPORT_URL} target="_blank" rel="noopener noreferrer"
-                className="mt-6 flex items-center gap-2.5 rounded-xl border border-dashed border-dream-line dark:border-white/15 px-4 py-3 text-[13px] text-dream-faint hover:text-dream-ink hover:border-bloom-violet transition-colors">
+                className="mt-6 flex items-center gap-2.5 rounded-xl border border-dashed border-dream-line dark:border-white/15 px-4 py-3 text-[14px] text-dream-faint hover:text-dream-ink hover:border-bloom-violet transition-colors">
                 <Icon n="heart" style={{ color: meta.color }} />
                 這場還缺照片和心得，你有的話幫忙補一筆
               </a>
@@ -594,26 +594,26 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
           <button className="btn-primary !h-11 sm:!h-10 !px-4 sm:!px-6" onClick={copyLink}>
             <Icon n="link" /> 複製連結
           </button>
-          <button className="pill !h-11 sm:!h-auto !px-4 !py-2 !text-[13px]" aria-label="加入行事曆" title="加入行事曆"
+          <button className="pill !h-11 sm:!h-auto !px-4 !py-2 !text-[14px]" aria-label="加入行事曆" title="加入行事曆"
             onClick={() => flash(downloadIcs(event, `${event.id}.ics`) ? '已下載行事曆檔' : '這場沒有確定日期')}>
             <Icon n="calendar" /> <span className="hidden sm:inline">加行事曆</span>
           </button>
-          <button className="pill !h-11 sm:!h-auto !px-4 !py-2 !text-[13px]" aria-label="複製摘要" title="複製摘要" onClick={copySummary}>
+          <button className="pill !h-11 sm:!h-auto !px-4 !py-2 !text-[14px]" aria-label="複製摘要" title="複製摘要" onClick={copySummary}>
             <Icon n="clipboard" /> <span className="hidden sm:inline">摘要</span>
           </button>
-          <button className="pill !h-11 sm:!h-auto !px-4 !py-2 !text-[13px]" aria-label="存成圖" title="存成圖"
+          <button className="pill !h-11 sm:!h-auto !px-4 !py-2 !text-[14px]" aria-label="存成圖" title="存成圖"
             onClick={() => downloadShareImage(event, meta, personal, {
               attended: isAttended,
               bandNth: ctx.bandNth, bandTotal: ctx.bandTotal,
               index: ctx.index, total: ctx.total,
             })}><Icon n="star" /> <span className="hidden sm:inline">存成圖</span></button>
-          <span className="ml-auto self-center text-[11px] text-dream-faint hidden sm:inline">← → 切換 · Esc 關閉</span>
-          <span className="ml-auto self-center text-[11px] text-dream-faint sm:hidden">左右滑切換 · 左緣滑回</span>
+          <span className="ml-auto self-center text-[14px] text-dream-faint hidden sm:inline">← → 切換 · Esc 關閉</span>
+          <span className="ml-auto self-center text-[14px] text-dream-faint sm:hidden">左右滑切換 · 左緣滑回</span>
         </div>
       </div>
 
       {toast && (
-        <div className="pointer-events-none fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] inline-flex items-center gap-2 rounded-full bg-dream-ink text-white text-[13px] font-medium px-4 py-2">
+        <div className="pointer-events-none fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] inline-flex items-center gap-2 rounded-full bg-dream-ink text-white text-[14px] font-medium px-4 py-2">
           <Icon n="circle-check" className="text-bloom-pink" />{toast}
         </div>
       )}

@@ -35,11 +35,11 @@ export default function Timeline({ events, onSelect, allEvents }) {
             {/* 年份站牌：捲動時貼在頂上，長清單裡永遠知道自己在哪一年 */}
             <div className="sticky top-[var(--wall-top)] z-20 relative flex items-center gap-3 mb-3 py-1.5
               bg-dream-bg/95 backdrop-blur-md">
-              <span className="grid place-items-center w-[52px] h-9 rounded-full text-white font-display font-bold text-[15px] z-10 shadow-sm"
+              <span className="grid place-items-center w-[52px] h-9 rounded-full text-white font-display font-bold text-[16px] z-10 shadow-sm"
                 style={{ background: 'linear-gradient(135deg, #ec4899, #8b5cf6)' }}>
                 {year}
               </span>
-              <span className="text-[13px] font-round font-semibold text-dream-sub">{arr.length} 場</span>
+              <span className="text-[14px] font-round font-semibold text-dream-sub">{arr.length} 場</span>
               <span className="block flex-1 h-px bg-dream-line" />
             </div>
 
@@ -67,14 +67,14 @@ export default function Timeline({ events, onSelect, allEvents }) {
                       <span aria-hidden
                         className="shrink-0 w-[13px] h-[13px] rounded-full ring-[3px] ring-dream-bg z-10 transition-transform group-hover:scale-125"
                         style={{ background: urgent ? 'rgb(var(--c-urgent))' : meta.color }} />
-                      <span className="shrink-0 w-[76px] font-round font-bold text-[13px]" style={{ color: meta.color }}>
+                      <span className="shrink-0 w-[76px] font-round font-bold text-[14px]" style={{ color: meta.color }}>
                         {day}
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block font-display font-semibold text-[15px] text-dream-ink line-clamp-1 group-hover:text-bloom-violet transition-colors">
+                        <span className="block font-display font-semibold text-[16px] text-dream-ink line-clamp-1 group-hover:text-bloom-violet transition-colors">
                           {e.title}
                         </span>
-                        <span className="flex items-center gap-1.5 text-[13px] text-dream-sub">
+                        <span className="flex items-center gap-1.5 text-[14px] text-dream-sub">
                           <Icon n={isPersonal(e) ? 'user' : meta.icon} className="text-[9px]" style={{ color: meta.color }} />
                           {isPersonal(e) ? '個人' : meta.name}
                           {e.venue && <span className="text-dream-faint truncate hidden sm:inline">· {e.venue}</span>}
@@ -86,7 +86,7 @@ export default function Timeline({ events, onSelect, allEvents }) {
                         </span>
                       )}
                       {e.isFullBand && <span className="badge badge-full shrink-0 hidden sm:inline-flex"><Icon n="star" className="text-[9px]" /> 全團</span>}
-                      <span className="shrink-0 font-round font-bold text-[11px] text-dream-faint">
+                      <span className="shrink-0 font-round font-bold text-[14px] text-dream-faint">
                         #{String(e.number).padStart(3, '0')}
                       </span>
                     </button>
@@ -112,8 +112,8 @@ function GapNote({ gap }) {
         style={{ backgroundImage: 'repeating-linear-gradient(180deg, rgb(var(--c-faint)) 0 5px, transparent 5px 12px)', opacity: 0.55 }} />
 
       <div className="rounded-2xl border border-dashed border-dream-line dark:border-white/15 px-5 py-4">
-        <div className="font-display font-bold text-[17px] text-dream-faint tracking-wide">{label}</div>
-        <p className="mt-1.5 font-hand text-[15px] leading-relaxed text-dream-sub">
+        <div className="font-display font-bold text-[18px] text-dream-faint tracking-wide">{label}</div>
+        <p className="mt-1.5 font-hand text-[16px] leading-relaxed text-dream-sub">
           整整 {gap.length} 年，一場都沒有。<br className="sm:hidden" />
           {gap.before} 年才又有下一場。
         </p>

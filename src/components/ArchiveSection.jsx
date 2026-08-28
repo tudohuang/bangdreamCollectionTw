@@ -26,15 +26,15 @@ export default function ArchiveSection({ event, allEvents = [], color, glow }) {
                 <li key={`${s.n}-${s.title}`}
                   className="grid grid-cols-[28px_minmax(0,1fr)_auto] items-baseline gap-x-3 py-2 border-b"
                   style={{ borderColor: `rgba(${glow},0.18)` }}>
-                  <span className="font-round font-bold text-[12px] tabular-nums text-right"
+                  <span className="font-round font-bold text-[14px] tabular-nums text-right"
                     style={{ color: s.encore ? color : undefined }}>
                     {s.encore ? 'EN' : s.n}
                   </span>
-                  <span className="min-w-0 font-display font-semibold text-[14.5px] text-dream-ink">
+                  <span className="min-w-0 font-display font-semibold text-[14px] text-dream-ink">
                     {s.title}
                   </span>
                   {n > 1 && (
-                    <span className="text-[11px] text-dream-faint tabular-nums shrink-0">
+                    <span className="text-[14px] text-dream-faint tabular-nums shrink-0">
                       台灣第 {n} 次
                     </span>
                   )}
@@ -54,7 +54,7 @@ export default function ArchiveSection({ event, allEvents = [], color, glow }) {
                 <div className="font-display font-extrabold text-[19px] tabular-nums" style={{ color }}>
                   {t.amount != null ? t.amount.toLocaleString('zh-TW') : t.text}
                 </div>
-                {t.label && <div className="text-[11px] text-dream-faint">{t.label}</div>}
+                {t.label && <div className="text-[14px] text-dream-faint">{t.label}</div>}
               </div>
             ))}
           </div>
@@ -72,12 +72,12 @@ export default function ArchiveSection({ event, allEvents = [], color, glow }) {
                 <span className="min-w-0 text-[14px] text-dream-ink">
                   {g.name}
                   {g.taiwanOnly && (
-                    <span className="ml-2 text-[10.5px] font-bold px-1.5 py-0.5 rounded"
+                    <span className="ml-2 text-[14px] font-bold px-1.5 py-0.5 rounded"
                       style={{ background: `rgba(${glow},0.16)`, color }}>台版限定</span>
                   )}
                 </span>
                 {g.price != null && (
-                  <span className="shrink-0 font-round font-bold text-[13px] tabular-nums text-dream-sub">
+                  <span className="shrink-0 font-round font-bold text-[14px] tabular-nums text-dream-sub">
                     {g.price.toLocaleString('zh-TW')}
                   </span>
                 )}
@@ -106,7 +106,7 @@ export default function ArchiveSection({ event, allEvents = [], color, glow }) {
 
 function Head({ icon, color, children }) {
   return (
-    <h3 className="flex items-center gap-2 font-display font-bold text-[15px] text-dream-ink mb-2">
+    <h3 className="flex items-center gap-2 font-display font-bold text-[16px] text-dream-ink mb-2">
       <Icon n={icon} className="text-[11px]" style={{ color }} />{children}
     </h3>
   )

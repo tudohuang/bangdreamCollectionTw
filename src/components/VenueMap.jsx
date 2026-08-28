@@ -34,7 +34,7 @@ export default function VenueMap({ events }) {
     <div>
       <div className="eyebrow"><Icon n="location-dot" className="text-[10px]" /> Venues</div>
       <h2 className="section-h mt-2">插旗地圖</h2>
-      <p className="mt-2.5 text-[15px] text-dream-sub">
+      <p className="mt-2.5 text-[16px] text-dream-sub">
         去過的場館 <span className="font-bold text-dream-ink">{allLocated.length + missing.length}</span> 個
         {allLocated.length > 0 && <>，其中 <span className="font-bold text-dream-ink">{allLocated.length}</span> 個有座標</>}
         。點大小是場次數，顏色是那裡最常來的團。
@@ -45,8 +45,8 @@ export default function VenueMap({ events }) {
           <div className="mx-auto mb-4 grid place-items-center w-14 h-14 rounded-full bg-bloom-indigo/10 text-bloom-indigo text-xl">
             <Icon n="location-dot" />
           </div>
-          <div className="font-display font-bold text-[17px] text-dream-ink">還沒有場館座標</div>
-          <p className="mt-2 text-[13px] text-dream-sub max-w-md mx-auto leading-relaxed">
+          <div className="font-display font-bold text-[18px] text-dream-ink">還沒有場館座標</div>
+          <p className="mt-2 text-[14px] text-dream-sub max-w-md mx-auto leading-relaxed">
             在 Sheet 加一欄「<span className="font-bold text-dream-ink">座標</span>」，
             從 Google Maps 右鍵複製的那串直接貼上（像 <code className="font-round">25.033964, 121.564468</code>）。
             同一個場館只要填一次，其他場次留空就好。
@@ -112,7 +112,7 @@ export default function VenueMap({ events }) {
           </svg>
 
           {/* ODbL 要求標註出處，這行不能拿掉 */}
-          <div className="mt-2 text-right text-[11px] text-dream-faint">
+          <div className="mt-2 text-right text-[14px] text-dream-faint">
             {tilesOk ? (
               <a href={OSM_ATTRIBUTION_URL} target="_blank" rel="noopener noreferrer" className="hover:underline">
                 {OSM_ATTRIBUTION}
@@ -128,7 +128,7 @@ export default function VenueMap({ events }) {
               return (
                 <a key={v.venue} href={`#/collection?venues=${encodeURIComponent(v.venue)}`}
                   onMouseEnter={() => setHover(v.venue)} onMouseLeave={() => setHover(null)}
-                  className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[13px] transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[14px] transition-colors"
                   style={on
                     ? { background: m.color, color: '#fff', border: `1px solid ${m.color}` }
                     : { background: `rgba(${m.glow},0.10)`, color: 'rgb(var(--c-sub))', border: '1px solid rgb(var(--c-line))' }}>
@@ -144,7 +144,7 @@ export default function VenueMap({ events }) {
 
       {far.length > 0 && (
         <div className="mt-4 rounded-2xl border border-dream-line dark:border-white/10 px-5 py-4">
-          <div className="text-[13px] font-bold text-dream-faint mb-2">
+          <div className="text-[14px] font-bold text-dream-faint mb-2">
             離主要區域太遠，另外列 · {far.length} 個
           </div>
           <div className="flex flex-wrap gap-1.5">
@@ -152,7 +152,7 @@ export default function VenueMap({ events }) {
               const m = bandMeta(v.topBand)
               return (
                 <a key={v.venue} href={`#/collection?venues=${encodeURIComponent(v.venue)}`}
-                  className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[13px] text-dream-sub border border-dream-line dark:border-white/10 hover:border-bloom-violet transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[14px] text-dream-sub border border-dream-line dark:border-white/10 hover:border-bloom-violet transition-colors"
                   style={{ background: `rgba(${m.glow},0.10)` }}>
                   <span className="w-1.5 h-1.5 rounded-full" style={{ background: m.color }} />
                   {v.city && <span className="text-dream-faint">{v.city}</span>}
@@ -166,12 +166,12 @@ export default function VenueMap({ events }) {
 
       {missing.length > 0 && (
         <div className="mt-4 rounded-2xl border border-dashed border-dream-line dark:border-white/15 px-5 py-4">
-          <div className="text-[13px] font-bold text-dream-faint mb-2">
+          <div className="text-[14px] font-bold text-dream-faint mb-2">
             還沒有座標的場館 · {missing.length} 個
           </div>
           <div className="flex flex-wrap gap-1.5">
             {missing.map(v => (
-              <span key={v.venue} className="rounded-full border border-dream-line dark:border-white/10 px-2.5 py-1 text-[13px] text-dream-sub">
+              <span key={v.venue} className="rounded-full border border-dream-line dark:border-white/10 px-2.5 py-1 text-[14px] text-dream-sub">
                 {v.venue}<span className="text-dream-faint"> ×{v.count}</span>
               </span>
             ))}

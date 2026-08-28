@@ -17,15 +17,15 @@ export default function CityBars({ events }) {
 
   return (
     <div className="glass p-6">
-      <h3 className="font-display font-bold text-[15px] text-dream-ink">都辦在哪裡</h3>
-      <p className="mt-1 text-[13px] text-dream-sub">
+      <h3 className="font-display font-bold text-[16px] text-dream-ink">都辦在哪裡</h3>
+      <p className="mt-1 text-[14px] text-dream-sub">
         {Math.round((taipei / total) * 100)}% 在台北。
         {rows.length > 2 && `其餘散在 ${rows.filter(r => r.city !== '台北' && r.city !== '未標記').map(r => r.city).join('、')}。`}
       </p>
 
       <div className="mt-4 space-y-2">
         {rows.map(r => (
-          <div key={r.city} className="flex items-center gap-3 text-[13px]">
+          <div key={r.city} className="flex items-center gap-3 text-[14px]">
             <span className="w-12 shrink-0 text-dream-faint">{r.city}</span>
             <span className="flex-1 h-2.5 rounded-full bg-dream-line dark:bg-white/10 overflow-hidden">
               <span className="block h-full rounded-full bg-gradient-to-r from-bloom-rose to-bloom-violet"
@@ -37,7 +37,7 @@ export default function CityBars({ events }) {
       </div>
 
       <div className="mt-5 pt-4 border-t border-dream-line dark:border-white/10">
-        <div className="text-[11px] font-bold text-dream-faint mb-2">最常用的場館</div>
+        <div className="text-[14px] font-bold text-dream-faint mb-2">最常用的場館</div>
         <div className="flex flex-wrap gap-2">
           {venues.slice(0, 6).map(v => (
             <a key={v.key} href={`#/venue/${encodeURIComponent(v.name)}`} className="pill">

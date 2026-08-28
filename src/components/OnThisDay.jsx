@@ -55,7 +55,7 @@ export default function OnThisDay({ events, onSelect }) {
         <div className="eyebrow"><Icon n="heart" className="text-[10px]" /> Rewind</div>
         <h2 className="font-display font-bold text-xl sm:text-2xl text-dream-ink mt-1.5">
           {exact ? '那年今天' : '那年的這幾天'}
-          <span className="ml-2 text-[13px] font-normal text-dream-faint">
+          <span className="ml-2 text-[14px] font-normal text-dream-faint">
             {Number(mmdd.slice(0, 2))} 月 {Number(mmdd.slice(3))} 日
             {!exact && ' 前後'}
           </span>
@@ -76,7 +76,7 @@ export default function OnThisDay({ events, onSelect }) {
             style={{ fontSize: 'clamp(20px,3.4vw,28px)' }}>
             <span style={{ color: m.color }}>{yearsAgo}</span> 年前的{exact ? '今天' : '這個時候'}
           </div>
-          <div className="mt-2 flex items-center gap-1.5 text-[13px]" style={{ color: m.color }}>
+          <div className="mt-2 flex items-center gap-1.5 text-[14px]" style={{ color: m.color }}>
             <Icon n={personal ? 'user' : m.icon} className="text-[10px]" />
             {personal ? '個人來台' : m.name}
             <span className="text-dream-faint">
@@ -97,11 +97,11 @@ export default function OnThisDay({ events, onSelect }) {
               <li key={o.id}>
                 <button onClick={() => onSelect(o.id)}
                   className="w-full text-left flex items-center gap-2.5 rounded-xl border border-dream-line dark:border-white/10 px-3.5 py-2.5 hover:border-bloom-violet transition-colors">
-                  <span className="shrink-0 font-round font-bold text-[13px]" style={{ color: om.color }}>
+                  <span className="shrink-0 font-round font-bold text-[14px]" style={{ color: om.color }}>
                     {o.startDate.replace(/-/g, '.')}
                   </span>
-                  <span className="min-w-0 flex-1 truncate text-[13px] text-dream-sub">{o.title}</span>
-                  <span className="shrink-0 text-[11px] text-dream-faint">{thisYear - o.year} 年前</span>
+                  <span className="min-w-0 flex-1 truncate text-[14px] text-dream-sub">{o.title}</span>
+                  <span className="shrink-0 text-[14px] text-dream-faint">{thisYear - o.year} 年前</span>
                 </button>
               </li>
             )

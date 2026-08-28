@@ -36,7 +36,7 @@ export default function MePage({ events, attended, onToggleAttended, onReplaceAt
           <Icon n="circle-check" />
         </div>
         <div className="font-display font-bold text-xl text-dream-ink">還沒有打卡紀錄</div>
-        <p className="text-[15px] text-dream-sub mt-2 max-w-sm mx-auto">
+        <p className="text-[16px] text-dream-sub mt-2 max-w-sm mx-auto">
           去圖鑑把你去過的場次打勾，這裡就是你的參戰紀錄。
         </p>
         <button onClick={onBrowse} className="btn-primary mt-6">
@@ -77,14 +77,14 @@ export default function MePage({ events, attended, onToggleAttended, onReplaceAt
               <div className="event-card group w-full flex items-center gap-3 p-3.5" style={{ '--band': m.glow }}>
                 <button onClick={() => onSelect(e.id)} className="flex items-center gap-3 min-w-0 flex-1 text-left">
                   <span className="shrink-0 text-center w-14">
-                    <span className="block font-round font-bold text-[13px]" style={{ color: m.color }}>{e.year}</span>
-                    <span className="block text-[11px] text-dream-faint">{md}</span>
+                    <span className="block font-round font-bold text-[14px]" style={{ color: m.color }}>{e.year}</span>
+                    <span className="block text-[14px] text-dream-faint">{md}</span>
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block font-display font-semibold text-[15px] text-dream-ink line-clamp-1 group-hover:text-bloom-violet transition-colors">
+                    <span className="block font-display font-semibold text-[16px] text-dream-ink line-clamp-1 group-hover:text-bloom-violet transition-colors">
                       {e.title}
                     </span>
-                    <span className="flex items-center gap-1.5 text-[13px] text-dream-sub">
+                    <span className="flex items-center gap-1.5 text-[14px] text-dream-sub">
                       <Icon n={isPersonal(e) ? 'user' : m.icon} className="text-[9px]" style={{ color: m.color }} />
                       {isPersonal(e) ? '個人' : m.name}
                       {e.venue && <span className="text-dream-faint truncate hidden sm:inline">· {e.venue}</span>}
@@ -136,30 +136,30 @@ function Backup({ attended, onReplaceAttended }) {
 
   return (
     <div className="glass p-5 sm:p-6">
-      <h3 className="flex items-center gap-2.5 font-display font-bold text-[17px] text-dream-ink">
+      <h3 className="flex items-center gap-2.5 font-display font-bold text-[18px] text-dream-ink">
         <Icon n="clipboard" className="text-bloom-sky" /> 換裝置備份
       </h3>
-      <p className="text-[13px] text-dream-sub mt-1.5 leading-relaxed">
+      <p className="text-[14px] text-dream-sub mt-1.5 leading-relaxed">
         這站沒有帳號，打卡紀錄只存在這台裝置的瀏覽器。把下面這段複製起來自己保管，
         換手機時貼回去就會還原。
       </p>
 
-      <label className="block mt-4 text-[12px] font-semibold text-dream-sub">我的備份碼</label>
+      <label className="block mt-4 text-[14px] font-semibold text-dream-sub">我的備份碼</label>
       <div className="flex flex-col sm:flex-row gap-2 mt-1.5">
         <input readOnly value={code || '（還沒有打卡紀錄）'} onFocus={(e) => e.target.select()}
-          className="min-w-0 flex-1 rounded-lg border border-dream-line bg-white/70 px-3 py-2 font-mono text-[12.5px] text-dream-ink dark:bg-white/[.06] dark:border-white/15" />
+          className="min-w-0 flex-1 rounded-lg border border-dream-line bg-white/70 px-3 py-2 font-mono text-[14px] text-dream-ink dark:bg-white/[.06] dark:border-white/15" />
         <button onClick={copy} disabled={!code} className="btn-ghost shrink-0 !h-11 sm:!h-auto disabled:opacity-40">複製</button>
       </div>
 
-      <label className="block mt-4 text-[12px] font-semibold text-dream-sub">貼上備份碼還原</label>
+      <label className="block mt-4 text-[14px] font-semibold text-dream-sub">貼上備份碼還原</label>
       <div className="flex flex-col sm:flex-row gap-2 mt-1.5">
         <input value={draft} onChange={(e) => { setDraft(e.target.value); setStatus(null) }}
           placeholder="BDTW:v2:…" spellCheck={false}
-          className="min-w-0 flex-1 rounded-lg border border-dream-line bg-white/70 px-3 py-2 font-mono text-[12.5px] text-dream-ink placeholder:text-dream-faint dark:bg-white/[.06] dark:border-white/15" />
+          className="min-w-0 flex-1 rounded-lg border border-dream-line bg-white/70 px-3 py-2 font-mono text-[14px] text-dream-ink placeholder:text-dream-faint dark:bg-white/[.06] dark:border-white/15" />
         <button onClick={restore} disabled={!draft.trim()} className="btn-primary shrink-0 !h-11 sm:!h-auto disabled:opacity-40">還原</button>
       </div>
 
-      <p aria-live="polite" className={`text-[12.5px] mt-2.5 ${status ? (status.ok ? 'text-bloom-indigo' : 'text-bloom-rose') : 'text-dream-faint'}`}>
+      <p aria-live="polite" className={`text-[14px] mt-2.5 ${status ? (status.ok ? 'text-bloom-indigo' : 'text-bloom-rose') : 'text-dream-faint'}`}>
         {status ? status.text : '還原會整份取代目前的紀錄，不會合併。'}
       </p>
     </div>
@@ -179,9 +179,9 @@ function PassProgress({ events, attended }) {
         <div className="min-w-0">
           <div className="flex items-baseline gap-2.5">
             <span className="font-display font-extrabold text-[26px] text-dream-ink leading-none">{s.tier.name}</span>
-            <span className="text-[11px] font-bold tracking-[0.22em] uppercase text-dream-faint">{s.tier.en}</span>
+            <span className="text-[14px] font-bold tracking-[0.22em] uppercase text-dream-faint">{s.tier.en}</span>
           </div>
-          <div className="mt-1.5 text-[13px] text-dream-sub">
+          <div className="mt-1.5 text-[14px] text-dream-sub">
             走過 <span className="font-bold text-dream-ink">{s.total}</span> / {s.all} 筆 · {s.percent}%
             {nextTier && <span className="text-dream-faint"> · 再 {needed} 場升{nextTier[0]}</span>}
           </div>
@@ -196,14 +196,14 @@ function PassProgress({ events, attended }) {
         <div className="h-full rounded-full transition-[width] duration-700"
           style={{ width: `${Math.max(2, s.percent)}%`, background: 'linear-gradient(90deg,#ec4899,#8b5cf6)' }} />
       </div>
-      <div className="mt-2 flex justify-between text-[11px] text-dream-faint">
+      <div className="mt-2 flex justify-between text-[14px] text-dream-faint">
         {tiers.map(([name, min]) => (
           <span key={name} className={s.percent >= min ? 'text-bloom-indigo font-bold' : ''}>{name}</span>
         ))}
       </div>
 
       {(s.streak > 1 || s.bestYear) && (
-        <div className="mt-4 pt-4 border-t border-dashed border-dream-line dark:border-white/10 flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-dream-sub">
+        <div className="mt-4 pt-4 border-t border-dashed border-dream-line dark:border-white/10 flex flex-wrap gap-x-6 gap-y-2 text-[14px] text-dream-sub">
           {s.streak > 1 && <span>連續參戰 <b className="text-dream-ink">{s.streak}</b> 年</span>}
           {s.bestYear && <span>最猛的一年 <b className="text-dream-ink">{s.bestYear.year}</b>（{s.bestYear.count} 場）</span>}
           {s.topBand && <span>最常見 <b className="text-dream-ink">{s.topBand.name}</b></span>}
@@ -216,7 +216,7 @@ function PassProgress({ events, attended }) {
 const StatTile = ({ value, label, sub }) => (
   <div className="glass p-4 sm:p-5">
     <div className="font-display text-[22px] sm:text-[26px] font-extrabold text-dream-ink leading-none truncate">{value}</div>
-    <div className="mt-2 text-[13px] text-dream-sub line-clamp-1">{label}</div>
-    <div className="mt-0.5 text-[11px] font-bold tracking-[0.18em] uppercase text-dream-faint">{sub}</div>
+    <div className="mt-2 text-[14px] text-dream-sub line-clamp-1">{label}</div>
+    <div className="mt-0.5 text-[14px] font-bold tracking-[0.18em] uppercase text-dream-faint">{sub}</div>
   </div>
 )

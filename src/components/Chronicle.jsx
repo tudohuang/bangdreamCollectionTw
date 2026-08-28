@@ -33,15 +33,15 @@ export default function Chronicle({ event, allEvents, pulse, color, glow, onNavi
                 <span aria-hidden className="absolute -left-5 top-[11px] w-[7px] h-[7px] rounded-full"
                   style={{ background: m.key === 'show' ? color : `rgba(${glow},0.45)` }} />
                 <div className="flex items-baseline gap-2.5 flex-wrap">
-                  <span className="font-round font-bold text-[13px] tabular-nums" style={{ color }}>
+                  <span className="font-round font-bold text-[14px] tabular-nums" style={{ color }}>
                     {dateShort(m.date)}
                   </span>
                   <span className="text-[14px] font-semibold text-dream-ink">{m.label}</span>
                   {m.offset !== 0 && m.offset !== null && (
-                    <span className="text-[12.5px] text-dream-faint">{beforeShowLabel(m.offset)}</span>
+                    <span className="text-[14px] text-dream-faint">{beforeShowLabel(m.offset)}</span>
                   )}
                 </div>
-                {m.note && <div className="text-[12.5px] text-dream-faint mt-0.5">{m.note}</div>}
+                {m.note && <div className="text-[14px] text-dream-faint mt-0.5">{m.note}</div>}
               </li>
             ))}
           </ol>
@@ -50,20 +50,20 @@ export default function Chronicle({ event, allEvents, pulse, color, glow, onNavi
 
       {elsewhere.length > 0 && (
         <Section title="當時的其他行程" color={color}>
-          <p className="text-[13px] text-dream-faint mb-3">
+          <p className="text-[14px] text-dream-faint mb-3">
             這場前後一個月，出演者在台灣以外的場次。看得出這一站在整趟行程裡的位置。
           </p>
           <div className="space-y-3.5">
             {elsewhere.map(({ name, list }) => (
               <div key={name}>
                 <a href={`#/person/${encodeURIComponent(name)}`}
-                  className="inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-dream-ink hover:text-bloom-indigo transition-colors">
+                  className="inline-flex items-center gap-1.5 text-[14px] font-semibold text-dream-ink hover:text-bloom-indigo transition-colors">
                   <Icon n="microphone" className="text-[10px]" style={{ color }} /> {name}
                   <span className="font-normal text-dream-faint">{list.length} 場</span>
                 </a>
                 <ul className="mt-1.5 space-y-1">
                   {list.map(r => (
-                    <li key={r.id} className="flex items-baseline gap-2.5 text-[13px]">
+                    <li key={r.id} className="flex items-baseline gap-2.5 text-[14px]">
                       <span className="shrink-0 w-[62px] text-right text-dream-faint tabular-nums">
                         {offsetLabel(r.offset)}
                       </span>
@@ -82,7 +82,7 @@ export default function Chronicle({ event, allEvents, pulse, color, glow, onNavi
 
       {around.length > 0 && (
         <Section title="同時期的台灣" color={color}>
-          <p className="text-[13px] text-dream-faint mb-3">
+          <p className="text-[14px] text-dream-faint mb-3">
             這場前後 45 天內，台灣還有這些場。
           </p>
           <ul className="space-y-1">
@@ -91,7 +91,7 @@ export default function Chronicle({ event, allEvents, pulse, color, glow, onNavi
               return (
                 <li key={e.id}>
                   <button onClick={() => onNavigate(e.id)}
-                    className="group w-full flex items-baseline gap-2.5 py-1 text-left text-[13.5px]">
+                    className="group w-full flex items-baseline gap-2.5 py-1 text-left text-[14px]">
                     <span className="shrink-0 w-[62px] text-right font-medium tabular-nums"
                       style={{ color: offset === 0 ? color : undefined }}>
                       <span className={offset === 0 ? '' : 'text-dream-faint'}>{offsetLabel(offset)}</span>

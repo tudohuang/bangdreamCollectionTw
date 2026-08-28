@@ -46,8 +46,8 @@ function Grid({ events, attended, onToggleAttended, onSelect, milestones, groupB
         <section key={`${g.year}-${g.items[0].id}`}>
           <div className="sticky top-[var(--wall-top)] z-[15] -mx-2 px-2 py-2 mb-3
             bg-dream-bg/95 backdrop-blur-md flex items-center gap-3">
-            <span className="font-display font-extrabold text-[15px] text-dream-ink">{g.year}</span>
-            <span className="text-[11px] font-round font-bold text-dream-faint">{g.items.length} 場</span>
+            <span className="font-display font-extrabold text-[16px] text-dream-ink">{g.year}</span>
+            <span className="text-[14px] font-round font-bold text-dream-faint">{g.items.length} 場</span>
             <span className="flex-1 h-px bg-dream-line dark:bg-white/10" />
           </div>
           <div className={GRID}>{cards(g.items)}</div>

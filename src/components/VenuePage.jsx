@@ -17,7 +17,7 @@ export default function VenuePage({ value, events, onSelect, onClose }) {
     return (
       <section className="glass px-6 py-20 text-center">
         <div className="font-display font-bold text-xl text-dream-ink">找不到這個場館</div>
-        <p className="mt-2 text-[13.5px] text-dream-sub">可能是名字改過，或這個場館還沒有收錄的場次。</p>
+        <p className="mt-2 text-[14px] text-dream-sub">可能是名字改過，或這個場館還沒有收錄的場次。</p>
         <button onClick={onClose} className="btn-primary mt-6">回上一頁</button>
       </section>
     )
@@ -49,20 +49,20 @@ export default function VenuePage({ value, events, onSelect, onClose }) {
   return (
     <section>
       <button onClick={onClose}
-        className="hidden sm:inline-flex items-center gap-1.5 text-[13px] text-dream-sub hover:text-dream-ink transition-colors">
+        className="hidden sm:inline-flex items-center gap-1.5 text-[14px] text-dream-sub hover:text-dream-ink transition-colors">
         <Icon n="chevron-left" className="text-[11px]" /> 回上一頁
       </button>
 
       <div className="mt-4">
         <div className="eyebrow"><Icon n="location-dot" className="text-[10px]" /> Venue</div>
         <h2 className="section-h mt-1.5">{v.name}</h2>
-        <p className="mt-2 text-[13.5px] text-dream-sub">
+        <p className="mt-2 text-[14px] text-dream-sub">
           {v.city && <span className="mr-1.5">{v.city}</span>}
           {first.year === last.year ? `${first.year} 年` : `${first.year}–${last.year}`}
           ，收錄 {list.length} 筆。
         </p>
         {aliases.length > 0 && (
-          <p className="mt-1.5 text-[12px] text-dream-faint">
+          <p className="mt-1.5 text-[14px] text-dream-faint">
             資料裡也寫作：{aliases.join('、')}
           </p>
         )}
@@ -72,14 +72,14 @@ export default function VenuePage({ value, events, onSelect, onClose }) {
         {stats.map(([k, val]) => (
           <div key={k} className="bg-white px-3 py-3.5 text-center dark:bg-white/[.04]">
             <dd className="font-display font-bold text-[20px] text-dream-ink tabular-nums leading-none">{val}</dd>
-            <dt className="text-[11px] text-dream-faint mt-1.5">{k}</dt>
+            <dt className="text-[14px] text-dream-faint mt-1.5">{k}</dt>
           </div>
         ))}
       </dl>
 
       {bands.length > 0 && (
         <div className="mt-5 glass p-6">
-          <h3 className="font-display font-bold text-[15px] text-dream-ink mb-3.5">在這裡演出過的</h3>
+          <h3 className="font-display font-bold text-[16px] text-dream-ink mb-3.5">在這裡演出過的</h3>
           <div className="flex flex-wrap gap-2">
             {bands.map(([g, n]) => {
               const m = bandMeta(g)
@@ -106,7 +106,7 @@ export default function VenuePage({ value, events, onSelect, onClose }) {
 
       {others.length > 0 && (
         <div className="mt-9">
-          <h3 className="font-display font-bold text-[15px] text-dream-ink mb-3">其他常用的場館</h3>
+          <h3 className="font-display font-bold text-[16px] text-dream-ink mb-3">其他常用的場館</h3>
           <div className="flex flex-wrap gap-2">
             {others.map(o => (
               <a key={o.key} href={`#/venue/${encodeURIComponent(o.name)}`} className="pill">

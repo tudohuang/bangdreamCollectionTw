@@ -17,13 +17,16 @@ function Row({ item, onSelect, showKind }) {
   return (
     <button onClick={() => onSelect(e.id)}
       className="group w-full flex items-center gap-3 py-2.5 text-left border-b border-dream-line/70 last:border-0 dark:border-white/10">
-      <span className="shrink-0 w-[52px] text-[11px] font-medium text-dream-faint tabular-nums">
+      <span className="shrink-0 w-[52px] text-[14px] font-medium text-dream-faint tabular-nums">
         {daysAgoLabel(date, today())}
       </span>
+      {/* 一列一行。原本標題下面還有一行「圖示 + 日期」，五列就是五行小字 ——
+          日期挪到右邊自成一欄，對齊之後反而更好掃。
+          只有「改了哪幾欄」還需要第二行，那是更新日誌才有的東西。 */}
       <span className="min-w-0 flex-1">
-        <span className="flex items-center gap-1.5 min-w-0">
+        <span className="flex items-baseline gap-1.5 min-w-0">
           {showKind && (
-            <span className={`shrink-0 text-[9.5px] font-bold tracking-wider px-1.5 py-0.5 rounded ${
+            <span className={`shrink-0 text-[14px] font-bold tracking-wider px-1.5 py-0.5 rounded ${
               kind === 'added' ? 'bg-bloom-rose/15 text-bloom-rose' : 'bg-dream-line text-dream-sub dark:bg-white/10'}`}>
               {kind === 'added' ? 'NEW' : '更新'}
             </span>
@@ -31,18 +34,17 @@ function Row({ item, onSelect, showKind }) {
           {isUrgent(e) && (
             <span className="urgent-badge shrink-0">{URGENT_LABEL}</span>
           )}
+          <Icon n={isPersonal(e) ? 'user' : m.icon} className="shrink-0 text-[9px]" style={{ color: m.color }} />
           <span className="min-w-0 truncate font-display font-semibold text-[14px] text-dream-ink group-hover:text-bloom-violet transition-colors">
             {e.title || '未命名活動'}
           </span>
         </span>
-        <span className="flex items-center gap-1.5 text-[12px] text-dream-sub mt-0.5 min-w-0">
-          <Icon n={isPersonal(e) ? 'user' : m.icon} className="text-[9px]" style={{ color: m.color }} />
-          {e.startDate ? formatMonthDay(e.startDate) : '日期未定'}
-          {e.venue && <span className="text-dream-faint truncate hidden sm:inline">· {e.venue}</span>}
-          {kind === 'changed' && fields?.length > 0 && (
-            <span className="text-dream-faint truncate">· 改了{fields.join('、')}</span>
-          )}
-        </span>
+        {kind === 'changed' && fields?.length > 0 && (
+          <span className="block truncate text-[14px] text-dream-faint">改了{fields.join('、')}</span>
+        )}
+      </span>
+      <span className="shrink-0 text-[14px] text-dream-sub tabular-nums">
+        {e.startDate ? formatMonthDay(e.startDate) : '日期未定'}
       </span>
       <Icon n="chevron-right" className="shrink-0 text-dream-faint group-hover:text-bloom-violet transition-colors" />
     </button>
@@ -57,11 +59,11 @@ export function JustAnnounced({ events, onSelect }) {
   return (
     <div className="glass p-5 sm:p-6 h-full w-full min-w-0 flex flex-col">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="flex items-center gap-2 font-display font-bold text-[17px] text-dream-ink">
+        <h2 className="flex items-center gap-2 font-display font-bold text-[18px] text-dream-ink">
           <Icon n="bolt" className="text-bloom-rose" /> 最近公布
         </h2>
         {week > 0 && (
-          <span className="shrink-0 text-[11px] font-semibold px-2 py-1 rounded-full bg-bloom-rose/12 text-bloom-rose">
+          <span className="shrink-0 text-[14px] font-semibold px-2 py-1 rounded-full bg-bloom-rose/12 text-bloom-rose">
             本週 +{week}
           </span>
         )}
@@ -72,7 +74,7 @@ export function JustAnnounced({ events, onSelect }) {
           {items.map(x => <Row key={x.event.id} item={x} onSelect={onSelect} />)}
         </div>
       ) : (
-        <p className="mt-4 flex-1 text-[13.5px] text-dream-faint">
+        <p className="mt-4 flex-1 text-[14px] text-dream-faint">
           最近沒有新公布的場次。這通常撐不了太久。
         </p>
       )}
@@ -91,7 +93,7 @@ export function ChangeFeed({ events, onSelect, limit = 20 }) {
         <h3 className="flex items-center gap-2.5 font-display font-bold text-lg text-dream-ink">
           <Icon n="clock" className="text-bloom-rose" /> 更新日誌
         </h3>
-        <span className="text-[11px] text-dream-faint text-right">每次同步 Sheet 都會留下紀錄</span>
+        <span className="text-[14px] text-dream-faint text-right">每次同步 Sheet 都會留下紀錄</span>
       </div>
       {items.map(x => <Row key={x.event.id + x.kind} item={x} onSelect={onSelect} showKind />)}
     </div>

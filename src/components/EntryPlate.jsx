@@ -23,15 +23,15 @@ export default function EntryPlate({ rows, color }) {
         <div key={r.label}
           className="grid grid-cols-[46px_minmax(0,1fr)] gap-x-3 gap-y-0.5 py-2.5 border-b"
           style={{ borderColor: `rgba(${color.glow},0.18)` }}>
-          <dt className="pt-[3px] text-[10.5px] font-bold tracking-[0.14em] text-dream-faint self-start">
+          <dt className="pt-[3px] text-[14px] font-bold tracking-[0.14em] text-dream-faint self-start">
             {r.label}
           </dt>
-          <dd className="min-w-0 font-display font-semibold text-[15px] leading-snug text-dream-ink">
+          <dd className="min-w-0 font-display font-semibold text-[16px] leading-snug text-dream-ink">
             {r.value}
           </dd>
           {/* 這一格在歷史裡的位置。手機沒有第三欄，改排到值的下面 */}
           {r.note && (
-            <dd className="col-start-2 text-[12px] text-dream-faint tabular-nums">
+            <dd className="col-start-2 text-[14px] text-dream-faint tabular-nums">
               {r.note}
             </dd>
           )}
@@ -57,12 +57,12 @@ export function CastList({ people, roster, color, onSelect }) {
             <a href={`#/person/${encodeURIComponent(p.name)}`}
               onClick={onSelect}
               className="group grid grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_auto] items-baseline gap-x-3 py-2.5">
-              <span className="font-display font-semibold text-[15px] text-dream-ink group-hover:text-bloom-violet transition-colors truncate">
+              <span className="font-display font-semibold text-[16px] text-dream-ink group-hover:text-bloom-violet transition-colors truncate">
                 {p.name}
               </span>
 
               {/* 飾演的角色。沒有名冊資料的人就留白，不要編 */}
-              <span className="hidden sm:block min-w-0 truncate text-[13px]"
+              <span className="hidden sm:block min-w-0 truncate text-[14px]"
                 style={{ color: m ? m.color : undefined }}>
                 {info?.char ? (
                   <>飾 {info.char}{band && <span className="text-dream-faint"> · {band}</span>}</>
@@ -71,7 +71,7 @@ export function CastList({ people, roster, color, onSelect }) {
                 ) : null}
               </span>
 
-              <span className="shrink-0 text-[12px] font-medium tabular-nums"
+              <span className="shrink-0 text-[14px] font-medium tabular-nums"
                 style={{ color: p.isFirst ? color.color : undefined }}>
                 {p.isFirst
                   ? '首次'
@@ -94,7 +94,7 @@ export function BandRow({ groups, onSelect }) {
         const m = bandMeta(g)
         return (
           <a key={g} href={`#/band/${encodeURIComponent(rootGroup(g))}`} onClick={onSelect}
-            className="inline-flex items-center gap-1.5 text-[13.5px] font-medium hover:opacity-75 transition-opacity"
+            className="inline-flex items-center gap-1.5 text-[14px] font-medium hover:opacity-75 transition-opacity"
             style={{ color: m.color }}>
             <Icon n={m.icon} className="text-[10px]" />{g}
           </a>
