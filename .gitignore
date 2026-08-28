@@ -12,3 +12,7 @@ reports/
 .watch-state.json
 watch-export.csv
 .cache/
+
+# 我在改東西時用的一次性 patch 腳本，不該進版控
+.patch.mjs
+.run.mjs
