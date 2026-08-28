@@ -1,68 +1,44 @@
-// FontAwesome 的自建子集：只打包下列圖示，不引入整包 CDN。
-// 用法：<Icon n="music" />
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faMusic, faStar, faFire, faPalette, faCrown, faRainbow, faBolt, faGuitar,
-  faMasksTheater, faWandMagicSparkles, faCompactDisc, faMicrophone,
-  faMagnifyingGlass, faUsers, faUser, faLocationDot, faNoteSticky, faLink,
-  faXmark, faChevronDown, faChevronLeft, faChevronRight, faArrowRotateLeft,
-  faArrowUp, faArrowRight, faHeart, faCircleCheck, faBullseye, faMoon, faSun, faClock, faUserGroup,
-  faTableCellsLarge, faImages, faBarsStaggered, faLayerGroup, faCalendarDays, faTable,
-  faHouse, faChartSimple, faSliders, faTag, faTriangleExclamation,
-} from '@fortawesome/free-solid-svg-icons'
-import { faCalendar, faClipboard } from '@fortawesome/free-regular-svg-icons'
+// 圖示：直接畫 inline SVG，不經過任何 runtime。
+//
+// 以前是 @fortawesome/react-fontawesome，打包後 96 KB（gzip 30 KB）——
+// 但其中圖示路徑只佔 17 KB，剩下的全是那層 runtime 在做我們用不到的事
+// （動態註冊、圖層、遮罩、CSS 注入…）。這站只要「把一段 path 畫出來」。
+//
+// 路徑資料由 npm run icons:data 從原套件抽出來（src/components/iconPaths.js），
+// 所以圖案跟以前一模一樣，只是少了中間那層。
+//
+// 用法不變：<Icon n="music" />
+import { ICONS } from './iconPaths.js'
 
-const MAP = {
-  music: faMusic,
-  star: faStar,
-  fire: faFire,
-  palette: faPalette,
-  crown: faCrown,
-  rainbow: faRainbow,
-  bolt: faBolt,
-  guitar: faGuitar,
-  'masks-theater': faMasksTheater,
-  'wand-magic-sparkles': faWandMagicSparkles,
-  'compact-disc': faCompactDisc,
-  microphone: faMicrophone,
-  'magnifying-glass': faMagnifyingGlass,
-  users: faUsers,
-  'user-group': faUserGroup,
-  user: faUser,
-  'location-dot': faLocationDot,
-  'note-sticky': faNoteSticky,
-  link: faLink,
-  xmark: faXmark,
-  'chevron-down': faChevronDown,
-  'chevron-left': faChevronLeft,
-  'chevron-right': faChevronRight,
-  'arrow-rotate-left': faArrowRotateLeft,
-  'arrow-up': faArrowUp,
-  'arrow-right': faArrowRight,
-  grid: faTableCellsLarge,
-  images: faImages,
-  'bars-staggered': faBarsStaggered,
-  'layer-group': faLayerGroup,
-  'calendar-days': faCalendarDays,
-  table: faTable,
-  heart: faHeart,
-  'circle-check': faCircleCheck,
-  bullseye: faBullseye,
-  moon: faMoon,
-  sun: faSun,
-  clock: faClock,
-  house: faHouse,
-  'chart-simple': faChartSimple,
-  sliders: faSliders,
-  tag: faTag,
-  'triangle-exclamation': faTriangleExclamation,
-  // 線框版
-  calendar: faCalendar,
-  clipboard: faClipboard,
-}
+export default function Icon({ n, className = '', style, fixedWidth, ...rest }) {
+  const icon = ICONS[n] || ICONS.star
+  if (import.meta.env?.DEV && n && !ICONS[n]) {
+    console.warn(`[Icon] 未知圖示名「${n}」，已 fallback 成 star`)
+  }
+  const [w, h, d] = icon
 
-export default function Icon({ n, className, style, fixedWidth }) {
-  if (import.meta.env?.DEV && n && !MAP[n]) console.warn(`[Icon] 未知圖示名「${n}」，已 fallback 成 star`)
-  const icon = MAP[n] || faStar
-  return <FontAwesomeIcon icon={icon} className={className} style={style} fixedWidth={fixedWidth} />
+  return (
+    <svg
+      // aria-hidden：圖示一律是裝飾。需要名稱的地方由外層的 aria-label 負責，
+      // 兩邊都念會變成「音樂 音樂」。
+      aria-hidden="true"
+      focusable="false"
+      role="img"
+      viewBox={`0 0 ${w} ${h}`}
+      // 跟著字級走 —— 全站是用 text-[13px] 這種 class 在控制圖示大小的，
+      // 換成固定 px 會讓幾百個地方要一起改。
+      // 1em 高、寬度依原始比例算，fixedWidth 時強制 1.25em（跟 FA 一樣）。
+      style={{
+        height: '1em',
+        width: fixedWidth ? '1.25em' : `${(w / h).toFixed(4)}em`,
+        display: 'inline-block',
+        verticalAlign: '-0.125em',
+        ...style,
+      }}
+      className={className}
+      {...rest}
+    >
+      <path fill="currentColor" d={d} />
+    </svg>
+  )
 }

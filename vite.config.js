@@ -43,4 +43,22 @@ function pagesFunctionsInDev() {
 export default defineConfig({
   plugins: [react(), pagesFunctionsInDev()],
   base: './',
+  build: {
+    rollupOptions: {
+      output: {
+        // React 與圖示庫拆成獨立的 vendor chunk。
+        //
+        // 總下載量不會變少，變的是回訪者：改一行文案就換一次 hash 的話，
+        // 每次部署所有人都要重載整包。拆開之後 vendor 的 hash 不動，
+        // 瀏覽器直接用快取，只重載真的改過的應用程式碼。
+        //
+        // 這站現在幾乎天天有新場次要更新，所以這件事會一直發生。
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return
+          if (/[\/]node_modules[\/](react|react-dom|scheduler)[\/]/.test(id)) return 'vendor-react'
+          if (id.includes('@fortawesome')) return 'vendor-icons'
+        },
+      },
+    },
+  },
 })

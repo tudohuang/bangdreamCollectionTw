@@ -27,13 +27,10 @@
     "db:export": "node db/export.mjs",
     "db:sql": "node db/sql.mjs",
     "health": "node scripts/health.mjs",
-    "template": "node scripts/template.mjs"
+    "template": "node scripts/template.mjs",
+    "icons:data": "node scripts/build-icon-paths.mjs"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^7.2.0",
-    "@fortawesome/free-regular-svg-icons": "^7.2.0",
-    "@fortawesome/free-solid-svg-icons": "^7.2.0",
-    "@fortawesome/react-fontawesome": "^3.3.1",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "react": "^18.3.1",
@@ -48,7 +45,9 @@
     "postcss": "^8.4.49",
     "sharp": "^0.35.3",
     "tailwindcss": "^3.4.16",
-    "vite": "^5.4.11"
+    "vite": "^5.4.11",
+    "@fortawesome/free-solid-svg-icons": "^7.2.0",
+    "@fortawesome/free-regular-svg-icons": "^7.2.0"
   },
   "homepage": "https://bangdream-collection-tw.vercel.app"
 }
