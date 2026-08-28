@@ -25,7 +25,9 @@
     "db:reset": "node db/reset.mjs",
     "db:ingest": "node db/ingest.mjs",
     "db:export": "node db/export.mjs",
-    "db:sql": "node db/sql.mjs"
+    "db:sql": "node db/sql.mjs",
+    "health": "node scripts/health.mjs",
+    "template": "node scripts/template.mjs"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.2.0",

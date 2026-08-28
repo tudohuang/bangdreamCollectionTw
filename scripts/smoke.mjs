@@ -48,6 +48,7 @@ import PulsePage from './src/components/PulsePage.jsx'
 import LabsPage from './src/components/LabsPage.jsx'
 import OrganizerPage from './src/components/OrganizerPage.jsx'
 import VenuePage from './src/components/VenuePage.jsx'
+import ArchiveSection from './src/components/ArchiveSection.jsx'
 import YearRing from './src/components/YearRing.jsx'
 import GapChart from './src/components/GapChart.jsx'
 import CityBars from './src/components/CityBars.jsx'
@@ -152,6 +153,17 @@ export const CASES = [
   ['YearRing(空資料)', <YearRing events={[]} onSelect={noop} />],
   ['GapChart(空資料)', <GapChart events={[]} onSelect={noop} />, { mayBeEmpty: true }],
   ['CityBars(空資料)', <CityBars events={[]} />, { mayBeEmpty: true }],
+  // 史料層：現在 Sheet 還沒有這些欄，所以測試自己造一筆有資料的。
+  // 注意整份 CASES 寫在上面 ENTRY 的 template literal 裡，字串的換行要多
+  // 跳脫一層；連註解裡都不能出現落單的反斜線，不然註解會被截成半行。
+  ['ArchiveSection', <ArchiveSection color="#8b5cf6" glow="139,92,246" allEvents={[]} event={{
+    id: 'x', title: 'demo',
+    setlist: ['1. STAR BEAT!〜ホシノコドウ', '2. 天下トーイツ A to Z☆', '安可', 'Returns'].join('\\n'),
+    price: '搖滾區 3800 / 座位區 2800',
+    goods: ['場刊 400', '台版限定壓克力立牌 800'].join('\\n'),
+    keyVisual: '某某繪師 https://example.tw/kv',
+  }} />],
+  ['ArchiveSection(沒資料)', <ArchiveSection event={{ id: 'x', title: 'demo' }} allEvents={[]} color="#8b5cf6" glow="139,92,246" />, { mayBeEmpty: true }],
   ['FirstsTable(空資料)', <FirstsTable events={[]} roster={new Map()} onSelect={noop} />],
   ['YearTimeline', <YearTimeline events={events} onSelect={noop} />],
   ['StatsInsights', <StatsInsights events={events} />],

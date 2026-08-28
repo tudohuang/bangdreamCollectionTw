@@ -1,0 +1,1789 @@
+[
+  {
+    "id": "evt-001",
+    "stableId": 1,
+    "number": 1,
+    "year": 2018,
+    "startDate": "2018-02-03",
+    "endDate": "2018-02-03",
+    "title": "BanG Dream! 少女樂團派對！2018聲優見面會 Poppin'Party",
+    "type": "FMT",
+    "people": [
+      "愛美",
+      "大塚紗英",
+      "西本里美"
+    ],
+    "relatedGroups": [
+      "Poppin'Party"
+    ],
+    "isFullBand": false,
+    "venue": "台北世貿一館",
+    "city": "台北",
+    "cover": "https://truth.bahamut.com.tw/s01/201801/0427e0aa64a0936e72cbd0aac75b2943.JPG",
+    "organizer": "移動怪獸",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-002",
+    "stableId": 2,
+    "number": 2,
+    "year": 2018,
+    "startDate": "2018-02-03",
+    "endDate": "2018-02-03",
+    "title": "《BanG Dream! 少女樂團派對》Poppin'Party 聲優街頭生放送",
+    "type": "公開生放送",
+    "people": [
+      "愛美",
+      "大塚紗英",
+      "西本里美"
+    ],
+    "relatedGroups": [
+      "Poppin'Party"
+    ],
+    "isFullBand": false,
+    "venue": "詩涼子街頭實況攝影棚",
+    "city": "台北",
+    "cover": "https://i.ytimg.com/vi/34qkechTg9g/maxresdefault.jpg",
+    "organizer": "移動怪獸",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-003",
+    "stableId": 3,
+    "number": 3,
+    "year": 2018,
+    "startDate": "2018-04-07",
+    "endDate": "2018-04-08",
+    "title": "THE IDOLM@STER CINDERELLA GIRLS Initial Mess@ge",
+    "type": "LIVE",
+    "people": [
+      "大橋彩香"
+    ],
+    "relatedGroups": [
+      "Poppin'Party／山吹沙綾"
+    ],
+    "isFullBand": false,
+    "venue": "TICC",
+    "city": "台北",
+    "cover": "https://p2.bahamut.com.tw/M/2KU/05/fd552b14cb1998980a37a05bccezvz94.JPG",
+    "organizer": "萬代南夢宮娛樂",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-004",
+    "stableId": 4,
+    "number": 4,
+    "year": 2018,
+    "startDate": "2018-05-19",
+    "endDate": "2018-05-19",
+    "title": "PF28 金元壽子 Talkshow／特別來賓簽名抽獎",
+    "type": "Talk、簽名",
+    "people": [
+      "金元壽子"
+    ],
+    "relatedGroups": [
+      "Afterglow／羽澤鶇"
+    ],
+    "isFullBand": false,
+    "venue": "花博爭豔館",
+    "city": "台北",
+    "cover": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSO4KriLs6533UougvFAeqImsNb23Yit4PUA&s",
+    "organizer": "開拓動漫",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-005",
+    "stableId": 5,
+    "number": 5,
+    "year": 2018,
+    "startDate": "2018-08-18",
+    "endDate": "2018-08-18",
+    "title": "2018少女樂團派對! 聲優見面會",
+    "type": "FMT",
+    "people": [
+      "前島亞美",
+      "豐田萌繪",
+      "工藤晴香",
+      "櫻川惠"
+    ],
+    "relatedGroups": [
+      "Roselia",
+      "Pastel＊Palettes",
+      "Hello, Happy World!"
+    ],
+    "isFullBand": false,
+    "venue": "台北世貿一館",
+    "city": "台北",
+    "cover": "https://p2.bahamut.com.tw/B/2KU/51/601b2c298e03ffcbf5553395d311rar5.JPG",
+    "organizer": "移動怪獸",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-006",
+    "stableId": 6,
+    "number": 6,
+    "year": 2018,
+    "startDate": "2018-09-30",
+    "endDate": "2018-09-30",
+    "title": "KING SUPER LIVE 2018 in 台灣",
+    "type": "LIVE、音樂祭",
+    "people": [
+      "上坂菫"
+    ],
+    "relatedGroups": [
+      "Pastel＊Palettes／白鷺千聖"
+    ],
+    "isFullBand": false,
+    "venue": "國立體育大學綜合體育館／林口體育館",
+    "city": "桃園",
+    "cover": "https://p2.bahamut.com.tw/B/2KU/45/85582f4189f2b9e1eaae42e78c11e0t5.JPG",
+    "organizer": "國王唱片",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-007",
+    "stableId": 7,
+    "number": 7,
+    "year": 2018,
+    "startDate": "2018-12-15",
+    "endDate": "2018-12-15",
+    "title": "LisAni！LIVE TAIWAN 2018 SATURDAY STAGE",
+    "type": "LIVE、音樂祭",
+    "people": [
+      "三森鈴子"
+    ],
+    "relatedGroups": [
+      "Glitter☆Green／牛込ゆり"
+    ],
+    "isFullBand": false,
+    "venue": "台灣大學綜合體育館",
+    "city": "台北",
+    "cover": "https://s3-press.niusnews.com/72023_2_15403380024680.jpg",
+    "organizer": "好玩國際文化",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-008",
+    "stableId": 8,
+    "number": 8,
+    "year": 2018,
+    "startDate": "2018-12-16",
+    "endDate": "2018-12-16",
+    "title": "MIMORI SUZUKO 5th Anniversary Live「five tones」in 台灣",
+    "type": "LIVE",
+    "people": [
+      "三森鈴子"
+    ],
+    "relatedGroups": [
+      "Glitter☆Green／牛込ゆり"
+    ],
+    "isFullBand": false,
+    "venue": "台北華山 Legacy Taipei",
+    "city": "台北",
+    "cover": "https://www.legacy.com.tw/uploads/image_library/1539159430.jpg",
+    "organizer": "好玩國際文化",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-009",
+    "stableId": 9,
+    "number": 9,
+    "year": 2019,
+    "startDate": "2019-01-21",
+    "endDate": "2019-01-21",
+    "title": "相羽亞衣奈 2019聲優見面會",
+    "type": "FMT",
+    "people": [
+      "相羽あいな"
+    ],
+    "relatedGroups": [
+      "Roselia／湊友希那"
+    ],
+    "isFullBand": false,
+    "venue": "台北世貿一館",
+    "city": "台北",
+    "cover": "https://p2.bahamut.com.tw/HOME/creationCover/13/0004241413_B.JPG",
+    "organizer": "移動怪獸",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-010",
+    "stableId": 10,
+    "number": 10,
+    "year": 2019,
+    "startDate": "2019-08-04",
+    "endDate": "2019-08-04",
+    "title": "2019漫畫博覽會 Netflix「動漫魂大爆發！」聲優舞台",
+    "type": "舞台活動",
+    "people": [
+      "上坂菫"
+    ],
+    "relatedGroups": [
+      "Pastel＊Palettes／白鷺千聖"
+    ],
+    "isFullBand": false,
+    "venue": "台北世貿一館",
+    "city": "台北",
+    "cover": "https://p2.bahamut.com.tw/B/2KU/65/df884d0086e492fafd2852392f15tdh5.JPG",
+    "organizer": "Netflix",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-011",
+    "stableId": 11,
+    "number": 11,
+    "year": 2023,
+    "startDate": "2023-05-20",
+    "endDate": "2023-05-20",
+    "title": "Bushiroad EXPO 2023",
+    "type": "Talk、EXPO、手渡、上映會",
+    "people": [
+      "進藤あまね",
+      "西尾夕香"
+    ],
+    "relatedGroups": [
+      "Morfonica"
+    ],
+    "isFullBand": false,
+    "venue": "台北富邦國際會議中心",
+    "city": "台北",
+    "cover": "https://p2.bahamut.com.tw/B/2KU/02/537957cd5c9196b21bfb9b0b2f1lrv25.JPG",
+    "organizer": "武士道",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-012",
+    "stableId": 12,
+    "number": 12,
+    "year": 2023,
+    "startDate": "2023-07-29",
+    "endDate": "2023-07-29",
+    "title": "《SPY×FAMILY 間諜家家酒》聲優見面會",
+    "type": "FMT",
+    "people": [
+      "加藤英美里"
+    ],
+    "relatedGroups": [
+      "Afterglow／上原緋瑪麗"
+    ],
+    "isFullBand": false,
+    "venue": "台北世貿一館",
+    "city": "台北",
+    "cover": "https://3c.yipee.cc/wp-content/uploads/2023/06/%E9%96%93%E8%AB%9C%E5%AE%B6%E5%AE%B6%E9%85%92%E8%81%B2%E5%84%AA%E6%B4%BB%E5%8B%95%E4%B8%BB%E8%A6%96%E8%A6%BA%E5%9C%96-copy-720x720.jpg",
+    "organizer": "木棉花國際",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-013",
+    "stableId": 13,
+    "number": 13,
+    "year": 2023,
+    "startDate": "2023-11-19",
+    "endDate": "2023-11-19",
+    "title": "BanG Dream! 少女樂團派對 6週年特別活動 2023聲優見面會",
+    "type": "FMT",
+    "people": [
+      "愛美",
+      "相羽あいな",
+      "進藤あまね"
+    ],
+    "relatedGroups": [
+      "Poppin'Party",
+      "Roselia",
+      "Morfonica"
+    ],
+    "isFullBand": false,
+    "venue": "台北中正紀念堂演藝廳",
+    "city": "台北",
+    "cover": "https://truth.bahamut.com.tw/s01/202312/573b5c6fcbe5b96e1443d4b1be752da6.JPG",
+    "organizer": "移動怪獸",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-014",
+    "stableId": 14,
+    "number": 14,
+    "year": 2024,
+    "startDate": "2024-02-02",
+    "endDate": "2024-02-02",
+    "title": "Bushiroad EXPO 2024",
+    "type": "Talk、EXPO、手渡、上映會",
+    "people": [
+      "西尾夕香"
+    ],
+    "relatedGroups": [
+      "Morfonica"
+    ],
+    "isFullBand": false,
+    "venue": "台北世貿一館",
+    "city": "台北",
+    "cover": "https://s3-ap-northeast-1.amazonaws.com/bushiroad-com/cb1a2ecf-d175-42cf-8274-ddc88ec7a614.png",
+    "organizer": "武士道",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-015",
+    "stableId": 15,
+    "number": 15,
+    "year": 2024,
+    "startDate": "2024-02-03",
+    "endDate": "2024-02-03",
+    "title": "Bushiroad EXPO 2024",
+    "type": "簽名會",
+    "people": [
+      "進藤あまね"
+    ],
+    "relatedGroups": [
+      "Morfonica"
+    ],
+    "isFullBand": false,
+    "venue": "台北世貿一館",
+    "city": "台北",
+    "cover": "https://p2.bahamut.com.tw/B/2KU/54/7da749b5d5f791f736ca2002b31o9ve5.JPG",
+    "organizer": "武士道",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-016",
+    "stableId": 16,
+    "number": 16,
+    "year": 2024,
+    "startDate": "2024-03-02",
+    "endDate": "2024-03-02",
+    "title": "一日店長特別活動",
+    "type": "Talk、簽名",
+    "people": [
+      "西尾夕香"
+    ],
+    "relatedGroups": [
+      "Morfonica"
+    ],
+    "isFullBand": false,
+    "venue": "Bushiroad 台北旗艦店「魔法氣泡」",
+    "city": "台北",
+    "cover": "https://i.imgur.com/iNNKgtM.jpeg",
+    "organizer": "武士道",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-017",
+    "stableId": 17,
+    "number": 17,
+    "year": 2024,
+    "startDate": "2024-03-03",
+    "endDate": "2024-03-03",
+    "title": "Raychell個人簽售會",
+    "type": "簽名會",
+    "people": [
+      "Raychell"
+    ],
+    "relatedGroups": [
+      "RAISE A SUILEN"
+    ],
+    "isFullBand": false,
+    "venue": "Bushiroad 台北旗艦店「魔法氣泡」",
+    "city": "台北",
+    "cover": "",
+    "organizer": "武士道",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-018",
+    "stableId": 18,
+    "number": 18,
+    "year": 2024,
+    "startDate": "2024-03-23",
+    "endDate": "2024-03-23",
+    "title": "RAISE A SUILEN ASIA TOUR 2024 IN TAIPEI",
+    "type": "LIVE",
+    "people": [
+      "Raychell",
+      "紡木吏佐",
+      "夏芽",
+      "倉知玲鳳",
+      "小原莉子"
+    ],
+    "relatedGroups": [
+      "RAISE A SUILEN"
+    ],
+    "isFullBand": true,
+    "venue": "Zepp New Taipei",
+    "city": "新北",
+    "cover": "https://assets.kktix.io/upload_images/187607/1200-630_large.jpg",
+    "organizer": "數位至匯",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-019",
+    "stableId": 19,
+    "number": 19,
+    "year": 2024,
+    "startDate": "2024-06-28",
+    "endDate": "2024-06-30",
+    "title": "Ani Crew DJ Live in Taipei",
+    "type": "舞台活動",
+    "people": [
+      "Raychell",
+      "岡田夢以"
+    ],
+    "relatedGroups": [
+      "RAISE A SUILEN",
+      "Ave Mujica"
+    ],
+    "isFullBand": false,
+    "venue": "SAKURA 音樂餐酒館",
+    "city": "台北",
+    "cover": "https://scontent-tpe1-1.cdninstagram.com/v/t51.82787-15/722036686_17966935959096365_4221407263606805221_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=107&ig_cache_key=MzkxNjk1MjI4OTY4MDcyMjg2Mw%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuNTg4LnNkci5yZWd1bGFyX3Bob3RvLkMzIn0%3D&_nc_ohc=3lcaXcjBGBkQ7kNvwHCeTIQ&_nc_oc=AdpUkC_gPcmGbTUsT2mZumMtU0ja64lxo8Khmb04FRgG168rjNH7Z97pmnWsiIZ-wXk&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe1-1.cdninstagram.com&_nc_gid=420hzjt88XtPGOKd0jxhlw&_nc_ss=7a22e&oh=00_Af_0to9p3bcYrAn7IVgU9Z4w9uFNNgwUnAcSoHJQbIL9nA&oe=6A31714D",
+    "organizer": "",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-020",
+    "stableId": 20,
+    "number": 20,
+    "year": 2024,
+    "startDate": "2024-11-16",
+    "endDate": "2024-11-16",
+    "title": "Sumire Uesaka Fan Meeting in Taipei",
+    "type": "FMT",
+    "people": [
+      "上坂菫"
+    ],
+    "relatedGroups": [
+      "Pastel＊Palettes／白鷺千聖"
+    ],
+    "isFullBand": false,
+    "venue": "三創生活園區 CLAPPER STUDIO",
+    "city": "台北",
+    "cover": "https://p2.bahamut.com.tw/B/2KU/46/a18bc2d2d03090a0710b0ba1ba1r59e5.JPG?v=1724300911351",
+    "organizer": "開拓動漫、好玩國際文化",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-021",
+    "stableId": 21,
+    "number": 21,
+    "year": 2025,
+    "startDate": "2025-02-08",
+    "endDate": "2025-02-08",
+    "title": "《金肉人 完美超人始祖篇》聲優上坂堇見面會",
+    "type": "FMT",
+    "people": [
+      "上坂菫"
+    ],
+    "relatedGroups": [
+      "Pastel＊Palettes／白鷺千聖"
+    ],
+    "isFullBand": false,
+    "venue": "台北南港展覽館一館",
+    "city": "台北",
+    "cover": "https://p2.bahamut.com.tw/B/2KU/00/93bc597e41f819c69718ff6f521t2a85.JPG?v=1739019157723",
+    "organizer": "回歸線娛樂",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-022",
+    "stableId": 22,
+    "number": 22,
+    "year": 2025,
+    "startDate": "2025-02-08",
+    "endDate": "2025-02-08",
+    "title": "Bushiroad EXPO 2025 in Taipei《BanG Dream!》系列聲優活動",
+    "type": "Talk、EXPO、手渡、上映會",
+    "people": [
+      "佐佐木李子",
+      "渡瀨結月",
+      "立石凜"
+    ],
+    "relatedGroups": [
+      "MyGO!!!!!",
+      "Ave Mujica"
+    ],
+    "isFullBand": false,
+    "venue": "台北世貿一館",
+    "city": "台北",
+    "cover": "https://img.4gamers.com.tw/puku-clone-version/f29dcb6dd06e56b0112f1c70de6c7bc6ddbb7905.jpg",
+    "organizer": "武士道",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-023",
+    "stableId": 23,
+    "number": 23,
+    "year": 2025,
+    "startDate": "2025-02-09",
+    "endDate": "2025-02-09",
+    "title": "Bushiroad EXPO 2025 in Taipei 聲優渡瀨結月、立石凛簽名會",
+    "type": "簽名會",
+    "people": [
+      "渡瀨結月",
+      "立石凜"
+    ],
+    "relatedGroups": [
+      "MyGO!!!!!",
+      "Ave Mujica"
+    ],
+    "isFullBand": false,
+    "venue": "台北世貿一館",
+    "city": "台北",
+    "cover": "https://s3-ap-northeast-1.amazonaws.com/bushiroad-com/4ac5cc46-8899-4ccc-a98e-3299618deb2e.jpg",
+    "organizer": "武士道",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-024",
+    "stableId": 24,
+    "number": 24,
+    "year": 2025,
+    "startDate": "2025-02-15",
+    "endDate": "2025-02-15",
+    "title": "BanG Dream! 少女樂團派對 7週年紀念特別活動 MyGO!!!!! 2025聲優見面會",
+    "type": "FMT",
+    "people": [
+      "青木陽菜",
+      "小日向美香",
+      "林鼓子"
+    ],
+    "relatedGroups": [
+      "MyGO!!!!!"
+    ],
+    "isFullBand": false,
+    "venue": "TICC",
+    "city": "台北",
+    "cover": "https://truth.bahamut.com.tw/s01/202412/forum/47099/445401c87816997eb0c6d55db274fd5c.JPG",
+    "organizer": "移動怪獸",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-025",
+    "stableId": 25,
+    "number": 25,
+    "year": 2025,
+    "startDate": "2025-04-20",
+    "endDate": "2025-04-20",
+    "title": "2025 霓虹綠洲音樂祭 米澤茜舞台演出＆見面會",
+    "type": "FMT、LIVE",
+    "people": [
+      "米澤茜"
+    ],
+    "relatedGroups": [
+      "Ave Mujica／祐天寺若麥"
+    ],
+    "isFullBand": false,
+    "venue": "華中露營場",
+    "city": "台北",
+    "cover": "https://assets.kktix.io/upload_images/247423/2025-%E7%B1%B3%E6%BE%A4%E8%8C%9C_1200x630px_large.png",
+    "organizer": "宝島制作委員会",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-026",
+    "stableId": 26,
+    "number": 26,
+    "year": 2025,
+    "startDate": "2025-05-24",
+    "endDate": "2025-05-24",
+    "title": "ANISAMA WORLD 2025 in TAOYUAN",
+    "type": "LIVE、音樂祭",
+    "people": [
+      "Raychell",
+      "紡木吏佐",
+      "夏芽",
+      "倉知玲鳳",
+      "小原莉子"
+    ],
+    "relatedGroups": [
+      "RAISE A SUILEN"
+    ],
+    "isFullBand": true,
+    "venue": "桃園會展中心",
+    "city": "桃園",
+    "cover": "https://assets.kktix.io/organization_resource_files/34262/68562/anisa0328%E5%B7%A5%E4%BD%9C%E5%8D%80%E5%9F%9F_12.png",
+    "organizer": "新想股份有限公司",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-027",
+    "stableId": 27,
+    "number": 27,
+    "year": 2025,
+    "startDate": "2025-06-21",
+    "endDate": "2025-06-21",
+    "title": "AniStar 特別企劃｜小澤亞李 台灣粉絲見面會＆簽名會",
+    "type": "FMT、簽名",
+    "people": [
+      "小澤亞李"
+    ],
+    "relatedGroups": [
+      "Pastel＊Palettes／冰川日菜"
+    ],
+    "isFullBand": false,
+    "venue": "WESTAR",
+    "city": "台北",
+    "cover": "https://assets.kktix.io/upload_images/227354/1200x630_0502_original.jpg",
+    "organizer": "AniStar製作委員會",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-028",
+    "stableId": 28,
+    "number": 28,
+    "year": 2025,
+    "startDate": "2025-08-23",
+    "endDate": "2025-08-23",
+    "title": "Ani-mode 花火大會",
+    "type": "舞台活動",
+    "people": [
+      "倉知玲鳳"
+    ],
+    "relatedGroups": [
+      "RAISE A SUILEN"
+    ],
+    "isFullBand": false,
+    "venue": "時藝劇場",
+    "city": "台北",
+    "cover": "https://scontent-tpe1-1.cdninstagram.com/v/t51.82787-15/721104386_17972458905105379_5388919835645089101_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=111&ig_cache_key=MzkxNjkyNDU5MjMwMDU2NDk2MA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTAyNC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=0luuzIbmTO0Q7kNvwEk1_Wl&_nc_oc=AdpSM-37Js2AYd2BjWz67S3WAdqSm4Bfcm94-XMPf_B0fvYTsTu-2jIQThyJb9yXptM&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe1-1.cdninstagram.com&_nc_gid=mMh_t5IWeRfa2PbGcvSECg&_nc_ss=7a22e&oh=00_Af8lAmYh4kHW9NkMUbwzYK_0HPCqsbN3Lps00wp3LY7DAQ&oe=6A31715D",
+    "organizer": "Ani-mode",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-029",
+    "stableId": 29,
+    "number": 29,
+    "year": 2025,
+    "startDate": "2025-09-29",
+    "endDate": "2025-09-29",
+    "title": "三澤紗千香 Fan Meeting in Taiwan - 好想去台灣！-",
+    "type": "FMT",
+    "people": [
+      "三澤紗千香"
+    ],
+    "relatedGroups": [
+      "Afterglow／青葉摩卡"
+    ],
+    "isFullBand": false,
+    "venue": "時藝劇場",
+    "city": "台北",
+    "cover": "https://www.famiticket.com.tw/Home/api/getimage/13250",
+    "organizer": "集藝文化",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-030",
+    "stableId": 30,
+    "number": 30,
+    "year": 2025,
+    "startDate": "2025-11-09",
+    "endDate": "2025-11-09",
+    "title": "AKANE YONEZAWA \"Numb show?\" TOUR -Taipei-",
+    "type": "LIVE",
+    "people": [
+      "米澤茜"
+    ],
+    "relatedGroups": [
+      "Ave Mujica／祐天寺若麥"
+    ],
+    "isFullBand": false,
+    "venue": "MOONDOG",
+    "city": "台北",
+    "cover": "https://p2.bahamut.com.tw/B/2KU/37/55b94041a23ad1844ce0ef825e1w5455.JPG",
+    "organizer": "宝島制作委員会",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-031",
+    "stableId": 31,
+    "number": 31,
+    "year": 2025,
+    "startDate": "2025-11-22",
+    "endDate": "2025-11-23",
+    "title": "リスアニ！LIVE TAIPEI 2025",
+    "type": "LIVE、音樂祭",
+    "people": [
+      "愛美",
+      "伊藤美來"
+    ],
+    "relatedGroups": [
+      "Poppin'Party",
+      "Hello, Happy World!"
+    ],
+    "isFullBand": false,
+    "venue": "台灣大學綜合體育館",
+    "city": "台北",
+    "cover": "https://aimi.info/wp-content/uploads/2025/08/%E3%80%8C%E3%83%AA%E3%82%B9%E3%82%A2%E3%83%8B%EF%BC%81LIVE-TAIPEI-2025%E3%80%8D%E5%91%8A%E7%9F%A5%E7%94%A8%E7%94%BB%E5%83%8F_%E6%97%A5%E6%9C%AC%E8%AA%9E-1448x2048.jpg",
+    "organizer": "好玩國際文化",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-032",
+    "stableId": 32,
+    "number": 32,
+    "year": 2025,
+    "startDate": "2025-12-10",
+    "endDate": "2025-12-10",
+    "title": "《劇場版 BanG Dream! It’s MyGO!!!!! 前篇》聲優來台特別場（A／B部）",
+    "type": "Talk、電影特別場",
+    "people": [
+      "立石凜",
+      "青木陽菜"
+    ],
+    "relatedGroups": [
+      "MyGO!!!!!"
+    ],
+    "isFullBand": false,
+    "venue": "MUVIE CINEMAS 台北松仁影城（TITAN SCREEN）",
+    "city": "台北",
+    "cover": "https://truth.bahamut.com.tw/s01/202512/forum/47099/4232d6ecdaeafbf3eb49bc873908361d.JPG",
+    "organizer": "威秀影城",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-033",
+    "stableId": 33,
+    "number": 33,
+    "year": 2025,
+    "startDate": "2025-12-26",
+    "endDate": "2025-12-26",
+    "title": "Roselia ASIA TOUR「Neuweltfahrt」台北公演",
+    "type": "LIVE",
+    "people": [
+      "工藤晴香",
+      "櫻川惠",
+      "相羽あいな",
+      "中島由貴",
+      "志崎樺音"
+    ],
+    "relatedGroups": [
+      "Roselia"
+    ],
+    "isFullBand": true,
+    "venue": "Zepp New Taipei",
+    "city": "新北",
+    "cover": "https://bang-dream.com/2025/renew/a6e35525-62e2-4db8-9c0c-8bbfb2bc062a.png",
+    "organizer": "數位至匯",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-034",
+    "stableId": 34,
+    "number": 34,
+    "year": 2026,
+    "startDate": "2026-01-17",
+    "endDate": "2026-01-17",
+    "title": "VOICE STAGE Vol.1 小原莉子台灣粉絲見面會",
+    "type": "FMT",
+    "people": [
+      "小原莉子"
+    ],
+    "relatedGroups": [
+      "RAISE A SUILEN／朝日六花"
+    ],
+    "isFullBand": false,
+    "venue": "新光三越高雄左營店 10F 舞台區",
+    "city": "高雄",
+    "cover": "https://100pointstore.com/wp-content/uploads/2025/12/%E5%B0%8F%E5%8E%9F%E8%8E%89%E5%AD%90_%E5%8F%B0%E7%81%A3%E7%B2%89%E7%B5%B2%E8%A6%8B%E9%9D%A2%E6%9C%83_%E7%B8%AE%E5%B0%8F%E7%89%88.jpg",
+    "organizer": "Voice Stage",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-035",
+    "stableId": 35,
+    "number": 35,
+    "year": 2026,
+    "startDate": "2026-02-05",
+    "endDate": "2026-02-09",
+    "title": "Bushiroad EXPO 2026",
+    "type": "Talk、EXPO、手渡、上映會",
+    "people": [
+      "渡瀨結月",
+      "千春"
+    ],
+    "relatedGroups": [
+      "Ave Mujica",
+      "Millsage"
+    ],
+    "isFullBand": false,
+    "venue": "台北南港展覽館一館",
+    "city": "台北",
+    "cover": "https://s3-ap-northeast-1.amazonaws.com/bushiroad-com/07bfde1a-aa34-4501-9453-22c57be7b347.png",
+    "organizer": "武士道",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-036",
+    "stableId": 36,
+    "number": 36,
+    "year": 2026,
+    "startDate": "2026-02-06",
+    "endDate": "2026-02-06",
+    "title": "ATC Special Stage 工藤晴香聲優見面會",
+    "type": "FMT",
+    "people": [
+      "工藤晴香"
+    ],
+    "relatedGroups": [
+      "Roselia／冰川紗夜"
+    ],
+    "isFullBand": false,
+    "venue": "台北南港展覽館一館",
+    "city": "台北",
+    "cover": "https://assets.kktix.io/upload_images/286888/%E5%B7%A5%E8%97%A4%E6%99%B4%E9%A6%99_%E5%8B%95%E6%BC%AB%E7%AF%80_Banner_large.png",
+    "organizer": "ATC Taiwan",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-037",
+    "stableId": 37,
+    "number": 37,
+    "year": 2026,
+    "startDate": "2026-02-07",
+    "endDate": "2026-02-07",
+    "title": "ATC Special Stage 伊藤美來聲優見面會",
+    "type": "FMT",
+    "people": [
+      "伊藤美來"
+    ],
+    "relatedGroups": [
+      "Hello, Happy World!／弦卷心"
+    ],
+    "isFullBand": false,
+    "venue": "台北南港展覽館一館",
+    "city": "台北",
+    "cover": "https://assets.kktix.io/upload_images/286255/ATC_design-2026%E5%8F%B0%E5%8C%97%E5%9C%8B%E9%9A%9B%E5%8B%95%E6%BC%AB%E7%AF%80-KKTIX-%E4%BC%8A%E8%97%A4%E7%BE%8E%E4%BE%86-01_0_large.jpg",
+    "organizer": "ATC Taiwan",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-038",
+    "stableId": 38,
+    "number": 38,
+    "year": 2026,
+    "startDate": "2026-02-08",
+    "endDate": "2026-02-09",
+    "title": "戀上換裝娃娃 直田姬奈聲優見面親遞會",
+    "type": "FMT、親遞會",
+    "people": [
+      "直田姬奈"
+    ],
+    "relatedGroups": [
+      "Morfonica"
+    ],
+    "isFullBand": false,
+    "venue": "台北南港展覽館一館",
+    "city": "台北",
+    "cover": "https://assets.kktix.io/organization_resource_files/8773/74244/01_%E6%B4%BB%E5%8B%95KV.jpg",
+    "organizer": "木棉花國際",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-039",
+    "stableId": 39,
+    "number": 39,
+    "year": 2026,
+    "startDate": "2026-03-21",
+    "endDate": "2026-03-21",
+    "title": "前島亞美粉絲見面會 2026 in 台北",
+    "type": "FMT",
+    "people": [
+      "前島亞美"
+    ],
+    "relatedGroups": [
+      "Pastel＊Palettes／丸山彩"
+    ],
+    "isFullBand": false,
+    "venue": "MOONDOG",
+    "city": "台北",
+    "cover": "https://assets.kktix.io/organization_resource_files/36077/74831/1080x1350.jpg",
+    "organizer": "宝島制作委員会",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-040",
+    "stableId": 40,
+    "number": 40,
+    "year": 2026,
+    "startDate": "2026-04-04",
+    "endDate": "2026-04-04",
+    "title": "2026 A.C.F 秋葉原動漫祭 上坂堇聲優見面會",
+    "type": "FMT",
+    "people": [
+      "上坂菫"
+    ],
+    "relatedGroups": [
+      "Pastel＊Palettes／白鷺千聖"
+    ],
+    "isFullBand": false,
+    "venue": "台北松山文創園區第五倉",
+    "city": "台北",
+    "cover": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM4UUeKgvlhAGdREKguqRbU0A8Bp_fVRkK7A&s",
+    "organizer": "創角數位",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-041",
+    "stableId": 41,
+    "number": 41,
+    "year": 2026,
+    "startDate": "2026-04-07",
+    "endDate": "2026-04-16",
+    "title": "BanG Dream! Special LIVE 台北限定快閃店",
+    "type": "快閃店",
+    "people": [],
+    "relatedGroups": [
+      "BanG Dream!"
+    ],
+    "isFullBand": false,
+    "venue": "台北微風廣場 8F C1、C2 廳",
+    "city": "台北",
+    "cover": "https://img.4gamers.com.tw/puku-clone-version/97b313a704a301b69ced035f9d09636eec6a9ea3.jpg",
+    "organizer": "宝島制作委員会",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-042",
+    "stableId": 42,
+    "number": 42,
+    "year": 2026,
+    "startDate": "2026-04-11",
+    "endDate": "2026-04-11",
+    "title": "BanG Dream! Special LIVE in TAIPEI DAY1：MyGO!!!!! × Ave Mujica「\"moment / memory\"」",
+    "type": "LIVE",
+    "people": [
+      "岡田夢以",
+      "佐佐木李子",
+      "渡瀨結月",
+      "立石凜",
+      "青木陽菜",
+      "小日向美香",
+      "林鼓子",
+      "米澤茜",
+      "羊宮妃那",
+      "高尾奏音"
+    ],
+    "relatedGroups": [
+      "MyGO!!!!!",
+      "Ave Mujica"
+    ],
+    "isFullBand": true,
+    "venue": "台北大佳河濱公園",
+    "city": "台北",
+    "cover": "https://pgw.udn.com.tw/gw/photo.php?u=https://uc.udn.com.tw/photo/2026/02/05/0/34369199.png&x=0&y=0&sw=0&sh=0&sl=W&fw=800&exp=3600",
+    "organizer": "宝島制作委員会",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-043",
+    "stableId": 43,
+    "number": 43,
+    "year": 2026,
+    "startDate": "2026-04-12",
+    "endDate": "2026-04-12",
+    "title": "BanG Dream! Special LIVE in TAIPEI DAY2：Poppin'Party × Roselia「DREAMS GO ON」",
+    "type": "LIVE",
+    "people": [
+      "愛美",
+      "大塚紗英",
+      "西本里美",
+      "大橋彩香",
+      "工藤晴香",
+      "櫻川惠",
+      "相羽あいな",
+      "中島由貴",
+      "志崎樺音",
+      "伊藤彩沙"
+    ],
+    "relatedGroups": [
+      "Poppin'Party",
+      "Roselia"
+    ],
+    "isFullBand": true,
+    "venue": "台北大佳河濱公園",
+    "city": "台北",
+    "cover": "https://img.league-funny.com/imgur/177026992115_o.png",
+    "organizer": "宝島制作委員会",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": "日期暫定（9月）"
+  },
+  {
+    "id": "evt-044",
+    "stableId": 44,
+    "number": 44,
+    "year": 2026,
+    "startDate": "2026-04-25",
+    "endDate": "2026-04-25",
+    "title": "AIMI LIVE TOUR “NEW WORLD” 台北公演",
+    "type": "LIVE",
+    "people": [
+      "愛美"
+    ],
+    "relatedGroups": [
+      "Poppin'Party／戶山香澄"
+    ],
+    "isFullBand": false,
+    "venue": "MOONDOG",
+    "city": "台北",
+    "cover": "https://assets.kktix.io/upload_images/295857/0224_AIMI_1200x630_large.jpg",
+    "organizer": "宝島制作委員会",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-045",
+    "stableId": 45,
+    "number": 45,
+    "year": 2026,
+    "startDate": "2026-05-09",
+    "endDate": "2026-05-10",
+    "title": "WCS TAIWAN 2026 小澤亞李見面會",
+    "type": "FMT",
+    "people": [
+      "小澤亞李"
+    ],
+    "relatedGroups": [
+      "Pastel＊Palettes／冰川日菜"
+    ],
+    "isFullBand": false,
+    "venue": "台北南港展覽館一館",
+    "city": "台北",
+    "cover": "https://cdn.fontrip.com/fontour/file/show/5gjEa/1200.jpg",
+    "organizer": "台灣Cosplay藝術推廣協會",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-046",
+    "stableId": 46,
+    "number": 46,
+    "year": 2026,
+    "startDate": "2026-05-10",
+    "endDate": "2026-05-10",
+    "title": "ANISAMA in TAIPEI 2026 -DOSHA!-",
+    "type": "LIVE、音樂祭",
+    "people": [
+      "佐佐木李子"
+    ],
+    "relatedGroups": [
+      "Ave Mujica／三角初華"
+    ],
+    "isFullBand": false,
+    "venue": "台北南港展覽館一館",
+    "city": "台北",
+    "cover": "https://pbs.twimg.com/media/HD7KUoUbMAA4urL.jpg",
+    "organizer": "新想股份有限公司",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-047",
+    "stableId": 47,
+    "number": 47,
+    "year": 2026,
+    "startDate": "2026-10-11",
+    "endDate": "2026-10-11",
+    "title": "Kanon Shizaki Fan Meeting “NON” Stop XI in Taipei",
+    "type": "FMT",
+    "people": [
+      "志崎樺音"
+    ],
+    "relatedGroups": [
+      "Roselia／白金燐子"
+    ],
+    "isFullBand": false,
+    "venue": "HANASPACE 花漾展演空間",
+    "city": "台北",
+    "cover": "https://www.cts.com.tw/data/images/bf/98/5e/46/bf985e46b8b50974054bccf423a2e8a1.webp",
+    "organizer": "數位至匯",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [
+      "https://ticketplus.com.tw/activity/14b934c1397c1f913aa0f6f005d420ba"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "evt-048",
+    "stableId": 48,
+    "number": 48,
+    "year": 2026,
+    "startDate": "2026-08-01",
+    "endDate": "2026-08-02",
+    "title": "小日向美香のひなたぼっこ。～台北出差版 with 櫻川めぐ",
+    "type": "FMT、LIVE、公錄",
+    "people": [
+      "櫻川惠",
+      "小日向美香"
+    ],
+    "relatedGroups": [
+      "Roselia",
+      "MyGO!!!!!"
+    ],
+    "isFullBand": false,
+    "venue": "MOONDOG",
+    "city": "台北",
+    "cover": "https://pbs.twimg.com/media/HKcg_hsbEAAgDZ5.jpg",
+    "organizer": "宝島制作委員会",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [
+      "https://baodaorecords.kktix.cc/events/6b8019fc"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "evt-049",
+    "stableId": 49,
+    "number": 49,
+    "year": 2026,
+    "startDate": "2026-08-02",
+    "endDate": "2026-08-02",
+    "title": "2026 Poppin’Party 聲優見面會",
+    "type": "FMT",
+    "people": [
+      "愛美",
+      "西本里美",
+      "伊藤彩沙"
+    ],
+    "relatedGroups": [
+      "Poppin'Party"
+    ],
+    "isFullBand": false,
+    "venue": "HANASPACE 花漾展演空間",
+    "city": "台北",
+    "cover": "https://assets.kktix.io/upload_images/547387/FM260802_KKTIX_large.jpg",
+    "organizer": "移動怪獸",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [
+      "https://mobimon.kktix.cc/events/mobimon20260625-campaign?fbclid=IwY2xjawSrDUlleHRuA2FlbQIxMABicmlkETFjYmEwOWNmUHMxY2phbXF0c3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHtJGMcGY_tp0GIwX_9W6kQ-mqq8DUcHYj-cO7XbiticechAbWN9sdB7j4lFJ_aem_86-Repoc7Kqbr08eiEeHJw"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "evt-050",
+    "stableId": 50,
+    "number": 50,
+    "year": 2026,
+    "startDate": "2026-08-07",
+    "endDate": "2026-08-10",
+    "title": "Ave Mujica LIVE TOUR 2026「Exitus」台北限定快閃店",
+    "type": "快閃店",
+    "people": [],
+    "relatedGroups": [
+      "Ave Mujica"
+    ],
+    "isFullBand": false,
+    "venue": "台北微風廣場 8F C1、C2 廳",
+    "city": "台北",
+    "cover": "https://storage.googleapis.com/prod-ticketupload-gash/activity/21251242d31992ec4ca23672569a1074.webp",
+    "organizer": "宝島制作委員会",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [
+      "https://ticketplus.com.tw/activity/296250ccc90137f0ce805764b3a6f450"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "evt-051",
+    "stableId": 51,
+    "number": 51,
+    "year": 2026,
+    "startDate": "2026-08-08",
+    "endDate": "2026-08-09",
+    "title": "Ave Mujica LIVE TOUR 2026「Exitus」台北追加公演",
+    "type": "LIVE",
+    "people": [
+      "岡田夢以",
+      "佐佐木李子",
+      "渡瀨結月",
+      "米澤茜",
+      "高尾奏音"
+    ],
+    "relatedGroups": [
+      "Ave Mujica"
+    ],
+    "isFullBand": true,
+    "venue": "國立體育大學綜合體育館／林口體育館",
+    "city": "桃園",
+    "cover": "https://pbs.twimg.com/media/HAOFegxawAAkPHS.jpg",
+    "organizer": "宝島制作委員会",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [
+      "https://ticketplus.com.tw/activity/296250ccc90137f0ce805764b3a6f450"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "evt-052",
+    "stableId": 52,
+    "number": 52,
+    "year": 2026,
+    "startDate": "2026-08-15",
+    "endDate": "2026-08-15",
+    "title": "反田葉月 1st LIVE tour「全力Melty Summer!!!」特別篇 台北公演",
+    "type": "FMT、LIVE",
+    "people": [
+      "反田葉月"
+    ],
+    "relatedGroups": [
+      "Sumimi／純田真奈"
+    ],
+    "isFullBand": false,
+    "venue": "HANASPACE 花漾展演空間",
+    "city": "台北",
+    "cover": "https://assets.kktix.io/upload_images/551532/%E5%8F%8D%E7%94%B0%E8%91%89%E6%9C%88-1200-630_original.jpg",
+    "organizer": "數位至匯",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [
+      "https://kktix.com/events/lqera-02/registrations/new"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "evt-053",
+    "stableId": 53,
+    "number": 53,
+    "year": 2026,
+    "startDate": "2026-09-27",
+    "endDate": "2026-09-27",
+    "title": "林鼓子粉絲見面會 台北",
+    "type": "FMT",
+    "people": [
+      "林鼓子"
+    ],
+    "relatedGroups": [
+      "MyGO!!!!!／椎名立希"
+    ],
+    "isFullBand": false,
+    "venue": "HANASPACE 花漾展演空間",
+    "city": "台北",
+    "cover": "https://p2.bahamut.com.tw/B/2KU/49/201be4cfe2d19e28cc598a84301zgq15.JPG",
+    "organizer": "數位至匯",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-054",
+    "stableId": 54,
+    "number": 54,
+    "year": 2026,
+    "startDate": "2026-10-17",
+    "endDate": "2026-10-17",
+    "title": "TSUMUGI RISA FAN MEETING 2026 in TAIPEI",
+    "type": "FMT",
+    "people": [
+      "紡木吏佐"
+    ],
+    "relatedGroups": [
+      "RAISE A SUILEN／CHU^2"
+    ],
+    "isFullBand": false,
+    "venue": "WESTAR",
+    "city": "台北",
+    "cover": "https://assets.kktix.io/upload_images/553652/%E7%B4%A1%E6%9C%A8%E5%90%8F%E4%BD%90_KKTIX_original.jpg",
+    "organizer": "鳴音合創",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-055",
+    "stableId": 55,
+    "number": 55,
+    "year": 2026,
+    "startDate": "2026-10-31",
+    "endDate": "2026-10-31",
+    "title": "Ayasa首次臺北見面會",
+    "type": "FMT",
+    "people": [
+      "Ayasa"
+    ],
+    "relatedGroups": [
+      "Morfonica"
+    ],
+    "isFullBand": false,
+    "venue": "MOONDOG",
+    "city": "台北",
+    "cover": "https://scontent-tpe5-1.cdninstagram.com/v/t51.82787-15/778381296_18082202591448654_2361746055322304616_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=109&ig_cache_key=Mzk2OTIzMzEwMTIwNTUzMzIwMQ%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTQxNC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=xAWL7rVUFiMQ7kNvwGr3tFg&_nc_oc=AdqpbQDSIq3EAGSyn6QRxsDnx38araPFBsbx6aDvnDpBQnpQ2sB1DZxfgYE9TmC4Dcc&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe5-1.cdninstagram.com&_nc_gid=i49QwzToWRIhP1ZcSeKrrw&_nc_ss=7a22e&oh=00_AQGfoXB5RxJlOviLQ2dInF8_5i8Qq2XO-UClauVqD4V3Vw&oe=6A8F9135",
+    "organizer": "",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-056",
+    "stableId": 56,
+    "number": 56,
+    "year": 2026,
+    "startDate": "2026-11-07",
+    "endDate": "2026-11-07",
+    "title": "工藤晴香 Fan Meeting 2026 in Taipei",
+    "type": "FMT",
+    "people": [
+      "工藤晴香"
+    ],
+    "relatedGroups": [
+      "Roselia"
+    ],
+    "isFullBand": false,
+    "venue": "三創生活園區 CLAPPER STUDIO",
+    "city": "台北",
+    "cover": "https://instagram.ftpe8-1.fna.fbcdn.net/v/t51.82787-15/773556269_17891737860599312_3170672272355519654_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=109&ig_cache_key=Mzk2Njg3NTQ4NTQ0MjkzNDgxNg%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMjA3Mi5zZHIucmVndWxhcl9waG90by5DMiJ9&_nc_ohc=yHznckC0Ir0Q7kNvwHBpxOa&_nc_oc=AdrFVa6HgMQ60IK0OfXoVXszAYuH6KgHlXpAHNCh1aIJ0mHAXmhILZqdfvl47H_1124&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.ftpe8-1.fna&_nc_gid=JP0QdOJHxxhsh9tXWwTf_Q&_nc_ss=7a22e&oh=00_AQE0EpymJ66DYzMDyIHUHQE5OkjC1fRc8V-8xRulRaSIJw&oe=6A8B1D58",
+    "organizer": "ATC Taiwan",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-057",
+    "stableId": 57,
+    "number": 57,
+    "year": 2026,
+    "startDate": "2026-11-14",
+    "endDate": "2026-11-14",
+    "title": "AKANE YONEZAWA \"Black Pasta\" TOUR in Taipei",
+    "type": "LIVE",
+    "people": [
+      "米澤茜"
+    ],
+    "relatedGroups": [
+      "Ave Mujica"
+    ],
+    "isFullBand": false,
+    "venue": "MOONDOG",
+    "city": "台北",
+    "cover": "https://instagram.ftpe8-3.fna.fbcdn.net/v/t51.82787-15/775446118_17936007927360590_3211033735839261065_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=106&ig_cache_key=Mzk2NjMzMTc1Mzc1NzYxOTY1NA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMjI1MC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=ql6PD2WqDN0Q7kNvwGD60Cn&_nc_oc=AdpWasBwNwmxb1-np-3Ffj7_O-3hCFb7A0So7ihuZQOagH-JD_3e7MUqvGjMBwgI1os&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.ftpe8-3.fna&_nc_gid=Vc2v8Qi6kNUnqOev1DfJyw&_nc_ss=7a22e&oh=00_AQGvuydtmWIOzgf1x9naPRd0cE7Fb1sbx_tQ1g0gN1BZxQ&oe=6A89E86A",
+    "organizer": "宝島制作委員会",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-058",
+    "stableId": 58,
+    "number": 58,
+    "year": 2026,
+    "startDate": "2026-11-28",
+    "endDate": "2026-11-28",
+    "title": "伊藤美来 10th Anniversary Live Tour「39rpm」",
+    "type": "LIVE",
+    "people": [
+      "伊藤美來"
+    ],
+    "relatedGroups": [
+      "Hello, Happy World!／弦卷心"
+    ],
+    "isFullBand": false,
+    "venue": "未確認",
+    "city": "",
+    "cover": "https://static.timable.com/image_c3823a8c-7e3d-42d2-b9ae-70989e01af65.webp",
+    "organizer": "未確認",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  },
+  {
+    "id": "evt-059",
+    "stableId": 59,
+    "number": 59,
+    "year": 2026,
+    "startDate": "2026-12-05",
+    "endDate": "2026-12-05",
+    "title": "AIMI ASIA TOUR 2026「STAR RISING」",
+    "type": "LIVE",
+    "people": [
+      "愛美"
+    ],
+    "relatedGroups": [
+      "Poppin'Party／戶山香澄"
+    ],
+    "isFullBand": false,
+    "venue": "MOONDOG",
+    "city": "台北",
+    "cover": "https://scontent-tpe1-1.cdninstagram.com/v/t51.82787-15/776748233_17935813221360590_8461018228893182023_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ig_cache_key=Mzk2NTYzNzMwMDMzNDk5NjQ3MQ%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTkzMC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=qkwEQvG9LZsQ7kNvwEebE4z&_nc_oc=AdqC7F5JxtX9SDClzg2kyltSThTTO4re6t1AnbJPKeG-f5LACpV2M5Fn7YcYHgbJS0c&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe1-1.cdninstagram.com&_nc_gid=9OEca0_mKS6D4Ujbud2JHw&_nc_ss=7a22e&oh=00_AQHtyjlHWMAc87v3yIh9-WZLX9D_e0okuqtGPIPSFr-50w&oe=6A88C802",
+    "organizer": "宝島制作委員会",
+    "description": "",
+    "impression": "",
+    "oneLine": "",
+    "sessions": 0,
+    "relation": "",
+    "ticketDate": "",
+    "sources": [],
+    "notes": ""
+  }
+]

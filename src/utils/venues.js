@@ -82,11 +82,29 @@ export function findVenue(events, key) {
   return want ? venueIndex(events).find(v => v.key === want) || null : null
 }
 
+// 同一個場館在 Sheet 裡被寫成兩種寫法時，其中一種推得出城市，
+// 另一種就跟著走 —— 這不是猜，是資料自己說的：那兩列指的是同一個地方。
+// 例：「Clapper Studio」單看推不出城市，但它跟「三創生活園區 CLAPPER STUDIO」
+// 是同一個 key，而後者推得出台北。
+export function cityOfWithVenue(event, events = []) {
+  const direct = cityOf(event)
+  if (direct) return direct
+  const key = venueKey(event?.venue)
+  if (!key) return ''
+  for (const other of events) {
+    if (venueKey(other.venue) === key) {
+      const c = cityOf(other)
+      if (c) return c
+    }
+  }
+  return ''
+}
+
 // 城市分布：統計頁用。沒有城市的歸到「未標記」，數字才誠實。
 export function cityBreakdown(events = []) {
   const map = new Map()
   for (const e of events) {
-    const c = cityOf(e) || '未標記'
+    const c = cityOfWithVenue(e, events) || '未標記'
     map.set(c, (map.get(c) || 0) + 1)
   }
   return [...map].map(([city, count]) => ({ city, count }))

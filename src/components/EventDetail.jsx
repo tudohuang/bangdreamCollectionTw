@@ -19,6 +19,7 @@ import Icon from './Icon.jsx'
 import Img from './Img.jsx'
 import CollectionStrip from './CollectionStrip.jsx'
 import EntryPlate, { CastList, BandRow } from './EntryPlate.jsx'
+import ArchiveSection from './ArchiveSection.jsx'
 import Chronicle from './Chronicle.jsx'
 import {
   PhotoCredit, Punch, OverBtn, Stat,
@@ -164,7 +165,8 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
   const credit = photoCredit(event)
   // 座標與照片出處都是機器資料：前者給地圖與結構化資料用，後者顯示在照片旁。
   // 原樣列在銘牌上只會佔位置 —— 沒有人想讀 17 位小數。
-  const HIDDEN_KEYS = [...PHOTO_CREDIT_KEYS, ...COORD_KEYS, ...LAT_KEYS, ...LNG_KEYS]
+  const HIDDEN_KEYS = [...PHOTO_CREDIT_KEYS, ...COORD_KEYS, ...LAT_KEYS, ...LNG_KEYS,
+    '曲目', 'setlist', '票價', 'price', '周邊', '場販', 'goods', '主視覺', '繪師', 'keyVisual']
   const extras = Object.entries(event.extras || {}).filter(([k]) => !HIDDEN_KEYS.includes(k))
 
   // 相關場次：同樂團 / 同聲優 / 同場館
@@ -498,6 +500,9 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
                 : <p className="text-[13px] text-dream-faint">尚無聲優資料</p>}
               <BandRow groups={groups} />
             </Section>
+
+            {/* 史料層：曲目、票價、周邊、主視覺。沒資料整塊不出現 */}
+            <ArchiveSection event={event} allEvents={allEvents} color={meta.color} glow={meta.glow} />
 
             {/* 收藏軌：53 場排成一條，這場亮起來，點任何一格直接跳過去 */}
             <Section title="收藏軌" color={meta.color}>

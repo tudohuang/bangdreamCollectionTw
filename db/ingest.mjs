@@ -158,10 +158,16 @@ try {
     }
 
     await db.query('DELETE FROM event_band WHERE event_id = $1', [id])
-    for (const b of new Set((e.relatedGroups || []).map(rootGroup).filter(Boolean))) {
+    // 「Pastel＊Palettes／白鷺千聖」的角色要一起存 —— 那是「這場是個人的」
+    // 這件事的唯一載體，只存團名的話本體／個人在資料庫裡就重建不出來。
+    const seenBand = new Set()
+    for (const g of e.relatedGroups || []) {
+      const { band, parts } = parseGroup(g)
+      if (!band || !bandId.has(band) || seenBand.has(band)) continue
+      seenBand.add(band)
       await db.query(
-        'INSERT INTO event_band (event_id, band_id) VALUES ($1, $2) ON CONFLICT DO NOTHING',
-        [id, bandId.get(b)])
+        'INSERT INTO event_band (event_id, band_id, role_name) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING',
+        [id, bandId.get(band), parts?.[0] || null])
       stat.eventBand++
     }
 
