@@ -49,6 +49,8 @@ import LabsPage from './src/components/LabsPage.jsx'
 import OrganizerPage from './src/components/OrganizerPage.jsx'
 import VenuePage from './src/components/VenuePage.jsx'
 import SeriesPage from './src/components/SeriesPage.jsx'
+import ResumeLine from './src/components/ResumeLine.jsx'
+import OfficialLinks from './src/components/OfficialLinks.jsx'
 import { seriesIndex } from './src/utils/series.js'
 import ArchiveSection from './src/components/ArchiveSection.jsx'
 import MissingLine from './src/components/MissingLine.jsx'
@@ -150,6 +152,10 @@ export const CASES = [
   ['SeriesPage', <SeriesPage value={seriesIndex(events)[0]?.key || ''} events={events} onSelect={noop} onClose={noop} />],
   ['SeriesPage(找不到)', <SeriesPage value="不存在的系列" events={events} onSelect={noop} onClose={noop} />],
   ['SeriesPage(空資料)', <SeriesPage value="x" events={[]} onSelect={noop} onClose={noop} />],
+  // 沒有 localStorage 紀錄時本來就該整行不出現
+  ['ResumeLine(沒紀錄)', <ResumeLine events={events} onSelect={noop} />, { mayBeEmpty: true }],
+  ['OfficialLinks', <OfficialLinks links={['https://x.com/a', 'https://www.eventernote.com/actors/1', 'https://example.tw/']} />],
+  ['OfficialLinks(沒連結)', <OfficialLinks links={[]} />, { mayBeEmpty: true }],
   ['YearRing', <YearRing events={events} onSelect={noop} />],
   ['GapChart', <GapChart events={events} onSelect={noop} />],
   ['CityBars', <CityBars events={events} />],

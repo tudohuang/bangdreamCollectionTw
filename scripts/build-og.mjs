@@ -536,6 +536,15 @@ if (SITE_URL) {
   idx = idx.replace('</head>', '    ' + ogTags + String.fromCharCode(10) + '  </head>')
   idx = idx.replace('<div id="root"></div>', noscript + String.fromCharCode(10) + '    <div id="root"></div>')
 }
+// iOS 的啟動畫面：36 條 <link>，手貼一定會漏，所以由 npm run splash 產成
+// 一份 HTML 片段，這裡注入。沒跑過 splash 就跳過，不影響其他事。
+const splashPath = join(ROOT, 'src', 'data', 'splashLinks.html')
+if (existsSync(splashPath) && !idx.includes('apple-touch-startup-image')) {
+  const links = readFileSync(splashPath, 'utf8').trim()
+  idx = idx.replace('</head>', '    ' + links + String.fromCharCode(10) + '  </head>')
+  console.log('✓ iOS 啟動畫面：' + (links.match(/<link/g) || []).length + ' 條 link 已注入 index.html')
+}
+
 writeFileSync(idxPath, idx, 'utf8')
 
 // ---------------------------------------------------------------- sitemap + robots

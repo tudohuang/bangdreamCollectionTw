@@ -7,6 +7,7 @@ import { countingSummary } from '../utils/counting.js'
 import { OWNER_NOTE } from '../config.js'
 import { JustAnnounced } from './JustAnnounced.jsx'
 import Icon from './Icon.jsx'
+import ResumeLine from './ResumeLine.jsx'
 
 // 站長便利貼：首頁標題旁的手寫紙條
 function StickyNote({ text }) {
@@ -240,6 +241,9 @@ export default function Hero({ events, onSelect, onYearJump }) {
           <YearSnapshot events={events} onYearJump={onYearJump} />
         </div>
       </div>
+
+      {/* 上次看到哪。沒紀錄或超過兩週就整行不出現 */}
+      <ResumeLine events={events} onSelect={onSelect} />
 
       {/* 全站規模：從第一屏降級成一行字，不再佔四塊磚 */}
       <p className="mt-4 text-[14px] text-dream-faint">

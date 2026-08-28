@@ -1,0 +1,242 @@
+[
+  {
+    "name": "愛美",
+    "kind": "person",
+    "band": "Poppin'Party",
+    "role": "戶山香澄",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "伊藤彩沙",
+    "kind": "person",
+    "band": "Poppin'Party",
+    "role": "市谷有咲",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "西本里美",
+    "kind": "person",
+    "band": "Poppin'Party",
+    "role": "牛込里美",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "大塚紗英",
+    "kind": "person",
+    "band": "Poppin'Party",
+    "role": "花園多惠",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "大橋彩香",
+    "kind": "person",
+    "band": "Poppin'Party",
+    "role": "山吹沙綾",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "Poppin'Party",
+    "kind": "band",
+    "band": "Poppin'Party",
+    "role": "",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "相羽あいな",
+    "kind": "person",
+    "band": "Roselia",
+    "role": "湊有希那",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "工藤晴香",
+    "kind": "person",
+    "band": "Roselia",
+    "role": "冰川紗夜",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "中島由貴",
+    "kind": "person",
+    "band": "Roselia",
+    "role": "今井莉莎",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "櫻川惠",
+    "kind": "person",
+    "band": "Roselia",
+    "role": "宇田川亞子",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "志崎樺音",
+    "kind": "person",
+    "band": "Roselia",
+    "role": "白金燐子",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "Roselia",
+    "kind": "band",
+    "band": "Roselia",
+    "role": "",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "Raychell",
+    "kind": "person",
+    "band": "RAISE A SUILEN",
+    "role": "LAYER",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "紡木吏佐",
+    "kind": "person",
+    "band": "RAISE A SUILEN",
+    "role": "CHU^2",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "夏芽",
+    "kind": "person",
+    "band": "RAISE A SUILEN",
+    "role": "MASKING",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "倉知玲鳳",
+    "kind": "person",
+    "band": "RAISE A SUILEN",
+    "role": "PAREO",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "小原莉子",
+    "kind": "person",
+    "band": "RAISE A SUILEN",
+    "role": "LOCK",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "RAISE A SUILEN",
+    "kind": "band",
+    "band": "RAISE A SUILEN",
+    "role": "",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "羊宮妃那",
+    "kind": "person",
+    "band": "MyGO!!!!!",
+    "role": "高松燈",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "立石凜",
+    "kind": "person",
+    "band": "MyGO!!!!!",
+    "role": "千早愛音",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "青木陽菜",
+    "kind": "person",
+    "band": "MyGO!!!!!",
+    "role": "要樂奈",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "小日向美香",
+    "kind": "person",
+    "band": "MyGO!!!!!",
+    "role": "長崎爽世",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "林鼓子",
+    "kind": "person",
+    "band": "MyGO!!!!!",
+    "role": "椎名立希",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "MyGO!!!!!",
+    "kind": "band",
+    "band": "MyGO!!!!!",
+    "role": "",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "佐佐木李子",
+    "kind": "person",
+    "band": "Ave Mujica",
+    "role": "Doloris",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "渡瀨結月",
+    "kind": "person",
+    "band": "Ave Mujica",
+    "role": "Mortis",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "米澤茜",
+    "kind": "person",
+    "band": "Ave Mujica",
+    "role": "Amoris",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "岡田夢以",
+    "kind": "person",
+    "band": "Ave Mujica",
+    "role": "Timoris",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "高尾奏音",
+    "kind": "person",
+    "band": "Ave Mujica",
+    "role": "Obilivionis",
+    "tracked": true,
+    "links": []
+  },
+  {
+    "name": "Ave Mujica",
+    "kind": "band",
+    "band": "Ave Mujica",
+    "role": "",
+    "tracked": true,
+    "links": []
+  }
+]

@@ -8,7 +8,6 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { detectCity } from '../src/utils/derive.js'
 import { venueIndex, cityOfWithVenue } from '../src/utils/venues.js'
 import { relationOf } from '../src/utils/relation.js'
 
@@ -115,21 +114,69 @@ if (inferred === N) {
   })
 }
 
-// 陣容：有人物但沒有名冊資料的
-// 名冊是執行時從 Sheet 抓的，本機沒有副本 —— 用 npm run import 留下的紀錄
-let missingRoster = []
-if (existsSync(join(ROOT, 'docs/roster-missing.json'))) {
-  const rec = read('docs/roster-missing.json')
-  missingRoster = (Array.isArray(rec) ? rec : rec.missing || []).map(x =>
-    typeof x === 'string' ? x
-      : `${x['對象']}（${x['場次']} 場，${x['要人工確認'] === '要' ? '要人工確認' : x['程式判定的團'] || '判不出來'}）`)
-}
-if (missingRoster.length) {
+// ---------------------------------------------------- 名冊與動態（另外兩張分頁）
+//
+// 這兩張表以前完全沒被查過 —— 它們是執行時才抓的，本機沒有副本。
+// npm run snapshot 存下來之後才有東西可以查。
+const snap = (f) => (existsSync(join(ROOT, 'src/data/snapshot', f))
+  ? read('src/data/snapshot/' + f) : null)
+const roster = snap('roster.json')
+const pulse = snap('pulse.json')
+
+if (!roster || !pulse) {
   problems.push({
-    title: `${missingRoster.length} 位聲優不在名冊上`,
-    detail: '詳情頁的「飾演」那一欄會留白。',
-    items: missingRoster,
+    title: '名冊與動態沒有本機副本',
+    detail: 'events.json 有進 git，那兩張分頁沒有 —— Sheet 掉了就沒了。跑 npm run snapshot。',
+    items: [],
   })
+} else {
+  const rosterNames = new Set(roster.map(r => r.name))
+  const eventPeople = new Set(events.flatMap(e => e.people || []))
+
+  const notInRoster = [...eventPeople].filter(p => !rosterNames.has(p))
+  if (notInRoster.length) {
+    problems.push({
+      title: `名冊少了 ${notInRoster.length} 個在活動表出現過的人`,
+      detail: '詳情頁的「飾演」會留白，動態頁也追蹤不到他們。',
+      items: notInRoster,
+    })
+  }
+
+  const noBand = roster.filter(r => r.kind === 'person' && !r.band).map(r => r.name)
+  if (noBand.length) {
+    problems.push({
+      title: `名冊有 ${noBand.length} 個人沒填樂團`,
+      detail: '沒有樂團就沒有代表色，站上會用灰色的「其他」。',
+      items: noBand,
+    })
+  }
+
+  const noRole = roster.filter(r => r.kind === 'person' && r.band && !r.role).map(r => r.name)
+  if (noRole.length) {
+    problems.push({
+      title: `名冊有 ${noRole.length} 個人沒填角色`,
+      detail: '「飾 戶山香澄」那一段會不見。',
+      items: noRole,
+    })
+  }
+
+  const noLinks = roster.filter(r => !r.links?.length).map(r => r.name)
+  if (noLinks.length) {
+    problems.push({
+      title: `名冊有 ${noLinks.length} 筆沒有官方連結`,
+      detail: '人物頁的「官方連結」那一排不會出現。在名冊加一欄「連結」，貼官推或 Eventernote 就好。',
+      items: noLinks,
+    })
+  }
+
+  const noUrl = pulse.filter(p => !p.url).length
+  if (noUrl) {
+    problems.push({
+      title: `動態有 ${noUrl} / ${pulse.length} 筆沒有來源連結`,
+      detail: '看得到行程但點不進去，查證不了。',
+      items: [],
+    })
+  }
 }
 
 for (const p of problems) {

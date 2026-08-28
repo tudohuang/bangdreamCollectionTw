@@ -28,7 +28,9 @@
     "db:sql": "node db/sql.mjs",
     "health": "node scripts/health.mjs",
     "template": "node scripts/template.mjs",
-    "icons:data": "node scripts/build-icon-paths.mjs"
+    "icons:data": "node scripts/build-icon-paths.mjs",
+    "splash": "node scripts/build-splash.mjs",
+    "snapshot": "node scripts/snapshot.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",

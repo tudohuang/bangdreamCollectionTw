@@ -23,6 +23,7 @@ import { PageFallback, ScrollProgress, FloatingDock, BottomNav, MobileAppBar, Pu
 import { readHash, writeHash } from './utils/url.js'
 import { todayStr, daysUntil } from './utils/datetime.js'
 import { milestoneMap } from './utils/milestones.js'
+import { rememberSeen } from './utils/lastSeen.js'
 import { urgentEvents } from './utils/urgency.js'
 import { downloadIcs } from './utils/ics.js'
 import { getAttended, saveAttended } from './utils/attended.js'
@@ -261,7 +262,12 @@ export default function App() {
     }
   }
 
-  const openDetail = (id) => openOverlay(() => { setDetailId(id); writeHash('event', { id }) })
+  const openDetail = (id) => openOverlay(() => {
+    setDetailId(id)
+    writeHash('event', { id })
+    // 記住看到哪，回訪時不用從頭滾。只存在瀏覽器裡（見 utils/lastSeen.js）
+    rememberSeen(id)
+  })
 
   const closeDetail = () => closeOverlay(() => {
     setDetailId(null)
