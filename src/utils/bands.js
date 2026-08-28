@@ -14,6 +14,10 @@ export const BAND_META = {
   ave:       { name: 'Ave Mujica',        color: '#8a4ff0', glow: '138,79,240',  icon: 'masks-theater' },
   glitter:   { name: 'Glitter☆Green',     color: '#2fb96d', glow: '47,185,109',  icon: 'wand-magic-sparkles' },
   bang:      { name: 'BanG Dream!',       color: '#ff5fa2', glow: '255,95,162',  icon: 'compact-disc' },
+  // 這兩個不是主線五團，但都在台灣真的演過，歸到「其他」會讓它們在
+  // 篩選與統計裡消失。顏色取各自官方主視覺的色系。
+  sumimi:    { name: 'sumimi',            color: '#ff9ec4', glow: '255,158,196', icon: 'microphone' },
+  millsage:  { name: 'Millsage',          color: '#7c8cf8', glow: '124,140,248', icon: 'music' },
   other:     { name: '其他',               color: '#a78bfa', glow: '167,139,250', icon: 'music' },
 }
 
@@ -46,6 +50,9 @@ export function bandKey(group = '') {
   if (r.startsWith('Ave')) return 'ave'
   if (r.startsWith('Glitter')) return 'glitter'
   if (r.startsWith('BanG')) return 'bang'
+  // 大小寫都吃：Sheet 裡「sumimi」與「Sumimi」兩種寫法都出現過
+  if (/^sumimi/i.test(r)) return 'sumimi'
+  if (/^millsage/i.test(r)) return 'millsage'
   return 'other'
 }
 

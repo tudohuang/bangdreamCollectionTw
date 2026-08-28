@@ -10,7 +10,7 @@
 //
 // 沒有本地檔案的（新加的活動還沒跑過 covers）自動退回原本的外連網址，
 // 所以這支永遠有東西可回，不會因為漏跑腳本就整片破圖。
-import manifest from '../data/covers.json'
+import manifest from '../data/covers.json' with { type: 'json' }
 import { coverOf } from './media.js'
 
 const BASE = (import.meta.env?.BASE_URL || '/').replace(/\/$/, '')

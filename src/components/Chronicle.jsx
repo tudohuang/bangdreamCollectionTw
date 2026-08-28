@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import log from '../data/changelog.json'
+import log from '../data/changelog.json' with { type: 'json' }
 import { chronicle, offsetLabel, beforeShowLabel } from '../utils/chronicle.js'
 import { primaryMeta, isPersonal } from '../utils/bands.js'
 import { formatMonthDay } from '../utils/share.js'

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import bundled from '../data/events.json'
+import bundled from '../data/events.json' with { type: 'json' }
 import { SHEET_CSV_URL } from '../config.js'
 import { parseCsvToEvents, mergeWithBundled } from '../utils/parseEvents.js'
 

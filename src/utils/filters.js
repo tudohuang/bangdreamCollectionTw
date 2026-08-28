@@ -3,7 +3,7 @@
 import { rootGroup } from './bands.js'
 import { eventCharacters, detectCity, canonicalVenue } from './derive.js'
 import { coverOf } from './media.js'
-import { matchSearch } from './search.js'
+import { searchEvents } from './search.js'
 import { eventStatus, todayStr } from './datetime.js'
 import { isUrgent, URGENT_LABEL } from './urgency.js'
 
@@ -25,10 +25,15 @@ export const VIEW_SET = ['cards', 'timeline', 'table']
 export const MULTI_KEYS = ['groups', 'people', 'characters', 'types', 'venues', 'cities']
 const SINGLE_KEYS = ['year', 'category', 'fullBand', 'attended', 'photos', 'urgent', 'timeframe', 'search', 'view', 'order']
 
+// 回傳陣列（跟以前一樣）。要知道是不是走了容錯，用 applyFiltersDetailed。
 export function applyFilters(events, f, attended) {
+  return applyFiltersDetailed(events, f, attended).list
+}
+
+export function applyFiltersDetailed(events, f, attended) {
   const today = todayStr()
   const now = new Date()
-  return events.filter(e => {
+  const narrowed = events.filter(e => {
     if (f.year !== 'all' && e.year !== Number(f.year)) return false
     if (f.groups.length && !f.groups.some(g => (e.relatedGroups || []).some(rg => rootGroup(rg) === g))) return false
     if (f.people.length && !f.people.some(p => (e.people || []).includes(p))) return false
@@ -48,8 +53,11 @@ export function applyFilters(events, f, attended) {
       if (f.timeframe === 'thisYear' && e.year !== now.getFullYear()) return false
       if (f.timeframe === 'thisMonth' && (e.year !== now.getFullYear() || e.month !== now.getMonth() + 1)) return false
     }
-    return matchSearch(e, f.search)
+    return true
   })
+  // 搜尋放最後：先看精準有沒有命中，全部落空才放寬到錯字容錯。
+  // 有結果的時候放寬只會稀釋好結果 —— 打「愛美」的人不想看到「愛実」。
+  return searchEvents(narrowed, f.search)
 }
 
 // 沒有日期的場次（日期未定）一律排到最後，不要因為空字串被排到最前面

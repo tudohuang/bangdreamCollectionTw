@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { matchSearch } from '../utils/search.js'
+import { searchEvents } from '../utils/search.js'
 import { rootGroup, bandMeta, primaryMeta, isPersonal } from '../utils/bands.js'
 import { isUrgent, urgentEvents, URGENT_LABEL } from '../utils/urgency.js'
 import { eventStatus, todayStr } from '../utils/datetime.js'
@@ -49,7 +49,7 @@ export default function CommandPalette({ open, onClose, events, onSelectEvent })
       out.push({ type: 'filter', label: b, filterKey: 'groups', key: 'fb:' + b, color: bandMeta(b).color })
     }
     // 活動
-    const evs = events.filter(e => matchSearch(e, q)).slice(0, 8)
+    const evs = searchEvents(events, q).list.slice(0, 8)
     for (const e of evs) out.push({ type: 'event', label: e.title, key: 'e:' + e.id, event: e })
     return out
   }, [q, events, defaults])

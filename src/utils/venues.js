@@ -34,7 +34,10 @@ export function venueKey(raw) {
   let s = String(raw || '').trim()
   if (!s || s === '未確認' || s === '—' || s === '-') return ''
   s = halfWidth(s).toLowerCase().replace(/臺/g, '台')
-  // 引號與括號裡的是副標／別名，不影響場館身分
+  // 括號與引號故意處理得不一樣：
+  //   （TITAN SCREEN）、(B1) 是附註 —— 整段丟掉
+  //   「魔法氣泡」是店名本身 —— 只拿掉引號，字要留著，
+  //   不然 Bushiroad 各家門市會全部併成同一個場館
   s = s.replace(/[「」『』]/g, '').replace(/[（(][^）)]*[）)]/g, '')
   s = s.replace(PLACE_TAIL, '')
   // 城市在 key 裡是雜訊：「台北南港展覽館」跟「南港展覽館」是同一個地方

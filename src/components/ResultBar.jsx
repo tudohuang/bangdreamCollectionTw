@@ -3,7 +3,7 @@ import Icon from './Icon.jsx'
 
 // 卡牆上方的結果摘要條：顯示剩幾筆與目前套用的條件。
 // 沒有任何條件時不顯示。
-export default function ResultBar({ filters, onChange, onReset, count, total }) {
+export default function ResultBar({ filters, onChange, onReset, count, total, fuzzy }) {
   const chips = buildAppliedChips(filters)
   if (!chips.length) return null
 
@@ -14,6 +14,12 @@ export default function ResultBar({ filters, onChange, onReset, count, total }) 
           <span className="font-display font-bold text-[16px] text-bloom-indigo">{count}</span>
           <span className="text-dream-faint"> / {total}</span>
         </span>
+        {/* 錯字容錯撈回來的結果一定要標出來，不然使用者會以為自己打對了 */}
+        {fuzzy && (
+          <span className="shrink-0 text-[14px] text-dream-faint whitespace-nowrap">
+            找不到「{filters.search}」，這些是接近的
+          </span>
+        )}
         <span className="w-px h-4 bg-dream-line dark:bg-white/15 shrink-0" />
         <div className="flex-1 min-w-0 flex items-center gap-1.5 overflow-x-auto scrollbar-none">
           {chips.map(c => (

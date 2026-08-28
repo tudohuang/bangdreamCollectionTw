@@ -28,7 +28,7 @@ import { downloadIcs } from './utils/ics.js'
 import { getAttended, saveAttended } from './utils/attended.js'
 import { tap, done } from './utils/haptics.js'
 import {
-  DEFAULT_FILTERS, applyFilters, orderEvents,
+  DEFAULT_FILTERS, applyFiltersDetailed, orderEvents,
   filtersToParams, paramsToFilters, buildAppliedChips,
 } from './utils/filters.js'
 
@@ -85,9 +85,14 @@ export default function App() {
   const wideLayout = useMediaQuery('(min-width: 1024px)')
 
   const urgent = useMemo(() => urgentEvents(events), [events])
-  const filtered = useMemo(
-    () => orderEvents(applyFilters(events, filters, attended), filters.order),
+  // detailed 會告訴我們這批結果是不是靠錯字容錯撈回來的 ——
+  // 撈回來卻不講，使用者會以為自己打對了
+  const result = useMemo(
+    () => applyFiltersDetailed(events, filters, attended),
     [events, filters, attended])
+  const filtered = useMemo(
+    () => orderEvents(result.list, filters.order),
+    [result, filters.order])
   // 里程碑要對全部場次算，用篩選後的算會得到假的名次
   const milestones = useMemo(() => milestoneMap(events), [events])
   const appliedChips = useMemo(() => buildAppliedChips(filters), [filters])
@@ -413,6 +418,7 @@ export default function App() {
                     onReset={resetFilters}
                     count={filtered.length}
                     total={events.length}
+                    fuzzy={result.fuzzy}
                   />
                   <EventWall
                     events={filtered}

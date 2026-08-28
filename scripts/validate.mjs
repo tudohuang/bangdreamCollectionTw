@@ -5,15 +5,14 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dirname, join } from 'node:path'
+import { bandKey } from '../src/utils/bands.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
 const DATA = join(ROOT, 'src', 'data', 'events.json')
 
-const KNOWN_BANDS = [
-  "Poppin'Party", 'Afterglow', 'Pastel', 'Roselia', 'Hello', 'Morfonica',
-  'RAISE', 'MyGO', 'Ave', 'Glitter', 'BanG',
-]
+// 認不認得一個樂團，答案只有一個來源：utils/bands.js 的 bandKey。
+// 這裡本來另外抄了一份清單，結果 bands.js 新增了團、這裡還在報「未知」。
 const DATE_RE = /^\d{4}-\d{2}-(\d{2}|\?\?)$/
 
 const errors = []
@@ -48,7 +47,7 @@ for (const e of events) {
   if (!Array.isArray(e.relatedGroups) || e.relatedGroups.length === 0) warns.push(`${tag}：沒有關聯樂團`)
   else for (const g of e.relatedGroups) {
     const root = g.split('／')[0]
-    if (!KNOWN_BANDS.some(b => root.startsWith(b))) warns.push(`${tag}：未知樂團「${g}」（會以「其他」灰色呈現）`)
+    if (bandKey(root) === 'other') warns.push(`${tag}：未知樂團「${g}」（會以「其他」灰色呈現）`)
   }
   if (e.isFullBand && (e.people || []).length < 3) warns.push(`${tag}：標記全團但聲優少於 3 位`)
   // 緊急性只認得「普通 / 非常」；打錯字不會亮紅燈，所以在這裡提醒
@@ -59,8 +58,10 @@ for (const e of events) {
 }
 
 // 歸不出城市的場館：列出來讓你在 Sheet 的「城市」欄補上
-const { detectCity } = await import(pathToFileURL(join(ROOT, 'src', 'utils', 'derive.js')).href)
-const noCity = [...new Set(events.filter(e => e.venue && !detectCity(e)).map(e => e.venue))]
+// 用 cityOfWithVenue 而不是 detectCity —— 網站顯示的是前者。
+// 兩邊用不同函式的話，這份報告會叫你去補一個網站上明明有值的欄位。
+const { cityOfWithVenue } = await import(pathToFileURL(join(ROOT, 'src', 'utils', 'venues.js')).href)
+const noCity = [...new Set(events.filter(e => e.venue && !cityOfWithVenue(e, events)).map(e => e.venue))]
 for (const v of noCity) {
   warns.push(`場館「${v}」歸不出城市 — 請在 Sheet 的「城市」欄補上`)
 }
