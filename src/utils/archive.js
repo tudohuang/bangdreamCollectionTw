@@ -1,3 +1,5 @@
+import { bandKey } from './bands.js'
+
 // 史料層：曲目、票價、周邊、主視覺。
 //
 // 這四樣是這個站真正別的地方查不到的東西。Setlist.fm 沒有台灣的邦邦場次，
@@ -14,44 +16,89 @@ const splitLines = (v) =>
 
 // ------------------------------------------------------------------ 曲目
 //
-// 寫法：一行一首。前面的編號可有可無，安可用「encore」或「安可」起一段。
+// 寫法：一行一首。前面的編號可有可無。
+//
 //   1. STAR BEAT!〜ホシノコドウ
 //   2. 天下トーイツ A to Z☆
+//   MC
+//   3. BLACK SHOUT／Roselia
 //   安可
 //   Returns
-export function setlistOf(event) {
+//
+// 三件事可以標，都不標也完全沒問題：
+//
+//   ／團名     這首是誰唱的。雙團場（DAY1 MyGO × Ave Mujica）每首其實只有
+//              一團在唱，不標的話那條資訊整個掉了。單團場不用標（只有一個
+//              答案，自動帶上）；兩團以上沒標就留空 —— 猜錯會變成顯示出來的假事實。
+//   安可       單獨一行。後面的都算安可。可以有第二次（W安可 / EN2）。
+//   MC、影片    不是歌，不該進「這首唱過幾次」的統計，但它們是現場的一部分，
+//              所以留在曲目裡、只是標成非歌曲。
+const NOT_A_SONG = /^(mc\d*|トーク|talk|影片|映像|vtr|video|樂器演奏|楽器|instrumental|開場|オープニング|opening|自我介紹|挨拶)$/i
+const ENCORE_LINE = /^(w?安可\d*|encore\d*|アンコール\d*|en\d*|ｗ?アンコール)$/i
+
+export function setlistOf(event, fallbackBand = '') {
   const raw = event?.setlist || event?.extras?.['曲目'] || event?.extras?.['setlist']
   const lines = splitLines(raw)
   if (!lines.length) return []
 
+  const groups = [...new Set((event?.relatedGroups || [])
+    .map(g => String(g).split('／')[0].trim()).filter(Boolean))]
+
+  // 沒標團的算誰的？
+  //
+  // 單團場只有一個答案，直接用。但雙團場（DAY1 MyGO × Ave Mujica）猜不出來 ——
+  // 硬歸給第一個團的話，「春日影是 Ave Mujica 唱的」這種錯會被當成事實顯示。
+  // 所以兩團以上就留空，等人去標。這跟場館城市那條規矩一樣：不確定就不猜。
+  const primary = fallbackBand || (groups.length === 1 ? groups[0] : '')
+
   const out = []
-  let encore = false
+  let encore = 0
   let n = 0
   for (const line of lines) {
-    if (/^(安可|encore|アンコール)/i.test(line.replace(/[:：\s]/g, ''))) { encore = true; continue }
+    const bare = line.replace(/[:：]/g, '').trim()
+    if (ENCORE_LINE.test(bare)) { encore++; continue }
+
     // 開頭的「1.」「01」「1)」是編號不是歌名
-    const title = line.replace(/^\s*\d{1,2}\s*[.)、．]?\s*/, '').trim()
-    if (!title) continue
-    out.push({ n: ++n, title, encore })
+    let text = line.replace(/^\s*\d{1,2}\s*[.)、．]?\s*/, '').trim()
+    if (!text) continue
+
+    // 「歌名／團名」或「歌名 @團名」。
+    //
+    // 團名可能有空白（Ave Mujica、RAISE A SUILEN、Hello, Happy World!），
+    // 所以不能用「最後一段沒有空白」來認。改成：後半段要真的是認得的樂團才拆 ——
+    // 認不出來就當它是歌名的一部分，不要把歌名切斷。
+    let band = ''
+    const m = text.match(/^(.*?)\s*[／/@]\s*(.+)$/)
+    if (m && m[1].trim() && bandKey(m[2].trim()) !== 'other') {
+      text = m[1].trim()
+      band = m[2].trim()
+    }
+
+    if (NOT_A_SONG.test(text)) {
+      out.push({ n: null, title: text, encore: encore > 0, encoreRound: encore, isSong: false, band: '' })
+      continue
+    }
+    out.push({
+      n: ++n,
+      title: text,
+      encore: encore > 0,
+      encoreRound: encore,
+      isSong: true,
+      band: band || primary,
+      // 這一場的第一首歌。安可段落不算 —— 開場是正編的第一首。
+      opener: n === 1 && encore === 0,
+    })
   }
+
+  // 最後一首歌（有安可就是安可的最後一首）
+  const songs = out.filter(s => s.isSong)
+  if (songs.length) songs[songs.length - 1].closer = true
   return out
 }
 
-// 一首歌在台灣被唱過幾次、哪幾場。Setlist 有資料之後這是全站最有價值的查詢。
-export function songIndex(events = []) {
-  const map = new Map()
-  for (const e of events) {
-    for (const s of setlistOf(e)) {
-      const key = s.title
-      if (!map.has(key)) map.set(key, { title: key, events: [] })
-      const rec = map.get(key)
-      if (!rec.events.includes(e)) rec.events.push(e)
-    }
-  }
-  return [...map.values()]
-    .map(r => ({ ...r, count: r.events.length }))
-    .sort((a, b) => b.count - a.count || a.title.localeCompare(b.title))
-}
+// 只要歌，不要 MC 與影片。統計一律用這個。
+export const songsOf = (event, fallbackBand) =>
+  setlistOf(event, fallbackBand).filter(s => s.isSong)
 
 // ------------------------------------------------------------------ 票價
 //

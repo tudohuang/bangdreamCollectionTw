@@ -1,11 +1,17 @@
 import { setlistOf, pricesOf, goodsOf, keyVisualOf, salesOf, programmeOf } from '../utils/archive.js'
-import { songIndex, songKey } from '../utils/songs.js'
+import { songKey, setlistWithFirsts } from '../utils/songs.js'
+import { bandMeta } from '../utils/bands.js'
 import Icon from './Icon.jsx'
 
 // 史料層的四塊：曲目、票價、周邊、主視覺。
 // 沒資料的整塊不出現 —— 空殼比沒有更糟，它會讓人以為這站沒東西。
 export default function ArchiveSection({ event, allEvents = [], color, glow }) {
-  const songs = setlistOf(event)
+  // 曲目連同「台灣首唱」「這首唱過幾次」一起算好
+  const songs = setlistWithFirsts(event, allEvents)
+  // 非歌曲的項目（MC、影片）也要顯示 —— 它們是現場的一部分
+  const lines = setlistOf(event)
+  // 雙團場才需要標「這首誰唱的」；單團場每一行都同一個團，標了是雜訊
+  const multiBand = new Set(songs.map(s => s.band).filter(Boolean)).size > 1
   const price = pricesOf(event)
   const goods = goodsOf(event)
   const kv = keyVisualOf(event)
@@ -15,9 +21,6 @@ export default function ArchiveSection({ event, allEvents = [], color, glow }) {
 
   // 這場的每一首歌在台灣被唱過幾次。只有曲目資料多起來才有意義，
   // 所以第二場以上才顯示次數。
-  // 用正規化後的 key 對，不然「STAR BEAT!」與「STAR BEAT!〜ホシノコドウ〜」
-  // 會被當成兩首，次數永遠是 1
-  const counts = songs.length ? new Map(songIndex(allEvents).map(s => [s.key, s.count])) : null
 
   return (
     <div className="space-y-6">
@@ -25,26 +28,38 @@ export default function ArchiveSection({ event, allEvents = [], color, glow }) {
         <section>
           <Head icon="music" color={color}>曲目 {songs.length} 首</Head>
           <ol className="border-t" style={{ borderColor: `rgba(${glow},0.35)` }}>
-            {songs.map(s => {
-              const n = counts?.get(songKey(s.title)) || 1
+            {lines.map(s => {
+              const info = songs.find(x => x.title === s.title && x.n === s.n)
+              const n = info?.countInTw || 1
+              const bm = s.band ? bandMeta(s.band) : null
               return (
                 <li key={`${s.n}-${s.title}`}
                   className="grid grid-cols-[28px_minmax(0,1fr)_auto] items-baseline gap-x-3 py-2 border-b"
                   style={{ borderColor: `rgba(${glow},0.18)` }}>
                   <span className="font-round font-bold text-[14px] tabular-nums text-right"
                     style={{ color: s.encore ? color : undefined }}>
-                    {s.encore ? 'EN' : s.n}
+                    {!s.isSong ? '·' : s.encore ? (s.encoreRound > 1 ? 'EN' + s.encoreRound : 'EN') : s.n}
                   </span>
                   {/* 每一首連到它自己的頁：這首在台灣唱過幾次、誰唱的、第一次是什麼時候 */}
-                  <a href={`#/song/${encodeURIComponent(songKey(s.title))}`}
-                    className="min-w-0 truncate font-display font-semibold text-[14px] text-dream-ink hover:text-bloom-violet transition-colors">
-                    {s.title}
-                  </a>
-                  {n > 1 && (
-                    <span className="text-[14px] text-dream-faint tabular-nums shrink-0">
-                      台灣第 {n} 次
-                    </span>
+                  {s.isSong ? (
+                    <a href={`#/song/${encodeURIComponent(songKey(s.title))}`}
+                      className="min-w-0 truncate font-display font-semibold text-[14px] text-dream-ink hover:text-bloom-violet transition-colors">
+                      {s.title}
+                    </a>
+                  ) : (
+                    <span className="min-w-0 truncate text-[14px] text-dream-faint">{s.title}</span>
                   )}
+                  <span className="shrink-0 flex items-baseline gap-2 text-[14px] tabular-nums">
+                    {/* 誰唱的：只有雙團場才標。單團場每一行都同一個團，標了是雜訊 */}
+                    {multiBand && s.band && (
+                      <span style={{ color: bm?.color }}>{s.band}</span>
+                    )}
+                    {/* 台灣首唱：曲目一填就自動算出來，不需要任何額外欄位 */}
+                    {info?.firstInTw && (
+                      <span className="font-bold" style={{ color }}>台灣首唱</span>
+                    )}
+                    {n > 1 && <span className="text-dream-faint">第 {n} 次</span>}
+                  </span>
                 </li>
               )
             })}

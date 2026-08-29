@@ -34,7 +34,7 @@ export default function SongPage({ value, events, onSelect, onClose }) {
   const stats = [
     ['唱過', `${s.count} 場`],
     ['第一次', s.first.year ?? '—'],
-    ['最近', s.last.year ?? '—'],
+    ['開場', s.openers > 0 ? `${s.openers} 次` : '—'],
     ['安可', s.encores > 0 ? `${s.encores} 次` : '—'],
   ]
 
@@ -67,6 +67,27 @@ export default function SongPage({ value, events, onSelect, onClose }) {
           </div>
         ))}
       </dl>
+
+      {/* 哪幾團唱過這首。雙團場標了團的話這裡才分得出來 —— 
+          「春日影 MyGO 唱過 3 次、Ave Mujica 唱過 1 次」是別的地方沒有的。 */}
+      {s.bandList.length > 1 && (
+        <div className="mt-5 glass p-5">
+          <div className="text-[14px] font-bold text-dream-faint mb-2">誰唱的</div>
+          <div className="flex flex-wrap gap-x-5 gap-y-2">
+            {s.bandList.map(([g, n]) => {
+              const bm = bandMeta(g)
+              return (
+                <a key={g} href={`#/band/${encodeURIComponent(g)}`}
+                  className="inline-flex items-baseline gap-1.5 text-[15px] font-medium hover:opacity-75"
+                  style={{ color: bm.color }}>
+                  <Icon n={bm.icon} className="text-[10px]" />{g}
+                  <span className="text-dream-faint text-[14px] tabular-nums">{n} 次</span>
+                </a>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {bands.length > 0 && (
         <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2">

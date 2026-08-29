@@ -10,7 +10,7 @@
 //
 // 收斂的原則是「同一首歌的不同寫法」，不是「看起來像的歌」。
 // 不做前綴比對 —— 那會把不同的歌併在一起，比拆開更糟。
-import { setlistOf } from './archive.js'
+import { songsOf } from './archive.js'
 
 const halfWidth = (s) =>
   s.replace(/[Ａ-Ｚａ-ｚ０-９！？＃＆＊（）［］]/g, c =>
@@ -35,17 +35,27 @@ export function bestTitle(titles) {
   return [...titles].sort((a, b) => b.length - a.length)[0] || ''
 }
 
-// 所有歌的索引。每首附上唱過的場次（照時間排）與各種寫法。
+// 所有歌的索引。
+//
+// 除了「唱過幾場」，還記三件從曲目本身就算得出來、不用多打字的事：
+//   開場幾次 / 收尾幾次 / 安可幾次 —— 「STAR BEAT! 三次都是開場」
+//   是哪幾團唱的 —— 雙團場才分得出來
 export function songIndex(events = []) {
   const map = new Map()
   for (const e of events) {
-    for (const s of setlistOf(e)) {
+    for (const s of songsOf(e)) {
       const key = songKey(s.title)
       if (!key) continue
-      if (!map.has(key)) map.set(key, { key, titles: new Set(), events: [], encores: 0 })
+      if (!map.has(key)) {
+        map.set(key, { key, titles: new Set(), events: [], bands: new Map(),
+          encores: 0, openers: 0, closers: 0 })
+      }
       const rec = map.get(key)
       rec.titles.add(s.title)
       if (s.encore) rec.encores++
+      if (s.opener) rec.openers++
+      if (s.closer) rec.closers++
+      if (s.band) rec.bands.set(s.band, (rec.bands.get(s.band) || 0) + 1)
       if (!rec.events.includes(e)) rec.events.push(e)
     }
   }
@@ -54,10 +64,71 @@ export function songIndex(events = []) {
       ...r,
       title: bestTitle(r.titles),
       count: r.events.length,
+      bandList: [...r.bands].sort((a, b) => b[1] - a[1]),
       events: r.events.slice().sort((a, b) =>
         String(a.startDate).localeCompare(String(b.startDate))),
     }))
     .sort((a, b) => b.count - a.count || a.title.localeCompare(b.title))
+}
+
+// 這一場的曲目，附上「這首是不是台灣首唱」。
+//
+// 首唱完全算得出來 —— 全站所有曲目裡，這首最早出現在哪一場。
+// 這是曲目資料一填就自動長出來的東西，不用任何額外欄位。
+export function setlistWithFirsts(event, allEvents = []) {
+  const idx = new Map(songIndex(allEvents).map(s => [s.key, s]))
+  return songsOf(event).map(s => {
+    const rec = idx.get(songKey(s.title))
+    return {
+      ...s,
+      countInTw: rec?.count ?? 1,
+      // 這一場就是最早唱這首的那一場
+      firstInTw: rec ? rec.events[0]?.id === event.id : true,
+    }
+  })
+}
+
+// 每一場的曲目長度與組成。統計頁用。
+export function setlistStats(events = []) {
+  const rows = events
+    .map(e => ({ event: e, songs: songsOf(e) }))
+    .filter(r => r.songs.length)
+    .sort((a, b) => String(a.event.startDate).localeCompare(String(b.event.startDate)))
+  if (!rows.length) return null
+
+  const counts = rows.map(r => r.songs.length)
+  const openers = new Map()
+  const closers = new Map()
+  for (const r of rows) {
+    for (const s of r.songs) {
+      if (s.opener) openers.set(s.title, (openers.get(s.title) || 0) + 1)
+      if (s.closer) closers.set(s.title, (closers.get(s.title) || 0) + 1)
+    }
+  }
+  const top = (m) => [...m].sort((a, b) => b[1] - a[1]).slice(0, 5)
+  return {
+    shows: rows.length,
+    rows,
+    avg: Math.round((counts.reduce((a, b) => a + b, 0) / counts.length) * 10) / 10,
+    min: Math.min(...counts),
+    max: Math.max(...counts),
+    openers: top(openers),
+    closers: top(closers),
+  }
+}
+
+// 兩場的曲目重疊度。「DAY1 與 DAY2 重複了三首」是雙日公演才問得出來的問題。
+export function overlap(a, b) {
+  const ka = new Set(songsOf(a).map(s => songKey(s.title)))
+  const kb = new Set(songsOf(b).map(s => songKey(s.title)))
+  if (!ka.size || !kb.size) return null
+  const shared = [...ka].filter(k => kb.has(k))
+  return {
+    shared: shared.length,
+    onlyA: ka.size - shared.length,
+    onlyB: kb.size - shared.length,
+    ratio: Math.round((shared.length / Math.min(ka.size, kb.size)) * 100),
+  }
 }
 
 export function findSong(events, key) {

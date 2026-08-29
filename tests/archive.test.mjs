@@ -5,7 +5,7 @@
 // Sheet 那邊填錯不會有人發現，只會在網站上少一塊，所以規則要在這裡釘死。
 import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
-import { setlistOf, songIndex, pricesOf, priceHistory, goodsOf, keyVisualOf, hasArchive }
+import { setlistOf, pricesOf, priceHistory, goodsOf, keyVisualOf, hasArchive }
   from '../src/utils/archive.js'
 
 const L = (...lines) => lines.join('\n')
@@ -52,28 +52,8 @@ describe('曲目', () => {
   })
 })
 
-describe('曲目索引', () => {
-  test('同一首歌跨場次會被算在一起', () => {
-    const events = [
-      { id: 'a', setlist: L('1. X', '2. Y') },
-      { id: 'b', setlist: L('1. X') },
-      { id: 'c', setlist: L('1. Z') },
-    ]
-    const idx = songIndex(events)
-    assert.equal(idx[0].title, 'X')
-    assert.equal(idx[0].count, 2)
-    assert.equal(idx.find(s => s.title === 'Z').count, 1)
-  })
-
-  test('同一場重複的歌不會把自己數兩次', () => {
-    const idx = songIndex([{ id: 'a', setlist: L('1. X', '安可', 'X') }])
-    assert.equal(idx[0].count, 1, '安可再唱一次同一首，還是只有一場唱過')
-  })
-
-  test('沒有任何曲目資料時回空陣列（畫面靠這個決定不出現）', () => {
-    assert.deepEqual(songIndex([{ id: 'a' }, { id: 'b' }]), [])
-  })
-})
+// 曲目索引移到 tests/songs.test.mjs —— 那邊的版本會先做歌名正規化，
+// 是實際在用的那一支。這裡留著只會有兩份會慢慢分岔的測試。
 
 describe('票價', () => {
   test('分區帶區名', () => {

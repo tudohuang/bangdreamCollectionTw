@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { priceHistory } from '../utils/archive.js'
-import { songIndex } from '../utils/songs.js'
+import { songIndex, setlistStats } from '../utils/songs.js'
 import { primaryMeta } from '../utils/bands.js'
 import Icon from './Icon.jsx'
 
@@ -15,12 +15,14 @@ import Icon from './Icon.jsx'
 export default function ArchiveStats({ events, onSelect }) {
   const prices = useMemo(() => priceHistory(events), [events])
   const songs = useMemo(() => songIndex(events), [events])
+  const sl = useMemo(() => setlistStats(events), [events])
   if (!prices.length && !songs.length) return null
 
   return (
     <div className="grid lg:grid-cols-2 gap-6 mt-6">
       {prices.length > 0 && <PriceTrend rows={prices} onSelect={onSelect} />}
       {songs.length > 0 && <TopSongs rows={songs} onSelect={onSelect} />}
+      {sl && sl.shows > 1 && <SetlistShape s={sl} />}
     </div>
   )
 }
@@ -66,6 +68,40 @@ function PriceTrend({ rows, onSelect }) {
             </li>
           )
         })}
+      </ul>
+    </div>
+  )
+}
+
+// 曲目的整體樣貌。這幾個數字全部從曲目本身算出來，不用任何額外欄位 ——
+// 「哪一首最常拿來開場」是問得出來但沒地方查的那種問題。
+function SetlistShape({ s }) {
+  return (
+    <div className="glass p-6">
+      <h3 className="font-display font-bold text-[16px] text-dream-ink">曲目的樣子</h3>
+      <p className="mt-1 text-[14px] text-dream-sub">
+        {s.shows} 場有曲目紀錄，平均一場 {s.avg} 首（{s.min}–{s.max}）。
+      </p>
+      <div className="mt-4 grid sm:grid-cols-2 gap-x-6 gap-y-4">
+        <Rank title="最常拿來開場" rows={s.openers} />
+        <Rank title="最常拿來收尾" rows={s.closers} />
+      </div>
+    </div>
+  )
+}
+
+function Rank({ title, rows }) {
+  if (!rows.length) return null
+  return (
+    <div>
+      <div className="text-[14px] font-bold text-dream-faint mb-2">{title}</div>
+      <ul className="space-y-1">
+        {rows.map(([t, n]) => (
+          <li key={t} className="flex items-baseline gap-2 text-[14px]">
+            <span className="min-w-0 flex-1 truncate text-dream-ink">{t}</span>
+            <span className="shrink-0 text-dream-faint tabular-nums">{n} 次</span>
+          </li>
+        ))}
       </ul>
     </div>
   )

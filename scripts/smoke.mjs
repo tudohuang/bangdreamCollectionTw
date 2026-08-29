@@ -168,6 +168,11 @@ export const CASES = [
   ['SongsPage(有資料)', <SongsPage onSelect={noop} onClose={noop} events={songEvents} />],
   ['SongPage', <SongPage value="STAR BEAT!" events={songEvents} onSelect={noop} onClose={noop} />],
   ['SongPage(找不到)', <SongPage value="不存在的歌" events={songEvents} onSelect={noop} onClose={noop} />],
+  // 雙團場：每一行標了團、有 MC、有安可、有台灣首唱
+  ['ArchiveSection(雙團場全套)', <ArchiveSection color="#8b5cf6" glow="139,92,246"
+    allEvents={songEvents}
+    event={{ ...songEvents[0], relatedGroups: ['MyGO!!!!!', 'Ave Mujica'],
+      setlist: ['1. 春日影／MyGO!!!!!', 'MC', '2. KiLLKiSS／Ave Mujica', '安可', '詩超絆／MyGO!!!!!'].join(String.fromCharCode(10)) }} />],
   // 沒有 localStorage 紀錄時本來就該整行不出現
   ['ResumeLine(沒紀錄)', <ResumeLine events={events} onSelect={noop} />, { mayBeEmpty: true }],
   // 伺服器端沒有 UA 也沒有 localStorage，所以這張卡在 render 當下是空的，

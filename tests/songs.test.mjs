@@ -127,3 +127,109 @@ describe('自動完成用的清單', () => {
     assert.deepEqual(list, [{ title: 'A', count: 2 }, { title: 'B', count: 1 }])
   })
 })
+
+describe('曲目能標的三件事', () => {
+  const nl = String.fromCharCode(10)
+  const ev2 = (id, startDate, setlist, groups) =>
+    ({ id, startDate, endDate: startDate, setlist, people: [], relatedGroups: groups })
+
+  test('MC 與影片不是歌，不進統計但留在曲目裡', async () => {
+    const { setlistOf, songsOf } = await import('../src/utils/archive.js')
+    const e = ev2('a', '2026-01-01', ['1. A', 'MC', '影片', '2. B'].join(nl), ['Roselia'])
+    assert.equal(setlistOf(e).length, 4, '四行都留著')
+    assert.equal(songsOf(e).length, 2, '只有兩首是歌')
+    assert.deepEqual(setlistOf(e).map(s => s.isSong), [true, false, false, true])
+  })
+
+  test('編號跳過非歌曲 —— MC 不佔一個號碼', async () => {
+    const { setlistOf } = await import('../src/utils/archive.js')
+    const e = ev2('a', '2026-01-01', ['1. A', 'MC', '2. B'].join(nl), ['Roselia'])
+    assert.deepEqual(setlistOf(e).map(s => s.n), [1, null, 2])
+  })
+
+  test('單團場不用標團，自動帶上', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const e = ev2('a', '2026-01-01', ['1. A', '2. B'].join(nl), ['Roselia'])
+    assert.deepEqual(songsOf(e).map(s => s.band), ['Roselia', 'Roselia'])
+  })
+
+  test('雙團場沒標就留空 —— 猜錯會變成顯示出來的假事實', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const e = ev2('a', '2026-01-01', ['1. 春日影'].join(nl), ['MyGO!!!!!', 'Ave Mujica'])
+    assert.equal(songsOf(e)[0].band, '', '兩團以上不猜')
+  })
+
+  test('團名有空白也拆得開（Ave Mujica、RAISE A SUILEN）', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const e = ev2('a', '2026-01-01',
+      ['1. KiLLKiSS／Ave Mujica', '2. Hell! or Hell?／RAISE A SUILEN'].join(nl),
+      ['MyGO!!!!!', 'Ave Mujica'])
+    assert.deepEqual(songsOf(e).map(s => [s.title, s.band]),
+      [['KiLLKiSS', 'Ave Mujica'], ['Hell! or Hell?', 'RAISE A SUILEN']])
+  })
+
+  test('歌名裡有斜線但後面不是樂團，就不拆 —— 寧可不標也不要把歌名切斷', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const e = ev2('a', '2026-01-01', '1. 歌名裡有／斜線的歌', ['Roselia'])
+    assert.equal(songsOf(e)[0].title, '歌名裡有／斜線的歌')
+  })
+
+  test('開場與收尾：安可段落不算開場，收尾是最後一首歌', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const e = ev2('a', '2026-01-01', ['1. A', '2. B', '安可', 'C'].join(nl), ['Roselia'])
+    const s = songsOf(e)
+    assert.equal(s[0].opener, true)
+    assert.ok(!s[2].opener, '安可第一首不是開場')
+    assert.equal(s[2].closer, true)
+  })
+
+  test('第二次安可（W安可 / EN2）算得出是第幾輪', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const e = ev2('a', '2026-01-01', ['1. A', '安可', 'B', 'W安可', 'C'].join(nl), ['Roselia'])
+    assert.deepEqual(songsOf(e).map(s => s.encoreRound), [0, 1, 2])
+  })
+})
+
+describe('算得出來的東西（不用多打字）', () => {
+  const nl = String.fromCharCode(10)
+  const ev2 = (id, startDate, setlist, groups = ['Roselia']) =>
+    ({ id, startDate, endDate: startDate, setlist, people: [], relatedGroups: groups })
+
+  test('台灣首唱＝全站最早唱這首的那一場', async () => {
+    const { setlistWithFirsts } = await import('../src/utils/songs.js')
+    const a = ev2('a', '2024-01-01', '1. X')
+    const b = ev2('b', '2025-01-01', ['1. X', '2. Y'].join(nl))
+    assert.deepEqual(setlistWithFirsts(a, [a, b]).map(s => s.firstInTw), [true])
+    assert.deepEqual(setlistWithFirsts(b, [a, b]).map(s => [s.title, s.firstInTw]),
+      [['X', false], ['Y', true]])
+  })
+
+  test('每場幾首、最常開場', async () => {
+    const { setlistStats } = await import('../src/utils/songs.js')
+    const s = setlistStats([
+      ev2('a', '2024-01-01', ['1. X', '2. Y'].join(nl)),
+      ev2('b', '2025-01-01', ['1. X', '2. Y', '3. Z'].join(nl)),
+    ])
+    assert.equal(s.shows, 2)
+    assert.equal(s.avg, 2.5)
+    assert.deepEqual(s.openers, [['X', 2]])
+    assert.deepEqual(s.closers, [['Y', 1], ['Z', 1]])
+  })
+
+  test('沒有任何曲目時 setlistStats 回 null（畫面靠這個不出現）', async () => {
+    const { setlistStats } = await import('../src/utils/songs.js')
+    assert.equal(setlistStats([ev2('a', '2024-01-01', '')]), null)
+  })
+
+  test('兩場的重疊度 —— 雙日公演才問得出來的問題', async () => {
+    const { overlap } = await import('../src/utils/songs.js')
+    const a = ev2('a', '2026-04-11', ['1. X', '2. Y', '3. Z'].join(nl))
+    const b = ev2('b', '2026-04-12', ['1. X', '2. W'].join(nl))
+    assert.deepEqual(overlap(a, b), { shared: 1, onlyA: 2, onlyB: 1, ratio: 50 })
+  })
+
+  test('其中一場沒曲目時重疊度回 null，不要算出 0% 誤導人', async () => {
+    const { overlap } = await import('../src/utils/songs.js')
+    assert.equal(overlap(ev2('a', '2026-01-01', '1. X'), ev2('b', '2026-01-02', '')), null)
+  })
+})
