@@ -65,6 +65,33 @@ export function renderMarkdown(src) {
 }
 
 // 讀 --- 包起來的 YAML-ish 前置資料（只支援 key: value 單行）
+// 把正文依「## 小標」切開。
+//
+// 前置資料一行只放得下一個值，但曲目與場刊目次是一整串 ——
+// 塞進 front matter 會變成一行擠二十首歌，比塞進試算表還糟。
+// 所以長清單用小標分段，寫起來就是人本來會寫的樣子：
+//
+//   心得正文…
+//
+//   ## 曲目
+//   1. STAR BEAT!
+//   2. Returns
+//
+// 回傳 { intro, sections }。intro 是第一個小標之前的文字（＝心得），
+// sections 是 { 小標: 內容 }。
+export function parseSections(body) {
+  const text = String(body ?? '')
+  const parts = text.split(/^##\s+(.+)$/m)
+  const intro = (parts[0] || '').trim()
+  const sections = {}
+  for (let i = 1; i < parts.length; i += 2) {
+    const name = parts[i].trim()
+    const content = (parts[i + 1] || '').trim()
+    if (name && content) sections[name] = content
+  }
+  return { intro, sections }
+}
+
 export function parseFrontMatter(text) {
   const m = String(text ?? '').match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/)
   if (!m) return { meta: {}, body: String(text ?? '').trim() }

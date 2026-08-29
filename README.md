@@ -25,7 +25,7 @@ src/
   server/          分享頁 HTML（給 Cloudflare Functions 用，只用 Web 標準 API）
 functions/         Cloudflare Pages Functions：/e /p /b 分享頁、/api/img 圖片代理
 api/               同樣兩支的 Vercel 版（只是轉接層，邏輯共用 src/server/）
-content/impressions/ 每場活動的心得（Markdown），建置時折進 events.json
+content/impressions/ 手寫的那一層：心得、一句話、曲目、票價…（Markdown），建置時折進 events.json
 scripts/           匯入、驗證、週報、OG 圖、看盤終端（都在本機跑，與網站無關）
 tests/             utils 的單元測試
 ```
@@ -97,7 +97,7 @@ npm run icons:data # 從 FontAwesome 抽出用到的圖示路徑（加圖示時�
 | `備註` | 詳情頁的備註欄 |
 | `來源` | 參考連結，多個用空白/換行分隔 |
 | `一句話` | 站長對這場的一句評語，印在詳情頁票根下方。門檻比完整心得低很多 |
-| `心得` | 短心得。長文建議寫在 `content/impressions/<編號>.md`（見下）|
+| `心得` | 短心得。長文寫在 `content/impressions/<ID>.md`（見下）|
 | `場次` | 這一筆實際有幾場演出。留空時用天數推，快閃店與展覽一律算一場 |
 | `開賣` | 開賣日。填了詳情頁的時間線就會多一個點（公布 → 開賣 → 演出）|
 | `關聯` | `官方本體` / `強關聯` / `弱關聯`。留空時程式依規則推，推錯就補這一格 |
@@ -123,7 +123,7 @@ npm run icons:data # 從 FontAwesome 抽出用到的圖示路徑（加圖示時�
 ### 心得寫在檔案裡，不寫在 Sheet
 
 心得是幾百字的文章，塞進試算表的一個儲存格既難寫也難改。
-所以長文放 `content/impressions/<編號>.md`：
+所以長內容放 `content/impressions/<ID>.md` —— 檔名是**永久鍵 ID**，不是編號，所以在 Sheet 中間插一列重排編號也不會錯位：
 
 ```markdown
 ---
