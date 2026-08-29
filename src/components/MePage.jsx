@@ -3,6 +3,7 @@ import { primaryMeta, isPersonal } from '../utils/bands.js'
 import { formatMonthDay } from '../utils/share.js'
 import { downloadPassCard, passStats } from '../utils/passImage.js'
 import { exportCode, importCode } from '../utils/backup.js'
+import InstallCard from './InstallCard.jsx'
 import Icon from './Icon.jsx'
 
 // 我的收藏：把「我去過」的標記整理成個人紀錄。
@@ -103,8 +104,9 @@ export default function MePage({ events, attended, onToggleAttended, onReplaceAt
         })}
       </ul>
 
-      <div className="mt-10">
+      <div className="mt-10 grid lg:grid-cols-2 gap-5 items-start">
         <Backup attended={attended} onReplaceAttended={onReplaceAttended} />
+        <InstallCard />
       </div>
     </section>
   )

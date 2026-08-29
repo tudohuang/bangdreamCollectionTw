@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>行動版檢視台</title>
+<style>
+  :root {
+    --bg: #14121c; --panel: #1d1a28; --line: #2f2b3f;
+    --ink: #ece9f5; --sub: #a49fb8; --accent: #d946ef;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font: 14px/1.5 system-ui, "Noto Sans TC", sans-serif;
+    display: flex; flex-direction: column;
+  }
+
+  header {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--panel); border-bottom: 1px solid var(--line);
+    padding: 10px 16px;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px;
+  }
+  header h1 { font-size: 15px; margin: 0 8px 0 0; font-weight: 700; }
+  header .grow { flex: 1; }
+
+  .group { display: flex; align-items: center; gap: 6px; }
+  .group > label { color: var(--sub); font-size: 12px; }
+
+  button, select {
+    background: #262234; color: var(--ink);
+    border: 1px solid var(--line); border-radius: 8px;
+    padding: 5px 10px; font: inherit; font-size: 13px; cursor: pointer;
+  }
+  button:hover, select:hover { border-color: #4a4460; }
+  button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  main {
+    flex: 1; overflow: auto; padding: 18px;
+    display: flex; gap: 18px; align-items: flex-start;
+  }
+
+  .frame { flex: 0 0 auto; }
+  .frame .cap {
+    display: flex; align-items: baseline; gap: 8px;
+    margin-bottom: 6px; font-size: 12px;
+  }
+  .frame .cap b { font-size: 13px; font-weight: 700; }
+  .frame .cap .badge { font-style: normal; font-size: 12px; color: var(--sub); }
+  .frame .cap a { color: var(--accent); text-decoration: none; margin-left: auto; }
+  .frame .cap a:hover { text-decoration: underline; }
+
+  /* 外框畫成手機的樣子，才看得出安全區與圓角會切到什麼 */
+  .shell {
+    border: 10px solid #000; border-radius: 34px; overflow: hidden;
+    background: #000; box-shadow: 0 12px 40px -12px rgba(0,0,0,.8);
+    position: relative;
+  }
+  /* 截圖模式：框內就是乾淨的裝置像素，框選那塊直接送商店 */
+  .shell.shot { border: 0; border-radius: 0; box-shadow: none; }
+  .shell.notch::before {
+    content: ""; position: absolute; z-index: 2;
+    top: 8px; left: 50%; transform: translateX(-50%);
+    width: 34%; height: 26px; background: #000; border-radius: 14px;
+  }
+  iframe { display: block; border: 0; background: #fff; }
+
+  .empty { color: var(--sub); padding: 40px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>行動版檢視台</h1>
+
+  <div class="group">
+    <label for="device">裝置</label>
+    <select id="device"></select>
+  </div>
+
+  <div class="group">
+    <label for="zoom">縮放</label>
+    <select id="zoom">
+      <option value="1">100%</option>
+      <option value="0.8">80%</option>
+      <option value="0.65" selected>65%</option>
+      <option value="0.5">50%</option>
+      <option value="0.4">40%</option>
+    </select>
+  </div>
+
+  <div class="group">
+    <button id="theme" aria-pressed="false">夜場模式</button>
+    <button id="notch" aria-pressed="true">瀏海</button>
+    <button id="sync" aria-pressed="false">同步捲動</button>
+    <button id="shot" aria-pressed="false">截圖模式</button>
+  </div>
+
+  <div class="grow"></div>
+
+  <div class="group">
+    <label for="preset">組合</label>
+    <select id="preset"></select>
+    <button id="recheck">重新檢查</button>
+    <button id="reload">全部重載</button>
+  </div>
+</header>
+
+<main id="stage"><div class="empty">載入中…</div></main>
+
+<script type="module">
+// 行動版檢視台：把每個畫面各塞進一個手機尺寸的 iframe，一次全部看完。
+//
+// 為什麼要這個：改一次版面要在手機上點過十幾個頁面才知道有沒有壞，
+// 而瀏覽器的裝置模擬一次只看得到一頁。這裡一次排開。
+//
+// iframe 裡的媒體查詢吃的是 iframe 自己的寬度，所以 390px 的框看到的
+// 就是真的手機版面 —— 不是把桌機版縮小。
+
+const DEVICES = [
+  { id: 'iphone-15',      name: 'iPhone 15 / 16',      w: 393, h: 852, notch: true },
+  { id: 'iphone-15-max',  name: 'iPhone 15 Pro Max',   w: 430, h: 932, notch: true },
+  { id: 'iphone-13-mini', name: 'iPhone 13 mini',      w: 375, h: 812, notch: true },
+  { id: 'iphone-se',      name: 'iPhone SE（最窄）',    w: 375, h: 667, notch: false },
+  { id: 'pixel-7',        name: 'Pixel 7',             w: 412, h: 915, notch: false },
+  { id: 'galaxy-fold',    name: 'Galaxy Fold（極窄）',  w: 344, h: 882, notch: false },
+  { id: 'ipad-mini',      name: 'iPad mini（直向）',    w: 744, h: 1133, notch: false },
+]
+
+// 每一組是「一次想一起看的畫面」。加新頁面就在這裡加一行。
+const PRESETS = {
+  '主要頁面': [
+    ['首頁', '#/'],
+    ['活動', '#/collection'],
+    ['人物', '#/people'],
+    ['統計', '#/stats'],
+    ['我的', '#/me'],
+    ['Labs', '#/labs'],
+  ],
+  '詳情與側頁': [
+    ['活動詳情', '#/event/evt-043'],
+    ['活動詳情（無封面）', '#/event/evt-017'],
+    ['人物頁', '#/person/' + encodeURIComponent('愛美')],
+    ['樂團頁', '#/band/Roselia'],
+    ['場館頁', '#/venue/' + encodeURIComponent('台北世貿一館')],
+    ['系列頁', '#/series/bushiroad-expo'],
+    ['主辦頁', '#/org/' + encodeURIComponent('宝島制作委員会')],
+  ],
+  '篩選與搜尋': [
+    ['有結果', '#/collection?search=' + encodeURIComponent('愛美')],
+    ['錯字容錯', '#/collection?search=' + encodeURIComponent('愛実')],
+    ['羅馬字', '#/collection?search=ohtsuka'],
+    ['零結果', '#/collection?search=zzzzzzzz'],
+    ['多條件', '#/collection?year=2026&category=' + encodeURIComponent('本體')],
+    ['時間軸檢視', '#/collection?view=timeline'],
+    ['表格檢視', '#/collection?view=table'],
+  ],
+  '全部': null, // 下面自動組
+}
+PRESETS['全部'] = [...PRESETS['主要頁面'], ...PRESETS['詳情與側頁'], ...PRESETS['篩選與搜尋']]
+
+const $ = (id) => document.getElementById(id)
+const stage = $('stage')
+
+const state = {
+  device: DEVICES[0],
+  zoom: 0.65,
+  dark: false,
+  notch: true,
+  sync: false,
+  shot: false,   // 截圖模式：拿掉外框與縮放，框內＝真實像素
+  preset: '主要頁面',
+}
+
+// ---------------------------------------------------------------- 控制列
+for (const d of DEVICES) {
+  const o = document.createElement('option')
+  o.value = d.id; o.textContent = `${d.name}　${d.w}×${d.h}`
+  $('device').append(o)
+}
+for (const k of Object.keys(PRESETS)) {
+  const o = document.createElement('option')
+  o.value = k; o.textContent = k
+  $('preset').append(o)
+}
+$('preset').value = state.preset
+
+$('device').onchange = (e) => { state.device = DEVICES.find(d => d.id === e.target.value); render() }
+$('zoom').onchange = (e) => { state.zoom = Number(e.target.value); render() }
+$('preset').onchange = (e) => { state.preset = e.target.value; render() }
+$('reload').onclick = () => render()
+$('recheck').onclick = () => {
+  // 已經載入的重新量一次（改了樣式之後不用整批重載）
+  for (const w of stage.querySelectorAll('.frame')) {
+    const f = w.querySelector('iframe')
+    const b = w.querySelector('.badge')
+    if (f.contentDocument?.body) inspect(f, b)
+  }
+}
+
+const toggle = (id, key, after) => {
+  $(id).onclick = () => {
+    state[key] = !state[key]
+    $(id).setAttribute('aria-pressed', String(state[key]))
+    ;(after || render)()
+  }
+}
+toggle('theme', 'dark', () => applyTheme())
+toggle('notch', 'notch')
+toggle('sync', 'sync')
+toggle('shot', 'shot')
+
+// ---------------------------------------------------------------- 主題
+//
+// 不透過站上的切換鈕，直接改 iframe 的 <html class>：
+// 那個鈕會寫進 localStorage，而 localStorage 是同源共用的 ——
+// 切一個框會影響其他框，重載之後還會殘留。
+function applyTheme() {
+  for (const f of stage.querySelectorAll('iframe')) {
+    try {
+      f.contentDocument?.documentElement.classList.toggle('dark', state.dark)
+    } catch { /* 還沒載完就跳過，onload 會再套一次 */ }
+  }
+}
+
+// ---------------------------------------------------------------- 捲軸
+//
+// iframe 的捲軸會實際佔掉 17px，所以 393px 的框量到的是 376px ——
+// 比真手機窄，而窄正是版面檢查最在意的方向（會誤報溢出，也會蓋掉
+// 真的只在 393px 才發生的問題）。手機上的捲軸是浮動的、不佔空間，
+// 所以這裡把它藏掉，讓寬度對得上真機。
+const HIDE_SCROLLBAR = `
+  html { scrollbar-width: none; }
+  html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display: none; }
+`
+function hideScrollbar(frame) {
+  const d = frame.contentDocument
+  if (!d || d.getElementById('__demo-scrollbar')) return
+  const style = d.createElement('style')
+  style.id = '__demo-scrollbar'
+  style.textContent = HIDE_SCROLLBAR
+  d.head.append(style)
+}
+
+// ---------------------------------------------------------------- 自動檢查
+//
+// 光是排開來看，還是要一頁一頁用眼睛找。這裡順手把「機器看得出來的」
+// 標在標題旁邊：寬度對不對、有沒有橫向溢出、有沒有被切掉的內容。
+function inspect(frame, badge) {
+  const d = frame.contentDocument
+  if (!d?.body) return
+  const de = d.documentElement
+  const problems = []
+
+  if (de.clientWidth !== state.device.w) {
+    problems.push(`寬 ${de.clientWidth}≠${state.device.w}`)
+  }
+  if (de.scrollWidth > de.clientWidth + 1) {
+    problems.push(`橫向溢出 ${de.scrollWidth}px`)
+  }
+  // 被 overflow:hidden 切掉的內容。
+  //
+  // truncate / line-clamp / aspect-ratio 是刻意的，跳過。
+  // 絕對定位的裝飾也跳過 —— 票根的打孔、卡片的膠帶本來就故意超出去被裁掉，
+  // 把那些也算成問題的話，每一頁都會亮黃燈，然後你就開始無視黃燈了。
+  const view = d.defaultView
+  let clipped = 0
+  for (const el of d.querySelectorAll('main *')) {
+    const cs = view.getComputedStyle(el)
+    if (cs.display === 'none') continue
+    const cls = el.className.toString()
+    if (/truncate|line-clamp|overflow-x-auto|scrollbar-none|aspect-/.test(cls)) continue
+    if (!/hidden|clip/.test(cs.overflowY)) continue
+    if (el.scrollHeight <= el.clientHeight + 4 || el.clientHeight <= 24) continue
+
+    // 真的溢出的是誰？兩種不算：
+    //   絕對定位的裝飾（票根打孔、卡片膠帶）—— 本來就故意超出去被裁掉
+    //   object-fit: cover 的圖 —— 裁切就是它的用途，圖比框大是正常的
+    const box = el.getBoundingClientRect()
+    const real = [...el.children].some(c => {
+      const ccs = view.getComputedStyle(c)
+      if (ccs.position === 'absolute') return false
+      if (/^(IMG|PICTURE|VIDEO)$/.test(c.tagName) && /cover|fill/.test(ccs.objectFit)) return false
+      return c.getBoundingClientRect().bottom > box.bottom + 2
+    })
+    if (real) clipped++
+  }
+  if (clipped) problems.push(`${clipped} 處被切`)
+
+  badge.textContent = problems.length ? '⚠ ' + problems.join('・') : '✓'
+  badge.style.color = problems.length ? '#fbbf24' : '#4ade80'
+  badge.title = problems.length ? problems.join('\n') : '寬度正確、沒有溢出或截斷'
+}
+
+// ---------------------------------------------------------------- 同步捲動
+function wireScrollSync(frame) {
+  const doc = frame.contentDocument
+  if (!doc) return
+  doc.addEventListener('scroll', () => {
+    if (!state.sync || syncing) return
+    syncing = true
+    const ratio = doc.documentElement.scrollTop /
+      Math.max(1, doc.documentElement.scrollHeight - doc.documentElement.clientHeight)
+    for (const other of stage.querySelectorAll('iframe')) {
+      if (other === frame) continue
+      const od = other.contentDocument?.documentElement
+      if (!od) continue
+      od.scrollTop = ratio * Math.max(0, od.scrollHeight - od.clientHeight)
+    }
+    requestAnimationFrame(() => { syncing = false })
+  }, { passive: true })
+}
+let syncing = false
+
+// ---------------------------------------------------------------- 畫面
+function render() {
+  const { device: d } = state
+  stage.replaceChildren()
+
+  const z = state.shot ? 1 : state.zoom
+  for (const [label, hash] of PRESETS[state.preset]) {
+    const wrap = document.createElement('div')
+    wrap.className = 'frame'
+    wrap.style.width = `${(d.w + (state.shot ? 0 : 20)) * z}px`
+
+    const cap = document.createElement('div')
+    cap.className = 'cap'
+    cap.innerHTML = `<b></b><em class="badge"></em><a target="_blank">開啟 ↗</a>`
+    cap.querySelector('b').textContent = label
+    cap.querySelector('a').href = '/' + hash
+    cap.title = decodeURIComponent(hash)
+    const badge = cap.querySelector('.badge')
+    badge.textContent = '…'
+    badge.title = '捲到這裡才會載入與檢查'
+
+    const shell = document.createElement('div')
+    shell.className = state.shot ? 'shell shot' : 'shell' + (state.notch && d.notch ? ' notch' : '')
+    // 截圖模式沒有外框，框內要剛好是裝置像素；平常各邊多 10px 當機殼
+    const pad = state.shot ? 0 : 20
+    shell.style.width = `${d.w + pad}px`
+    shell.style.height = `${d.h + pad}px`
+    shell.style.transform = `scale(${z})`
+    shell.style.transformOrigin = 'top left'
+    // 縮放不影響版面高度，要自己把外層撐開
+    wrap.style.height = `${(d.h + (state.shot ? 0 : 20)) * z + 28}px`
+
+    const f = document.createElement('iframe')
+    f.src = '/' + hash
+    f.width = d.w
+    f.height = d.h
+    f.loading = 'lazy'
+    f.title = label
+    f.addEventListener('load', () => {
+      hideScrollbar(f)
+      applyTheme()
+      wireScrollSync(f)
+      // 等版面穩定再量 —— 字型與圖片載入都會改變高度
+      setTimeout(() => inspect(f, badge), 700)
+    })
+
+    shell.append(f)
+    wrap.append(cap, shell)
+    stage.append(wrap)
+  }
+}
+
+render()
+</script>
+</body>
+</html>

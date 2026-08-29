@@ -7,7 +7,7 @@
 // 設定網域（讓 og:image / og:url 變絕對網址，分享才會顯示縮圖）：
 //   SITE_URL=https://your-name.github.io/bangdream-tw  npm run build
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { BAND_META, bandKey } from '../src/utils/bands.js'
@@ -543,6 +543,28 @@ if (existsSync(splashPath) && !idx.includes('apple-touch-startup-image')) {
   const links = readFileSync(splashPath, 'utf8').trim()
   idx = idx.replace('</head>', '    ' + links + String.fromCharCode(10) + '  </head>')
   console.log('✓ iOS 啟動畫面：' + (links.match(/<link/g) || []).length + ' 條 link 已注入 index.html')
+}
+
+// manifest 的 screenshots：Android 的安裝對話框有截圖時會變成完整的樣子
+// （標題＋描述＋截圖輪播），沒有的話只是一行小小的橫幅。
+//
+// 不寫死在 public/manifest.webmanifest 裡，是因為指向不存在的檔案會讓
+// 整個安裝對話框退回陽春版 —— 比沒寫還糟。有圖才加。
+const shotsDir = join(ROOT, 'public', 'screenshots')
+if (existsSync(shotsDir)) {
+  const shots = readdirSync(shotsDir).filter(f => /.(png|jpe?g|webp)$/i.test(f)).sort()
+  if (shots.length) {
+    const mfPath = join(DIST, 'manifest.webmanifest')
+    const mf = JSON.parse(readFileSync(mfPath, 'utf8'))
+    mf.screenshots = shots.map(f => ({
+      src: './screenshots/' + f,
+      // 直向的當手機截圖，橫向的當桌機 —— 檔名帶 wide 就強制當桌機
+      form_factor: /wide|desktop/i.test(f) ? 'wide' : 'narrow',
+      type: /.png$/i.test(f) ? 'image/png' : 'image/jpeg',
+    }))
+    writeFileSync(mfPath, JSON.stringify(mf, null, 2) + String.fromCharCode(10), 'utf8')
+    console.log('✓ manifest：' + shots.length + ' 張截圖已列入（安裝對話框會用）')
+  }
 }
 
 writeFileSync(idxPath, idx, 'utf8')

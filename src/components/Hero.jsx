@@ -8,6 +8,7 @@ import { OWNER_NOTE } from '../config.js'
 import { JustAnnounced } from './JustAnnounced.jsx'
 import Icon from './Icon.jsx'
 import ResumeLine from './ResumeLine.jsx'
+import NewSince from './NewSince.jsx'
 
 // 站長便利貼：首頁標題旁的手寫紙條
 function StickyNote({ text }) {
@@ -244,6 +245,9 @@ export default function Hero({ events, onSelect, onYearJump }) {
 
       {/* 上次看到哪。沒紀錄或超過兩週就整行不出現 */}
       <ResumeLine events={events} onSelect={onSelect} />
+
+      {/* 上次來之後新增了什麼。第一次來的人看不到 */}
+      <NewSince events={events} onSelect={onSelect} />
 
       {/* 全站規模：從第一屏降級成一行字，不再佔四塊磚 */}
       <p className="mt-4 text-[14px] text-dream-faint">

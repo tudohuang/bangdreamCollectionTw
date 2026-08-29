@@ -459,7 +459,7 @@ export default function App() {
       </main>
 
       <Footer source={source} updatedAt={updatedAt} onRetry={retry} />
-      <InstallHint />
+      <InstallHint attendedCount={attended.size} />
       <BottomNav tabs={PAGE_TABS} page={profile ? null : page} onGo={goPage} />
       <FloatingDock onRandom={openRandom} />
       <Analytics />

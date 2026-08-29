@@ -50,6 +50,8 @@ import OrganizerPage from './src/components/OrganizerPage.jsx'
 import VenuePage from './src/components/VenuePage.jsx'
 import SeriesPage from './src/components/SeriesPage.jsx'
 import ResumeLine from './src/components/ResumeLine.jsx'
+import InstallCard from './src/components/InstallCard.jsx'
+import NewSince from './src/components/NewSince.jsx'
 import OfficialLinks from './src/components/OfficialLinks.jsx'
 import { seriesIndex } from './src/utils/series.js'
 import ArchiveSection from './src/components/ArchiveSection.jsx'
@@ -154,6 +156,11 @@ export const CASES = [
   ['SeriesPage(空資料)', <SeriesPage value="x" events={[]} onSelect={noop} onClose={noop} />],
   // 沒有 localStorage 紀錄時本來就該整行不出現
   ['ResumeLine(沒紀錄)', <ResumeLine events={events} onSelect={noop} />, { mayBeEmpty: true }],
+  // 伺服器端沒有 UA 也沒有 localStorage，所以這張卡在 render 當下是空的，
+  // 等 mount 之後才決定要顯示哪一種。空輸出是正確行為。
+  ['InstallCard(伺服器端)', <InstallCard />, { mayBeEmpty: true }],
+  // 第一次來的人沒有基準，整塊不出現 —— 這是正確行為
+  ['NewSince(第一次來)', <NewSince events={events} onSelect={noop} />, { mayBeEmpty: true }],
   ['OfficialLinks', <OfficialLinks links={['https://x.com/a', 'https://www.eventernote.com/actors/1', 'https://example.tw/']} />],
   ['OfficialLinks(沒連結)', <OfficialLinks links={[]} />, { mayBeEmpty: true }],
   ['YearRing', <YearRing events={events} onSelect={noop} />],

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import Icon from './Icon.jsx'
 import { tap, done } from '../utils/haptics.js'
 import { isStandalone, isIOSSafari } from '../utils/platform.js'
+import { countVisit, shouldInvite, snooze } from '../utils/install.js'
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
 
@@ -34,12 +35,13 @@ export function ScrollProgress() {
 
 // 「加到主畫面」的邀請。
 //
-// 瀏覽器只有在它自己認為這站夠格安裝時才會丟出 beforeinstallprompt，
-// 所以這條不會亂跳。關掉之後就記住，不再煩人。
+// 這站不上架商店，所以這一步就是全部 —— 一個人會不會把它當 App 用，
+// 完全取決於有沒有加到主畫面。時機的規則放在 utils/install.js，
+// 這裡只負責顯示。
+//
 // 已經是獨立視窗（裝過了）就完全不出現。
-const INSTALL_KEY = 'bdtw-install-dismissed'
 
-export function InstallHint() {
+export function InstallHint({ attendedCount = 0 }) {
   const [prompt, setPrompt] = useState(null)
 
   // iOS 沒有 beforeinstallprompt —— 這個事件在 Safari 根本不存在，
@@ -48,13 +50,14 @@ export function InstallHint() {
   const [ios, setIOS] = useState(false)
 
   useEffect(() => {
-    let dismissed = false
-    try { dismissed = localStorage.getItem(INSTALL_KEY) === '1' } catch {}
-    if (isStandalone() || dismissed) return
+    if (isStandalone()) return
+    countVisit()
+    // 第一次來的人還在決定要不要看下去，這時候邀請最容易被反射性按掉，
+    // 而且按掉之後就沒有第二次機會了。等他回訪或標過「我去過」再說。
+    if (!shouldInvite({ attendedCount })) return
 
     if (isIOSSafari()) {
-      // 剛進站就跳一張教學卡太吵，等使用者真的看了一下再說
-      const timer = setTimeout(() => setIOS(true), 12000)
+      const timer = setTimeout(() => setIOS(true), 4000)
       return () => clearTimeout(timer)
     }
 
@@ -62,10 +65,12 @@ export function InstallHint() {
     window.addEventListener('beforeinstallprompt', onPrompt)
     window.addEventListener('appinstalled', () => setPrompt(null))
     return () => window.removeEventListener('beforeinstallprompt', onPrompt)
-  }, [])
+  }, [attendedCount])
 
+  // 按掉是收起來 30 天，不是永久 —— 最可能安裝的人正是回訪很多次的人，
+  // 第一次按掉就永遠失去他們是最貴的錯。
   const close = () => {
-    try { localStorage.setItem(INSTALL_KEY, '1') } catch {}
+    snooze()
     setPrompt(null)
     setIOS(false)
   }
