@@ -170,3 +170,34 @@ describe('hasArchive', () => {
     assert.equal(hasArchive({ title: '只有標題' }), false)
   })
 })
+
+// Sheet 的格子裡按 Alt+Enter 就能換行，匯出成 CSV 時整格會被雙引號包起來。
+// 整個歌單功能都靠這個 round trip —— 解析器哪天不吃多行，曲目會整批變成
+// 一行擠在一起，而且畫面上看起來只是「這場只有一首歌」，不會報錯。
+describe('Sheet 的多行格子', () => {
+  test('曲目寫在一格裡的多行，解析後還是多行', async () => {
+    const { parseCsvToEvents } = await import('../src/utils/parseEvents.js')
+    const nl = String.fromCharCode(10)
+    const csv = [
+      'ID,編號,活動名稱,曲目,票價',
+      `43,43,DAY2,"1. STAR BEAT!${nl}2. Returns${nl}安可${nl}キズナミュージック",搖滾區 3800 / 座位區 2800`,
+    ].join(nl)
+
+    const [e] = parseCsvToEvents(csv)
+    assert.equal(e.setlist.split(nl).length, 4)
+    assert.equal(e.price, '搖滾區 3800 / 座位區 2800')
+
+    const songs = setlistOf(e)
+    assert.deepEqual(songs.map(s => s.title),
+      ['STAR BEAT!', 'Returns', 'キズナミュージック'])
+    assert.equal(songs[2].encore, true, '「安可」那一行要把後面的標成安可')
+  })
+
+  test('格子裡的雙引號用兩個雙引號跳脫，不會把整列打斷', async () => {
+    const { parseCsvToEvents } = await import('../src/utils/parseEvents.js')
+    const csv = 'ID,編號,活動名稱,曲目\n1,1,X,"1. 歌名裡有""引號""\n2. B"'
+    const [e] = parseCsvToEvents(csv)
+    assert.equal(setlistOf(e).length, 2)
+    assert.match(e.setlist, /「?歌名裡有"引號"/)
+  })
+})
