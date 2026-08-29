@@ -289,3 +289,37 @@ describe('官方曲目的寫法', () => {
     assert.equal(new Set(keys).size, keys.length)
   })
 })
+
+// 音樂祭的曲目是按「出演者」分段的，不是按樂團 ——
+// リスアニ！LIVE TAIPEI 2025 在 Sheet 裡就是這樣寫的。
+// 只認樂團的話，「伊藤美來」會被當成一首歌，而且會永遠留在
+// 「台灣唱過的歌」清單裡，看起來像真的。
+describe('音樂祭：用人名分段', () => {
+  const nl = String.fromCharCode(10)
+  const fest = {
+    id: 'f', startDate: '2025-01-01',
+    people: ['伊藤美來', '愛美'],
+    relatedGroups: ["Poppin'Party", 'Hello, Happy World!'],
+    setlist: ['伊藤美來', 'Shocking Blue', '青100色', '愛美', 'カザニア', 'HELP'].join(nl),
+  }
+
+  test('人名是標頭，不是歌', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    assert.deepEqual(songsOf(fest).map(s => s.title),
+      ['Shocking Blue', '青100色', 'カザニア', 'HELP'])
+  })
+
+  test('人名記在 performer，不會被誤記成樂團', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const s = songsOf(fest)
+    assert.deepEqual(s.map(x => x.performer), ['伊藤美來', '伊藤美來', '愛美', '愛美'])
+    assert.deepEqual(s.map(x => x.band), ['', '', '', ''], '兩團以上又是人名分段，就不猜樂團')
+  })
+
+  test('只有出演名單上的人才算標頭', async () => {
+    // 名單上沒有的名字就是一首歌名，不能亂認
+    const { songsOf } = await import('../src/utils/archive.js')
+    const e = { ...fest, setlist: ['不在名單上的人', 'A'].join(nl) }
+    assert.deepEqual(songsOf(e).map(s => s.title), ['不在名單上的人', 'A'])
+  })
+})

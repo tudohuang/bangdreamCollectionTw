@@ -46,6 +46,20 @@ export function setlistOf(event, fallbackBand = '') {
   const groups = [...new Set((event?.relatedGroups || [])
     .map(g => String(g).split('／')[0].trim()).filter(Boolean))]
 
+  // 分段標頭也可能是「人名」不是團名。
+  //
+  // 音樂祭（リスアニ！LIVE、ANISAMA）的曲目是按出演者分段的：
+  //   伊藤美來
+  //   Shocking Blue
+  //   …
+  //   愛美
+  //   カザニア
+  // 只認樂團的話，「伊藤美來」會被當成一首歌 —— 而且會永遠留在
+  // 「台灣唱過的歌」清單裡，看起來像真的。
+  //
+  // 認得的人名就是這一場的出演者，那份名單本來就在資料裡。
+  const cast = new Set((event?.people || []).map(p => String(p).trim()).filter(Boolean))
+
   // 沒標團的算誰的？
   //
   // 單團場只有一個答案，直接用。但雙團場（DAY1 MyGO × Ave Mujica）猜不出來 ——
@@ -56,7 +70,8 @@ export function setlistOf(event, fallbackBand = '') {
   const out = []
   let encore = 0
   let n = 0
-  let section = ''   // 「▍Ave Mujica」這種區塊標頭設定的團
+  let section = ''          // 區塊標頭設定的演出者（團名或人名）
+  let sectionIsPerson = false // 是人名的話要記在 performer 而不是 band
   for (const line of lines) {
     const bare = line.replace(/[:：]/g, '').trim()
     if (ENCORE_LINE.test(bare)) { encore++; continue }
@@ -65,8 +80,9 @@ export function setlistOf(event, fallbackBand = '') {
     //
     // 雙團場的官方曲目本來就是這樣分段的，一行一行標 24 次是自找麻煩。
     const head = bare.replace(/^[▍▎▏■□●○◆◇※#＃*＊\-–—\s]+/, '').trim()
-    if (head && bandKey(head) !== 'other' && head.length <= 24) {
+    if (head && head.length <= 24 && (bandKey(head) !== 'other' || cast.has(head))) {
       section = head
+      sectionIsPerson = cast.has(head) && bandKey(head) === 'other'
       continue
     }
 
@@ -96,7 +112,9 @@ export function setlistOf(event, fallbackBand = '') {
       encore: encore > 0,
       encoreRound: encore,
       isSong: true,
-      band: band || section || primary,
+      band: band || (sectionIsPerson ? '' : section) || primary,
+      // 音樂祭是按出演者分段的，那個資訊該記成「誰唱的」不是「哪一團」
+      performer: sectionIsPerson ? section : '',
       // 這一場的第一首歌。安可段落不算 —— 開場是正編的第一首。
       opener: n === 1 && encore === 0,
     })
