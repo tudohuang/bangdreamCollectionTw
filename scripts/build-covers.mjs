@@ -81,23 +81,43 @@ async function render(buf, id) {
 }
 
 const manifest = {}
-const failed = []
-let bytesSm = 0, bytesLg = 0, done = 0
+// 手動存的封面。
+//
+// 為什麼需要：抓不到的那幾張裡，大部分是 Instagram／Facebook 的網址。
+// 那種網址帶簽章與到期時間（oh= / oe= 參數），本來就會失效 ——
+// 換一個新網址只會再死一次。唯一穩的做法是把圖存下來。
+//
+// 用法：把圖片存成 covers-manual/<ID>.jpg（ID 是三位數的永久鍵，不是編號）。
+// 有手動檔就優先用它，連原網址都不會去抓。
+const MANUAL = join(ROOT, 'covers-manual')
+const manualFile = (id) => {
+  if (!existsSync(MANUAL)) return null
+  const hit = readdirSync(MANUAL).find(f => f.replace(/\.[^.]+$/, '') === id)
+  return hit ? join(MANUAL, hit) : null
+}
 
-const withCover = events.filter(e => /^https?:/.test(e.cover || ''))
+const failed = []
+let bytesSm = 0, bytesLg = 0, done = 0, manualUsed = 0
+
+// 有網址的，或者沒網址但有手動檔的（例如原本就完全沒有封面那幾筆）
+const withCover = events.filter(e =>
+  /^https?:/.test(e.cover || '') || manualFile(String(keyOf(e)).padStart(3, '0')))
 console.log(`封面 ${withCover.length} 張，開始處理…\n`)
 
 for (const e of withCover) {
   const id = String(keyOf(e)).padStart(3, '0')
   const cacheFile = join(CACHE, `${id}.bin`)
   try {
-    const buf = await download(e.cover, cacheFile)
+    const manual = manualFile(id)
+    let buf
+    if (manual) { buf = readFileSync(manual); manualUsed++ }
+    else buf = await download(e.cover, cacheFile)
     const info = await render(buf, id)
     manifest[id] = {
       w: info.width,
       h: info.height,
       ratio: Math.round((info.width / info.height) * 1000) / 1000,
-      source: e.cover,
+      source: manual ? `covers-manual/${id}` : e.cover,
     }
     bytesSm += info.files['sm.avif']
     bytesLg += info.files['lg.avif']
@@ -109,16 +129,41 @@ for (const e of withCover) {
   }
 }
 
+// 一張都沒成功就不要覆蓋 manifest。
+//
+// 這條是踩到才加的：腳本被改壞（一個未定義的變數）之後，每一筆都進 catch，
+// manifest 是空的，然後它就把 51 筆的檔案覆蓋成 {}，順便把 public/covers 底下
+// 三百多個檔案清空 —— 而畫面上完全看不出來，只是所有封面同時消失。
+//
+// 網路整個斷掉也會是同一個情況。既有的產物比這次的結果值錢。
+if (done === 0 && withCover.length > 0) {
+  console.error(`\n✗ 一張都沒有成功（共 ${withCover.length} 張）。`)
+  console.error('  不覆蓋 src/data/covers.json —— 既有的產物比這次的結果值錢。')
+  console.error('  如果是真的想清空，手動刪掉那個檔再跑一次。')
+  process.exit(1)
+}
+
 writeFileSync(MANIFEST, JSON.stringify(manifest, null, 2) + '\n')
 
 const kb = (n) => (n / 1024).toFixed(0)
-console.log(`\n成功 ${done} · 失敗 ${failed.length}`)
+console.log(`\n成功 ${done} · 失敗 ${failed.length}` +
+  (manualUsed ? ` · 其中 ${manualUsed} 張用手動存的檔` : ''))
 console.log(`清單縮圖（AVIF）合計 ${kb(bytesSm)} KB，平均 ${kb(bytesSm / done)} KB`)
 console.log(`詳情大圖（AVIF）合計 ${kb(bytesLg)} KB，平均 ${kb(bytesLg / done)} KB`)
 
 if (failed.length) {
   console.log(`\n這些抓不到，需要在 Sheet 換掉封面網址：`)
   for (const f of failed) console.log(`  #${f.number} ${f.title}\n      ${f.why} · ${f.url}`)
+
+  // Instagram 與 Facebook 的圖片網址帶簽章與到期時間，換新網址只會再死一次
+  const expiring = failed.filter(f => /cdninstagram|fbcdn\.net/.test(f.url || ''))
+  if (expiring.length) {
+    console.log(`\n  ⚠ 其中 ${expiring.length} 張是 Instagram／Facebook 的網址 —— 那種網址本來就會過期。`)
+    console.log('    換新網址沒有用。把圖存成下面的檔名再跑一次，就永遠都有了：')
+    for (const f of expiring) {
+      console.log(`      covers-manual/${f.id}.jpg   ← #${f.number} ${f.title.slice(0, 30)}`)
+    }
+  }
   writeFileSync(join(ROOT, 'docs', 'covers-failed.json'), JSON.stringify(failed, null, 2) + '\n')
   console.log(`\n（清單已寫進 docs/covers-failed.json）`)
 }
