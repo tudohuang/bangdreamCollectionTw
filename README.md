@@ -54,7 +54,18 @@ npm run icons:data # 從 FontAwesome 抽出用到的圖示路徑（加圖示時�
 `npm run health` 刻意不是測試 —— 資料不完整不是錯誤，是待辦，
 紅燈會讓人習慣忽略紅燈。想知道「現在最該補什麼」跑它就對了。
 
-### 行動版檢視台
+### 開發工具（只在 dev server 上，不會進 dist）
+
+#### 填表台 `/__fill`
+
+一次一筆把欄位填完。旁邊放齊寫這句話需要知道的東西 —— 封面、日期、
+場館、誰來了、這是那個團第幾次來、距上一場多久、同一週還有幾場。
+打完 <kbd>Ctrl</kbd>+<kbd>Enter</kbd> 跳下一筆，進度存在瀏覽器裡，隨時可以關掉。
+填完按「匯出 TSV」複製，貼回 Sheet。
+
+`docs/template/*.tsv` 也還在，兩個都能用 —— 差別只在摩擦。
+
+#### 行動版檢視台 `/__mobile`
 
 `npm run dev` 之後開 `/__mobile`。把每個畫面各塞進一個手機尺寸的 iframe
 一次排開，可以換裝置（含 Galaxy Fold 344px 這種極窄的）、切夜場模式、同步捲動。
@@ -62,8 +73,6 @@ npm run icons:data # 從 FontAwesome 抽出用到的圖示路徑（加圖示時�
 絕對定位的裝飾與 object-cover 的裁切不算，不然每頁都會亮黃燈，然後你就開始無視它。
 
 截圖模式會拿掉機殼與縮放，框內剛好是裝置真實像素。
-
-只掛在 dev server 上（檔案放 `dev/` 而不是 `public/`），不會進 dist。
 
 > **不要用 `npx vite build` 當作驗證。** 它會跳過 `prebuild`（心得折進 JSON）
 > 與 `postbuild`（OG 圖與分享頁），那兩支壞掉在本機看不出來，

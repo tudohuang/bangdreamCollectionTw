@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>填表台</title>
+<style>
+  :root {
+    --bg:#14121c; --panel:#1d1a28; --line:#2f2b3f;
+    --ink:#ece9f5; --sub:#a49fb8; --faint:#6f6885; --accent:#d946ef; --ok:#4ade80;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; }
+  body {
+    background:var(--bg); color:var(--ink);
+    font:15px/1.6 system-ui,"Noto Sans TC",sans-serif;
+    display:flex; flex-direction:column;
+  }
+
+  header {
+    background:var(--panel); border-bottom:1px solid var(--line);
+    padding:10px 18px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  }
+  header h1 { font-size:15px; margin:0; font-weight:700; }
+  select,button {
+    background:#262234; color:var(--ink); border:1px solid var(--line);
+    border-radius:8px; padding:6px 12px; font:inherit; font-size:14px; cursor:pointer;
+  }
+  button:hover,select:hover { border-color:#4a4460; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700; }
+  .grow { flex:1; }
+
+  .bar { height:3px; background:var(--line); }
+  .bar > i { display:block; height:100%; background:var(--accent); transition:width .25s; }
+
+  main { flex:1; overflow:auto; display:grid; place-items:start center; padding:28px 18px 60px; }
+  .card { width:100%; max-width:720px; }
+
+  .no { font:800 13px/1 ui-monospace,monospace; letter-spacing:.14em; color:var(--faint); }
+  h2 { font-size:22px; margin:8px 0 0; line-height:1.35; }
+  .meta { color:var(--sub); font-size:14px; margin-top:6px; }
+
+  .ctx { margin-top:16px; display:flex; flex-wrap:wrap; gap:8px; }
+  .ctx span {
+    background:#241f33; border:1px solid var(--line); border-radius:999px;
+    padding:4px 11px; font-size:13.5px; color:var(--sub);
+  }
+  .ctx span b { color:var(--ink); font-weight:700; }
+
+  .cast { margin-top:14px; font-size:14px; color:var(--sub); }
+  .cast b { color:var(--ink); font-weight:600; }
+
+  img.cover { margin-top:16px; width:100%; max-height:230px; object-fit:cover; border-radius:12px; background:#241f33; }
+
+  textarea {
+    margin-top:18px; width:100%; min-height:92px; resize:vertical;
+    background:#1a1726; color:var(--ink); border:1px solid var(--line);
+    border-radius:12px; padding:12px 14px; font:inherit; line-height:1.6;
+  }
+  textarea:focus { outline:none; border-color:var(--accent); }
+
+  .hint { margin-top:8px; font-size:13.5px; color:var(--faint); display:flex; gap:14px; flex-wrap:wrap; }
+  .hint kbd { background:#262234; border:1px solid var(--line); border-radius:5px; padding:1px 6px; font-size:12.5px; }
+  .count { margin-left:auto; font-variant-numeric:tabular-nums; }
+  .count.over { color:#fbbf24; }
+
+  .row { margin-top:16px; display:flex; gap:10px; align-items:center; }
+
+  .done { text-align:center; padding:60px 20px; }
+  .done h2 { font-size:20px; }
+  .done p { color:var(--sub); }
+  pre {
+    text-align:left; background:#1a1726; border:1px solid var(--line); border-radius:12px;
+    padding:14px; overflow:auto; max-height:320px; font-size:13px; white-space:pre;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>填表台</h1>
+  <select id="field"></select>
+  <span id="progress" class="meta"></span>
+  <div class="grow"></div>
+  <button id="jumpEmpty">跳到還沒填的</button>
+  <button id="export" class="primary">匯出 TSV</button>
+</header>
+<div class="bar"><i id="barFill" style="width:0"></i></div>
+
+<main><div class="card" id="card">載入中…</div></main>
+
+<script type="module">
+// 填表台：一次一筆，把該填的欄位填完。
+//
+// 為什麼要這個：docs/template/*.tsv 已經產好了，但它躺在那裡沒動 ——
+// 因為要開試算表、對著編號捲、在小格子裡打字。那是 59 次的摩擦。
+//
+// 這裡把摩擦拿掉：一次只看一筆，旁邊放齊寫這句話需要知道的東西
+// （封面、日期、場館、誰來了、這是第幾次、距上一場多久），
+// 打完按 Ctrl+Enter 就跳下一筆。隨時可以關掉，進度存在瀏覽器裡。
+//
+// 只在 dev server 上，不會進 dist。
+
+const FIELDS = [
+  { key:'oneLine', header:'一句話', max:20,
+    how:'20 字以內，講這場的一件事，不要複述標題。',
+    eg:'睽違三年八個月，台灣終於又有邦邦的 LIVE。' },
+  { key:'description', header:'簡介', max:120,
+    how:'兩到三句。這場是什麼、為什麼值得記。詳情頁與搜尋結果都會用。',
+    eg:'Poppin’Party 與 Roselia 的雙團場，也是兩團第一次在台灣同台。' },
+  { key:'sources', header:'來源', max:0,
+    how:'公告或報導的網址。多筆用空白分隔。',
+    eg:'https://www.facebook.com/xxx/posts/123' },
+  { key:'impression', header:'心得', max:0,
+    how:'你在現場的感覺。沒去過就跳過。',
+    eg:'' },
+  { key:'setlist', header:'曲目', max:0,
+    how:'一行一首，安可另起一行寫「安可」。記得幾首寫幾首。',
+    eg:'1. STAR BEAT!\n2. 天下トーイツ A to Z☆\n安可\nReturns' },
+  { key:'price', header:'票價', max:0,
+    how:'分區用 / 隔開，可以帶區名。',
+    eg:'搖滾區 3800 / 座位區 2800' },
+  { key:'soldOut', header:'售票狀況', max:0,
+    how:'完售了嗎？多久賣完的？',
+    eg:'開賣 3 分鐘完售' },
+]
+
+const KEY = 'bdtw-fill-draft'
+const $ = (id) => document.getElementById(id)
+
+let events = []
+let field = FIELDS[0]
+let i = 0
+let draft = {}          // { 欄位key: { stableId: 值 } }
+
+try { draft = JSON.parse(localStorage.getItem(KEY) || '{}') } catch { draft = {} }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(draft)) } catch {} }
+
+const valOf = (e) => draft[field.key]?.[e.stableId] ?? ''
+const filledInData = (e) => {
+  const v = e[field.key]
+  return Array.isArray(v) ? v.length > 0 : !!(v && String(v).trim())
+}
+// 「已經有了」＝資料裡本來就有，或這次填過
+const isDone = (e) => filledInData(e) || !!valOf(e).trim()
+
+// ------------------------------------------------------------------ 脈絡
+//
+// 寫一句話最難的不是文筆，是「想不起這場是什麼」。
+// 這幾條全部從 events.json 算得出來，不用另外查。
+const day = (d) => (d ? String(d).slice(0, 10) : '')
+const diffDays = (a, b) =>
+  Math.round((new Date(day(b)) - new Date(day(a))) / 86400000)
+
+function contextOf(e) {
+  const out = []
+  const chrono = events.filter(x => day(x.startDate)).sort((a, b) => day(a.startDate).localeCompare(day(b.startDate)))
+  const idx = chrono.findIndex(x => x.id === e.id)
+
+  if (idx > 0) {
+    const prev = chrono[idx - 1]
+    const d = diffDays(prev.startDate, e.startDate)
+    if (d >= 0) out.push(['距上一場', `${d} 天`])
+  }
+
+  const band = (e.relatedGroups || [])[0]
+  if (band) {
+    const root = String(band).split('／')[0].trim()
+    const same = chrono.filter(x => (x.relatedGroups || []).some(g => String(g).split('／')[0].trim() === root))
+    const nth = same.findIndex(x => x.id === e.id) + 1
+    if (same.length > 1) out.push([root, `第 ${nth} 次 / 共 ${same.length}`])
+  }
+
+  if (e.venue) {
+    const same = chrono.filter(x => x.venue === e.venue)
+    if (same.length > 1) out.push([e.venue, `這裡第 ${same.findIndex(x => x.id === e.id) + 1} 場`])
+  }
+
+  // 同一週還有什麼 —— 密集期常常是同一件事的一部分
+  const near = chrono.filter(x => x.id !== e.id && Math.abs(diffDays(x.startDate, e.startDate)) <= 3)
+  if (near.length) out.push(['同一週還有', `${near.length} 場`])
+
+  return out
+}
+
+// ------------------------------------------------------------------ 畫面
+function render() {
+  const list = events
+  const e = list[i]
+  if (!e) return
+
+  $('progress').textContent =
+    `${i + 1} / ${list.length}　已填 ${list.filter(isDone).length}`
+  $('barFill').style.width = `${(list.filter(isDone).length / list.length) * 100}%`
+
+  const people = (e.people || []).join('、')
+  const ctx = contextOf(e)
+  const cover = e.cover || ''
+
+  $('card').innerHTML = `
+    <div class="no">#${String(e.number).padStart(3, '0')}${isDone(e) ? '　✓ 已有內容' : ''}</div>
+    <h2></h2>
+    <div class="meta"></div>
+    ${cover ? `<img class="cover" src="${cover}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}
+    <div class="ctx">${ctx.map(([k, v]) => `<span>${k} <b>${v}</b></span>`).join('')}</div>
+    ${people ? `<div class="cast">出演：<b class="who"></b></div>` : ''}
+    <textarea id="input" placeholder="${field.how}"></textarea>
+    <div class="hint">
+      <span><kbd>Ctrl</kbd>+<kbd>Enter</kbd> 存檔並下一筆</span>
+      <span><kbd>Ctrl</kbd>+<kbd>←</kbd> / <kbd>→</kbd> 換筆</span>
+      ${field.eg ? `<span>例：${field.eg.split('\n')[0]}</span>` : ''}
+      <span class="count" id="count"></span>
+    </div>
+    <div class="row">
+      <button id="prev">← 上一筆</button>
+      <button id="skip">跳過</button>
+      <button id="next" class="primary">存檔並下一筆 →</button>
+    </div>
+  `
+  // 標題與人名用 textContent 塞，避免資料裡的角括號把版面弄壞
+  $('card').querySelector('h2').textContent = e.title || '（沒有標題）'
+  $('card').querySelector('.meta').textContent =
+    [e.startDate || '日期未定', e.venue, e.type].filter(Boolean).join('　·　')
+  const who = $('card').querySelector('.who')
+  if (who) who.textContent = people
+
+  const input = $('input')
+  input.value = valOf(e)
+  input.focus()
+
+  const count = () => {
+    const n = [...input.value].length
+    $('count').textContent = field.max ? `${n} / ${field.max}` : `${n} 字`
+    $('count').className = 'count' + (field.max && n > field.max ? ' over' : '')
+  }
+  count()
+  input.addEventListener('input', count)
+
+  input.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey)) { ev.preventDefault(); commit(1) }
+    if (ev.key === 'ArrowRight' && (ev.ctrlKey || ev.metaKey)) { ev.preventDefault(); commit(1) }
+    if (ev.key === 'ArrowLeft' && (ev.ctrlKey || ev.metaKey)) { ev.preventDefault(); commit(-1) }
+  })
+
+  $('next').onclick = () => commit(1)
+  $('prev').onclick = () => commit(-1)
+  $('skip').onclick = () => { i = Math.min(events.length - 1, i + 1); render() }
+}
+
+function commit(step) {
+  const e = events[i]
+  const v = $('input').value.trim()
+  draft[field.key] = draft[field.key] || {}
+  if (v) draft[field.key][e.stableId] = v
+  else delete draft[field.key][e.stableId]
+  save()
+  i = Math.max(0, Math.min(events.length - 1, i + step))
+  render()
+}
+
+// ------------------------------------------------------------------ 匯出
+//
+// 只匯出這次填的，而且照編號排 —— 貼回 Sheet 時對得上。
+function exportTsv() {
+  const rows = events
+    .filter(e => (draft[field.key]?.[e.stableId] || '').trim())
+    .sort((a, b) => a.number - b.number)
+  if (!rows.length) { alert('這一欄還沒有填任何東西'); return }
+
+  // Sheet 的一格裡要放多行，整格要用雙引號包起來
+  const cell = (v) => (/[\t\n"]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v)
+  const tsv = [
+    ['編號', '活動名稱', field.header].join('\t'),
+    ...rows.map(e => [
+      `#${String(e.number).padStart(3, '0')}`,
+      e.title,
+      cell(draft[field.key][e.stableId]),
+    ].join('\t')),
+  ].join('\n')
+
+  $('card').innerHTML = `
+    <div class="done">
+      <h2>${rows.length} 筆「${field.header}」</h2>
+      <p>複製最右邊那一欄貼回 Sheet 的「${field.header}」欄，或整段貼進空白試算表再對。</p>
+      <pre id="out"></pre>
+      <div class="row" style="justify-content:center">
+        <button id="copy" class="primary">複製</button>
+        <button id="back">回去繼續填</button>
+      </div>
+    </div>`
+  $('out').textContent = tsv
+  $('copy').onclick = async () => {
+    await navigator.clipboard.writeText(tsv)
+    $('copy').textContent = '已複製 ✓'
+  }
+  $('back').onclick = render
+}
+
+// ------------------------------------------------------------------ 起動
+for (const f of FIELDS) {
+  const o = document.createElement('option')
+  o.value = f.key; o.textContent = f.header
+  $('field').append(o)
+}
+$('field').onchange = (ev) => {
+  field = FIELDS.find(f => f.key === ev.target.value)
+  i = 0
+  jumpToEmpty()
+}
+$('export').onclick = exportTsv
+$('jumpEmpty').onclick = () => jumpToEmpty()
+
+function jumpToEmpty() {
+  const k = events.findIndex(e => !isDone(e))
+  i = k >= 0 ? k : 0
+  render()
+}
+
+// dev server 直接吃得到原始檔
+const res = await fetch('/src/data/events.json')
+events = (await res.json()).sort((a, b) => (a.number || 0) - (b.number || 0))
+jumpToEmpty()
+</script>
+</body>
+</html>

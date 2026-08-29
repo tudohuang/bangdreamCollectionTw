@@ -46,32 +46,46 @@ function pagesFunctionsInDev() {
 // 行動版檢視台：把每個畫面塞進手機尺寸的 iframe 一次排開。
 // 只掛在 dev server 上（apply: 'serve'），不會進 dist —— 檔案放在 dev/ 而不是
 // public/ 就是為了這個，public/ 裡的東西 build 時會被原樣複製出去。
-function mobileDemoInDev() {
+// dev/ 底下的開發工具，各自掛一條路由。
+//   /__mobile  行動版檢視台
+//   /__fill    填表台
+const DEV_TOOLS = [
+  ['/__mobile', 'mobile.html', '行動版檢視台'],
+  ['/__fill', 'fill.html', '填表台'],
+]
+
+function devToolsInDev() {
+  const here = dirname(fileURLToPath(import.meta.url))
   return {
-    name: 'mobile-demo',
+    name: 'dev-tools',
     apply: 'serve',
     configureServer(server) {
-      server.middlewares.use('/__mobile', (req, res, next) => {
-        // 只吃根路徑，子路徑（如果之後加圖片）交給後面的中介層
-        if (req.url !== '/' && req.url !== '') return next()
-        try {
-          const html = readFileSync(join(dirname(fileURLToPath(import.meta.url)), 'dev', 'mobile.html'), 'utf8')
-          res.setHeader('Content-Type', 'text/html; charset=utf-8')
-          res.end(html)
-        } catch (e) {
-          server.config.logger.error(`[mobile-demo] ${e.message}`)
-          next()
-        }
-      })
+      for (const [route, file] of DEV_TOOLS) {
+        server.middlewares.use(route, (req, res, next) => {
+          // 只吃根路徑，其餘交給後面的中介層
+          if (req.url !== '/' && req.url !== '') return next()
+          try {
+            res.setHeader('Content-Type', 'text/html; charset=utf-8')
+            res.end(readFileSync(join(here, 'dev', file), 'utf8'))
+          } catch (e) {
+            server.config.logger.error(`[dev-tools] ${route} ${e.message}`)
+            next()
+          }
+        })
+      }
       server.httpServer?.once('listening', () => {
-        setTimeout(() => server.config.logger.info('  ➜  行動版檢視台: /__mobile'), 60)
+        setTimeout(() => {
+          for (const [route, , label] of DEV_TOOLS) {
+            server.config.logger.info(`  ➜  ${label}: ${route}`)
+          }
+        }, 60)
       })
     },
   }
 }
 
 export default defineConfig({
-  plugins: [react(), pagesFunctionsInDev(), mobileDemoInDev()],
+  plugins: [react(), pagesFunctionsInDev(), devToolsInDev()],
   base: './',
   build: {
     rollupOptions: {
