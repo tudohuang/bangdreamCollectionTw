@@ -58,6 +58,18 @@
   }
   textarea:focus { outline:none; border-color:var(--accent); }
 
+  /* 已經打過的歌名。點一下補到游標處 —— 讓人挑到同一個寫法，
+     比任何事後的正規化規則都有效。 */
+  .known { margin-top:10px; display:flex; flex-wrap:wrap; gap:6px; }
+  .known:empty { display:none; }
+  .known > b { width:100%; font-size:13px; color:var(--faint); font-weight:400; }
+  .known button {
+    padding:3px 10px; font-size:13.5px; border-radius:999px;
+    background:#241f33; border:1px solid var(--line); color:var(--sub);
+  }
+  .known button:hover { border-color:var(--accent); color:var(--ink); }
+  .known button i { font-style:normal; color:var(--faint); margin-left:5px; }
+
   .hint { margin-top:8px; font-size:13.5px; color:var(--faint); display:flex; gap:14px; flex-wrap:wrap; }
   .hint kbd { background:#262234; border:1px solid var(--line); border-radius:5px; padding:1px 6px; font-size:12.5px; }
   .count { margin-left:auto; font-variant-numeric:tabular-nums; }
@@ -151,6 +163,25 @@ const day = (d) => (d ? String(d).slice(0, 10) : '')
 const diffDays = (a, b) =>
   Math.round((new Date(day(b)) - new Date(day(a))) / 86400000)
 
+// 已經出現過的歌名（活動表裡的 + 這次填的），照用過的次數排。
+//
+// 歌名會像場館名一樣被打成好幾種寫法，而且更嚴重 —— 場館 28 個、
+// 歌名會有幾百個，還是日文。事後正規化救得回一部分，但一開始就挑到
+// 同一個寫法才是真的解法。
+function knownSongTitles() {
+  const tally = new Map()
+  const eat = (raw) => {
+    for (const line of String(raw || "").split(/[\n;；]+/)) {
+      const t = line.replace(/^\s*\d{1,2}\s*[.)、．]?\s*/, "").trim()
+      if (!t || /^(安可|encore|アンコール)/i.test(t)) continue
+      tally.set(t, (tally.get(t) || 0) + 1)
+    }
+  }
+  for (const e of events) eat(e.setlist)
+  for (const v of Object.values(draft.setlist || {})) eat(v)
+  return [...tally].sort((a, b) => b[1] - a[1]).slice(0, 24)
+}
+
 function contextOf(e) {
   const out = []
   const chrono = events.filter(x => day(x.startDate)).sort((a, b) => day(a.startDate).localeCompare(day(b.startDate)))
@@ -204,6 +235,7 @@ function render() {
     <div class="ctx">${ctx.map(([k, v]) => `<span>${k} <b>${v}</b></span>`).join('')}</div>
     ${people ? `<div class="cast">出演：<b class="who"></b></div>` : ''}
     <textarea id="input" placeholder="${field.how}"></textarea>
+    <div id="known" class="known"></div>
     <div class="hint">
       <span><kbd>Ctrl</kbd>+<kbd>Enter</kbd> 存檔並下一筆</span>
       <span><kbd>Ctrl</kbd>+<kbd>←</kbd> / <kbd>→</kbd> 換筆</span>
@@ -234,6 +266,27 @@ function render() {
   }
   count()
   input.addEventListener('input', count)
+
+  // 曲目才需要 —— 其他欄位沒有「要跟之前寫法一致」的問題
+  if (field.key === 'setlist') {
+    const known = knownSongTitles()
+    const box = $('known')
+    if (known.length) {
+      box.innerHTML = '<b>已經打過的歌名（點一下加進去，寫法才會一致）</b>'
+      for (const [title, n] of known) {
+        const b = document.createElement('button')
+        b.textContent = title
+        if (n > 1) { const i = document.createElement('i'); i.textContent = n; b.append(i) }
+        b.onclick = () => {
+          const v = input.value
+          input.value = v && !v.endsWith('\n') ? v + '\n' + title : v + title
+          input.dispatchEvent(new Event('input'))
+          input.focus()
+        }
+        box.append(b)
+      }
+    }
+  }
 
   input.addEventListener('keydown', (ev) => {
     if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey)) { ev.preventDefault(); commit(1) }

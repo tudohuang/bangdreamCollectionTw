@@ -38,6 +38,7 @@ const EventDetail = lazy(() => import('./components/EventDetail.jsx'))
 const PeoplePage = lazy(() => import('./components/PeoplePage.jsx'))
 const LabsPage = lazy(() => import('./components/LabsPage.jsx'))
 const MePage = lazy(() => import('./components/MePage.jsx'))
+const SongsPage = lazy(() => import('./components/SongsPage.jsx'))
 const StatsPanel = lazy(() => import('./components/StatsPanel.jsx'))
 const VenueMap = lazy(() => import('./components/VenueMap.jsx'))
 const OtherHalf = lazy(() => import('./components/OtherHalf.jsx'))
@@ -57,7 +58,7 @@ const PAGE_TABS = [
   ['me', '我的', 'circle-check'],
   ['labs', 'Labs', 'wand-magic-sparkles'],
 ]
-const SIMPLE_PAGES = ['people', 'stats', 'me', 'labs']
+const SIMPLE_PAGES = ['people', 'stats', 'me', 'labs', 'songs']
 // 舊連結（#/pulse）還在外面流通，靜靜導到 Labs
 const PAGE_ALIAS = { pulse: 'labs' }
 // 統計頁的區塊，由上而下：結論與圖表 → 年度時間軸 → 場館 → 只來過一次 → 封面牆 → 更新日誌 → 投稿
@@ -142,7 +143,7 @@ export default function App() {
         return
       }
       setDetailId(null)
-      if (['person', 'band', 'org', 'venue', 'series'].includes(h.route)) {
+      if (['person', 'band', 'org', 'venue', 'series', 'song'].includes(h.route)) {
         setProfile({ kind: h.route, value: h.value })
         return
       }
@@ -439,6 +440,11 @@ export default function App() {
               </Reveal>
             ))}
           </Suspense>
+
+        ) : page === 'songs' ? (
+          <ErrorBoundary><Suspense fallback={<PageFallback h={520} />}>
+            <SongsPage events={events} onSelect={openDetail} onClose={() => goPage('stats')} />
+          </Suspense></ErrorBoundary>
 
         ) : page === 'me' ? (
           <ErrorBoundary><Suspense fallback={<PageFallback h={420} />}>

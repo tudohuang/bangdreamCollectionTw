@@ -1,4 +1,5 @@
-import { setlistOf, pricesOf, goodsOf, keyVisualOf, salesOf, programmeOf, songIndex } from '../utils/archive.js'
+import { setlistOf, pricesOf, goodsOf, keyVisualOf, salesOf, programmeOf } from '../utils/archive.js'
+import { songIndex, songKey } from '../utils/songs.js'
 import Icon from './Icon.jsx'
 
 // 史料層的四塊：曲目、票價、周邊、主視覺。
@@ -14,7 +15,9 @@ export default function ArchiveSection({ event, allEvents = [], color, glow }) {
 
   // 這場的每一首歌在台灣被唱過幾次。只有曲目資料多起來才有意義，
   // 所以第二場以上才顯示次數。
-  const counts = songs.length ? new Map(songIndex(allEvents).map(s => [s.title, s.count])) : null
+  // 用正規化後的 key 對，不然「STAR BEAT!」與「STAR BEAT!〜ホシノコドウ〜」
+  // 會被當成兩首，次數永遠是 1
+  const counts = songs.length ? new Map(songIndex(allEvents).map(s => [s.key, s.count])) : null
 
   return (
     <div className="space-y-6">
@@ -23,7 +26,7 @@ export default function ArchiveSection({ event, allEvents = [], color, glow }) {
           <Head icon="music" color={color}>曲目 {songs.length} 首</Head>
           <ol className="border-t" style={{ borderColor: `rgba(${glow},0.35)` }}>
             {songs.map(s => {
-              const n = counts?.get(s.title) || 1
+              const n = counts?.get(songKey(s.title)) || 1
               return (
                 <li key={`${s.n}-${s.title}`}
                   className="grid grid-cols-[28px_minmax(0,1fr)_auto] items-baseline gap-x-3 py-2 border-b"
@@ -32,9 +35,11 @@ export default function ArchiveSection({ event, allEvents = [], color, glow }) {
                     style={{ color: s.encore ? color : undefined }}>
                     {s.encore ? 'EN' : s.n}
                   </span>
-                  <span className="min-w-0 font-display font-semibold text-[14px] text-dream-ink">
+                  {/* 每一首連到它自己的頁：這首在台灣唱過幾次、誰唱的、第一次是什麼時候 */}
+                  <a href={`#/song/${encodeURIComponent(songKey(s.title))}`}
+                    className="min-w-0 truncate font-display font-semibold text-[14px] text-dream-ink hover:text-bloom-violet transition-colors">
                     {s.title}
-                  </span>
+                  </a>
                   {n > 1 && (
                     <span className="text-[14px] text-dream-faint tabular-nums shrink-0">
                       台灣第 {n} 次

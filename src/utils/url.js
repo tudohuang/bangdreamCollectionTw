@@ -3,7 +3,7 @@
 // 內容：#/event/evt-034 ｜ #/person/愛美 ｜ #/band/Roselia ｜ #/org/宝島制作委員会 ｜ #/venue/世貿一館
 // 舊網址相容：#/filter?… → collection ｜ #/year/2026 → collection?year=2026 ｜ #/pulse → labs
 
-const PAGES = new Set(['collection', 'people', 'stats', 'me', 'labs', 'pulse'])
+const PAGES = new Set(['collection', 'people', 'stats', 'me', 'labs', 'pulse', 'songs'])
 
 export function readHash() {
   const raw = (window.location.hash || '').replace(/^#\/?/, '')
@@ -31,6 +31,10 @@ export function readHash() {
   }
   // 系列：segment 是 utils/series.js 定的 key（bushiroad-expo 這種），
   // 用系列名稱也進得去 —— findSeries 兩種都認。
+  // 歌：segment 是 songKey() 正規化後的結果，用原本的歌名也進得去
+  if (segments[0] === 'song' && segments[1]) {
+    return { route: 'song', value: decodeURIComponent(segments[1]), params }
+  }
   if (segments[0] === 'series' && segments[1]) {
     return { route: 'series', value: decodeURIComponent(segments[1]), params }
   }
@@ -56,6 +60,7 @@ export function writeHash(route, opts = {}, { replace = false } = {}) {
   else if (route === 'band') hash = `#/band/${encodeURIComponent(opts.value)}`
   else if (route === 'venue') hash = `#/venue/${encodeURIComponent(opts.value)}`
   else if (route === 'series') hash = `#/series/${encodeURIComponent(opts.value)}`
+  else if (route === 'song') hash = `#/song/${encodeURIComponent(opts.value)}`
   else if (route === 'year') hash = `#/collection?year=${opts.year}`
   else if (route === 'collection' || route === 'filter') {
     const qs = new URLSearchParams(opts.params || {}).toString()

@@ -12,12 +12,14 @@ const ProfilePage = lazy(() => import('./ProfilePage.jsx'))
 const OrganizerPage = lazy(() => import('./OrganizerPage.jsx'))
 const VenuePage = lazy(() => import('./VenuePage.jsx'))
 const SeriesPage = lazy(() => import('./SeriesPage.jsx'))
+const SongPage = lazy(() => import('./SongPage.jsx'))
 
 // person 與 band 共用 ProfilePage，靠 kind 分辨；其餘各有各的頁
 const PAGES = {
   org: OrganizerPage,
   venue: VenuePage,
   series: SeriesPage,
+  song: SongPage,
 }
 
 export default function ProfileRoute({ profile, events, attended, sheetRoster,

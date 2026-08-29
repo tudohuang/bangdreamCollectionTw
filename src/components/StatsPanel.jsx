@@ -116,6 +116,11 @@ export default function StatsPanel({ events, onSelect = () => {} }) {
       {/* 票價與曲目：現在都是 0/59，所以整塊不出現。Sheet 一填就會長出來 */}
       <ArchiveStats events={events} onSelect={onSelect} />
 
+      {/* 總表的入口永遠在：沒資料時那一頁會說明為什麼這件事值得做 */}
+      <p className="mt-6 text-[14px] text-dream-sub">
+        <a href="#/songs" className="text-bloom-violet hover:underline">在台灣唱過的歌 →</a>
+      </p>
+
       <div className="grid lg:grid-cols-2 gap-6 mt-6">
         {/* 統計口徑：別人拿我們的數字去比對時，先講清楚一筆是什麼 */}
         <div className="glass p-7 lg:col-span-2">

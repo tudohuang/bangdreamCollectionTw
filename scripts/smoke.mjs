@@ -49,6 +49,8 @@ import LabsPage from './src/components/LabsPage.jsx'
 import OrganizerPage from './src/components/OrganizerPage.jsx'
 import VenuePage from './src/components/VenuePage.jsx'
 import SeriesPage from './src/components/SeriesPage.jsx'
+import SongPage from './src/components/SongPage.jsx'
+import SongsPage from './src/components/SongsPage.jsx'
 import ResumeLine from './src/components/ResumeLine.jsx'
 import InstallCard from './src/components/InstallCard.jsx'
 import NewSince from './src/components/NewSince.jsx'
@@ -75,6 +77,11 @@ import { milestoneMap } from './src/utils/milestones.js'
 import { sortChrono } from './src/utils/context.js'
 
 const noop = () => {}
+// 曲目的替身資料：真資料是 0/59，但那幾頁的有資料狀態也要測
+const songEvents = events.slice(0, 3).map((e, i) => ({
+  ...e,
+  setlist: i === 2 ? '1. STAR BEAT!' : ['1. STAR BEAT!' + (i ? '〜ホシノコドウ〜' : ''), '2. Returns', '安可', 'キズナミュージック'].join(String.fromCharCode(10)),
+}))
 const attended = new Set(events.slice(0, 6).map(e => e.id))
 const filters = {
   year: 'all', groups: [], people: [], characters: [], types: [], venues: [], cities: [],
@@ -156,6 +163,11 @@ export const CASES = [
   ['SeriesPage', <SeriesPage value={seriesIndex(events)[0]?.key || ''} events={events} onSelect={noop} onClose={noop} />],
   ['SeriesPage(找不到)', <SeriesPage value="不存在的系列" events={events} onSelect={noop} onClose={noop} />],
   ['SeriesPage(空資料)', <SeriesPage value="x" events={[]} onSelect={noop} onClose={noop} />],
+  // 曲目現在是 0/59，所以總表要能好好講「還沒有人補」而不是空著唬人
+  ['SongsPage(沒資料)', <SongsPage events={events} onSelect={noop} onClose={noop} />],
+  ['SongsPage(有資料)', <SongsPage onSelect={noop} onClose={noop} events={songEvents} />],
+  ['SongPage', <SongPage value="STAR BEAT!" events={songEvents} onSelect={noop} onClose={noop} />],
+  ['SongPage(找不到)', <SongPage value="不存在的歌" events={songEvents} onSelect={noop} onClose={noop} />],
   // 沒有 localStorage 紀錄時本來就該整行不出現
   ['ResumeLine(沒紀錄)', <ResumeLine events={events} onSelect={noop} />, { mayBeEmpty: true }],
   // 伺服器端沒有 UA 也沒有 localStorage，所以這張卡在 render 當下是空的，

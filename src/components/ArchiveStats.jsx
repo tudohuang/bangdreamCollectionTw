@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
-import { priceHistory, songIndex } from '../utils/archive.js'
+import { priceHistory } from '../utils/archive.js'
+import { songIndex } from '../utils/songs.js'
 import { primaryMeta } from '../utils/bands.js'
 import Icon from './Icon.jsx'
 
@@ -88,7 +89,10 @@ function TopSongs({ rows, onSelect }) {
             <span className="w-5 shrink-0 text-right font-round font-bold text-dream-faint tabular-nums">
               {i + 1}
             </span>
-            <span className="min-w-0 flex-1 truncate text-dream-ink">{s.title}</span>
+            <a href={`#/song/${encodeURIComponent(s.key)}`}
+              className="min-w-0 flex-1 truncate text-dream-ink hover:text-bloom-violet transition-colors">
+              {s.title}
+            </a>
             <span className="shrink-0 text-dream-faint tabular-nums">{s.count} 次</span>
             <button onClick={() => onSelect(s.events[s.events.length - 1].id)}
               aria-label={`看最近唱這首的場次：${s.title}`}
@@ -98,9 +102,11 @@ function TopSongs({ rows, onSelect }) {
           </li>
         ))}
       </ol>
-      {rows.length > top.length && (
-        <p className="mt-2 text-[14px] text-dream-faint">…還有 {rows.length - top.length} 首</p>
-      )}
+      <a href="#/songs"
+        className="mt-3 inline-flex items-center gap-1.5 text-[14px] text-bloom-violet hover:underline">
+        {rows.length > top.length ? `看全部 ${rows.length} 首` : '看曲目總表'}
+        <Icon n="arrow-right" className="text-[9px]" />
+      </a>
     </div>
   )
 }
