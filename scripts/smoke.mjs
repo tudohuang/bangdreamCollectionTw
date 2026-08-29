@@ -168,6 +168,12 @@ export const CASES = [
   ['SongsPage(有資料)', <SongsPage onSelect={noop} onClose={noop} events={songEvents} />],
   ['SongPage', <SongPage value="STAR BEAT!" events={songEvents} onSelect={noop} onClose={noop} />],
   ['SongPage(找不到)', <SongPage value="不存在的歌" events={songEvents} onSelect={noop} onClose={noop} />],
+  // 兩天一列 + 暱稱分段 + 出處註記（#048 那種）
+  ['ArchiveSection(兩天一列)', <ArchiveSection color="#8b5cf6" glow="139,92,246" allEvents={[]}
+    event={{ id: 'x', people: ['小日向美香', '櫻川惠'], relatedGroups: ['MyGO!!!!!', 'Roselia'],
+      setlist: ['【Day 1】', '合唱', '1. ray（BUMP OF CHICKEN 歌曲）', 'みか 部分', '2. 夢のみちしるべ',
+        '安可', '3. Snow halation', '【Day 2】', '合唱', '1. ライオン', 'めぐ 部分', '2. キボウマイロード',
+      ].join(String.fromCharCode(10)) }} />],
   // 雙團場：每一行標了團、有 MC、有安可、有台灣首唱
   ['ArchiveSection(雙團場全套)', <ArchiveSection color="#8b5cf6" glow="139,92,246"
     allEvents={songEvents}

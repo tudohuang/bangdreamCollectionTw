@@ -38,6 +38,19 @@ const splitLines = (v) =>
 const NOT_A_SONG = /^(mc\d*|トーク|talk|影片|映像|vtr|video|樂器演奏|楽器|instrumental|開場|オープニング|opening|自我介紹|挨拶)$/i
 const ENCORE_LINE = /^(w?安可\d*|encore\d*|アンコール\d*|en\d*|ｗ?アンコール)$/i
 
+// 【Day 1】、Day 2、第二天 —— 一列涵蓋兩天的場次（8/01–8/02 那種）
+// 兩份歌單只能塞進同一格，所以要認得日子的分界。編號每天重新算。
+const DAY_LINE = /^[【\[（(]?\s*(?:day|d)\s*([0-9]+)\s*[】\]）)]?$/i
+const DAY_LINE_ZH = /^[【\[（(]?\s*第\s*([一二三四五六日\d]+)\s*[天日場]\s*[】\]）)]?$/
+const ZH_NUM = { 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6 }
+
+// 「みか 部分」「めぐ パート」「合唱」——
+// 分段標頭常常寫暱稱不寫全名，而暱稱跟名冊上的名字對不起來
+// （「みか」對「小日向美香」沒有任何字面關係）。所以不猜，原樣留著當標籤：
+// 那是曲目來源本來就這樣寫的，照實記比亂對更有用。
+const PERFORMER_SECTION = /^(.+?)\s*(?:部分|パート|ソロ|solo|コーナー|の部)$/i
+const SHARED_SECTION = /^(合唱|全員|二人|ふたり|デュエット|duet|共演)$/i
+
 export function setlistOf(event, fallbackBand = '') {
   const raw = event?.setlist || event?.extras?.['曲目'] || event?.extras?.['setlist']
   const lines = splitLines(raw)
@@ -70,25 +83,54 @@ export function setlistOf(event, fallbackBand = '') {
   const out = []
   let encore = 0
   let n = 0
-  let section = ''          // 區塊標頭設定的演出者（團名或人名）
-  let sectionIsPerson = false // 是人名的話要記在 performer 而不是 band
+  let day = 0               // 0 ＝ 沒有分天
+  let section = ''          // 區塊標頭設定的演出者（團名或人名或暱稱）
+  let sectionIsPerson = false // 是人／暱稱的話記在 performer 而不是 band
   for (const line of lines) {
     const bare = line.replace(/[:：]/g, '').trim()
     if (ENCORE_LINE.test(bare)) { encore++; continue }
 
-    // 區塊標頭：整行就是一個認得的樂團名（前面可以有 ▍■●#※- 這類記號）。
-    //
-    // 雙團場的官方曲目本來就是這樣分段的，一行一行標 24 次是自找麻煩。
     const head = bare.replace(/^[▍▎▏■□●○◆◇※#＃*＊\-–—\s]+/, '').trim()
-    if (head && head.length <= 24 && (bandKey(head) !== 'other' || cast.has(head))) {
-      section = head
-      sectionIsPerson = cast.has(head) && bandKey(head) === 'other'
+
+    // 分天：一列涵蓋兩天的場次，兩份歌單塞在同一格。編號每天重來。
+    const dm = head.match(DAY_LINE) || head.match(DAY_LINE_ZH)
+    if (dm) {
+      day = ZH_NUM[dm[1]] || Number(dm[1]) || day + 1
+      n = 0
+      encore = 0
+      section = ''
+      sectionIsPerson = false
       continue
+    }
+
+    // 區塊標頭。四種都認：
+    //   樂團名（▍Ave Mujica）／出演名單上的人名／「みか 部分」這種暱稱／「合唱」
+    if (head && head.length <= 24) {
+      if (SHARED_SECTION.test(head)) {
+        section = head; sectionIsPerson = true; continue
+      }
+      if (bandKey(head) !== 'other' || cast.has(head)) {
+        section = head
+        sectionIsPerson = cast.has(head) && bandKey(head) === 'other'
+        continue
+      }
+      const pm = head.match(PERFORMER_SECTION)
+      if (pm && pm[1].trim()) {
+        section = pm[1].trim(); sectionIsPerson = true; continue
+      }
     }
 
     // 開頭的「1.」「01」「1)」「M01.」是編號不是歌名
     let text = line.replace(/^\s*[Mm]?\s*\d{1,2}\s*[.)、．]?\s*/, '').trim()
     if (!text) continue
+
+    // 結尾的括號是出處註記，不是歌名的一部分：
+    //   ふわふわ時間（動畫《K-ON!輕音部》插入曲）
+    // 留著當說明 —— 那是這份曲目裡最有資訊量的部分之一，
+    // 但不能混進歌名，不然同一首歌換一種註記就變成兩首。
+    let note = ''
+    const nm = text.match(/^(.+?)\s*[（(]([^（()]*)[）)]\s*$/)
+    if (nm && nm[1].trim()) { text = nm[1].trim(); note = nm[2].trim() }
 
     // 「歌名／團名」或「歌名 @團名」。
     //
@@ -103,7 +145,7 @@ export function setlistOf(event, fallbackBand = '') {
     }
 
     if (NOT_A_SONG.test(text)) {
-      out.push({ n: null, title: text, encore: encore > 0, encoreRound: encore, isSong: false, band: '' })
+      out.push({ n: null, title: text, note, day, encore: encore > 0, encoreRound: encore, isSong: false, band: '', performer: '' })
       continue
     }
     out.push({
@@ -112,6 +154,8 @@ export function setlistOf(event, fallbackBand = '') {
       encore: encore > 0,
       encoreRound: encore,
       isSong: true,
+      note,
+      day,
       band: band || (sectionIsPerson ? '' : section) || primary,
       // 音樂祭是按出演者分段的，那個資訊該記成「誰唱的」不是「哪一團」
       performer: sectionIsPerson ? section : '',
@@ -120,9 +164,13 @@ export function setlistOf(event, fallbackBand = '') {
     })
   }
 
-  // 最後一首歌（有安可就是安可的最後一首）
+  // 收尾＝那一天的最後一首歌（有安可就是安可的最後一首）。
+  // 分天的話每天各有一個收尾 —— 只標全場最後一首會漏掉 Day1 的。
   const songs = out.filter(s => s.isSong)
-  if (songs.length) songs[songs.length - 1].closer = true
+  for (const d of new Set(songs.map(s => s.day))) {
+    const ofDay = songs.filter(s => s.day === d)
+    if (ofDay.length) ofDay[ofDay.length - 1].closer = true
+  }
   return out
 }
 

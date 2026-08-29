@@ -323,3 +323,80 @@ describe('音樂祭：用人名分段', () => {
     assert.deepEqual(songsOf(e).map(s => s.title), ['不在名單上的人', 'A'])
   })
 })
+
+// 真實資料：#048 小日向美香のひなたぼっこ。～台北出差版 with 櫻川めぐ
+//
+// 這一場是「一列涵蓋兩天」（8/01–8/02），所以兩份歌單塞在同一格；
+// 分段用的是暱稱「みか 部分」「めぐ 部分」而不是名冊上的全名；
+// 歌名後面還帶著出處註記。三件事以前都會壞。
+describe('兩天一列、暱稱分段、出處註記', () => {
+  const nl = String.fromCharCode(10)
+  const e = {
+    id: 'evt-048', startDate: '2026-08-01', endDate: '2026-08-02',
+    people: ['小日向美香', '櫻川惠'], relatedGroups: ['MyGO!!!!!', 'Roselia'],
+    setlist: [
+      '【Day 1】', '合唱', '1. ray（BUMP OF CHICKEN 歌曲）',
+      'みか 部分', '2. 夢のみちしるべ ', "3. ふわふわ時間（動畫《K-ON!輕音部》插入曲）",
+      'めぐ 部分', '07. キボウマイロード ',
+      '合唱', "13. つまさきMovin'on（遊戲《青空下的約定》OP）",
+      '安可', '14. Snow halation',
+      '【 Day 2】', '合唱', '01. ライオン（《超時空要塞 Frontier》片頭曲）',
+      'めぐ 部分', '02. キボウマイロード ',
+      'みか 部分', '10. ふわふわ時間 （動畫《K-ON!輕音部》插入曲）',
+      '合唱', "12. つまさきMovin'on! （遊戲《青空下的約定》OP）", '13. ひなたぼっこ。',
+      '安可', '14. Snow halation',
+    ].join(nl),
+  }
+
+  test('分成兩天，編號每天重來', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const s = songsOf(e)
+    assert.deepEqual([...new Set(s.map(x => x.day))], [1, 2])
+    assert.equal(s.filter(x => x.day === 1)[0].n, 1)
+    assert.equal(s.filter(x => x.day === 2)[0].n, 1, 'Day2 從 1 重新算')
+  })
+
+  test('每天各有自己的開場與收尾', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const s = songsOf(e)
+    for (const d of [1, 2]) {
+      const day = s.filter(x => x.day === d)
+      assert.equal(day.filter(x => x.opener).length, 1, `Day${d} 要有一個開場`)
+      assert.equal(day.filter(x => x.closer).length, 1, `Day${d} 要有一個收尾`)
+    }
+  })
+
+  test('暱稱分段記成 performer，而且不會被當成歌', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const s = songsOf(e)
+    assert.ok(!s.some(x => /部分|合唱/.test(x.title)), '標頭不能變成歌名')
+    assert.deepEqual([...new Set(s.map(x => x.performer))].sort(),
+      ['めぐ', 'みか', '合唱'].sort())
+  })
+
+  test('出處註記拆出來，不混進歌名', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const ray = songsOf(e).find(x => x.title === 'ray')
+    assert.ok(ray, '歌名要是乾淨的 ray')
+    assert.equal(ray.note, 'BUMP OF CHICKEN 歌曲')
+  })
+
+  test('同一首歌換一種寫法／註記，還是同一個 key', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const s = songsOf(e)
+    const keys = (t) => s.filter(x => x.title.startsWith(t)).map(x => songKey(x.title))
+    // つまさきMovin'on 與 つまさきMovin'on!
+    const mov = keys('つまさき')
+    assert.equal(new Set(mov).size, 1, `兩天的寫法要收斂：${JSON.stringify(mov)}`)
+    // ふわふわ時間 兩天的註記位置不同（有無空白）
+    assert.equal(new Set(keys('ふわふわ')).size, 1)
+  })
+
+  test('兩天重複的歌算得出來', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const s = songsOf(e)
+    const d1 = new Set(s.filter(x => x.day === 1).map(x => songKey(x.title)))
+    const both = s.filter(x => x.day === 2 && d1.has(songKey(x.title)))
+    assert.ok(both.length >= 3, `兩天都唱的至少三首，實際 ${both.length}`)
+  })
+})
