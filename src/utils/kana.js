@@ -67,4 +67,3 @@ export function toRomaji(input) {
   return out
 }
 
-export const hasKana = (s) => /[぀-ヿ]/.test(String(s || ''))

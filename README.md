@@ -44,6 +44,7 @@ Google Sheet ─CSV→ hooks ─parse→ utils ─props→ components
 npm run verify   # 推之前跑這個：測試 + 完整 build（含 prebuild / postbuild）
 npm test         # utils 單元測試 + 把每個畫面在 Node 裡 render 一遍
 npm run validate # 檢查 events.json 的資料品質
+npm run dead     # 找出 export 了但沒有任何人 import 的東西
 npm run health   # 資料缺在哪：欄位覆蓋率 + 具體待辦（寫成 docs/health.md）
 npm run template # 產出照編號排好的空白 TSV，填完貼回 Sheet
 npm run snapshot # 把 Sheet 的「名冊」「動態」兩張分頁存成本機副本

@@ -32,12 +32,6 @@ export function formatDateRangeCompact(start, end) {
   return `${head} → ${b[3]}`
 }
 
-export function formatDateShort(d) {
-  if (!d) return ''
-  const m = d.match(/^(\d{4})-(\d{2})-(\d{2})$/)
-  if (!m) return d
-  return `${Number(m[2])}/${Number(m[3])}`
-}
 
 export function formatMonthDay(d) {
   if (!d) return ''

@@ -63,8 +63,6 @@ function infer(event) {
   return { tier: 'weak', context: 'other_ip' }
 }
 
-export const tierOf = (e) => relationOf(e).tier
-export const isOfficial = (e) => tierOf(e) === 'official'
 
 // 一批活動的關聯分布，附帶「有幾筆是猜的」
 export function relationBreakdown(events = []) {

@@ -59,6 +59,8 @@ import MissingLine from './src/components/MissingLine.jsx'
 import YearRing from './src/components/YearRing.jsx'
 import GapChart from './src/components/GapChart.jsx'
 import CityBars from './src/components/CityBars.jsx'
+import RelationBars from './src/components/RelationBars.jsx'
+import ArchiveStats from './src/components/ArchiveStats.jsx'
 import FirstsTable from './src/components/FirstsTable.jsx'
 import { venueIndex } from './src/utils/venues.js'
 import YearTimeline from './src/components/YearTimeline.jsx'
@@ -172,6 +174,14 @@ export const CASES = [
   ['YearRing(空資料)', <YearRing events={[]} onSelect={noop} />],
   ['GapChart(空資料)', <GapChart events={[]} onSelect={noop} />, { mayBeEmpty: true }],
   ['CityBars(空資料)', <CityBars events={[]} />, { mayBeEmpty: true }],
+  ['RelationBars', <RelationBars events={events} />],
+  ['RelationBars(空資料)', <RelationBars events={[]} />, { mayBeEmpty: true }],
+  // 票價與曲目現在都沒資料，整塊不出現才是對的；有資料的情境自己造
+  ['ArchiveStats(沒資料)', <ArchiveStats events={events} onSelect={noop} />, { mayBeEmpty: true }],
+  ['ArchiveStats(有資料)', <ArchiveStats onSelect={noop} events={[
+    { ...events[0], price: '800', setlist: '1. A' },
+    { ...events[1], price: '4800', setlist: '1. A' },
+  ]} />],
   // 史料層：現在 Sheet 還沒有這些欄，所以測試自己造一筆有資料的。
   // 注意整份 CASES 寫在上面 ENTRY 的 template literal 裡，字串的換行要多
   // 跳脫一層；連註解裡都不能出現落單的反斜線，不然註解會被截成半行。

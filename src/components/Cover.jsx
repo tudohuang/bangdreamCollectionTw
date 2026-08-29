@@ -60,12 +60,3 @@ export function CoverFallback({ event, className = '' }) {
   )
 }
 
-// 依原始比例預留位置的外框。ratio 未知時退回呼叫端給的預設值。
-export function CoverFrame({ event, ratio, className = '', children }) {
-  const r = coverRatio(event) || ratio || 3 / 2
-  return (
-    <span className={`relative block w-full overflow-hidden ${className}`} style={{ aspectRatio: r }}>
-      {children}
-    </span>
-  )
-}

@@ -6,6 +6,8 @@ import StatsInsights from './StatsInsights.jsx'
 import YearRing from './YearRing.jsx'
 import GapChart from './GapChart.jsx'
 import CityBars from './CityBars.jsx'
+import RelationBars from './RelationBars.jsx'
+import ArchiveStats from './ArchiveStats.jsx'
 import { bandKey, BAND_META } from '../utils/bands.js'
 import { detectCity } from '../utils/derive.js'
 import Icon from './Icon.jsx'
@@ -106,6 +108,13 @@ export default function StatsPanel({ events, onSelect = () => {} }) {
         <GapChart events={events} onSelect={onSelect} />
         <CityBars events={events} />
       </div>
+
+      <div className="grid lg:grid-cols-2 gap-6 mt-6">
+        <RelationBars events={events} />
+      </div>
+
+      {/* 票價與曲目：現在都是 0/59，所以整塊不出現。Sheet 一填就會長出來 */}
+      <ArchiveStats events={events} onSelect={onSelect} />
 
       <div className="grid lg:grid-cols-2 gap-6 mt-6">
         {/* 統計口徑：別人拿我們的數字去比對時，先講清楚一筆是什麼 */}

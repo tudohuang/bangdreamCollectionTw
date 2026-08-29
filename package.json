@@ -30,7 +30,8 @@
     "template": "node scripts/template.mjs",
     "icons:data": "node scripts/build-icon-paths.mjs",
     "splash": "node scripts/build-splash.mjs",
-    "snapshot": "node scripts/snapshot.mjs"
+    "snapshot": "node scripts/snapshot.mjs",
+    "dead": "node scripts/deadcode.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",

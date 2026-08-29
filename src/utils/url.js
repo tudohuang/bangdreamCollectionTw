@@ -68,6 +68,3 @@ export function writeHash(route, opts = {}, { replace = false } = {}) {
   }
 }
 
-export function currentShareUrl() {
-  return window.location.href
-}

@@ -139,34 +139,3 @@ export function splitByProximity(points, radiusKm = 60) {
   return near.length >= 2 ? { near, far } : { near: points, far: [] }
 }
 
-// 等距圓柱投影 + 依緯度修正 x，小範圍夠準，也不會被拉扁。
-// 回傳把 {lat,lng} 換算成 viewBox 座標的函式與畫布尺寸。
-export function makeProjection(points, width = 1000, pad = 56) {
-  if (!points.length) return null
-  const lats = points.map(p => p.lat), lngs = points.map(p => p.lng)
-  const meanLat = (Math.min(...lats) + Math.max(...lats)) / 2
-  const kx = Math.cos((meanLat * Math.PI) / 180)
-
-  const xs = lngs.map(l => l * kx)
-  const ys = lats.map(l => -l)
-  let minX = Math.min(...xs), maxX = Math.max(...xs)
-  let minY = Math.min(...ys), maxY = Math.max(...ys)
-
-  // 只有一個點（或全部擠在一起）時給一個最小跨度，免得除以零
-  const MIN_SPAN = 0.01
-  if (maxX - minX < MIN_SPAN) { const c = (minX + maxX) / 2; minX = c - MIN_SPAN / 2; maxX = c + MIN_SPAN / 2 }
-  if (maxY - minY < MIN_SPAN) { const c = (minY + maxY) / 2; minY = c - MIN_SPAN / 2; maxY = c + MIN_SPAN / 2 }
-
-  const inner = width - pad * 2
-  const scale = inner / (maxX - minX)
-  const height = (maxY - minY) * scale + pad * 2
-
-  return {
-    width,
-    height: Math.round(height),
-    project: ({ lat, lng }) => ({
-      x: pad + (lng * kx - minX) * scale,
-      y: pad + (-lat - minY) * scale,
-    }),
-  }
-}
