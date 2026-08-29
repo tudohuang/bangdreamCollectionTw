@@ -27,7 +27,9 @@ const splitLines = (v) =>
 //
 // 三件事可以標，都不標也完全沒問題：
 //
-//   ／團名     這首是誰唱的。雙團場（DAY1 MyGO × Ave Mujica）每首其實只有
+//   ▍團名     整行只有團名 ＝ 區塊標頭，後面的歌都算那一團的。雙團場的官方
+//              曲目本來就這樣分段，比一行一行標 24 次省事太多。
+//   ／團名     單獨一首要指定誰唱的時候用。雙團場（DAY1 MyGO × Ave Mujica）每首其實只有
 //              一團在唱，不標的話那條資訊整個掉了。單團場不用標（只有一個
 //              答案，自動帶上）；兩團以上沒標就留空 —— 猜錯會變成顯示出來的假事實。
 //   安可       單獨一行。後面的都算安可。可以有第二次（W安可 / EN2）。
@@ -54,12 +56,22 @@ export function setlistOf(event, fallbackBand = '') {
   const out = []
   let encore = 0
   let n = 0
+  let section = ''   // 「▍Ave Mujica」這種區塊標頭設定的團
   for (const line of lines) {
     const bare = line.replace(/[:：]/g, '').trim()
     if (ENCORE_LINE.test(bare)) { encore++; continue }
 
-    // 開頭的「1.」「01」「1)」是編號不是歌名
-    let text = line.replace(/^\s*\d{1,2}\s*[.)、．]?\s*/, '').trim()
+    // 區塊標頭：整行就是一個認得的樂團名（前面可以有 ▍■●#※- 這類記號）。
+    //
+    // 雙團場的官方曲目本來就是這樣分段的，一行一行標 24 次是自找麻煩。
+    const head = bare.replace(/^[▍▎▏■□●○◆◇※#＃*＊\-–—\s]+/, '').trim()
+    if (head && bandKey(head) !== 'other' && head.length <= 24) {
+      section = head
+      continue
+    }
+
+    // 開頭的「1.」「01」「1)」「M01.」是編號不是歌名
+    let text = line.replace(/^\s*[Mm]?\s*\d{1,2}\s*[.)、．]?\s*/, '').trim()
     if (!text) continue
 
     // 「歌名／團名」或「歌名 @團名」。
@@ -84,7 +96,7 @@ export function setlistOf(event, fallbackBand = '') {
       encore: encore > 0,
       encoreRound: encore,
       isSong: true,
-      band: band || primary,
+      band: band || section || primary,
       // 這一場的第一首歌。安可段落不算 —— 開場是正編的第一首。
       opener: n === 1 && encore === 0,
     })

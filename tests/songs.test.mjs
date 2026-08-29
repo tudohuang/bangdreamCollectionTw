@@ -233,3 +233,59 @@ describe('算得出來的東西（不用多打字）', () => {
     assert.equal(overlap(ev2('a', '2026-01-01', '1. X'), ev2('b', '2026-01-02', '')), null)
   })
 })
+
+// 真實資料：2026-04-11 DAY1（MyGO!!!!! × Ave Mujica）官方曲目的格式。
+// 官方就是用「▍團名」分段、用 M01. 編號的 —— 解析器要吃得下人家本來的寫法，
+// 而不是逼人改成我們的格式。
+describe('官方曲目的寫法', () => {
+  const nl = String.fromCharCode(10)
+  const day1 = {
+    id: 'evt-042', startDate: '2026-04-11',
+    relatedGroups: ['MyGO!!!!!', 'Ave Mujica'],
+    setlist: [
+      '▍Ave Mujica',
+      "M01. Choir 'S' Choir",
+      'M02. 顔',
+      "M09. 'S/' The Way",
+      '▍MyGO!!!!!',
+      'M13. 回層浮',
+      'M24. 往欄印',
+    ].join(nl),
+  }
+
+  test('「▍團名」是區塊標頭，後面的歌都算那一團的', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const s = songsOf(day1)
+    assert.deepEqual(s.map(x => x.band),
+      ['Ave Mujica', 'Ave Mujica', 'Ave Mujica', 'MyGO!!!!!', 'MyGO!!!!!'])
+  })
+
+  test('標頭自己不是歌', async () => {
+    const { setlistOf, songsOf } = await import('../src/utils/archive.js')
+    assert.equal(setlistOf(day1).length, 5, '兩個標頭都不佔行')
+    assert.ok(!songsOf(day1).some(s => /Ave Mujica|MyGO/.test(s.title)))
+  })
+
+  test('M01. 這種編號認得，而且不會吃掉歌名', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    assert.deepEqual(songsOf(day1).map(x => x.title),
+      ["Choir 'S' Choir", '顔', "'S/' The Way", '回層浮', '往欄印'])
+  })
+
+  test("歌名裡的斜線不會被當成團名分隔（'S/' The Way）", async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const t = songsOf(day1).map(x => x.title)
+    assert.ok(t.includes("'S/' The Way"), '整個歌名要留著')
+  })
+
+  test('編號連續，跨區塊也不會重來', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    assert.deepEqual(songsOf(day1).map(x => x.n), [1, 2, 3, 4, 5])
+  })
+
+  test('沒有任何一首被誤併成同一個 key', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const keys = songsOf(day1).map(s => songKey(s.title))
+    assert.equal(new Set(keys).size, keys.length)
+  })
+})
