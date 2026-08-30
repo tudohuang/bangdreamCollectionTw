@@ -90,7 +90,14 @@ export function setlistOf(event, fallbackBand = '') {
     const bare = line.replace(/[:：]/g, '').trim()
     if (ENCORE_LINE.test(bare)) { encore++; continue }
 
-    const head = bare.replace(/^[▍▎▏■□●○◆◇※#＃*＊\-–—\s]+/, '').trim()
+    // 有編號的一定是歌，不可能是標頭。
+    //
+    // 這條要排在標頭判斷前面，因為有些歌名跟團名一模一樣 ——
+    // Ave Mujica 就有一首歌叫〈Ave Mujica〉。沒有這條的話那一行會被
+    // 當成分段標頭整行吞掉，而且畫面上完全看不出來少了一首。
+    const numbered = /^\s*[Mm]?\s*\d{1,2}\s*[.)、．]\s*\S/.test(line)
+
+    const head = numbered ? '' : bare.replace(/^[▍▎▏■□●○◆◇※#＃*＊\-–—\s]+/, '').trim()
 
     // 分天：一列涵蓋兩天的場次，兩份歌單塞在同一格。編號每天重來。
     const dm = head.match(DAY_LINE) || head.match(DAY_LINE_ZH)
@@ -109,7 +116,10 @@ export function setlistOf(event, fallbackBand = '') {
       if (SHARED_SECTION.test(head)) {
         section = head; sectionIsPerson = true; continue
       }
-      if (bandKey(head) !== 'other' || cast.has(head)) {
+      // 已經在這一段裡了，同一個名字再出現一次就是歌不是標頭 ——
+      // 沒有人會在「▍Ave Mujica」底下再宣告一次 Ave Mujica。
+      // 這正是〈Ave Mujica〉那首歌沒有編號時唯一的分辨方式。
+      if (head !== section && (bandKey(head) !== 'other' || cast.has(head))) {
         section = head
         sectionIsPerson = cast.has(head) && bandKey(head) === 'other'
         continue

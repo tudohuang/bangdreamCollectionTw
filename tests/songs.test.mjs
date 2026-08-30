@@ -431,3 +431,56 @@ describe('台灣首唱要標得有意義', () => {
       [['X', 1, true], ['X', 2, false], ['Y', 2, true]])
   })
 })
+
+// Ave Mujica 有一首歌就叫〈Ave Mujica〉。
+//
+// 這是會靜默吃掉一首歌的錯：整行跟團名一樣，就被當成分段標頭吞掉，
+// 而畫面上只是少一首，不會有任何錯誤訊息。
+// 同名的還有 Roselia 的〈Roselia〉那類情況，所以要當成通則處理。
+describe('歌名跟團名一樣的時候', () => {
+  const nl = String.fromCharCode(10)
+  const ev4 = (setlist) => ({
+    id: 'x', startDate: '2026-04-11', people: [],
+    relatedGroups: ['Ave Mujica', 'MyGO!!!!!'], setlist,
+  })
+
+  test('有編號的一定是歌，不會被當成標頭', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const s = songsOf(ev4(['▍Ave Mujica', 'M01. Ave Mujica', 'M02. 顔'].join(nl)))
+    assert.deepEqual(s.map(x => x.title), ['Ave Mujica', '顔'])
+    assert.equal(s[0].section, 'Ave Mujica', '它還是屬於那一段')
+  })
+
+  test('沒編號時：標頭之後同名再出現一次，那次是歌', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const s = songsOf(ev4(['▍Ave Mujica', 'Ave Mujica', '顔'].join(nl)))
+    assert.deepEqual(s.map(x => x.title), ['Ave Mujica', '顔'])
+  })
+
+  test('連標記符號都沒有也救得回來', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const s = songsOf(ev4(['Ave Mujica', 'Ave Mujica', '顔'].join(nl)))
+    assert.deepEqual(s.map(x => x.title), ['Ave Mujica', '顔'],
+      '第一個當標頭、第二個當歌')
+  })
+
+  test('分號寫成一行也一樣', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const s = songsOf(ev4('▍Ave Mujica; Ave Mujica; 顔; ▍MyGO!!!!!; 迷星叫'))
+    assert.deepEqual(s.map(x => x.title), ['Ave Mujica', '顔', '迷星叫'])
+  })
+
+  test('切換到別的段之後，原本那個團名又能當標頭', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const s = songsOf(ev4(['▍Ave Mujica', '顔', '▍MyGO!!!!!', '迷星叫', '▍Ave Mujica', 'KiLLKiSS'].join(nl)))
+    assert.deepEqual(s.map(x => [x.title, x.section]),
+      [['顔', 'Ave Mujica'], ['迷星叫', 'MyGO!!!!!'], ['KiLLKiSS', 'Ave Mujica']])
+  })
+
+  test('編號優先於標頭：「1. MyGO!!!!!」是歌不是分段', async () => {
+    const { songsOf } = await import('../src/utils/archive.js')
+    const s = songsOf(ev4(['▍Ave Mujica', '1. 顔', '2. MyGO!!!!!'].join(nl)))
+    assert.deepEqual(s.map(x => x.title), ['顔', 'MyGO!!!!!'])
+    assert.equal(s[1].section, 'Ave Mujica')
+  })
+})
