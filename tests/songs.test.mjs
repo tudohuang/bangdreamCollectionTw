@@ -400,3 +400,34 @@ describe('兩天一列、暱稱分段、出處註記', () => {
     assert.ok(both.length >= 3, `兩天都唱的至少三首，實際 ${both.length}`)
   })
 })
+
+describe('台灣首唱要標得有意義', () => {
+  const nl = String.fromCharCode(10)
+  const ev3 = (id, startDate, setlist) =>
+    ({ id, startDate, endDate: startDate, setlist, people: [], relatedGroups: ['Roselia'] })
+
+  test('只有一場有曲目時，一個都不標 —— 全部都標等於沒標', async () => {
+    const { setlistWithFirsts } = await import('../src/utils/songs.js')
+    const only = ev3('a', '2026-01-01', ['1. X', '2. Y'].join(nl))
+    assert.deepEqual(setlistWithFirsts(only, [only]).map(s => s.firstInTw), [false, false])
+  })
+
+  test('有別場可以比之後才標', async () => {
+    const { setlistWithFirsts } = await import('../src/utils/songs.js')
+    const a = ev3('a', '2026-01-01', ['1. X'].join(nl))
+    const b = ev3('b', '2026-02-01', ['1. X', '2. Y'].join(nl))
+    assert.deepEqual(setlistWithFirsts(a, [a, b]).map(s => s.firstInTw), [true])
+    assert.deepEqual(setlistWithFirsts(b, [a, b]).map(s => [s.title, s.firstInTw]),
+      [['X', false], ['Y', true]])
+  })
+
+  test('同一場（含兩天）重複唱的，只有第一次算首唱', async () => {
+    const { setlistWithFirsts } = await import('../src/utils/songs.js')
+    const two = ev3('a', '2026-01-01',
+      ['【Day 1】', '1. X', '【Day 2】', '1. X', '2. Y'].join(nl))
+    const other = ev3('b', '2026-05-01', '1. Z')
+    const r = setlistWithFirsts(two, [two, other])
+    assert.deepEqual(r.map(s => [s.title, s.day, s.firstInTw]),
+      [['X', 1, true], ['X', 2, false], ['Y', 2, true]])
+  })
+})

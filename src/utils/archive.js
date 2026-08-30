@@ -145,7 +145,7 @@ export function setlistOf(event, fallbackBand = '') {
     }
 
     if (NOT_A_SONG.test(text)) {
-      out.push({ n: null, title: text, note, day, encore: encore > 0, encoreRound: encore, isSong: false, band: '', performer: '' })
+      out.push({ n: null, title: text, note, day, section, encore: encore > 0, encoreRound: encore, isSong: false, band: '', performer: '' })
       continue
     }
     out.push({
@@ -156,6 +156,9 @@ export function setlistOf(event, fallbackBand = '') {
       isSong: true,
       note,
       day,
+      // 標頭原文。畫面照這個分段 —— band 是推導出來的，單團場每首都有 band
+      // 但那不叫「分段」。只有真的寫了標頭才有 section。
+      section,
       band: band || (sectionIsPerson ? '' : section) || primary,
       // 音樂祭是按出演者分段的，那個資訊該記成「誰唱的」不是「哪一團」
       performer: sectionIsPerson ? section : '',

@@ -10,13 +10,21 @@ export default function ArchiveSection({ event, allEvents = [], color, glow }) {
   const songs = setlistWithFirsts(event, allEvents)
   // 非歌曲的項目（MC、影片）也要顯示 —— 它們是現場的一部分
   const lines = setlistOf(event)
-  // 雙團場才需要標「這首誰唱的」；單團場每一行都同一個團，標了是雜訊
-  const multiBand = new Set(songs.map(s => s.band).filter(Boolean)).size > 1
-  // 「みか 部分」「合唱」這種分段。同樣只有分過段才顯示。
-  const hasPerformer = new Set(lines.map(s => s.performer).filter(Boolean)).size > 1
   // 一列涵蓋兩天的場次（8/01–8/02），曲目要分天列
   const days = [...new Set(lines.map(s => s.day))].sort((a, b) => a - b)
   const multiDay = days.length > 1
+
+  // 「誰唱的」照分段排，不做成每一行右邊的小標籤。
+  //
+  // 曲目來源本來就是分段寫的（合唱 / みか 部分 / めぐ 部分、
+  // ▍Ave Mujica / ▍MyGO!!!!!），那個結構就是資訊本身 ——
+  // 拆成一行一個標籤反而要靠眼睛自己重組回來。
+  const blocks = []
+  for (const s of lines) {
+    const last = blocks[blocks.length - 1]
+    if (last && last.day === s.day && last.section === (s.section || '')) last.items.push(s)
+    else blocks.push({ day: s.day, section: s.section || '', items: [s] })
+  }
   const price = pricesOf(event)
   const goods = goodsOf(event)
   const kv = keyVisualOf(event)
@@ -34,65 +42,71 @@ export default function ArchiveSection({ event, allEvents = [], color, glow }) {
           <Head icon="music" color={color}>
             曲目 {songs.length} 首{multiDay && `・${days.length} 天`}
           </Head>
-          {days.map(d => (
-          <div key={d}>
-          {multiDay && (
-            <div className="mt-3 mb-1 text-[14px] font-bold" style={{ color }}>
-              Day {d}
-              <span className="ml-2 font-normal text-dream-faint">
-                {songs.filter(x => x.day === d).length} 首
-              </span>
-            </div>
-          )}
-          <ol className="border-t" style={{ borderColor: `rgba(${glow},0.35)` }}>
-            {lines.filter(s => s.day === d).map(s => {
-              const info = songs.find(x => x.title === s.title && x.n === s.n)
-              const n = info?.countInTw || 1
-              const bm = s.band ? bandMeta(s.band) : null
-              return (
-                <li key={`${s.n}-${s.title}`}
-                  className="grid grid-cols-[28px_minmax(0,1fr)_auto] items-baseline gap-x-3 py-2 border-b"
-                  style={{ borderColor: `rgba(${glow},0.18)` }}>
-                  <span className="font-round font-bold text-[14px] tabular-nums text-right"
-                    style={{ color: s.encore ? color : undefined }}>
-                    {!s.isSong ? '·' : s.encore ? (s.encoreRound > 1 ? 'EN' + s.encoreRound : 'EN') : s.n}
-                  </span>
-                  {/* 每一首連到它自己的頁：這首在台灣唱過幾次、誰唱的、第一次是什麼時候 */}
-                  <span className="min-w-0">
-                    {s.isSong ? (
-                      <a href={`#/song/${encodeURIComponent(songKey(s.title))}`}
-                        className="font-display font-semibold text-[14px] text-dream-ink hover:text-bloom-violet transition-colors">
-                        {s.title}
-                      </a>
-                    ) : (
-                      <span className="text-[14px] text-dream-faint">{s.title}</span>
-                    )}
-                    {/* 出處註記：這份曲目裡資訊量最高的部分之一，但不是歌名 */}
-                    {s.note && (
-                      <span className="block text-[14px] text-dream-faint">{s.note}</span>
-                    )}
-                  </span>
-                  <span className="shrink-0 flex items-baseline gap-2 text-[14px] tabular-nums">
-                    {/* 誰唱的：只有雙團場才標。單團場每一行都同一個團，標了是雜訊 */}
-                    {multiBand && s.band && (
-                      <span style={{ color: bm?.color }}>{s.band}</span>
-                    )}
-                    {/* 「みか」「合唱」這種分段標籤。原樣顯示 —— 那是曲目來源本來的寫法 */}
-                    {hasPerformer && s.performer && (
-                      <span className="text-dream-sub">{s.performer}</span>
-                    )}
-                    {/* 台灣首唱：曲目一填就自動算出來，不需要任何額外欄位 */}
-                    {info?.firstInTw && (
-                      <span className="font-bold" style={{ color }}>台灣首唱</span>
-                    )}
-                    {n > 1 && <span className="text-dream-faint">第 {n} 次</span>}
-                  </span>
-                </li>
-              )
-            })}
-          </ol>
-          </div>
-          ))}
+          {blocks.map((b, bi) => {
+            const first = bi === 0 || blocks[bi - 1].day !== b.day
+            const bm = b.section ? bandMeta(b.section) : null
+            const isBand = b.section && bm && bm.name === b.section
+            return (
+              <div key={`${b.day}-${b.section}-${bi}`}>
+                {multiDay && first && (
+                  <div className="mt-4 mb-1 font-display font-bold text-[15px]" style={{ color }}>
+                    Day {b.day}
+                    <span className="ml-2 font-normal text-[14px] text-dream-faint">
+                      {songs.filter(x => x.day === b.day).length} 首
+                    </span>
+                  </div>
+                )}
+
+                {/* 分段標題就是「誰唱的」。合唱／みか／めぐ／▍Ave Mujica 都走這裡 */}
+                {b.section && (
+                  <div className="mt-3 mb-0.5 flex items-baseline gap-2">
+                    <span className="font-display font-bold text-[15px]"
+                      style={{ color: isBand ? bm.color : undefined }}>
+                      {isBand && <Icon n={bm.icon} className="text-[10px] mr-1.5" />}
+                      {b.section}
+                    </span>
+                    <span className="text-[14px] text-dream-faint">
+                      {b.items.filter(x => x.isSong).length} 首
+                    </span>
+                  </div>
+                )}
+
+                <ol className="border-t" style={{ borderColor: `rgba(${glow},0.35)` }}>
+                  {b.items.map(s => {
+                    const info = songs.find(x => x.title === s.title && x.n === s.n && x.day === s.day)
+                    const n = info?.countInTw || 1
+                    return (
+                      <li key={`${s.day}-${s.n}-${s.title}`}
+                        className="grid grid-cols-[28px_minmax(0,1fr)_auto] items-baseline gap-x-3 py-2 border-b"
+                        style={{ borderColor: `rgba(${glow},0.18)` }}>
+                        <span className="font-round font-bold text-[14px] tabular-nums text-right"
+                          style={{ color: s.encore ? color : undefined }}>
+                          {!s.isSong ? '·' : s.encore ? (s.encoreRound > 1 ? 'EN' + s.encoreRound : 'EN') : s.n}
+                        </span>
+                        {/* 出處（「動畫《K-ON!》插入曲」）放 title 屬性：留著但不佔版面。
+                            每一首都掛一行說明的話，眼睛會先看到說明而不是歌名。 */}
+                        {s.isSong ? (
+                          <a href={`#/song/${encodeURIComponent(songKey(s.title))}`} title={s.note || undefined}
+                            className="min-w-0 truncate font-display font-semibold text-[15px] text-dream-ink hover:text-bloom-violet transition-colors">
+                            {s.title}
+                          </a>
+                        ) : (
+                          <span className="min-w-0 truncate text-[14px] text-dream-faint">{s.title}</span>
+                        )}
+                        <span className="shrink-0 flex items-baseline gap-2 text-[14px] tabular-nums">
+                          {/* 台灣首唱：曲目一填就自動算出來，不需要任何額外欄位 */}
+                          {info?.firstInTw && (
+                            <span className="font-bold" style={{ color }}>台灣首唱</span>
+                          )}
+                          {n > 1 && <span className="text-dream-faint">第 {n} 次</span>}
+                        </span>
+                      </li>
+                    )
+                  })}
+                </ol>
+              </div>
+            )
+          })}
         </section>
       )}
 

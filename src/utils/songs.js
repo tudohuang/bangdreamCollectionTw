@@ -77,13 +77,23 @@ export function songIndex(events = []) {
 // 這是曲目資料一填就自動長出來的東西，不用任何額外欄位。
 export function setlistWithFirsts(event, allEvents = []) {
   const idx = new Map(songIndex(allEvents).map(s => [s.key, s]))
+
+  // 只有一場有曲目的時候，每一首當然都是「台灣首唱」——
+  // 那樣標會變成整份曲目每一行都掛一個徽章，等於沒標。
+  // 有別場可以比才有意義。
+  const others = allEvents.filter(e => e.id !== event.id && (e.setlist || '').trim()).length
+  const seen = new Set()
+
   return songsOf(event).map(s => {
-    const rec = idx.get(songKey(s.title))
+    const key = songKey(s.title)
+    const rec = idx.get(key)
+    // 同一場（含兩天）重複唱的，只有第一次算首唱
+    const firstHere = !seen.has(key)
+    seen.add(key)
     return {
       ...s,
       countInTw: rec?.count ?? 1,
-      // 這一場就是最早唱這首的那一場
-      firstInTw: rec ? rec.events[0]?.id === event.id : true,
+      firstInTw: others > 0 && firstHere && (rec ? rec.events[0]?.id === event.id : true),
     }
   })
 }
