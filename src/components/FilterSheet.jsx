@@ -4,6 +4,7 @@ import { rootGroup, bandMeta } from '../utils/bands.js'
 import { uniqueCharacters, uniqueVenues, uniqueCities } from '../utils/derive.js'
 import Icon from './Icon.jsx'
 import Segmented from './Segmented.jsx'
+import { TIMEFRAMES, ORDERS, VIEWS } from './filterOptions.js'
 
 // 「全部篩選」抽屜與它專用的三個零件（Row / ChipGroup / Segmented）。
 //

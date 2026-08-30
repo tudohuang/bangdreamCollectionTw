@@ -7,22 +7,10 @@ import { buildAppliedChips, removeChipPatch } from '../utils/filters.js'
 import Icon from './Icon.jsx'
 import FilterSheet from './FilterSheet.jsx'
 import Segmented from './Segmented.jsx'
+import { TIMEFRAMES, ORDERS, VIEWS, ADV_KEYS, mainViews } from './filterOptions.js'
 
 function uniq(arr) { return [...new Set(arr)] }
 
-const TIMEFRAMES = [['全部', 'all'], ['即將', 'upcoming'], ['已結束', 'past'], ['今年', 'thisYear'], ['本月', 'thisMonth']]
-const ORDERS = [['日期↑', 'date-asc'], ['日期↓', 'date-desc'], ['人次', 'attendance'], ['編號', 'number']]
-const VIEWS = [
-  ['卡片', 'cards', 'grid'],
-  ['時間軸', 'timeline', 'bars-staggered'],
-  ['總表', 'table', 'table'],
-]
-// 工具列只留兩種常用檢視；總表是給要對資料的人用的，收進「全部篩選」。
-// 已經在總表裡的時候要把它顯示出來，不然沒有路可以切回去。
-const mainViews = (view) => (view === 'table' ? VIEWS : VIEWS.slice(0, 2))
-
-// 進階篩選維度：收在「全部篩選」抽屜裡，不佔工具列
-const ADV_KEYS = ['year', 'groups', 'people', 'characters', 'types', 'venues', 'cities', 'fullBand']
 
 // variant='bar'（預設，內容上方橫條）／'sidebar'（xl 以上的左側常駐工作台）
 export default function FilterPanel({ events, filters, onChange, onReset, resultCount, variant = 'bar', onExportIcs }) {

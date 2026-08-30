@@ -28,6 +28,14 @@ import MonthlyDigest from './src/components/MonthlyDigest.jsx'
 import Highlights from './src/components/Highlights.jsx'
 import OnThisDay from './src/components/OnThisDay.jsx'
 import FilterPanel from './src/components/FilterPanel.jsx'
+import FilterSheet from './src/components/FilterSheet.jsx'
+import ChangeLogSection from './src/components/ChangeLogSection.jsx'
+import EventTable from './src/components/EventTable.jsx'
+import Timeline from './src/components/Timeline.jsx'
+import YearGlance from './src/components/YearGlance.jsx'
+import PulseCalendar from './src/components/PulseCalendar.jsx'
+import EmptyResult from './src/components/EmptyResult.jsx'
+import EventRow from './src/components/EventRow.jsx'
 import EventWall from './src/components/EventWall.jsx'
 import EventCard from './src/components/EventCard.jsx'
 import EventDetail from './src/components/EventDetail.jsx'
@@ -117,6 +125,23 @@ export const CASES = [
   ['Highlights', <Highlights events={events} onSelect={noop} />],
   ['OnThisDay', <OnThisDay events={events} onSelect={noop} />],
   ['FilterPanel(bar)', <FilterPanel events={events} filters={filters} onChange={noop} onReset={noop} resultCount={events.length} />],
+  // 篩選抽屜要單獨測 —— 它只在點「全部篩選」之後才 render，
+  // 所以 FilterPanel 過了不代表它會過。抽成獨立檔案時常數沒跟著搬，
+  // 抽屜一打開就整塊掛掉，而煙霧測試完全沒抓到。
+  // 這幾個以前完全沒被 render 過。FilterSheet 的教訓：沒進煙霧測試的元件
+  // 壞掉不會有人發現，因為它們只在某個互動之後才出現。
+  ['ChangeLogSection', <ChangeLogSection events={events} onSelect={noop} />, { mayBeEmpty: true }],
+  ['EventTable', <EventTable events={events} attended={attended} onSelect={noop} />],
+  ['EventTable(空)', <EventTable events={[]} attended={attended} onSelect={noop} />, { mayBeEmpty: true }],
+  ['Timeline', <Timeline events={events} attended={attended} onSelect={noop} milestones={milestones} />],
+  ['YearGlance', <YearGlance year={2026} byMonth={new Map([[4, events.slice(0, 2)]])} thisYear={2026} thisMonth={8} openMonth={null} onOpenMonth={noop} onSelect={noop} />],
+  ['YearGlance(展開)', <YearGlance year={2026} byMonth={new Map([[4, events.slice(0, 2)]])} thisYear={2026} thisMonth={8} openMonth={4} onOpenMonth={noop} onSelect={noop} />],
+  ['PulseCalendar', <PulseCalendar months={['2026-08', '2026-09']} roster={pulseRoster} pulse={pulseRows} events={events} onSelectEvent={noop} />],
+  ['PulseCalendar(沒 months)', <PulseCalendar onSelectEvent={noop} />, { mayBeEmpty: true }],
+  ['EmptyResult', <EmptyResult search="找不到的字" onReset={noop} suggestions={events.slice(0, 3)} onSelect={noop} />, { mayBeEmpty: true }],
+  ['EventRow', <EventRow event={one} onSelect={noop} />],
+  ['FilterSheet', <FilterSheet events={events} filters={filters} onChange={noop} onClose={noop} onReset={noop} resultCount={events.length} />],
+  ['FilterSheet(空資料)', <FilterSheet events={[]} filters={filters} onChange={noop} onClose={noop} onReset={noop} resultCount={0} />],
   ['FilterPanel(sidebar)', <FilterPanel events={events} filters={filters} onChange={noop} onReset={noop} resultCount={events.length} variant="sidebar" onExportIcs={noop} />],
   ['EventWall(cards)', <EventWall events={events} view="cards" attended={attended} onToggleAttended={noop} onSelect={noop} onReset={noop} allEvents={events} milestones={milestones} />],
   ['EventWall(timeline)', <EventWall events={events} view="timeline" attended={attended} onSelect={noop} allEvents={events} milestones={milestones} />],

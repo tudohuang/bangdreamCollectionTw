@@ -7,10 +7,17 @@ import Icon from './Icon.jsx'
 const WEEK = ['日', '一', '二', '三', '四', '五', '六']
 
 // 動態頁的月曆：選一個月，看那個月每天誰有行程，以及誰整個月排滿了。
-export default function PulseCalendar({ months, pulse, events, roster, onSelectEvent }) {
+export default function PulseCalendar({ months = [], pulse = [], events = [], roster = [], onSelectEvent }) {
   const today = todayStr()
-  const defaultYm = months.includes(today.slice(0, 7)) ? today.slice(0, 7) : months[months.length - 1]
+  // 沒有月份就沒有月曆可畫，整塊不出現。
+  //
+  // 少傳一個 prop 不該讓整頁掛掉 —— 那是 ErrorBoundary 接得住、
+  // 但使用者只看得到「這個區塊出了點狀況」的那種錯，而且完全查不出原因。
+  const defaultYm = months.includes(today.slice(0, 7))
+    ? today.slice(0, 7)
+    : months[months.length - 1] || ''
   const [ym, setYm] = useState(defaultYm)
+  const hasMonths = months.length > 0
   const [day, setDay] = useState(null)
 
   // 名字 → 樂團色，月曆上的點與清單都靠它上色
@@ -51,6 +58,8 @@ export default function PulseCalendar({ months, pulse, events, roster, onSelectE
 
   const i = months.indexOf(ym)
   const dayItems = day ? (byDay.get(day) || []) : []
+
+  if (!hasMonths) return null
 
   return (
     <div className="flex flex-col gap-4">
