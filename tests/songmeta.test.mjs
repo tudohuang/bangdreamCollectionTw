@@ -109,3 +109,34 @@ describe('有沒有東西可以顯示', () => {
     assert.equal(hasSongMeta(null), false)
   })
 })
+
+describe('空白表與解析器不會漂移', () => {
+  test('npm run template 產的每一欄，解析器都認得', async () => {
+    // 兩邊各寫一份表頭的話，改名之後貼進 Sheet 每一欄都會靜靜讀不到 ——
+    // 畫面正常、沒有錯誤、就是沒資料。所以表頭只有一份，這裡釘住它真的通。
+    const { SONG_COLUMNS } = await import('../src/utils/parseSongs.js')
+    const value = (h) => (h === '封面' ? 'https://i.test/a.jpg'
+      : h === '連結' ? 'https://a.test/x'
+        : h === '發行' ? '2020-01-02' : `${h}的值`)
+    const [s] = parseSongsCsv(csv([SONG_COLUMNS, SONG_COLUMNS.map(value)]))
+
+    assert.equal(s.title, '歌名的值')
+    assert.equal(s.band, '樂團的值')
+    assert.equal(s.album, '專輯的值')
+    assert.equal(s.released, '2020-01-02')
+    assert.equal(s.lyricist, '作詞的值')
+    assert.equal(s.composer, '作曲的值')
+    assert.equal(s.arranger, '編曲的值')
+    assert.deepEqual(s.links, ['https://a.test/x'])
+    assert.equal(s.cover, 'https://i.test/a.jpg')
+    assert.deepEqual(s.aliases, ['別名的值'])
+    assert.equal(s.note, '備註的值')
+  })
+
+  test('欄序改了也還是讀得到 —— 靠表頭不靠位置', async () => {
+    const { SONG_COLUMNS } = await import('../src/utils/parseSongs.js')
+    const reversed = [...SONG_COLUMNS].reverse()
+    const [s] = parseSongsCsv(csv([reversed, reversed.map(h => (h === '歌名' ? '春日影' : ''))]))
+    assert.equal(s.title, '春日影')
+  })
+})

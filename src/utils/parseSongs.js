@@ -16,6 +16,14 @@ import { parseCSV } from './parseEvents.js'
 import { songKey } from './songs.js'
 import { normalizeDate } from './parsePulse.js'
 
+// Sheet 上「歌曲」分頁的表頭，順序就是產生空白表時的欄序。
+//
+// 匯出而不是各寫一份：npm run template 產的表頭如果跟解析器認得的欄名對不上，
+// 貼進 Sheet 之後每一欄都會靜靜讀不到 —— 畫面正常、沒有錯誤、就是沒資料。
+export const SONG_COLUMNS = [
+  '歌名', '樂團', '專輯', '發行', '作詞', '作曲', '編曲', '連結', '封面', '別名', '備註',
+]
+
 const cell = (row, i) => (i >= 0 ? (row[i] || '').trim() : '')
 
 // 一個欄位可能有好幾種寫法，依序找第一個對得上的

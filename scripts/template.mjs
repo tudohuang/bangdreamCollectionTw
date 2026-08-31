@@ -7,9 +7,14 @@
 //
 //   npm run template            所有欄位、所有還沒填的
 //   npm run template 一句話      只產這一欄
+//   npm run template 歌曲        「歌曲」分頁的空白表（一首一列，不是一場一列）
 //
 // 輸出是 TSV（用 tab 分隔），貼進 Google Sheet 會自動落格。
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
+import { parseCsvToEvents } from '../src/utils/parseEvents.js'
+import { songIndex } from '../src/utils/songs.js'
+import { SONG_COLUMNS } from '../src/utils/parseSongs.js'
+import { SHEET_CSV_URL } from '../src/config.js'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -87,7 +92,72 @@ const filled = (e, f) => {
   return Array.isArray(v) ? v.length > 0 : !!(v && String(v).trim())
 }
 
+// 「歌曲」分頁的空白表。
+//
+// 跟上面那些欄不一樣：那些是「一場一列」，這張是「一首一列」——
+// 專輯封面屬於歌不屬於場次，塞進活動表的話同一首歌會在每一場重複一次。
+//
+// 曲目是最近才開始填的，內建的 events.json 多半還沒跟上（要跑 npm run import），
+// 所以這支直接抓線上的 Sheet。抓不到才退回內建資料。
+async function songsTemplate() {
+  let events = JSON.parse(readFileSync(join(ROOT, 'src/data/events.json'), 'utf8'))
+  if (SHEET_CSV_URL) {
+    try {
+      const res = await fetch(SHEET_CSV_URL)
+      if (res.ok) {
+        const live = parseCsvToEvents(await res.text())
+        if (live.length) events = live
+      }
+    } catch { /* 離線就用內建的 */ }
+  }
+
+  const songs = songIndex(events)
+  if (!songs.length) {
+    console.log('目前還沒有任何曲目資料，「歌曲」分頁沒東西可以產。')
+    console.log('先在活動表的「曲目」欄填幾場，再跑一次。')
+    return null
+  }
+
+  // TSV 的分隔字元寫成常數：tab 與換行直接打在原始碼裡看不見，
+  // 被編輯器或補丁腳本吃掉的時候完全沒有症狀。
+  const TAB = String.fromCharCode(9)
+  const NL = String.fromCharCode(10)
+
+  const rows = [SONG_COLUMNS.join(TAB)]
+  for (const s of songs) {
+    // 樂團能從歌單的 ▍區塊推出來的就先填好 —— 那是最不值得人手打的一欄。
+    // 一首歌被兩團唱過的話留空，讓人自己決定原唱是誰。
+    const band = s.bandList.length === 1 ? s.bandList[0][0] : ''
+    // 欄數跟著 SONG_COLUMNS 走，加欄的時候不用回來改這裡
+    rows.push([s.title, band, ...Array(SONG_COLUMNS.length - 2).fill('')].join(TAB))
+  }
+
+  mkdirSync(OUT_DIR, { recursive: true })
+  const file = join(OUT_DIR, '歌曲.tsv')
+  writeFileSync(file, rows.join(NL) + NL, 'utf8')
+
+  const guessed = songs.filter(s => s.bandList.length === 1).length
+  const repeated = songs.filter(s => s.count > 1).length
+  return { total: songs.length, guessed, repeated, file }
+}
+
 const want = process.argv.slice(2).filter(a => !a.startsWith('-'))
+
+// 「歌曲」是另一張分頁，不是活動表的一欄，所以先處理掉
+if (want.includes('歌曲') || want.includes('songs')) {
+  const r = await songsTemplate()
+  if (r) {
+    console.log('')
+    console.log(`「歌曲」分頁 ${r.total} 首 → docs/template/歌曲.tsv`)
+    console.log(`   其中 ${r.guessed} 首的「樂團」已經從歌單的 ▍區塊填好了`)
+    console.log(`   唱過不只一次的有 ${r.repeated} 首（排在最上面，先填這些就好）`)
+    console.log('')
+    console.log('   整張貼進 Sheet 的新分頁「歌曲」，表頭那列一起貼。')
+    console.log('   只有「歌名」是必要的；其餘留白都不會有副作用。')
+    console.log('   歌詞放連結不放本文 —— uta-net、UtaTen 那類網址會自動標成「歌詞」。')
+  }
+  process.exit(0)
+}
 const cols = want.length
   ? COLUMNS.filter(c => want.includes(c.header) || want.includes(c.field))
   : COLUMNS
