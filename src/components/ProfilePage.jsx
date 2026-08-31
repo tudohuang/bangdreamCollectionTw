@@ -6,6 +6,7 @@ import { eventStatus, daysUntil } from '../utils/datetime.js'
 import { formatMonthDay, formatDateRangeCompact, shareUrl, shareOrCopy, shareToast, canShareLink } from '../utils/share.js'
 import { sortChrono, daysBetween } from '../utils/context.js'
 import { yearGaps } from '../utils/insights.js'
+import { songIndex } from '../utils/songs.js'
 import { addToCalendar } from '../utils/ics.js'
 import { downloadPassCard } from '../utils/passImage.js'
 import Icon from './Icon.jsx'
@@ -80,6 +81,9 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
     }
     return [...map.entries()].sort((a, b) => b[0] - a[0])
   }, [list])
+
+  // 這批場次的曲目。只吃有填歌單的場，沒填的自然就不會有東西。
+  const songs = useMemo(() => songIndex(list), [list])
 
   const meta = kind === 'band'
     ? bandMeta(value)
@@ -253,6 +257,33 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
       {/* 官方連結：查完「來過幾次」之後，下一步就是想知道本人現在在幹嘛。
           資料來自名冊的「連結」欄，沒填就整塊不出現。 */}
       <OfficialLinks links={officialLinks} />
+
+      {/* 曲目。人物頁跟歌曲頁之間原本沒有路 ——
+          看完「愛美來過六次」之後很自然的下一個問題是「那她唱了什麼」，
+          而答案就在同一批場次的歌單裡，不用另外填任何資料。
+
+          標題刻意寫「這些場次唱過的歌」不是「她唱過的歌」：
+          聯合場的歌單裡有別團的曲子，我們分不出來的部分就不要假裝分得出來。 */}
+      {songs.length > 0 && (
+        <div className="mt-9">
+          <h2 className="section-h mb-1">這些場次唱過的歌
+            <span className="text-dream-faint text-lg font-bold"> {songs.length}</span>
+          </h2>
+          <p className="text-[14px] text-dream-faint mb-4">
+            來自各場的曲目紀錄。多團聯合的場次會含其他團的曲子。
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {songs.slice(0, 40).map(x => (
+              <a key={x.key} href={`#/song/${encodeURIComponent(x.key)}`} className="pill">
+                {x.title}{x.count > 1 && <span className="text-dream-faint ml-1">×{x.count}</span>}
+              </a>
+            ))}
+          </div>
+          {songs.length > 40 && (
+            <p className="mt-3 text-[14px] text-dream-faint">還有 {songs.length - 40} 首</p>
+          )}
+        </div>
+      )}
 
       {/* 全部場次：新到舊，年份分組，中間空掉的年份也標出來 */}
       <div className="mt-9">

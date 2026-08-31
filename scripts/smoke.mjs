@@ -59,6 +59,8 @@ import VenuePage from './src/components/VenuePage.jsx'
 import SeriesPage from './src/components/SeriesPage.jsx'
 import SongPage from './src/components/SongPage.jsx'
 import SongsPage from './src/components/SongsPage.jsx'
+import { songMetaIndex } from './src/utils/parseSongs.js'
+import { songKey } from './src/utils/songs.js'
 import ResumeLine from './src/components/ResumeLine.jsx'
 import InstallCard from './src/components/InstallCard.jsx'
 import NewSince from './src/components/NewSince.jsx'
@@ -90,6 +92,25 @@ const songEvents = events.slice(0, 3).map((e, i) => ({
   ...e,
   setlist: i === 2 ? '1. STAR BEAT!' : ['1. STAR BEAT!' + (i ? '〜ホシノコドウ〜' : ''), '2. Returns', '安可', 'キズナミュージック'].join(String.fromCharCode(10)),
 }))
+// 歌曲主檔的三種樣子。實際資料在 Sheet 的「歌曲」分頁，這裡只是造形狀。
+const songMetaRow = (over = {}) => ({
+  // key 一定要用 songKey 算，不能手寫 —— 手寫錯了畫面照樣 render，
+  // 只是主檔那塊靜靜對不上，測試永遠是綠的
+  key: songKey('STAR BEAT!'), title: 'STAR BEAT!', band: "Poppin'Party",
+  album: '', released: '', lyricist: '', composer: '', arranger: '',
+  links: [], cover: '', aliases: [], note: '', ...over,
+})
+const songMetaFull = songMetaIndex([songMetaRow({
+  album: "Poppin'Party Sings BanG Dream!", released: '2017-04-19',
+  lyricist: '中村航', composer: 'Elements Garden',
+  links: ['https://open.spotify.com/track/x', 'https://www.uta-net.com/song/1/',
+    'https://music.apple.com/tw/album/1', 'https://bandori.party/'],
+  cover: 'https://i.test/cover.jpg',
+  note: '第一張專輯的開場曲。',
+})])
+const songMetaLinks = songMetaIndex([songMetaRow({ band: '', links: ['https://youtu.be/x'] })])
+const songMetaBlank = songMetaIndex([songMetaRow({ band: '' })])
+
 const attended = new Set(events.slice(0, 6).map(e => e.id))
 const filters = {
   year: 'all', groups: [], people: [], characters: [], types: [], venues: [], cities: [],
@@ -156,6 +177,8 @@ export const CASES = [
   ['PeoplePage', <PeoplePage events={events} onSelect={noop} />],
   ['ProfilePage(person)', <ProfilePage kind="person" value={(one.people || [])[0] || '愛美'} events={events} attended={attended} onToggleAttended={noop} onSelect={noop} onClose={noop} />],
   ['ProfilePage(band)', <ProfilePage kind="band" value="Poppin'Party" events={events} attended={attended} onToggleAttended={noop} onSelect={noop} onClose={noop} />],
+  // 人物頁的曲目區塊：真資料是 0/59，靠 songEvents 才測得到
+  ['ProfilePage(有曲目)', <ProfilePage kind="person" value={(songEvents[0].people || [])[0] || '愛美'} events={songEvents} attended={attended} onToggleAttended={noop} onSelect={noop} onClose={noop} />],
   ['ProfilePage(找不到)', <ProfilePage kind="person" value="不存在的人" events={events} attended={attended} onSelect={noop} onClose={noop} />],
   ['MePage(有紀錄)', <MePage events={events} attended={attended} onToggleAttended={noop} onSelect={noop} onBrowse={noop} />],
   ['MePage(空)', <MePage events={events} attended={new Set()} onToggleAttended={noop} onSelect={noop} onBrowse={noop} />],
@@ -193,10 +216,15 @@ export const CASES = [
   ['SeriesPage(找不到)', <SeriesPage value="不存在的系列" events={events} onSelect={noop} onClose={noop} />],
   ['SeriesPage(空資料)', <SeriesPage value="x" events={[]} onSelect={noop} onClose={noop} />],
   // 曲目現在是 0/59，所以總表要能好好講「還沒有人補」而不是空著唬人
-  ['SongsPage(沒資料)', <SongsPage events={events} onSelect={noop} onClose={noop} />],
-  ['SongsPage(有資料)', <SongsPage onSelect={noop} onClose={noop} events={songEvents} />],
+  ['SongsPage(沒資料)', <SongsPage events={events} onClose={noop} />],
+  ['SongsPage(有資料)', <SongsPage onClose={noop} events={songEvents} />],
+  ['SongsPage(有歌曲主檔)', <SongsPage onClose={noop} events={songEvents} songMeta={songMetaFull} />],
   ['SongPage', <SongPage value="STAR BEAT!" events={songEvents} onSelect={noop} onClose={noop} />],
   ['SongPage(找不到)', <SongPage value="不存在的歌" events={songEvents} onSelect={noop} onClose={noop} />],
+  // 歌曲主檔是選填的：三種狀態都要撐得住
+  ['SongPage(有歌曲主檔)', <SongPage value="STAR BEAT!" events={songEvents} songMeta={songMetaFull} onSelect={noop} onClose={noop} />],
+  ['SongPage(主檔只有連結)', <SongPage value="STAR BEAT!" events={songEvents} songMeta={songMetaLinks} onSelect={noop} onClose={noop} />],
+  ['SongPage(主檔有這首但整列空白)', <SongPage value="STAR BEAT!" events={songEvents} songMeta={songMetaBlank} onSelect={noop} onClose={noop} />],
   // 兩天一列 + 暱稱分段 + 出處註記（#048 那種）
   ['ArchiveSection(兩天一列)', <ArchiveSection color="#8b5cf6" glow="139,92,246" allEvents={[]}
     event={{ id: 'x', people: ['小日向美香', '櫻川惠'], relatedGroups: ['MyGO!!!!!', 'Roselia'],

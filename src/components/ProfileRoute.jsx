@@ -22,16 +22,18 @@ const PAGES = {
   song: SongPage,
 }
 
-export default function ProfileRoute({ profile, events, attended, sheetRoster,
+export default function ProfileRoute({ profile, events, attended, sheetRoster, songMeta,
   onToggleAttended, onSelect, onClose, fallback }) {
   if (!profile) return null
 
   const Page = PAGES[profile.kind] || ProfilePage
   // 只有 ProfilePage 需要打卡狀態與名冊；多傳給別的頁沒有壞處，
   // 但明著分開比較看得出誰要什麼。
-  const extra = PAGES[profile.kind]
-    ? {}
-    : { kind: profile.kind, attended, onToggleAttended, sheetRoster }
+  const extra = profile.kind === 'song'
+    ? { songMeta }
+    : PAGES[profile.kind]
+      ? {}
+      : { kind: profile.kind, attended, onToggleAttended, sheetRoster }
 
   return (
     <ErrorBoundary>

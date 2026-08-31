@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, lazy, Suspense }
 
 import { useEvents } from './hooks/useEvents.js'
 import { usePulse } from './hooks/usePulse.js'
+import { useSongMeta } from './hooks/useSongMeta.js'
 import { useMediaQuery } from './hooks/useMediaQuery.js'
 
 // 首頁與圖鑑一定會用到的直接進主包，其餘按頁面切開
@@ -70,6 +71,8 @@ const scrollToTop = () =>
 export default function App() {
   const { events, source, updatedAt, retry } = useEvents()
   const { roster, pulse, source: pulseSource } = usePulse()
+  // Sheet 的「歌曲」分頁（選填）：歌本身的資料，沒建那張表就是空的 Map
+  const songMeta = useSongMeta()
 
   const [page, setPage] = useState('home')
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
@@ -371,6 +374,7 @@ export default function App() {
             events={events}
             attended={attended}
             sheetRoster={roster}
+            songMeta={songMeta}
             onToggleAttended={toggleAttended}
             onSelect={openDetail}
             onClose={closeProfile}
@@ -444,7 +448,7 @@ export default function App() {
 
         ) : page === 'songs' ? (
           <ErrorBoundary><Suspense fallback={<PageFallback h={520} />}>
-            <SongsPage events={events} onSelect={openDetail} onClose={() => goPage('stats')} />
+            <SongsPage events={events} songMeta={songMeta} onClose={() => goPage('stats')} />
           </Suspense></ErrorBoundary>
 
         ) : page === 'me' ? (

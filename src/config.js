@@ -22,6 +22,11 @@ const sheetTab = (name) => `${SHEET_CSV_URL}&sheet=${encodeURIComponent(name)}`
 export const SHEET_ROSTER_CSV_URL = sheetTab('名冊')
 export const SHEET_PULSE_CSV_URL = sheetTab('動態')
 
+// 歌曲主檔（選填）：一列一首歌 —— 原唱團、專輯、發行日、詞曲、官方連結。
+// 歌單記的是「這場唱了什麼」，這張記的是「這首歌是什麼」，靠歌名對位。
+// 沒有建這個分頁就完全不影響其他地方，歌曲頁只是少掉上半部。
+export const SHEET_SONGS_CSV_URL = sheetTab('歌曲')
+
 // 資料回報入口：頁尾的「資料回報」、以及詳情頁「這一格還缺…」都指到這裡。
 // 可填信箱（mailto:）、Google 表單、或 GitHub issues。留空＝整個入口不顯示。
 //

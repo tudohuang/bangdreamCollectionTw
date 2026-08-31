@@ -7,13 +7,22 @@ import Icon from './Icon.jsx'
 //
 // 完全沒有曲目資料的時候，這一頁不會空著唬人 —— 它直說「還沒有人補」，
 // 並且講清楚為什麼值得補。那比一張空表格誠實，也比不做這頁有用。
-export default function SongsPage({ events, onSelect, onClose }) {
+export default function SongsPage({ events, songMeta, onClose }) {
   const songs = useMemo(() => songIndex(events), [events])
   const [q, setQ] = useState('')
 
+  const infoOf = (key) => songMeta?.get?.(key)
+  // 縮圖欄只有在真的有封面時才佔位置。一整排空白方塊比沒有那一欄還糟。
+  const anyCover = songs.some(x => infoOf(x.key)?.cover)
+
   const withSetlist = events.filter(e => (e.setlist || '').trim()).length
   const shown = q
-    ? songs.filter(s => s.title.toLowerCase().includes(q.toLowerCase()))
+    ? songs.filter(s => {
+        const needle = q.toLowerCase()
+        const info = infoOf(s.key)
+        return [s.title, info?.band, info?.album, ...(info?.aliases || [])]
+          .filter(Boolean).some(t => String(t).toLowerCase().includes(needle))
+      })
     : songs
 
   return (
@@ -54,29 +63,44 @@ export default function SongsPage({ events, onSelect, onClose }) {
             <Icon n="magnifying-glass"
               className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[11px] text-dream-faint" />
             <input value={q} onChange={e => setQ(e.target.value)}
-              placeholder="找一首歌"
+              placeholder="找一首歌、樂團或專輯"
               className="w-full rounded-xl border border-dream-line dark:border-white/15 bg-white/70 dark:bg-white/[.04] pl-10 pr-4 py-2.5 text-[15px] text-dream-ink" />
           </div>
 
           <ol className="mt-5 border-t border-dream-line dark:border-white/10">
             {shown.map((s, i) => {
               const m = primaryMeta(s.events[0])
+              const info = infoOf(s.key)
+              const span = s.events[0].year +
+                (s.count > 1 && s.events[s.count - 1].year !== s.events[0].year
+                  ? `–${s.events[s.count - 1].year}`
+                  : '')
               return (
                 <li key={s.key}
                   className="border-b border-dream-line dark:border-white/10">
                   <a href={`#/song/${encodeURIComponent(s.key)}`}
-                    className="group grid grid-cols-[32px_minmax(0,1fr)_auto] items-baseline gap-x-3 py-2.5">
-                    <span className="text-right font-round font-bold text-[14px] tabular-nums text-dream-faint">
+                    className={`group grid ${anyCover
+                      ? 'grid-cols-[32px_40px_minmax(0,1fr)_auto]'
+                      : 'grid-cols-[32px_minmax(0,1fr)_auto]'} items-center gap-x-3 py-2.5`}>
+                    <span className="self-baseline text-right font-round font-bold text-[14px] tabular-nums text-dream-faint">
                       {i + 1}
                     </span>
+                    {anyCover && (
+                      info?.cover
+                        ? <img src={info.cover} alt="" loading="lazy" decoding="async"
+                            className="w-10 h-10 rounded-lg object-cover"
+                            style={{ background: `rgba(${m.glow},0.10)` }} />
+                        : <span aria-hidden className="grid place-items-center w-10 h-10 rounded-lg"
+                            style={{ background: `rgba(${m.glow},0.14)` }}>
+                            <Icon n="compact-disc" className="text-[15px] opacity-60" style={{ color: m.color }} />
+                          </span>
+                    )}
                     <span className="min-w-0">
                       <span className="block truncate font-display font-semibold text-[15px] text-dream-ink group-hover:text-bloom-violet transition-colors">
                         {s.title}
                       </span>
                       <span className="block truncate text-[14px] text-dream-faint">
-                        {s.events[0].year}
-                        {s.count > 1 && s.events[s.count - 1].year !== s.events[0].year &&
-                          `–${s.events[s.count - 1].year}`}
+                        {[info?.band, span].filter(Boolean).join(' · ')}
                       </span>
                     </span>
                     <span className="shrink-0 font-round font-bold text-[14px] tabular-nums"
