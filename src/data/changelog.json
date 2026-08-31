@@ -1,5 +1,65 @@
 [
   {
+    "date": "2026-08-31",
+    "added": [],
+    "changed": [
+      {
+        "id": 59,
+        "number": 59,
+        "title": "AIMI ASIA TOUR 2026「STAR RISING」",
+        "startDate": "2026-12-05",
+        "fields": [
+          "售票"
+        ]
+      },
+      {
+        "id": 57,
+        "number": 57,
+        "title": "AKANE YONEZAWA \"Black Pasta\" TOUR in Taipei",
+        "startDate": "2026-11-14",
+        "fields": [
+          "售票"
+        ]
+      },
+      {
+        "id": 56,
+        "number": 56,
+        "title": "工藤晴香 Fan Meeting 2026 in Taipei",
+        "startDate": "2026-11-07",
+        "fields": [
+          "售票"
+        ]
+      },
+      {
+        "id": 54,
+        "number": 54,
+        "title": "TSUMUGI RISA FAN MEETING 2026 in TAIPEI",
+        "startDate": "2026-10-17",
+        "fields": [
+          "售票"
+        ]
+      },
+      {
+        "id": 53,
+        "number": 53,
+        "title": "林鼓子粉絲見面會 台北",
+        "startDate": "2026-09-27",
+        "fields": [
+          "售票"
+        ]
+      },
+      {
+        "id": 26,
+        "number": 26,
+        "title": "ANISAMA WORLD 2025 in TAOYUAN",
+        "startDate": "2025-05-24",
+        "fields": [
+          "出演者"
+        ]
+      }
+    ]
+  },
+  {
     "date": "2026-08-24",
     "added": [
       {

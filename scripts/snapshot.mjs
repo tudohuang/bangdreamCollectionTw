@@ -1,4 +1,4 @@
-// npm run snapshot —— 把 Sheet 的「名冊」與「動態」兩張分頁抓下來存進 repo。
+// npm run snapshot —— 把 Sheet 上除了活動表以外的分頁抓下來存進 repo。
 //
 // 為什麼需要：活動表有 events.json 進版控，Sheet 掉了還救得回來。
 // 但名冊與動態是執行時才抓的，本機一份副本都沒有 ——
@@ -11,17 +11,19 @@ import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseRosterCsv, parsePulseCsv } from '../src/utils/parsePulse.js'
+import { parseSongsCsv } from '../src/utils/parseSongs.js'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const OUT = join(ROOT, 'src', 'data', 'snapshot')
 mkdirSync(OUT, { recursive: true })
 
 // config.js 是 ESM 而且沒有副作用，直接讀
-const { SHEET_ROSTER_CSV_URL, SHEET_PULSE_CSV_URL } = await import('../src/config.js')
+const { SHEET_ROSTER_CSV_URL, SHEET_PULSE_CSV_URL, SHEET_SONGS_CSV_URL } = await import('../src/config.js')
 
 const TABS = [
   { key: 'roster', name: '名冊', url: SHEET_ROSTER_CSV_URL, parse: parseRosterCsv },
   { key: 'pulse', name: '動態', url: SHEET_PULSE_CSV_URL, parse: parsePulseCsv },
+  { key: 'songs', name: '歌曲', url: SHEET_SONGS_CSV_URL, parse: parseSongsCsv, optional: true },
 ]
 
 let failed = 0
@@ -42,6 +44,8 @@ for (const tab of TABS) {
 
   const rows = tab.parse(csv)
   if (!rows.length) {
+    // 「歌曲」是選填的，還沒建就是 0 列 —— 那是正常狀態不是故障
+    if (tab.optional) { console.log(`· ${tab.name}：還沒建這張分頁，跳過`); continue }
     console.error(`✗ ${tab.name} 解析出 0 列 —— 可能是分頁改名或發布被關掉，不覆蓋既有副本`)
     failed++
     continue

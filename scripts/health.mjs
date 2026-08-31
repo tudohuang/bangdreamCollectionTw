@@ -10,6 +10,9 @@ import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { venueIndex, cityOfWithVenue } from '../src/utils/venues.js'
 import { relationOf } from '../src/utils/relation.js'
+import { songIndex, songKey } from '../src/utils/songs.js'
+import { songMetaIndex } from '../src/utils/parseSongs.js'
+import { bandKey, BAND_META } from '../src/utils/bands.js'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const read = (p) => JSON.parse(readFileSync(join(ROOT, p), 'utf8'))
@@ -179,6 +182,91 @@ if (!roster || !pulse) {
   }
 }
 
+// ------------------------------------------------------------- 歌曲（第四張分頁）
+//
+// 這張是選填的，沒建就整段不出現 —— 不要在健檢裡催一個使用者沒選擇要用的東西。
+//
+// 覆蓋率那幾行先算好放著，等「具體要處理的」印完再印，
+// 不然會插在標題與清單中間。
+const songCoverage = []
+{
+  const meta = snap('songs.json')
+  const songs = songIndex(events)
+
+  if (meta && meta.length) {
+    const COLS = [
+      ['band', '樂團'], ['links', '連結'], ['cover', '封面'],
+      ['album', '專輯'], ['released', '發行'],
+      ['lyricist', '作詞'], ['composer', '作曲'],
+    ]
+    const has = (m, k) => (Array.isArray(m[k]) ? m[k].length > 0 : !!String(m[k] || '').trim())
+
+    songCoverage.push('', `歌曲分頁 · ${meta.length} 首`, '')
+    for (const [key, label] of COLS) {
+      const n = meta.filter(m => has(m, key)).length
+      const w = Math.round((n / meta.length) * 24)
+      songCoverage.push(`  ${label.padEnd(6)} ${'█'.repeat(w)}${'·'.repeat(24 - w)} ` +
+        `${String(n).padStart(3)}/${meta.length}  ${String(Math.round(n / meta.length * 100)).padStart(3)}%`)
+    }
+
+    // 只填歌名的那些對畫面沒有任何影響 —— 貼完空白表最容易誤會的就是這件事
+    const nothing = meta.filter(m => !COLS.some(([k]) => has(m, k))).map(m => m.title)
+    if (nothing.length) {
+      problems.push({
+        title: `歌曲分頁有 ${nothing.length} 首只填了歌名`,
+        detail: '只有歌名的話畫面上完全不會有變化。填一條「連結」（Spotify 或 YouTube）就會長出按鈕。',
+        items: nothing,
+      })
+    }
+
+    if (songs.length) {
+      const idx = songMetaIndex(meta)
+      const miss = songs.filter(x => !idx.get(x.key)).map(x => x.title)
+      if (miss.length) {
+        problems.push({
+          title: `${miss.length} 首唱過的歌不在歌曲分頁裡`,
+          detail: '那幾頁的上半部（唱片、原唱團、去哪裡聽）不會出現。npm run template 歌曲 重產一份。',
+          items: miss,
+        })
+      }
+      const orphan = meta.filter(m => !songs.some(x => x.key === m.key)).map(m => m.title)
+      if (orphan.length) {
+        problems.push({
+          title: `歌曲分頁有 ${orphan.length} 首在歌單裡找不到`,
+          detail: '歌名寫法對不上，或那首還沒有任何一場的曲目提到它。不影響網站，但那幾列是白填的。',
+          items: orphan,
+        })
+      }
+    }
+  }
+}
+
+// --------------------------------------------- 樂團欄的分隔符
+//
+// splitList 切的是「、」與全形「，」，故意不切半形逗號 ——
+// 因為「Hello, Happy World!」這個團名本身就含半形逗號。
+// 所以半形逗號分隔的兩個團會黏成一個團名，靜靜變成一個查不到的樂團頁。
+{
+  const known = new Set(Object.values(BAND_META).map(b => b.name))
+  const bad = []
+  for (const e of events) {
+    for (const g of e.relatedGroups || []) {
+      if (!g.includes(',')) continue
+      const root = g.split('／')[0].trim()
+      if (known.has(root)) continue      // 團名本身含逗號的不算
+      bad.push(`#${String(e.number).padStart(3, '0')} 「${g}」`)
+    }
+  }
+  if (bad.length) {
+    problems.push({
+      title: `${bad.length} 筆的樂團欄用了半形逗號`,
+      detail: '分隔多個團要用「、」。半形逗號不切（因為 Hello, Happy World! 團名本身就有），' +
+        '兩個團會黏成一個查不到的樂團頁。',
+      items: bad,
+    })
+  }
+}
+
 for (const p of problems) {
   say(`  ▸ ${p.title}`)
   if (p.detail) say(`    ${p.detail}`)
@@ -189,6 +277,8 @@ for (const p of problems) {
 }
 
 if (!problems.length) say('  （沒有）')
+
+for (const line of songCoverage) say(line)
 
 // ------------------------------------------------------------------ 下一步
 say('')

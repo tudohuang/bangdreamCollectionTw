@@ -33,12 +33,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.033647834299405, 121.5624091842944"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-002",
@@ -74,12 +82,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.041995567783406, 121.50757686564295"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-003",
@@ -113,12 +129,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.033677434259534, 121.56091275545798"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-004",
@@ -152,12 +176,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.069831257938237, 121.52083509964054"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-005",
@@ -196,12 +228,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.033647834299405, 121.5624091842944"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-006",
@@ -235,12 +275,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.034963936894517, 121.38349535360369"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-007",
@@ -274,12 +322,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.021796018791985, 121.53506255360321"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-008",
@@ -313,12 +369,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.045185758565307, 121.52938959593106"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-009",
@@ -352,12 +416,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.033647834299405, 121.5624091842944"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-010",
@@ -391,12 +463,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.033647834299405, 121.5624091842944"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-011",
@@ -431,12 +511,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.04561273806598, 121.548449726622"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-012",
@@ -470,12 +558,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.033647834299405, 121.5624091842944"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-013",
@@ -513,12 +609,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.035550581886277, 121.52015101127607"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-014",
@@ -552,12 +656,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.033647834299405, 121.5624091842944"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-015",
@@ -591,12 +703,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.033647834299405, 121.5624091842944"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-016",
@@ -630,12 +750,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.05673084147199, 121.36935212476776"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-017",
@@ -669,12 +797,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.05673084147199, 121.36935212476776"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-018",
@@ -712,12 +848,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "M01. Apocalypse\n\nM02. DEAD HEAT BEAT\nM03. A DECLARATION OF ×××\nM04. 灼熱 Bonfire!\nM05. EXPOSE 'Burn out!!!'\n\n\nM06. UNSTOPPABLE\nM07. !NVADE SHOW!\nM08. Takin' my Heart\n\nM09. Beautiful Birthday\nM10. DRIVE US CRAZY\n\n\nM11. POLARIS\nM12. HELL! or HELL?\nM13. R・I・O・T",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.059862936750406, 121.44961551313123"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-019",
@@ -745,7 +889,7 @@
     "venue": "SAKURA 音樂餐酒館",
     "city": "",
     "photos": [],
-    "cover": "https://scontent-tpe1-1.cdninstagram.com/v/t51.82787-15/722036686_17966935959096365_4221407263606805221_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=107&ig_cache_key=MzkxNjk1MjI4OTY4MDcyMjg2Mw%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuNTg4LnNkci5yZWd1bGFyX3Bob3RvLkMzIn0%3D&_nc_ohc=3lcaXcjBGBkQ7kNvwHCeTIQ&_nc_oc=AdpUkC_gPcmGbTUsT2mZumMtU0ja64lxo8Khmb04FRgG168rjNH7Z97pmnWsiIZ-wXk&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe1-1.cdninstagram.com&_nc_gid=420hzjt88XtPGOKd0jxhlw&_nc_ss=7a22e&oh=00_Af_0to9p3bcYrAn7IVgU9Z4w9uFNNgwUnAcSoHJQbIL9nA&oe=6A31714D",
+    "cover": "https://www.fanhealth.com.tw/uploads/article/img1717212012-2924271.jpg",
     "ticketUrl": "",
     "organizer": "",
     "description": "",
@@ -753,12 +897,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.035480132440163, 121.56624307979008"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-020",
@@ -792,12 +944,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.045517357904412, 121.5311791842947"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-021",
@@ -831,12 +991,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.056757383998285, 121.61812662662228"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-022",
@@ -873,12 +1041,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.033647834299405, 121.5624091842944"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-023",
@@ -914,12 +1090,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.033647834299405, 121.5624091842944"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-024",
@@ -955,12 +1139,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.033677434259534, 121.56091275545798"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-025",
@@ -994,12 +1186,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.01478421477335, 121.49625829593023"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-026",
@@ -1016,14 +1216,15 @@
       "紡木吏佐",
       "夏芽",
       "倉知玲鳳",
-      "小原莉子"
+      "小原莉子",
+      "Ayasa"
     ],
     "relatedGroups": [
-      "RAISE A SUILEN"
+      "RAISE A SUILEN,Morfonica"
     ],
-    "category": "本體",
+    "category": "本體,擦邊",
     "isFullBand": true,
-    "attendanceCount": 5,
+    "attendanceCount": 6,
     "urgency": "",
     "isUrgent": false,
     "venue": "桃園會展中心",
@@ -1037,12 +1238,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "▍RAISE A SUILEN\n !NVADE SHOW!;HELL! or HELL?;UNSTOPPABLE  (with Ayasa);\nAyasa\n新時代\nRESISTER  (with ASCA)",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.003176958404442, 121.20090462662107"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-027",
@@ -1076,12 +1285,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.043090223888605, 121.50731818244019"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-028",
@@ -1107,7 +1324,7 @@
     "venue": "時藝劇場",
     "city": "",
     "photos": [],
-    "cover": "https://scontent-tpe1-1.cdninstagram.com/v/t51.82787-15/721104386_17972458905105379_5388919835645089101_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=111&ig_cache_key=MzkxNjkyNDU5MjMwMDU2NDk2MA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTAyNC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=0luuzIbmTO0Q7kNvwEk1_Wl&_nc_oc=AdpSM-37Js2AYd2BjWz67S3WAdqSm4Bfcm94-XMPf_B0fvYTsTu-2jIQThyJb9yXptM&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe1-1.cdninstagram.com&_nc_gid=mMh_t5IWeRfa2PbGcvSECg&_nc_ss=7a22e&oh=00_Af8lAmYh4kHW9NkMUbwzYK_0HPCqsbN3Lps00wp3LY7DAQ&oe=6A31715D",
+    "cover": "https://scontent-tpe5-1.cdninstagram.com/v/t51.82787-15/521298010_17891739996280139_6036055020299743203_n.webp?_nc_cat=104&ig_cache_key=MzY3OTM5MDU3OTc3ODkyOTgyOQ%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTAyNC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=PcuXAmSSkM4Q7kNvwG3q4LL&_nc_oc=Adqh4BaAkYKDRQU0EsPGlcpezWCDxnjjBAgYhObnnuyuLPYRtM986gJ95_VgiZ0-U1k&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe5-1.cdninstagram.com&_nc_gid=ccmjWBBjPAN8LINTFNtfgw&_nc_ss=7a22e&oh=00_AQGqeLklnO3FHolDnFiXohvdfWuhgIFznDetS2LIe78YcQ&oe=6A9206AC",
     "ticketUrl": "",
     "organizer": "Ani-mode",
     "description": "",
@@ -1115,12 +1332,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.05808881559169, 121.4991657149856"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-029",
@@ -1154,12 +1379,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.05808881559169, 121.4991657149856"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-030",
@@ -1193,12 +1426,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.04625425726183, 121.5443547977855"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-031",
@@ -1234,12 +1475,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "伊藤美來\nShocking Blue\n青100色\nNow On Air\nPlunderer\nNo.6\n愛美\nカザニア\nMAGICAL DESTROYER\nAthisCode\nメリトクラシー\nHELP",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.021796018791985, 121.53506255360321"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-032",
@@ -1274,12 +1523,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.036970884850206, 121.56806831498538"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-033",
@@ -1317,12 +1574,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "FRONTIER FANTASIA\nSong I am.\nDetermination Symphony\n紫炎\nR\n約束\nRinging Bloom\n陽だまりロードナイト\n軌跡\nBRAVE JEWEL\nSteadfast Spirits\nNeo-Aspect\n安可\nFIRE BIRD\nPASSIONATE ANTHEM",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.059862936750406, 121.44961551313123"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-034",
@@ -1356,12 +1621,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "22.68928615749584, 120.31042518425267"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-035",
@@ -1397,12 +1670,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.056757383998285, 121.61812662662228"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-036",
@@ -1436,12 +1717,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.056757383998285, 121.61812662662229"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-037",
@@ -1475,12 +1764,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.056757383998285, 121.61812662662230"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-038",
@@ -1514,12 +1811,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.056757383998285, 121.61812662662231"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-039",
@@ -1553,12 +1858,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "Wish for you\n不器用に 君のとなり\n職業:あみた",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.04625425726183, 121.5443547977855"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-040",
@@ -1592,12 +1905,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.04391082312588, 121.56064271940983"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-041",
@@ -1629,12 +1950,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.04631357728319, 121.5445902996399"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-042",
@@ -1678,12 +2007,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "▍Ave Mujica; Choir 'S' Choir; 顔; 黒のバースデイ; Symbol IV : Earth; Mas?uerade Rhapsody Re?uest; 八芒星ダンス; Symbol II : Air; DIVINE; 'S/' The Way; KiLLKiSS; Sophie; Symbol I : △; ▍MyGO!!!!!; 回層浮; 無路矢; 端程山; 掌心正銘; 迷星叫; 夜隠染; 孤壊牢; 影色舞; 壱雫空; 歌いましょう鳴らしましょう; 砂寸奏; 往欄印",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.074806590236637, 121.54108986894981"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-043",
@@ -1731,12 +2068,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "Yes! BanG_Dream!\nDreamers Go!\nぽっぴん'どりーむ！\nぽっぴん'しゃっふる\nTime Lapse\nDrive Your Heart\nRequiem for Fate\nBLACK SHOUT\nONENESS\nSteadfast Spirits\n熱色スターマイン\nティアドロップス\nR\nLight Delight\nSing Alive\nLive Beyond!!\nZEAL of proud\nキズナミュージック♪\n安可\nBRAVE JEWEL (short ver.)\nときめきエクスペリエンス！ (short ver.)\nFIRE BIRD",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "日期暫定（9月）",
     "extras": {
       "座標": "25.074806590236637, 121.54108986894981"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-044",
@@ -1774,12 +2119,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "NEO ELDOLADO\nNoise in me\nAthisCode\nMAGICAL DESTROYER\nキャンセルさせて人生\nC’est la vie drive\nLIGHTS\nWhat’s up FIRE!\nSTARS\nザ・センセーション\nHELP\nwillドレス\nCROWNED\n安可\nMAYDAY\nメリトクラシー",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.04625425726183, 121.5443547977855"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-045",
@@ -1813,12 +2166,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.056757383998285, 121.61812662662228"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-046",
@@ -1852,12 +2213,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "まるでマトリョーシカ\nMeteor -ミーティアー\nPalette Days\nMajestic Catastrophe\nDon't say \"lazy\"(小倉唯 feat. 茅原實里 & 佐佐木李子)",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.056757383998285, 121.61812662662228"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-047",
@@ -1891,14 +2260,22 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [
       "https://ticketplus.com.tw/activity/14b934c1397c1f913aa0f6f005d420ba"
     ],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.039263773158908, 121.52234102847616"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-048",
@@ -1938,14 +2315,22 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [
       "https://baodaorecords.kktix.cc/events/6b8019fc"
     ],
+    "setlist": "【Day 1】; 合唱; ray; みか 部分; 夢のみちしるべ; ふわふわ時間; ナツイロ探し; 君の知らない物語; 光をくれるあなたへ; めぐ 部分; キボウマイロード; ワールドイズマイン; 光るなら; 一冊のアロー; はよ、New World.; 合唱; ひなたぼっこ; つまさきMovin'on; 安可; Snow halation; 【Day 2】; 合唱; ライオン; めぐ 部分; キボウマイロード; シャルル; 光るなら; 一冊のアロー; はよ、New World.; みか 部分; ナツイロ探し; 光をくれるあなたへ; only my railgun; ふわふわ時間; 夢のみちしるべ; 合唱; つまさきMovin'on!; ひなたぼっこ。; 安可; Snow halation",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.04625425726183, 121.5443547977855"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-049",
@@ -1981,14 +2366,22 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [
       "https://mobimon.kktix.cc/events/mobimon20260625-campaign?fbclid=IwY2xjawSrDUlleHRuA2FlbQIxMABicmlkETFjYmEwOWNmUHMxY2phbXF0c3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHtJGMcGY_tp0GIwX_9W6kQ-mqq8DUcHYj-cO7XbiticechAbWN9sdB7j4lFJ_aem_86-Repoc7Kqbr08eiEeHJw"
     ],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.039263773158908, 121.52234102847616"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-050",
@@ -2020,14 +2413,22 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [
       "https://ticketplus.com.tw/activity/296250ccc90137f0ce805764b3a6f450"
     ],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.04631357728319, 121.5445902996399"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-051",
@@ -2065,14 +2466,22 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [
       "https://ticketplus.com.tw/activity/296250ccc90137f0ce805764b3a6f450"
     ],
+    "setlist": "【Day 1】;Mas?uerade Rhapsody Re?uest;Sophie;Crucifix X;M01. Ave Mujica;素晴らしき世界 でも どこにもない場所;Symbol II : Air;Symbol III : ▽;八芒星ダンス;黒のバースデイ;Symbol IV : Earth;Choir 'S' Choir;天球(そら)のMúsica;DIVINE;'S/' The Way;顔;KiLLKiSS;Symbol I : △;【Day 2】;Ether;DIVINE;Georgette Me, Georgette You;M01. Ave Mujica;神さま、バカ;八芒星ダンス;黒のバースデイ;Crucifix X;Choir 'S' Choir;Symbol II : Air;天球(そら)のMúsica;Mas?uerade Rhapsody Re?uest;顔;Sophie;'S/' The Way;KiLLKiSS;Symbol I : △",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.034963936894517, 121.38349535360369"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-052",
@@ -2106,14 +2515,22 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [
       "https://kktix.com/events/lqera-02/registrations/new"
     ],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.039263773158908, 121.52234102847616"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-053",
@@ -2140,19 +2557,27 @@
     "city": "",
     "photos": [],
     "cover": "https://p2.bahamut.com.tw/B/2KU/49/201be4cfe2d19e28cc598a84301zgq15.JPG",
-    "ticketUrl": "",
+    "ticketUrl": "https://digitalidea.kktix.cc/events/2d9b4d89",
     "organizer": "數位至匯",
     "description": "",
     "impression": "",
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.039263773158908, 121.52234102847616"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-054",
@@ -2179,19 +2604,27 @@
     "city": "",
     "photos": [],
     "cover": "https://assets.kktix.io/upload_images/553652/%E7%B4%A1%E6%9C%A8%E5%90%8F%E4%BD%90_KKTIX_original.jpg",
-    "ticketUrl": "",
+    "ticketUrl": "https://resonance-works.kktix.cc/events/tsumugirisa",
     "organizer": "鳴音合創",
     "description": "",
     "impression": "",
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.043090223888605, 121.50731818244019"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-055",
@@ -2225,12 +2658,20 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.04625425726183, 121.5443547977855"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-056",
@@ -2256,20 +2697,28 @@
     "venue": "Clapper Studio",
     "city": "",
     "photos": [],
-    "cover": "https://instagram.ftpe8-1.fna.fbcdn.net/v/t51.82787-15/773556269_17891737860599312_3170672272355519654_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=109&ig_cache_key=Mzk2Njg3NTQ4NTQ0MjkzNDgxNg%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMjA3Mi5zZHIucmVndWxhcl9waG90by5DMiJ9&_nc_ohc=yHznckC0Ir0Q7kNvwHBpxOa&_nc_oc=AdrFVa6HgMQ60IK0OfXoVXszAYuH6KgHlXpAHNCh1aIJ0mHAXmhILZqdfvl47H_1124&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.ftpe8-1.fna&_nc_gid=JP0QdOJHxxhsh9tXWwTf_Q&_nc_ss=7a22e&oh=00_AQE0EpymJ66DYzMDyIHUHQE5OkjC1fRc8V-8xRulRaSIJw&oe=6A8B1D58",
-    "ticketUrl": "",
+    "cover": "https://assets.kktix.io/organization_resource_files/32182/79565/0814%E5%B7%A5%E8%97%A4%E6%99%B4%E9%A6%99%E4%B8%BB%E8%A6%96%E8%A6%BA%E6%B5%B7%E5%A0%B1-new_%E5%B7%A5%E4%BD%9C%E5%8D%80%E5%9F%9F_1_%E8%A4%87%E6%9C%AC_20.jpg",
+    "ticketUrl": "https://atc-twn.kktix.cc/events/jrsfe",
     "organizer": "ATC Taiwan",
     "description": "",
     "impression": "",
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.045521197970487, 121.53114385199983"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-057",
@@ -2295,20 +2744,28 @@
     "venue": "MOONDOG",
     "city": "",
     "photos": [],
-    "cover": "https://instagram.ftpe8-3.fna.fbcdn.net/v/t51.82787-15/775446118_17936007927360590_3211033735839261065_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=106&ig_cache_key=Mzk2NjMzMTc1Mzc1NzYxOTY1NA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMjI1MC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=ql6PD2WqDN0Q7kNvwGD60Cn&_nc_oc=AdpWasBwNwmxb1-np-3Ffj7_O-3hCFb7A0So7ihuZQOagH-JD_3e7MUqvGjMBwgI1os&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.ftpe8-3.fna&_nc_gid=Vc2v8Qi6kNUnqOev1DfJyw&_nc_ss=7a22e&oh=00_AQGvuydtmWIOzgf1x9naPRd0cE7Fb1sbx_tQ1g0gN1BZxQ&oe=6A89E86A",
-    "ticketUrl": "",
+    "cover": "https://p2.bahamut.com.tw/B/2KU/42/3e75ae1a5a688aa52411b6cbc21zxrq5.PNG",
+    "ticketUrl": "https://baodaorecords.kktix.cc/events/14793026",
     "organizer": "宝島制作委員会",
     "description": "",
     "impression": "",
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.04625425726183, 121.5443547977855"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-058",
@@ -2342,10 +2799,18 @@
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {},
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   },
   {
     "id": "evt-059",
@@ -2371,19 +2836,27 @@
     "venue": "MOONDOG",
     "city": "",
     "photos": [],
-    "cover": "https://scontent-tpe1-1.cdninstagram.com/v/t51.82787-15/776748233_17935813221360590_8461018228893182023_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ig_cache_key=Mzk2NTYzNzMwMDMzNDk5NjQ3MQ%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTkzMC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=qkwEQvG9LZsQ7kNvwEebE4z&_nc_oc=AdqC7F5JxtX9SDClzg2kyltSThTTO4re6t1AnbJPKeG-f5LACpV2M5Fn7YcYHgbJS0c&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe1-1.cdninstagram.com&_nc_gid=9OEca0_mKS6D4Ujbud2JHw&_nc_ss=7a22e&oh=00_AQHtyjlHWMAc87v3yIh9-WZLX9D_e0okuqtGPIPSFr-50w&oe=6A88C802",
-    "ticketUrl": "",
+    "cover": "https://p2.bahamut.com.tw/B/2KU/27/995c488f85153f19c16eaad05d1zx7v5.JPG",
+    "ticketUrl": "https://baodaorecords.kktix.cc/events/ba87b6aa",
     "organizer": "宝島制作委員会",
     "description": "",
     "impression": "",
     "oneLine": "",
     "sessions": 0,
     "relation": "",
+    "ticketDate": "",
     "sources": [],
+    "setlist": "",
+    "price": "",
+    "goods": "",
+    "keyVisual": "",
+    "series": "",
+    "soldOut": "",
+    "programme": "",
     "notes": "",
     "extras": {
       "座標": "25.04625425726183, 121.5443547977855"
     },
-    "lastUpdated": "2026-08-24"
+    "lastUpdated": "2026-08-31"
   }
 ]
