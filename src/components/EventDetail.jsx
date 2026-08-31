@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { buildSummary, copyText, formatDateRangeCompact, shareUrl } from '../utils/share.js'
+import { buildSummary, copyText, formatDateRangeCompact, shareUrl, shareOrCopy, shareToast, canShareLink } from '../utils/share.js'
 import { primaryMeta, parseGroup, isPersonal, rootGroup } from '../utils/bands.js'
 import { photoUrl, photoCredit, PHOTO_CREDIT_KEYS } from '../utils/media.js'
-import { coverSrc, coverSources } from '../utils/cover.js'
+import { coverSrc, coverSources, coverSrcSet } from '../utils/cover.js'
 import { eventStatus, countdownLabel, weekday, STATUS_LABEL } from '../utils/datetime.js'
 import { eventContext, typeTags } from '../utils/context.js'
 import { addToCalendar } from '../utils/ics.js'
@@ -150,7 +150,11 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
 
   const flash = (m) => { setToast(m); setTimeout(() => setToast(''), 1800) }
   const copySummary = async () => flash((await copyText(buildSummary(event))) ? '已複製摘要' : '複製失敗')
-  const copyLink = async () => flash((await copyText(shareUrl('event', event.id))) ? '已複製連結' : '複製失敗')
+  const share = async () => flash(shareToast(await shareOrCopy({
+    title: event.title || '邦邦來台圖鑑',
+    text: buildSummary(event),
+    url: shareUrl('event', event.id),
+  })))
 
   const dex = `#${String(event.number ?? 0).padStart(3, '0')}`
   const groups = event.relatedGroups || []
@@ -207,8 +211,9 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
               <img aria-hidden src={coverSrc(event, 'sm')} alt=""
                 className="absolute inset-0 w-full h-full object-cover scale-125 blur-2xl opacity-70" />
               <picture className="relative block w-full h-full">
-                {lgSources && <source type="image/avif" srcSet={lgSources.avif} />}
-                {lgSources && <source type="image/webp" srcSet={lgSources.webp} />}
+                {/* 頭圖最寬就是浮層的寬度；DPR1 的手機不用載 960w 那張 */}
+                {lgSources && <source type="image/avif" srcSet={coverSrcSet(event, 'avif')} sizes="(max-width: 639px) 100vw, (max-width: 1023px) 768px, 1024px" />}
+                {lgSources && <source type="image/webp" srcSet={coverSrcSet(event, 'webp')} sizes="(max-width: 639px) 100vw, (max-width: 1023px) 768px, 1024px" />}
                 <img src={cover} alt="" decoding="async"
                   onError={() => setCoverOk(false)}
                   className="w-full h-full object-contain group-hover/cover:scale-[1.03] motion-reduce:transform-none" />
@@ -520,8 +525,9 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
         <div className="sticky bottom-0 z-10 px-5 sm:px-8 py-3 flex flex-wrap gap-2.5 items-center border-t border-dream-line dark:border-white/10"
           style={{ background: 'var(--modal-bg)', paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))' }}>
           {/* 手機只留圖示，四顆按鈕才不會擠成兩行吃掉半個畫面 */}
-          <button className="btn-primary !h-11 sm:!h-10 !px-4 sm:!px-6" onClick={copyLink}>
-            <Icon n="link" /> 複製連結
+          {/* 手機叫得出系統分享單就叫，那才是東西實際流通的方式 */}
+          <button className="btn-primary !h-11 sm:!h-10 !px-4 sm:!px-6" onClick={share}>
+            <Icon n="link" /> {canShareLink() ? '分享' : '複製連結'}
           </button>
           <button className="pill !h-11 sm:!h-auto !px-4 !py-2 !text-[14px]" aria-label="加入行事曆" title="加入行事曆"
             onClick={() => addToCalendar(event, `${event.id}.ics`, flash)}>

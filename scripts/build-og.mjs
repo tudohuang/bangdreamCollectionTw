@@ -13,6 +13,7 @@ import { dirname, join } from 'node:path'
 import { BAND_META, bandKey } from '../src/utils/bands.js'
 import { renderEntryPage, renderProfilePage, renderListPage } from '../src/server/entryPage.js'
 import { canonicalVenue } from '../src/utils/derive.js'
+import { seriesIndex } from '../src/utils/series.js'
 import { personBandMap } from '../src/utils/derive.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -479,14 +480,32 @@ const hubs = []
     })
   }
 
-  for (const kind of ['y', 'v', 't']) mkdirSync(join(DIST, kind), { recursive: true })
+  // 系列（Bushiroad EXPO、LisAni! LIVE 這種跨年份的同一檔活動）。
+  // 這是全站唯一「同一件事分好幾年發生」的軸線，也是最值得被搜到的一種頁面 ——
+  // 「bushiroad expo 台灣」這種查法，找的就是這一頁而不是某一場。
+  for (const si of seriesIndex(events, 2)) {
+    hubs.push({
+      kind: 's', key: si.key,
+      title: si.name + ' 在台灣',
+      lead: si.name + ' 在台灣辦過的場次，共 ' + si.events.length + ' 場。',
+      events: si.events,
+      // 系列在 App 裡有自己的一頁，不要把人丟回圖鑑的起點
+      appHref: '../#/series/' + encodeURIComponent(si.key),
+      appLabel: '看這個系列 →',
+      related: seriesIndex(events, 2).filter(o => o.key !== si.key).slice(0, 6)
+        .map(o => ({ kind: 's', key: o.key, label: o.name })),
+    })
+  }
+
+  for (const kind of ['y', 'v', 't', 's']) mkdirSync(join(DIST, kind), { recursive: true })
   for (const h of hubs) {
     writeFileSync(join(DIST, h.kind, h.key + '.html'),
       renderListPage({ ...h, origin: SITE_URL }), 'utf8')
   }
   console.log('✓ 清單頁：' + hubs.filter(h => h.kind === 'y').length + ' 個年份、' +
     hubs.filter(h => h.kind === 'v').length + ' 個場館、' +
-    hubs.filter(h => h.kind === 't').length + ' 個類型')
+    hubs.filter(h => h.kind === 't').length + ' 個類型、' +
+    hubs.filter(h => h.kind === 's').length + ' 個系列')
 }
 
 // 首頁的 head 注入要放在清單頁之後 —— noscript 的爬蟲入口需要 hubs

@@ -18,7 +18,7 @@ const HAS_DIST = existsSync(join(DIST, 'index.html'))
 function allPages() {
   const out = []
   if (existsSync(join(DIST, 'index.html'))) out.push({ rel: 'index.html', kind: 'home' })
-  for (const dir of ['e', 'p', 'b', 'y', 'v', 't']) {
+  for (const dir of ['e', 'p', 'b', 'y', 'v', 't', 's']) {
     const d = join(DIST, dir)
     if (!existsSync(d)) continue
     for (const f of readdirSync(d)) {
@@ -252,5 +252,47 @@ describe('SEO', { skip: HAS_DIST ? false : '尚未 build，跳過（npm run veri
     assert.ok(ns, '首頁缺少 noscript 的爬蟲入口')
     const links = (ns[1].match(/<a /g) || []).length
     assert.ok(links >= 10, `爬蟲入口只有 ${links} 個連結`)
+  })
+})
+
+// 系列頁是最後才補的（年份／場館／類型早就有了），所以單獨釘住 ——
+// 「同一檔活動跨好幾年」是這站唯一有、別處查不到的軸線，
+// 也是搜尋「bushiroad expo 台灣」時真正該命中的那一頁。
+describe('系列頁', { skip: HAS_DIST ? false : '尚未 build' }, () => {
+  const dir = join(DIST, 's')
+  const files = existsSync(dir) ? readdirSync(dir).filter(f => f.endsWith('.html')) : []
+
+  test('有產出來', () => {
+    assert.ok(files.length >= 5, `系列頁太少：${files.length}`)
+  })
+
+  test('CTA 指向 App 裡的系列頁，不是圖鑑首頁', () => {
+    // 落到圖鑑等於把人丟回起點 —— 他明明是為了這個系列來的
+    for (const f of files) {
+      const html = read(`s/${f}`)
+      const cta = (html.match(/<a class="cta" href="([^"]*)"/) || [])[1]
+      assert.match(cta ?? '', /^\.\.\/#\/series\//, `${f} 的 CTA 是 ${cta}`)
+      assert.equal(cta.slice('../#/series/'.length), f.replace(/\.html$/, ''))
+    }
+  })
+
+  test('每一頁至少列兩場 —— 只有一場的系列不該產（跟單場頁重複）', () => {
+    for (const f of files) {
+      const n = (read(`s/${f}`).match(/<li><a href="\.\.\/e\//g) || []).length
+      assert.ok(n >= 2, `${f} 只列了 ${n} 場`)
+    }
+  })
+
+  test('進得了 sitemap', () => {
+    const sm = read('sitemap.xml')
+    for (const f of files) {
+      const key = f.replace(/\.html$/, '')
+      assert.ok(sm.includes(`/s/${encodeURIComponent(key)}`), `sitemap 少了 ${key}`)
+    }
+  })
+
+  test('首頁的爬蟲入口帶得到系列', () => {
+    // 沒有內部連結的頁面等於沒有產
+    assert.match(read('index.html'), /href="\/s\//)
   })
 })

@@ -341,7 +341,10 @@ ${relatedBlock}
 //
 // 每一頁都要有實質內容才值得存在，所以只產「有兩三筆以上」的，
 // 一筆的清單頁跟單筆頁重複，反而會被判定為薄內容。
-export function renderListPage({ kind, key, title, lead, events, origin = '', related = [] }) {
+// appHref：進 App 之後要落在哪。多數清單頁（年份／場館／類型）在 App 裡是
+// 圖鑑的篩選狀態，但系列在 App 裡有自己的一頁，落到圖鑑就等於把人丟回起點。
+export function renderListPage({ kind, key, title, lead, events, origin = '', related = [],
+  appHref = '../#/collection', appLabel = '在圖鑑裡篩選 →' }) {
   const list = [...events].sort((a, b) =>
     String(b.startDate || '').localeCompare(String(a.startDate || '')))
 
@@ -414,7 +417,7 @@ ROBOTS +
 '</dl>' +
 '<h2>全部場次</h2><ul class="cast">' + rows + '</ul>' +
 relatedHtml +
-'<a class="cta" href="../#/collection">在圖鑑裡篩選 →</a>' +
+'<a class="cta" href="' + esc(appHref) + '">' + esc(appLabel) + '</a>' +
 '<p class="foot">邦邦來台圖鑑 —— BanG Dream! 相關聲優與樂團的來台活動紀錄，粉絲整理，非官方。 <a href="../">回到圖鑑</a></p>' +
 '</div></body></html>'
 }

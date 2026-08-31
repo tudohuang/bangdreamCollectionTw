@@ -70,3 +70,35 @@ export async function copyText(text) {
     catch { document.body.removeChild(ta); return false }
   }
 }
+
+// 分享得出去，而不是只複製到剪貼簿。
+//
+// 「複製連結」是桌機的習慣：複製 → 切到別的 App → 貼上。
+// 手機上真正要的是系統分享單 —— 一下就到 Line、IG、限動、噗浪，
+// 而那正是這個站的東西實際流通的方式。
+//
+// canShare 不存在（桌機瀏覽器多半沒有）就自動退回複製，
+// 所以呼叫端不用自己判斷平台。
+export function canShareLink() {
+  return typeof navigator !== 'undefined' && typeof navigator.share === 'function'
+}
+
+// 回傳 'shared' | 'copied' | 'cancel' | 'fail'
+export async function shareOrCopy({ title, text, url }) {
+  if (canShareLink()) {
+    try {
+      await navigator.share({ title, text, url })
+      return 'shared'
+    } catch (e) {
+      // 使用者自己按取消，不要再默默複製一次讓他以為分享成功了
+      if (e?.name === 'AbortError') return 'cancel'
+      // 其他錯誤（權限、瀏覽器不支援這組欄位）就退回複製，總比什麼都沒發生好
+    }
+  }
+  return (await copyText(url)) ? 'copied' : 'fail'
+}
+
+// 分享完之後說什麼。'shared' 不用說 —— 系統分享單自己就是回饋，
+// 再彈一個提示只是重複。
+export const shareToast = (result) =>
+  result === 'copied' ? '已複製連結' : result === 'fail' ? '複製失敗' : null

@@ -3,7 +3,7 @@ import { bandMeta, rootGroup, primaryMeta, isPersonal, BAND_META } from '../util
 import { coverSrc } from '../utils/cover.js'
 import { personBandMap, detectCity } from '../utils/derive.js'
 import { eventStatus, daysUntil } from '../utils/datetime.js'
-import { formatMonthDay, copyText, formatDateRangeCompact, shareUrl } from '../utils/share.js'
+import { formatMonthDay, formatDateRangeCompact, shareUrl, shareOrCopy, shareToast, canShareLink } from '../utils/share.js'
 import { sortChrono, daysBetween } from '../utils/context.js'
 import { yearGaps } from '../utils/insights.js'
 import { addToCalendar } from '../utils/ics.js'
@@ -90,10 +90,10 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
   const span = first && last ? (first === last ? `${first}` : `${first}–${last}`) : '—'
 
   const flash = (m) => { setToast(m); setTimeout(() => setToast(''), 1800) }
-  const copyLink = async () => {
-    const ok = await copyText(shareUrl(kind, value))
-    flash(ok ? '已複製連結' : '複製失敗')
-  }
+  const share = async () => flash(shareToast(await shareOrCopy({
+    title: `${value} · 邦邦來台圖鑑`,
+    url: shareUrl(kind, value),
+  })))
 
   if (!list.length) {
     return (
@@ -150,8 +150,8 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
 
         {/* 操作列獨立一行，手機上才不會被頭像擠成三行 */}
         <div className="relative px-6 sm:px-8 pb-6 sm:pb-8 -mt-1 flex flex-wrap gap-2">
-          <button onClick={copyLink} className="btn-primary !h-10 !px-5 !text-[14px]">
-            <Icon n="link" /> 複製連結
+          <button onClick={share} className="btn-primary !h-10 !px-5 !text-[14px]">
+            <Icon n="link" /> {canShareLink() ? '分享' : '複製連結'}
           </button>
           <button className="pill !px-4 !py-2 !text-[14px]"
             onClick={() => addToCalendar(list, `${value}.ics`, flash)}>
