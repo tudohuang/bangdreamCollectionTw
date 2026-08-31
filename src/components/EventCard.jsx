@@ -52,7 +52,7 @@ export default function EventCard({ event, attended, onToggleAttended, onClick, 
           // sizes 告訴瀏覽器這張圖實際會顯示多寬，它才挑得到正確的檔案。
           // 手機一張佔滿一欄、平板兩欄、桌機三到四欄。
           <Cover event={event} size="sm" priority={priority}
-            sizes="(max-width: 639px) 100vw, (max-width: 1279px) 50vw, 25vw"
+            sizes="(max-width: 639px) 100vw, (max-width: 1279px) 50vw, (max-width: 1535px) 33vw, 25vw"
             className={`absolute inset-0 w-full h-full transition-[transform,filter] duration-500 ease-out group-hover:scale-[1.04] motion-reduce:transform-none ${pastTone}`} />
         ) : (
           <NoCover meta={meta} dex={dex} icon={personal ? 'user' : meta.icon} />

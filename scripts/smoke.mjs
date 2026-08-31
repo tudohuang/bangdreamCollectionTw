@@ -78,7 +78,7 @@ import StatsInsights from './src/components/StatsInsights.jsx'
 import LifeTimeline from './src/components/LifeTimeline.jsx'
 import Primer from './src/components/Primer.jsx'
 import Chronicle from './src/components/Chronicle.jsx'
-import { InstallHint, BottomNav, IOSInstallCard, PromptInstallCard } from './src/components/Chrome.jsx'
+import { InstallHint, BottomNav, IOSInstallCard, PromptInstallCard, DataStatus } from './src/components/Chrome.jsx'
 import { JustAnnounced, ChangeFeed } from './src/components/JustAnnounced.jsx'
 import { parseRosterCsv, parsePulseCsv } from './src/utils/parsePulse.js'
 import { milestoneMap } from './src/utils/milestones.js'
@@ -141,6 +141,10 @@ export const CASES = [
   ['EmptyResult', <EmptyResult search="找不到的字" onReset={noop} suggestions={events.slice(0, 3)} onSelect={noop} />, { mayBeEmpty: true }],
   ['EventRow', <EventRow event={one} onSelect={noop} />],
   ['FilterSheet', <FilterSheet events={events} filters={filters} onChange={noop} onClose={noop} onReset={noop} resultCount={events.length} />],
+  // 資料狀態列：一切正常時本來就該是空的，出事時才要有東西
+  ['DataStatus(正常)', <DataStatus source="sheet" updatedAt={Date.now()} onRetry={noop} />, { mayBeEmpty: true }],
+  ['DataStatus(抓不到)', <DataStatus source="error" updatedAt={Date.now()} onRetry={noop} />],
+  ['DataStatus(抓不到且沒時間戳)', <DataStatus source="error" onRetry={noop} />],
   ['FilterSheet(空資料)', <FilterSheet events={[]} filters={filters} onChange={noop} onClose={noop} onReset={noop} resultCount={0} />],
   ['FilterPanel(sidebar)', <FilterPanel events={events} filters={filters} onChange={noop} onReset={noop} resultCount={events.length} variant="sidebar" onExportIcs={noop} />],
   ['EventWall(cards)', <EventWall events={events} view="cards" attended={attended} onToggleAttended={noop} onSelect={noop} onReset={noop} allEvents={events} milestones={milestones} />],

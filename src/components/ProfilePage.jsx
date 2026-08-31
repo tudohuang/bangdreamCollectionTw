@@ -6,7 +6,7 @@ import { eventStatus, daysUntil } from '../utils/datetime.js'
 import { formatMonthDay, copyText, formatDateRangeCompact, shareUrl } from '../utils/share.js'
 import { sortChrono, daysBetween } from '../utils/context.js'
 import { yearGaps } from '../utils/insights.js'
-import { downloadIcs } from '../utils/ics.js'
+import { addToCalendar } from '../utils/ics.js'
 import { downloadPassCard } from '../utils/passImage.js'
 import Icon from './Icon.jsx'
 import OfficialLinks from './OfficialLinks.jsx'
@@ -154,7 +154,7 @@ export default function ProfilePage({ kind, value, events, attended, onToggleAtt
             <Icon n="link" /> 複製連結
           </button>
           <button className="pill !px-4 !py-2 !text-[14px]"
-            onClick={() => flash(downloadIcs(list, `${value}.ics`) ? '已下載行事曆檔' : '沒有確定日期的場次')}>
+            onClick={() => addToCalendar(list, `${value}.ics`, flash)}>
             <Icon n="calendar" /> 加行事曆
           </button>
           <button className="pill !px-4 !py-2 !text-[14px]"

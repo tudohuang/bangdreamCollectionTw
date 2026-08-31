@@ -19,14 +19,14 @@ import Footer from './components/Footer.jsx'
 import Icon from './components/Icon.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import ProfileRoute from './components/ProfileRoute.jsx'
-import { PageFallback, ScrollProgress, FloatingDock, BottomNav, MobileAppBar, PullToRefresh, InstallHint, Analytics } from './components/Chrome.jsx'
+import { PageFallback, ScrollProgress, FloatingDock, BottomNav, MobileAppBar, PullToRefresh, InstallHint, DataStatus, Analytics } from './components/Chrome.jsx'
 
 import { readHash, writeHash } from './utils/url.js'
 import { todayStr, daysUntil } from './utils/datetime.js'
 import { milestoneMap } from './utils/milestones.js'
 import { rememberSeen } from './utils/lastSeen.js'
 import { urgentEvents } from './utils/urgency.js'
-import { downloadIcs } from './utils/ics.js'
+import { saveIcs } from './utils/ics.js'
 import { getAttended, saveAttended } from './utils/attended.js'
 import { tap, done } from './utils/haptics.js'
 import {
@@ -360,6 +360,7 @@ export default function App() {
             </button>
           </nav>
         </div>
+        <DataStatus source={source} updatedAt={updatedAt} onRetry={retry} />
         <UrgentBar events={urgent} onSelect={openDetail} />
       </header>
 
@@ -388,7 +389,7 @@ export default function App() {
                     onReset={resetFilters}
                     resultCount={filtered.length}
                     variant={wideLayout ? 'sidebar' : 'bar'}
-                    onExportIcs={() => downloadIcs(filtered, 'bangdream-tw.ics')}
+                    onExportIcs={() => saveIcs(filtered, 'bangdream-tw.ics')}
                   />
                 </div>
 

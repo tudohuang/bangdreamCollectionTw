@@ -350,3 +350,55 @@ export function Analytics() {
     </>
   )
 }
+
+// 資料狀態列。
+//
+// 之前這個資訊只寫在頁尾。手機上加到主畫面之後沒有網址列、沒有重新整理鍵，
+// 使用者離線時看到的是一份靜靜過期的活動表，而且完全沒有跡象 ——
+// 那是「網頁沒網路」和「App 沒網路」最大的差別：App 會講。
+//
+// 一切正常的時候完全不出現。常態顯示的狀態列等於沒有狀態列。
+export function DataStatus({ source, updatedAt, onRetry }) {
+  const [online, setOnline] = useState(() =>
+    typeof navigator === 'undefined' ? true : navigator.onLine !== false)
+
+  useEffect(() => {
+    const on = () => setOnline(true)
+    const off = () => setOnline(false)
+    window.addEventListener('online', on)
+    window.addEventListener('offline', off)
+    return () => {
+      window.removeEventListener('online', on)
+      window.removeEventListener('offline', off)
+    }
+  }, [])
+
+  // 'cached' 是背景更新中，那是正常流程，不用打擾
+  const bad = !online || source === 'error'
+  if (!bad) return null
+
+  const when = updatedAt
+    ? new Date(updatedAt).toLocaleDateString('zh-TW', { month: 'numeric', day: 'numeric' })
+    : null
+
+  return (
+    <div role="status"
+      className="relative z-10 bg-dream-ink/90 dark:bg-white/10 text-white backdrop-blur">
+      <div className="max-w-6xl xl:max-w-[1400px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-8 py-2
+        flex items-center gap-2.5 text-[14px]">
+        <Icon n="triangle-exclamation" className="shrink-0 opacity-80" />
+        <span className="min-w-0 flex-1">
+          {!online
+            ? `離線中，看的是${when ? ' ' + when + ' ' : ''}存在這台裝置上的資料`
+            : '連不上 Google Sheet，先顯示上次的資料'}
+        </span>
+        {online && onRetry && (
+          <button onClick={onRetry}
+            className="shrink-0 rounded-full bg-white/20 hover:bg-white/30 px-3 py-1 font-bold transition-colors">
+            重試
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}

@@ -43,3 +43,31 @@ export function coverSrc(event, size = 'sm') {
   const s = coverSources(event, size)
   return s ? s.jpg : coverOf(event)
 }
+
+// 產生器用的目標寬。build-covers.mjs 開了 withoutEnlargement，
+// 所以實際輸出寬是「原圖寬」與「目標寬」取小 —— 52 張裡有 14 張原圖不到 960。
+const TARGET_W = { sm: 420, lg: 960 }
+const outWidth = (meta, size) => Math.min(meta.w || TARGET_W[size], TARGET_W[size])
+
+// srcset 字串。
+//
+// 之前這裡只給一個網址、沒有寬度描述子，所以旁邊的 sizes 完全沒作用 ——
+// 瀏覽器只有一個候選，不管螢幕多大都拿 420w 那張。手機是 3 倍像素密度，
+// 一張卡片滿版等於要 1170px，結果拿 420 放大快三倍，封面看起來就是糊的。
+//
+// 寬度一定要寫實際輸出寬，不能寫目標寬：原圖只有 201px 卻標成 960w，
+// 瀏覽器會以為自己挑到大圖，那比沒有 srcset 更糟。
+export function coverSrcSet(event, ext) {
+  const id = keyOf(event)
+  const meta = manifest[id]
+  if (!meta) return undefined
+
+  const out = []
+  for (const size of ['sm', 'lg']) {
+    const w = outWidth(meta, size)
+    // 原圖比 420 還小的時候兩個尺寸像素一樣，留檔案較小的 sm 就好
+    if (out.some(c => c.w === w)) continue
+    out.push({ w, url: `${BASE}/covers/${id}-${size}.${ext}` })
+  }
+  return out.map(c => `${c.url} ${c.w}w`).join(', ')
+}

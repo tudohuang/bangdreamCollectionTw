@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { coverSources, coverSrc, coverRatio } from '../utils/cover.js'
+import { coverSources, coverSrc, coverSrcSet, coverRatio } from '../utils/cover.js'
 import { primaryMeta, isPersonal } from '../utils/bands.js'
 import Icon from './Icon.jsx'
 
@@ -24,10 +24,12 @@ export default function Cover({ event, size = 'sm', className = '', sizes, prior
 
   return (
     <picture className={className}>
-      {sources && <source type="image/avif" srcSet={sources.avif} sizes={sizes} />}
-      {sources && <source type="image/webp" srcSet={sources.webp} sizes={sizes} />}
+      {sources && <source type="image/avif" srcSet={coverSrcSet(event, 'avif')} sizes={sizes} />}
+      {sources && <source type="image/webp" srcSet={coverSrcSet(event, 'webp')} sizes={sizes} />}
       <img
         src={src}
+        srcSet={sources ? coverSrcSet(event, 'jpg') : undefined}
+        sizes={sources ? sizes : undefined}
         alt=""
         // 第一屏的封面要早點載；其餘等捲到再說
         loading={priority ? 'eager' : 'lazy'}

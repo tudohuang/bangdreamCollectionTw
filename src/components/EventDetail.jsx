@@ -5,7 +5,7 @@ import { photoUrl, photoCredit, PHOTO_CREDIT_KEYS } from '../utils/media.js'
 import { coverSrc, coverSources } from '../utils/cover.js'
 import { eventStatus, countdownLabel, weekday, STATUS_LABEL } from '../utils/datetime.js'
 import { eventContext, typeTags } from '../utils/context.js'
-import { downloadIcs } from '../utils/ics.js'
+import { addToCalendar } from '../utils/ics.js'
 import { downloadShareImage } from '../utils/shareImage.js'
 import { isUrgent, URGENT_LABEL } from '../utils/urgency.js'
 import { organizersOf } from '../utils/organizers.js'
@@ -524,7 +524,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
             <Icon n="link" /> 複製連結
           </button>
           <button className="pill !h-11 sm:!h-auto !px-4 !py-2 !text-[14px]" aria-label="加入行事曆" title="加入行事曆"
-            onClick={() => flash(downloadIcs(event, `${event.id}.ics`) ? '已下載行事曆檔' : '這場沒有確定日期')}>
+            onClick={() => addToCalendar(event, `${event.id}.ics`, flash)}>
             <Icon n="calendar" /> <span className="hidden sm:inline">加行事曆</span>
           </button>
           <button className="pill !h-11 sm:!h-auto !px-4 !py-2 !text-[14px]" aria-label="複製摘要" title="複製摘要" onClick={copySummary}>
