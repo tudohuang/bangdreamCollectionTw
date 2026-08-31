@@ -140,3 +140,18 @@ describe('空白表與解析器不會漂移', () => {
     assert.equal(s.title, '春日影')
   })
 })
+
+describe('原唱團的連結', () => {
+  test('兩團擠在一格的寫法要連到正規化後的團名', async () => {
+    // 實際資料裡有「RAISE A SUILEN,Morfonica」—— 歌單的 ▍區塊本來就那樣標。
+    // 照原樣連出去會落到一個「找不到這個團的場次」的死頁。
+    const { bandKey, bandMeta } = await import('../src/utils/bands.js')
+    assert.equal(bandKey('RAISE A SUILEN,Morfonica'), 'ras')
+    assert.equal(bandMeta('RAISE A SUILEN,Morfonica').name, 'RAISE A SUILEN')
+  })
+
+  test('認不出來的團會被判成 other，那種就不該連出去', async () => {
+    const { bandKey } = await import('../src/utils/bands.js')
+    assert.equal(bandKey('某個外部歌手'), 'other')
+  })
+})

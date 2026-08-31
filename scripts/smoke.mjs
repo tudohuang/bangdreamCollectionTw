@@ -110,6 +110,9 @@ const songMetaFull = songMetaIndex([songMetaRow({
 })])
 const songMetaLinks = songMetaIndex([songMetaRow({ band: '', links: ['https://youtu.be/x'] })])
 const songMetaBlank = songMetaIndex([songMetaRow({ band: '' })])
+// 兩團擠在一格、以及認不出來的團名：兩種都不該生出死連結
+const songMetaTwoBands = songMetaIndex([songMetaRow({ band: 'RAISE A SUILEN,Morfonica' })])
+const songMetaOddBand = songMetaIndex([songMetaRow({ band: '某個外部歌手' })])
 
 const attended = new Set(events.slice(0, 6).map(e => e.id))
 const filters = {
@@ -224,6 +227,8 @@ export const CASES = [
   // 歌曲主檔是選填的：三種狀態都要撐得住
   ['SongPage(有歌曲主檔)', <SongPage value="STAR BEAT!" events={songEvents} songMeta={songMetaFull} onSelect={noop} onClose={noop} />],
   ['SongPage(主檔只有連結)', <SongPage value="STAR BEAT!" events={songEvents} songMeta={songMetaLinks} onSelect={noop} onClose={noop} />],
+  ['SongPage(團名兩個擠一格)', <SongPage value="STAR BEAT!" events={songEvents} songMeta={songMetaTwoBands} onSelect={noop} onClose={noop} />],
+  ['SongPage(認不出來的團名)', <SongPage value="STAR BEAT!" events={songEvents} songMeta={songMetaOddBand} onSelect={noop} onClose={noop} />],
   ['SongPage(主檔有這首但整列空白)', <SongPage value="STAR BEAT!" events={songEvents} songMeta={songMetaBlank} onSelect={noop} onClose={noop} />],
   // 兩天一列 + 暱稱分段 + 出處註記（#048 那種）
   ['ArchiveSection(兩天一列)', <ArchiveSection color="#8b5cf6" glow="139,92,246" allEvents={[]}

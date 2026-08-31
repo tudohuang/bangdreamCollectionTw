@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { songProfile, songIndex } from '../utils/songs.js'
-import { primaryMeta, bandMeta, rootGroup } from '../utils/bands.js'
+import { primaryMeta, bandMeta, bandKey, rootGroup } from '../utils/bands.js'
 import { hasSongMeta } from '../utils/parseSongs.js'
 import Icon from './Icon.jsx'
 import EventRow from './EventRow.jsx'
@@ -55,13 +55,7 @@ export default function SongPage({ value, events, songMeta, onSelect, onClose })
         <div className="min-w-0 flex-1">
           <div className="eyebrow"><Icon n="music" className="text-[10px]" /> Song</div>
           <h2 className="section-h mt-1.5" style={{ color: m.color }}>{s.title}</h2>
-          {info?.band && (
-            <a href={`#/band/${encodeURIComponent(info.band)}`}
-              className="mt-1 inline-flex items-center gap-1.5 text-[16px] font-medium hover:opacity-75"
-              style={{ color: bandMeta(info.band).color }}>
-              <Icon n={bandMeta(info.band).icon} className="text-[11px]" />{info.band}
-            </a>
-          )}
+          {info?.band && <SongBand name={info.band} />}
           <p className="mt-2 text-[14px] text-dream-sub">
             在台灣唱過 {s.count} 場
             {years.length > 1 && `，橫跨 ${years[0]}–${years[years.length - 1]}`}。
@@ -223,5 +217,33 @@ export function SongFacts({ info }) {
       {/* 歌詞連結也在這一排。站上不放歌詞本文，連出去給官方或歌詞站。 */}
       <OfficialLinks links={info.links} title="去哪裡聽" />
     </div>
+  )
+}
+
+// 原唱團那一行。
+//
+// 連結用的是「正規化後的團名」不是 Sheet 上原本那串：實際資料裡有
+// 「RAISE A SUILEN,Morfonica」這種兩團擠在一格的寫法（歌單的 ▍區塊本來就
+// 那樣標），照原樣連出去就是一個「找不到這個團的場次」的死頁。
+//
+// bandKey 認不出來的（自製曲、外部歌手）就不連，只顯示文字 ——
+// 連到「其他」那一頁對使用者沒有任何意義。
+export function SongBand({ name }) {
+  const meta = bandMeta(name)
+  const known = bandKey(name) !== 'other'
+  const inner = (
+    <>
+      <Icon n={meta.icon} className="text-[11px]" />
+      {known ? meta.name : name}
+    </>
+  )
+  const cls = 'mt-1 inline-flex items-center gap-1.5 text-[16px] font-medium'
+
+  if (!known) return <span className={`${cls} text-dream-sub`}>{inner}</span>
+  return (
+    <a href={`#/band/${encodeURIComponent(meta.name)}`}
+      className={`${cls} hover:opacity-75`} style={{ color: meta.color }}>
+      {inner}
+    </a>
   )
 }
