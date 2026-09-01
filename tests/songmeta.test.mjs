@@ -155,3 +155,56 @@ describe('原唱團的連結', () => {
     assert.equal(bandKey('某個外部歌手'), 'other')
   })
 })
+
+describe('歌詞連結分到自己那一排', () => {
+  test('認得出常見的歌詞站', async () => {
+    const { isLyricSite } = await import('../src/utils/links.js')
+    for (const u of [
+      'https://www.uta-net.com/song/1/', 'https://utaten.com/lyric/x',
+      'https://j-lyric.net/artist/a/l.html', 'https://kashinavi.com/song_view.html?1',
+      'https://www.utamap.com/showkasi.php?surl=1',
+    ]) assert.equal(isLyricSite(u), true, u)
+  })
+
+  test('音樂平台不算歌詞站', async () => {
+    // 混在一起的話「去哪裡聽」那個標題就在說一件不是真的事
+    const { isLyricSite } = await import('../src/utils/links.js')
+    for (const u of [
+      'https://open.spotify.com/track/x', 'https://music.apple.com/tw/album/1',
+      'https://youtu.be/x', 'https://bandori.party/',
+    ]) assert.equal(isLyricSite(u), false, u)
+  })
+
+  test('壞掉的網址不會爆，也不會被當成歌詞站', async () => {
+    const { isLyricSite } = await import('../src/utils/links.js')
+    for (const u of ['', '待補', 'uta-net.com/song/1', null]) {
+      assert.equal(isLyricSite(u), false, String(u))
+    }
+  })
+})
+
+describe('連結按鈕上的字', () => {
+  test('認得出的站顯示站名', async () => {
+    const { linkLabel } = await import('../src/utils/links.js')
+    const pairs = [
+      ['https://open.spotify.com/track/x', 'Spotify'],
+      ['https://music.apple.com/tw/album/1', 'Apple Music'],
+      ['https://www.uta-net.com/song/1/', '歌ネット'],
+      ['https://utaten.com/lyric/1/', 'UtaTen'],
+      ['https://bandori.party/', 'Bandori.party'],
+    ]
+    for (const [url, want] of pairs) assert.equal(linkLabel(url), want, url)
+  })
+
+  test('music.youtube.com 不能被標成 YouTube —— 順序有意義', async () => {
+    const { linkLabel } = await import('../src/utils/links.js')
+    assert.equal(linkLabel('https://music.youtube.com/watch?v=x'), 'YouTube Music')
+    assert.equal(linkLabel('https://youtu.be/x'), 'YouTube')
+  })
+
+  test('認不出來的站顯示網域，不要顯示「連結」', async () => {
+    // 一顆寫著「連結」的按鈕等於沒說 —— 至少要看得出會被帶去哪裡
+    const { linkLabel } = await import('../src/utils/links.js')
+    assert.equal(linkLabel('https://www.example.co.jp/a/b'), 'example.co.jp')
+  })
+})

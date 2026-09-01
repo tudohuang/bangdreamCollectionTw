@@ -103,8 +103,10 @@ const songMetaRow = (over = {}) => ({
 const songMetaFull = songMetaIndex([songMetaRow({
   album: "Poppin'Party Sings BanG Dream!", released: '2017-04-19',
   lyricist: '中村航', composer: 'Elements Garden',
-  links: ['https://open.spotify.com/track/x', 'https://www.uta-net.com/song/1/',
-    'https://music.apple.com/tw/album/1', 'https://bandori.party/'],
+  links: ['https://open.spotify.com/track/x', 'https://music.apple.com/tw/album/1',
+    'https://bandori.party/',
+    // 歌詞站要被分到另一排去
+    'https://www.uta-net.com/song/1/', 'https://utaten.com/lyric/1/'],
   cover: 'https://i.test/cover.jpg',
   note: '第一張專輯的開場曲。',
 })])

@@ -5,6 +5,7 @@ import { hasSongMeta } from '../utils/parseSongs.js'
 import Icon from './Icon.jsx'
 import EventRow from './EventRow.jsx'
 import OfficialLinks from './OfficialLinks.jsx'
+import { isLyricSite } from '../utils/links.js'
 
 // 一首歌在台灣的履歷。
 //
@@ -214,8 +215,10 @@ export function SongFacts({ info }) {
         </p>
       )}
 
-      {/* 歌詞連結也在這一排。站上不放歌詞本文，連出去給官方或歌詞站。 */}
-      <OfficialLinks links={info.links} title="去哪裡聽" />
+      {/* 兩排分開：歌詞連結混在「去哪裡聽」裡的話，那個標題就在說一件不是真的事。
+          站上不放歌詞本文（版權在 Bushiroad 與 JASRAC 底下），只連出去。 */}
+      <OfficialLinks links={info.links.filter(u => !isLyricSite(u))} title="去哪裡聽" />
+      <OfficialLinks links={info.links.filter(isLyricSite)} title="歌詞" />
     </div>
   )
 }
