@@ -238,6 +238,18 @@ Returns
 Service worker 只有三條規則，刻意寫得保守：HTML 走「先連線」（部署後一定拿得到新版）、
 `/assets/*` 走「先快取」（Vite 檔名帶內容 hash，不會拿到舊的）、圖片走「先給快取、背景更新」。
 Google Sheet 的 CSV 完全不碰，交給 App 自己的 localStorage 快取。
+
+### 訂閱行事曆（/api/calendar）
+
+「匯出 .ics」是一次性的：存進去之後新公布的場次不會自己出現。訂閱把方向反過來 ——
+行事曆 App 每半天回來拉一次 `/api/calendar`（Vercel serverless，即時抓 Sheet），
+之後每一場新公布的活動、每一個開賣日都自動出現在使用者的手機裡，連提醒一起。
+這站沒有後端、做不了推播，這就是最接近推播的東西。
+
+入口在首頁 UP NEXT 卡下方與活動頁工具列（`SubscribeCalendar.jsx`）：
+Google 走 `calendar.google.com/calendar/r?cid=`、iPhone 走 `webcal://`、其他貼網址。
+抓不到 Sheet 時退回內建資料 —— 訂閱網址一旦被存進別人的行事曆就是永久合約，
+這個端點永遠不能 500。
 `_headers` 有把 `/sw.js` 設成 `no-cache` —— 這條不能漏，否則之後改快取策略推不出去。
 
 **詳情頁在手機上是一整頁，不是浮層。** 從右邊推進來（`.push-page`），

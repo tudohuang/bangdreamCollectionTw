@@ -125,34 +125,36 @@ export default function PeoplePage({ events, onSelect, sheetRoster = [] }) {
             即將來台
             <span className="text-[14px] font-normal text-dream-faint">{upcomingCount} 位</span>
           </h3>
-          <ul className="space-y-2.5">
+          {/* 一場一行。之前一場佔兩行的大卡片，八場排下來要滾一整屏
+              才看得到目錄本體 —— 這一區是預告不是主角。 */}
+          <ul className="rounded-2xl border border-dream-line dark:border-white/10 bg-white/70 dark:bg-white/[.06] divide-y divide-dream-line/70 dark:divide-white/10">
             {upcoming.map(({ event: e, names }) => {
               const m = bandMeta((e.relatedGroups || [])[0] || '')
               const dleft = daysUntil(e.startDate)
               return (
-                <li key={e.id}
-                  className="rounded-2xl border border-dream-line dark:border-white/10 bg-white/70 dark:bg-white/[.06] px-4 py-3">
-                  <div className="flex items-center gap-2.5 flex-wrap">
-                    <span className="shrink-0 rounded-full px-2.5 py-0.5 text-[14px] font-bold text-white"
-                      style={{ background: 'rgba(139,92,246,0.92)' }}>
-                      {dleft <= 0 ? '就是這幾天' : `${dleft} 天後`}
-                    </span>
-                    <span className="font-round font-bold text-[14px]" style={{ color: m.color }}>
-                      {e.startDate.replace(/-/g, '.')}
-                    </span>
-                    <button onClick={() => onSelect?.(e.id)}
-                      className="min-w-0 flex-1 text-left font-display font-semibold text-[16px] text-dream-ink truncate hover:text-bloom-violet transition-colors">
-                      {e.title}
-                    </button>
-                  </div>
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {names.map(n => (
+                <li key={e.id} className="flex items-baseline gap-2.5 px-4 py-2.5">
+                  <span className="shrink-0 w-14 text-right font-round font-bold text-[14px] tabular-nums"
+                    style={{ color: m.color }}>
+                    {dleft <= 0 ? '這幾天' : `${dleft} 天後`}
+                  </span>
+                  <span className="shrink-0 font-round text-[14px] text-dream-faint tabular-nums">
+                    {e.startDate.slice(5).replace('-', '.')}
+                  </span>
+                  <button onClick={() => onSelect?.(e.id)}
+                    className="min-w-0 flex-1 text-left text-[15px] font-medium text-dream-ink truncate hover:text-bloom-violet transition-colors">
+                    {e.title}
+                  </button>
+                  <span className="hidden sm:flex shrink-0 gap-2">
+                    {names.slice(0, 3).map(n => (
                       <a key={n} href={`#/person/${encodeURIComponent(n)}`}
-                        className="rounded-full border border-dream-line dark:border-white/10 px-2.5 py-0.5 text-[14px] text-dream-sub hover:text-dream-ink hover:border-bloom-violet transition-colors">
+                        className="text-[14px] text-dream-sub hover:text-bloom-violet transition-colors">
                         {n}
                       </a>
                     ))}
-                  </div>
+                    {names.length > 3 && (
+                      <span className="text-[14px] text-dream-faint">+{names.length - 3}</span>
+                    )}
+                  </span>
                 </li>
               )
             })}

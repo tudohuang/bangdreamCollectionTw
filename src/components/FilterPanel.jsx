@@ -7,6 +7,7 @@ import { buildAppliedChips, removeChipPatch } from '../utils/filters.js'
 import Icon from './Icon.jsx'
 import FilterSheet from './FilterSheet.jsx'
 import Segmented from './Segmented.jsx'
+import SubscribeCalendar from './SubscribeCalendar.jsx'
 import { TIMEFRAMES, ORDERS, VIEWS, ADV_KEYS, mainViews } from './filterOptions.js'
 
 function uniq(arr) { return [...new Set(arr)] }
@@ -237,6 +238,8 @@ function QuickPills({ filters, onChange, advCount, onOpenSheet, onExportIcs, has
           <Icon n="calendar" className="text-[11px]" /> 匯出行事曆
         </button>
       )}
+      {/* 匯出是一次性的，訂閱才是活的 —— 兩顆並排，讓人看得到有更好的選項 */}
+      <SubscribeCalendar />
     </>
   )
 }

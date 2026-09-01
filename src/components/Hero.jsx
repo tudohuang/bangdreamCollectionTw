@@ -6,7 +6,9 @@ import { isUrgent, urgentEvents, URGENT_LABEL } from '../utils/urgency.js'
 import { countingSummary } from '../utils/counting.js'
 import { OWNER_NOTE } from '../config.js'
 import { JustAnnounced } from './JustAnnounced.jsx'
+import { songIndex } from '../utils/songs.js'
 import Icon from './Icon.jsx'
+import SubscribeCalendar from './SubscribeCalendar.jsx'
 import ResumeLine from './ResumeLine.jsx'
 import NewSince from './NewSince.jsx'
 
@@ -29,12 +31,14 @@ function StickyNote({ text }) {
 // 其他東西（月曆、那年今天、照片牆）一律往下排。
 
 function computeStats(events) {
+  const songCount = songIndex(events).length
   const years = events.map(e => e.year).filter(Boolean)
   const bands = new Set(events.flatMap(e => e.relatedGroups.map(bandKey)))
   return {
     total: events.length,
     yearRange: years.length ? `${Math.min(...years)}–${Math.max(...years)}` : '—',
     bandCount: bands.size,
+    songCount,
   }
 }
 
@@ -200,6 +204,11 @@ function TicketCountdown({ events, onSelect }) {
             )
           })}
         </ul>
+        {/* 看完「再來還有誰」的下一個念頭就是「怕忘記」——
+            訂閱入口放在這裡，不用去活動頁找 */}
+        <div className="mt-2.5 pt-2 border-t border-dashed border-dream-line dark:border-white/10">
+          <SubscribeCalendar compact />
+        </div>
       </div>
     )}
     </div>
@@ -251,7 +260,12 @@ export default function Hero({ events, onSelect, onYearJump }) {
 
       {/* 全站規模：從第一屏降級成一行字，不再佔四塊磚 */}
       <p className="mt-4 text-[14px] text-dream-faint">
-        全站 {stats.total} 筆活動紀錄 · {stats.bandCount} 個樂團 · {stats.yearRange}
+        全站 {stats.total} 筆活動紀錄 · {stats.bandCount} 個樂團
+        {stats.songCount > 0 && (
+          <> · <a href="#/songs" className="hover:text-dream-ink underline decoration-dotted underline-offset-2">
+            {stats.songCount} 首唱過的歌
+          </a></>
+        )} · {stats.yearRange}
       </p>
     </section>
   )

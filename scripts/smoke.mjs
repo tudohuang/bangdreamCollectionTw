@@ -29,6 +29,7 @@ import Highlights from './src/components/Highlights.jsx'
 import OnThisDay from './src/components/OnThisDay.jsx'
 import FilterPanel from './src/components/FilterPanel.jsx'
 import FilterSheet from './src/components/FilterSheet.jsx'
+import SubscribeCalendar from './src/components/SubscribeCalendar.jsx'
 import ChangeLogSection from './src/components/ChangeLogSection.jsx'
 import EventTable from './src/components/EventTable.jsx'
 import Timeline from './src/components/Timeline.jsx'
@@ -171,6 +172,8 @@ export const CASES = [
   ['DataStatus(正常)', <DataStatus source="sheet" updatedAt={Date.now()} onRetry={noop} />, { mayBeEmpty: true }],
   ['DataStatus(抓不到)', <DataStatus source="error" updatedAt={Date.now()} onRetry={noop} />],
   ['DataStatus(抓不到且沒時間戳)', <DataStatus source="error" onRetry={noop} />],
+  // node 沒有 location，這顆按鈕在 SSR/煙霧環境要優雅地變成空白
+  ['SubscribeCalendar(無 location)', <SubscribeCalendar />, { mayBeEmpty: true }],
   ['FilterSheet(空資料)', <FilterSheet events={[]} filters={filters} onChange={noop} onClose={noop} onReset={noop} resultCount={0} />],
   ['FilterPanel(sidebar)', <FilterPanel events={events} filters={filters} onChange={noop} onReset={noop} resultCount={events.length} variant="sidebar" onExportIcs={noop} />],
   ['EventWall(cards)', <EventWall events={events} view="cards" attended={attended} onToggleAttended={noop} onSelect={noop} onReset={noop} allEvents={events} milestones={milestones} />],

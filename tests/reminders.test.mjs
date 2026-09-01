@@ -122,3 +122,34 @@ describe('加到行事曆的回話', () => {
     assert.deepEqual(said, ['這場還沒有確定日期'])
   })
 })
+
+describe('訂閱行事曆（/api/calendar 用的模式）', () => {
+  test('有 name 才加訂閱標頭 —— 一次性下載不用自我介紹', () => {
+    const feed = buildIcs([future()], STAMP, { name: '邦邦來台圖鑑', origin: 'https://x.test' })
+    assert.match(feed, /X-WR-CALNAME:邦邦來台圖鑑/)
+    assert.match(feed, /REFRESH-INTERVAL;VALUE=DURATION:PT12H/)
+    assert.match(feed, /X-WR-TIMEZONE:Asia\/Taipei/)
+    const plain = buildIcs([future()], STAMP)
+    assert.ok(!/X-WR-CALNAME/.test(plain))
+  })
+
+  test('serverless 沒有 location，URL 從 origin 組出來', () => {
+    // 訂閱進行事曆的每一則都要點得回網站 —— 那是使用者回流的路
+    const feed = buildIcs([future()], STAMP, { origin: 'https://x.test' })
+    assert.match(feed, /URL:https:\/\/x\.test\/e\/e47/)
+  })
+
+  test('沒給 origin 時在 node 環境不爆炸、也不產生壞網址', () => {
+    const feed = buildIcs([future()], STAMP)
+    assert.ok(!/URL:undefined|URL:\/e\//.test(feed))
+  })
+
+  test('整份 feed 是合法的頭尾配對', () => {
+    const feed = buildIcs([future({ ticketDate: '2026-09-06' }), past()], STAMP,
+      { name: 'x', origin: 'https://x.test' })
+    assert.ok(feed.startsWith('BEGIN:VCALENDAR\r\n'))
+    assert.ok(feed.endsWith('END:VCALENDAR\r\n'))
+    assert.equal((feed.match(/BEGIN:VEVENT/g) || []).length,
+      (feed.match(/END:VEVENT/g) || []).length)
+  })
+})

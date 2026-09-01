@@ -32,7 +32,9 @@ function fold(line) {
   return out.join('\r\n')
 }
 
-function eventLink(event) {
+function eventLink(event, origin) {
+  // serverless（訂閱行事曆）沒有 location，由呼叫端把網域傳進來
+  if (origin) return `${origin}/e/${encodeURIComponent(event.id)}`
   if (typeof location === 'undefined') return ''
   return shareUrl('event', event.id)
 }
@@ -63,7 +65,7 @@ function alarms(summary) {
 // 但有些行事曆 App 匯入時會把它們一起列出來，看起來像壞掉。
 const isFuture = (start, stamp) => start > String(stamp || '').slice(0, 8)
 
-export function eventToVevent(event, stamp) {
+export function eventToVevent(event, stamp, origin = '') {
   const start = ymd(event.startDate)
   const end = endExclusive(event.endDate, event.startDate)
   if (!start || !end) return null
@@ -73,7 +75,7 @@ export function eventToVevent(event, stamp) {
     (event.relatedGroups || []).join('、'),
     (event.people || []).join('、'),
     event.organizer && `主辦：${event.organizer}`,
-    eventLink(event),
+    eventLink(event, origin),
   ].filter(Boolean).join('\n')
 
   return [
@@ -85,7 +87,7 @@ export function eventToVevent(event, stamp) {
     fold(`SUMMARY:${esc(event.title || '未命名活動')}`),
     event.venue ? fold(`LOCATION:${esc(event.venue)}`) : null,
     fold(`DESCRIPTION:${esc(desc)}`),
-    eventLink(event) ? `URL:${eventLink(event)}` : null,
+    eventLink(event, origin) ? `URL:${eventLink(event, origin)}` : null,
     ...(isFuture(start, stamp) ? alarms(event.title || '未命名活動') : []),
     'END:VEVENT',
   ].filter(Boolean).join('\r\n')
@@ -98,7 +100,7 @@ export function eventToVevent(event, stamp) {
 // 提醒放前一天晚上 8 點與當天早上 8 點：多數開賣在中午，早上八點還來得及。
 //
 // 「開賣」那欄目前是空的。填了就會自己長出來，不用改程式。
-export function ticketToVevent(event, stamp) {
+export function ticketToVevent(event, stamp, origin = '') {
   const day = ymd(event.ticketDate)
   if (!/^\d{8}$/.test(day)) return null
   const end = endExclusive(event.ticketDate, event.ticketDate)
@@ -106,7 +108,7 @@ export function ticketToVevent(event, stamp) {
 
   const title = event.title || '未命名活動'
   const summary = `開賣：${title}`
-  const desc = [event.ticketUrl, eventLink(event)].filter(Boolean).join('\n')
+  const desc = [event.ticketUrl, eventLink(event, origin)].filter(Boolean).join('\n')
 
   return [
     'BEGIN:VEVENT',
@@ -131,17 +133,25 @@ export function ticketToVevent(event, stamp) {
   ].filter(Boolean).join('\r\n')
 }
 
-export function buildIcs(events, stamp) {
-  const body = events.flatMap(e => [eventToVevent(e, stamp), ticketToVevent(e, stamp)]).filter(Boolean)
+export function buildIcs(events, stamp, opts = {}) {
+  const { origin = '', name = '' } = opts
+  const body = events.flatMap(e =>
+    [eventToVevent(e, stamp, origin), ticketToVevent(e, stamp, origin)]).filter(Boolean)
   return [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
     'PRODID:-//Taiwan BanG Dream Collection//TW//ZH',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
+    // 訂閱模式的自我介紹：這份行事曆叫什麼、多久回來拉一次。
+    // 一次性下載的 .ics 沒有這些也沒差，所以有 name 才加。
+    name ? fold(`X-WR-CALNAME:${esc(name)}`) : null,
+    name ? 'X-WR-TIMEZONE:Asia/Taipei' : null,
+    name ? 'REFRESH-INTERVAL;VALUE=DURATION:PT12H' : null,
+    name ? 'X-PUBLISHED-TTL:PT12H' : null,
     ...body,
     'END:VCALENDAR',
-  ].join('\r\n') + '\r\n'
+  ].filter(Boolean).join('\r\n') + '\r\n'
 }
 
 // 回傳實際寫進檔案的場次數（沒有合法日期的會被略過）

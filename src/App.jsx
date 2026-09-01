@@ -59,6 +59,13 @@ const PAGE_TABS = [
   ['me', '我的', 'circle-check'],
   ['labs', 'Labs', 'wand-magic-sparkles'],
 ]
+// 桌機頁首放得下第七格，歌曲才不會只能從統計頁摸進去；
+// 手機底部列維持六格 —— 第七格會讓每一格都窄到按不準。
+const DESKTOP_TABS = [
+  ...PAGE_TABS.slice(0, 4),
+  ['songs', '歌曲', 'music'],
+  ...PAGE_TABS.slice(4),
+]
 const SIMPLE_PAGES = ['people', 'stats', 'me', 'labs', 'songs']
 // 舊連結（#/pulse）還在外面流通，靜靜導到 Labs
 const PAGE_ALIAS = { pulse: 'labs' }
@@ -340,7 +347,7 @@ export default function App() {
 
           <nav className="flex items-center gap-1 sm:gap-1.5 text-[14px] min-w-0 flex-1 sm:flex-none justify-end">
             <div className="hidden sm:flex items-center gap-0.5">
-              {PAGE_TABS.map(([p, label, icon]) => (
+              {DESKTOP_TABS.map(([p, label, icon]) => (
                 <button key={p} onClick={() => goPage(p)}
                   className={`shrink-0 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-medium transition-colors ${
                     page === p && !profile
