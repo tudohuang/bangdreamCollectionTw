@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { searchEvents } from '../utils/search.js'
+import { songIndex } from '../utils/songs.js'
 import { rootGroup, bandMeta, primaryMeta, isPersonal } from '../utils/bands.js'
 import { isUrgent, urgentEvents, URGENT_LABEL } from '../utils/urgency.js'
 import { eventStatus, todayStr } from '../utils/datetime.js'
@@ -48,6 +49,15 @@ export default function CommandPalette({ open, onClose, events, onSelectEvent })
       out.push({ type: 'band', label: b, key: 'b:' + b, color: bandMeta(b).color })
       out.push({ type: 'filter', label: b, filterKey: 'groups', key: 'fb:' + b, color: bandMeta(b).color })
     }
+    // 歌曲。手機導覽沒有歌曲的格子，搜尋就是那條路 ——
+    // 對粉絲來說「春日影」是比活動名稱更自然的查法
+    const songs = songIndex(events)
+      .filter(x => norm(x.title).includes(nq) ||
+        [...x.titles].some(t => norm(t).includes(nq)))
+      .slice(0, 3)
+    for (const x of songs) {
+      out.push({ type: 'song', label: x.title, key: 's:' + x.key, songKey: x.key, count: x.count })
+    }
     // 活動
     const evs = searchEvents(events, q).list.slice(0, 8)
     for (const e of evs) out.push({ type: 'event', label: e.title, key: 'e:' + e.id, event: e })
@@ -66,6 +76,7 @@ export default function CommandPalette({ open, onClose, events, onSelectEvent })
     onClose()
     if (r.type === 'event') onSelectEvent(r.event.id)
     else if (r.type === 'filter') window.location.hash = `#/collection?${r.filterKey}=${encodeURIComponent(r.label)}`
+    else if (r.type === 'song') window.location.hash = `#/song/${encodeURIComponent(r.songKey)}`
     else window.location.hash = `#/${r.type}/${encodeURIComponent(r.label)}`
   }
 
@@ -114,7 +125,7 @@ export default function CommandPalette({ open, onClose, events, onSelectEvent })
                     : r.type === 'event'
                       ? { background: `rgba(${primaryMeta(r.event).glow},0.14)`, color: primaryMeta(r.event).color }
                       : { background: 'rgba(139,92,246,0.15)', color: '#8b5cf6' }}>
-                  <Icon n={r.type === 'person' ? 'microphone' : r.type === 'band' ? 'guitar' : r.type === 'filter' ? 'sliders' : (isPersonal(r.event) ? 'user' : 'calendar')} />
+                  <Icon n={r.type === 'person' ? 'microphone' : r.type === 'band' ? 'guitar' : r.type === 'filter' ? 'sliders' : r.type === 'song' ? 'music' : (isPersonal(r.event) ? 'user' : 'calendar')} />
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-1.5 text-[16px] text-dream-ink">
@@ -129,6 +140,7 @@ export default function CommandPalette({ open, onClose, events, onSelectEvent })
                   </span>
                   <span className="block text-[14px] text-dream-faint">
                     {r.type === 'person' ? '聲優圖鑑頁' : r.type === 'band' ? '樂團圖鑑頁' : r.type === 'filter' ? '套用篩選'
+                      : r.type === 'song' ? `歌曲頁 · 在台灣唱過 ${r.count} 次`
                       : `${r.hint ? r.hint + ' · ' : ''}#${String(r.event.number).padStart(3, '0')} · ${r.event.year}`}
                   </span>
                 </span>
