@@ -16,12 +16,9 @@ import NewSince from './NewSince.jsx'
 function StickyNote({ text }) {
   if (!text) return null
   return (
-    <div className="relative -rotate-2 self-center shrink-0 max-w-[240px]">
-      <span aria-hidden
-        className="absolute -top-2.5 left-1/2 -translate-x-1/2 rotate-3 w-16 h-4 bg-white/60 border border-black/[.06] shadow-sm" />
-      <div className="bg-[#fff8c4] dark:bg-[#4a4420] px-4 py-3 shadow-[0_6px_16px_-6px_rgba(120,80,20,0.35)] rounded-[3px]">
-        <p className="font-hand text-[16px] leading-6 text-[#5b4a12] dark:text-[#f0e6b0]">{text}</p>
-      </div>
+    <div className="self-end shrink-0 max-w-[260px] border-l-2 border-bloom-rose/60 pl-3.5 py-0.5">
+      <p className="font-hand text-[17px] leading-7 text-dream-sub">{text}</p>
+      <p className="mt-0.5 text-[14px] tracking-[0.22em] uppercase text-dream-faint">Owner's note</p>
     </div>
   )
 }

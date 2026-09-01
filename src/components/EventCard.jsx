@@ -38,13 +38,10 @@ export default function EventCard({ event, attended, onToggleAttended, onClick, 
   return (
     <button
       onClick={onClick}
-      className={`event-card card-lift group flex flex-col text-left !overflow-visible ${urgent ? 'urgent-card' : ''}`}
+      className={`event-card card-lift group flex flex-col text-left ${urgent ? 'urgent-card' : ''}`}
       style={{ '--band': meta.glow }}
       aria-label={`${urgent ? `${URGENT_LABEL} ` : ''}${dex} ${event.title}`}
     >
-      {/* 貼在上緣的紙膠帶 */}
-      <span aria-hidden className="card-tape" />
-
       {/* 封面像貼上去的照片：四周留一圈紙、固定 3:2 版位 → 無 CLS */}
       <div className="p-2.5 pb-0">
       <div className="relative w-full aspect-[3/2] overflow-hidden rounded-xl shadow-[0_2px_8px_-4px_rgba(60,40,90,0.45)]">

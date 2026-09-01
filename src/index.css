@@ -9,12 +9,13 @@
 
 @layer base {
   :root {
-    /* 淺色（主主題）：暖白偏粉紫 */
-    --c-bg: 253 250 255;
+    /* 淺色（主主題）：中性紙白。顏色只發生在內容上（封面、樂團色、緊急色），
+       底色不搶戲 —— 之前整頁泡在粉紅裡，樂團色反而顯不出來。 */
+    --c-bg: 251 250 252;
     --c-ink: 42 36 66;
-    --c-sub: 96 88 130;
-    --c-faint: 156 148 190;
-    --c-line: 238 230 248;
+    --c-sub: 91 86 110;
+    --c-faint: 143 138 160;
+    --c-line: 233 230 239;
     --modal-bg: rgba(255, 253, 255, 0.97);
     /* 緊急色：粉紫全站色系裡唯一的紅，看到就知道是「這件事很急」 */
     --c-urgent: 225 29 72;
@@ -51,9 +52,8 @@
     font-feature-settings: 'palt' 1;
     background-color: rgb(var(--c-bg));
     background-image:
-      radial-gradient(920px 620px at 88% -6%, rgba(236, 72, 153, 0.09), transparent 60%),
-      radial-gradient(780px 580px at 4% 106%, rgba(139, 92, 246, 0.10), transparent 60%),
-      radial-gradient(680px 520px at 50% 40%, rgba(34, 211, 238, 0.05), transparent 65%);
+      radial-gradient(920px 620px at 88% -6%, rgba(139, 92, 246, 0.045), transparent 60%),
+      radial-gradient(780px 580px at 4% 106%, rgba(236, 72, 153, 0.035), transparent 60%);
     background-attachment: fixed;
     min-height: 100vh;
   }
@@ -146,7 +146,7 @@
   .event-card:hover {
     transform: translateY(-3px);
     border-color: rgba(var(--band), 0.5);
-    box-shadow: 0 16px 34px -14px rgba(var(--band), 0.5), 0 4px 14px -10px rgba(120, 80, 160, 0.25);
+    box-shadow: 0 14px 30px -16px rgba(var(--band), 0.35), 0 4px 12px -10px rgba(60, 50, 90, 0.18);
   }
   /* 滑過像把紙從桌上輕輕掀起一角 — 只給卡牆的方卡，橫向列表列不適用 */
   .card-lift:hover { transform: translateY(-4px) rotate(-0.35deg); }
@@ -166,29 +166,6 @@
     z-index: 1;
   }
 
-  /* 貼在卡片上緣的紙膠帶：歪一點才像手貼的 */
-  .card-tape {
-    position: absolute;
-    top: -8px;
-    left: 50%;
-    width: 74px;
-    height: 19px;
-    z-index: 20;
-    pointer-events: none;
-    transform: translateX(-50%) rotate(-2.4deg);
-    background:
-      linear-gradient(100deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 60%),
-      linear-gradient(90deg, rgba(var(--band), 0.34), rgba(var(--band), 0.2));
-    border-left: 1px dashed rgba(255, 255, 255, 0.55);
-    border-right: 1px dashed rgba(255, 255, 255, 0.55);
-    box-shadow: 0 1px 4px -1px rgba(60, 40, 90, 0.28);
-  }
-  .dark .card-tape {
-    background:
-      linear-gradient(100deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 60%),
-      linear-gradient(90deg, rgba(var(--band), 0.5), rgba(var(--band), 0.3));
-    border-color: rgba(255, 255, 255, 0.25);
-  }
 
   /* ---------- 按鈕 / 標籤 ---------- */
   .pill {
@@ -203,26 +180,26 @@
     color: theme('colors.dream.ink');
   }
   .pill-active {
-    background: linear-gradient(135deg, #ec4899, #8b5cf6);
+    background: theme('colors.bloom.indigo');
     color: #fff;
     border-color: transparent;
-    box-shadow: 0 4px 14px -4px rgba(168, 85, 247, 0.6);
+    box-shadow: 0 3px 10px -4px rgba(139, 92, 246, 0.5);
   }
   .pill-active:hover {
     color: #fff;
-    background: linear-gradient(135deg, #db2777, #7c3aed);
+    background: #7c3aed;
   }
 
   /* 主要／次要按鈕 */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-full px-6 h-11 text-[16px] font-bold text-white transition-all duration-150;
-    background: linear-gradient(135deg, #ec4899, #8b5cf6);
-    box-shadow: 0 10px 26px -10px rgba(217, 70, 239, 0.7);
+    background: theme('colors.bloom.indigo');
+    box-shadow: 0 8px 20px -10px rgba(139, 92, 246, 0.55);
   }
   .btn-primary:hover {
     transform: translateY(-1px);
-    background: linear-gradient(135deg, #db2777, #7c3aed);
-    box-shadow: 0 14px 30px -10px rgba(217, 70, 239, 0.8);
+    background: #7c3aed;
+    box-shadow: 0 10px 24px -10px rgba(139, 92, 246, 0.65);
   }
   .btn-primary:active { transform: translateY(0); }
   .btn-ghost {
@@ -289,7 +266,7 @@
 
   /* 重點字漸層 */
   .text-gradient {
-    background: linear-gradient(120deg, #db2777 5%, #a855f7 55%, #7c3aed 100%);
+    background: linear-gradient(120deg, #7c3aed 0%, #a855f7 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -512,11 +489,6 @@
   .urgent-card::before {
     background: linear-gradient(180deg, rgb(var(--c-urgent)), rgba(var(--c-urgent), 0.5)) !important;
     box-shadow: 0 0 12px 0 rgba(var(--c-urgent), 0.7) !important;
-  }
-  .urgent-card .card-tape {
-    background:
-      linear-gradient(100deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 60%),
-      linear-gradient(90deg, rgba(var(--c-urgent), 0.5), rgba(var(--c-urgent), 0.3));
   }
 
   /* 緊急提示塊：詳情浮層 / 首頁票根上方那條說明 */
