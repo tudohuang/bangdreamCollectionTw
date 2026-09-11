@@ -37,19 +37,22 @@ export default function Highlights({ events, onSelect }) {
         </a>
       </div>
       {/* 拍立得牆：每張歪一點點，像手貼上去的 */}
+      {/* 最新的一場放大成主圖佔 2×2，其餘八張圍著它 —— 一面牆總要有一張是主角 */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-5">
         {picks.map((e, i) => {
+          const lead = i === 0
           const m = primaryMeta(e)
           const cover = coverSrc(e)
           const tilt = ['-rotate-1', 'rotate-[0.8deg]', 'rotate-0', 'rotate-1', '-rotate-[0.6deg]', 'rotate-[1.2deg]'][i % 6]
           return (
             <button key={e.id} onClick={() => onSelect(e.id)}
-              className={`group relative block w-full text-left bg-white dark:bg-white/[.07] p-2 pb-2.5 rounded-lg border border-dream-line dark:border-white/10 shadow-[0_10px_28px_-16px_rgba(120,80,160,0.4)] ${tilt} hover:rotate-0 hover:-translate-y-1 transition-transform duration-300`}
+              className={`group relative block w-full text-left bg-white dark:bg-white/[.07] p-2 pb-2.5 rounded-lg border border-dream-line dark:border-white/10 shadow-[0_10px_28px_-16px_rgba(120,80,160,0.4)] ${tilt} hover:rotate-0 hover:-translate-y-1 transition-transform duration-300 ${
+                lead ? 'sm:col-span-2 sm:row-span-2 sm:flex sm:flex-col' : ''}`}
               aria-label={e.title}>
               <span aria-hidden
                 className="absolute -top-2 left-1/2 -translate-x-1/2 rotate-[-3deg] w-14 h-4 bg-white/55 border border-black/[.05] shadow-sm z-20" />
-              <div className="relative w-full aspect-[3/2] overflow-hidden rounded-md">
-                <Img src={cover}
+              <div className={`relative w-full aspect-[3/2] overflow-hidden rounded-md ${lead ? 'sm:aspect-auto sm:flex-1 sm:min-h-[300px]' : ''}`}>
+                <Img src={cover} event={e} sizes={lead ? '(max-width: 639px) 50vw, 640px' : '(max-width: 639px) 50vw, 33vw'}
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transform-none" />
                 <span className="absolute inset-x-0 bottom-0 h-1 z-10" style={{ background: m.color }} />
                 <div className="absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-black/70 via-black/10 to-transparent">
@@ -57,7 +60,7 @@ export default function Highlights({ events, onSelect }) {
                     <Icon n={isPersonal(e) ? 'user' : m.icon} className="text-[9px]" />
                     {e.year}
                   </div>
-                  <div className="text-[14px] font-bold text-white line-clamp-2 leading-snug">{e.title}</div>
+                  <div className={`font-bold text-white line-clamp-2 leading-snug ${lead ? 'text-[16px] sm:text-[20px]' : 'text-[14px]'}`}>{e.title}</div>
                 </div>
               </div>
             </button>

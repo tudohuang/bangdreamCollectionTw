@@ -67,6 +67,7 @@ import InstallCard from './src/components/InstallCard.jsx'
 import NewSince from './src/components/NewSince.jsx'
 import OfficialLinks from './src/components/OfficialLinks.jsx'
 import { seriesIndex } from './src/utils/series.js'
+import { todayStr } from './src/utils/datetime.js'
 import ArchiveSection from './src/components/ArchiveSection.jsx'
 import MissingLine from './src/components/MissingLine.jsx'
 import YearRing from './src/components/YearRing.jsx'
@@ -145,12 +146,20 @@ const pulseRows = parsePulseCsv(
   '2026-9-19,高尾奏音,朗讀劇,朗讀劇 出演,新宿,已公開,\\n' +
   '2026-08-16,Ave Mujica,音樂祭,SUMMER SONIC 2026 TOKYO,ZOZO Marine Stadium,已公開,\\n')
 
+const onThisDayFixture = (() => {
+  const src = events.find(e => /^\d{4}-\d{2}-\d{2}$/.test(e.startDate || '')) || events[0]
+  const d = '2019-' + todayStr().slice(5)
+  return { ...src, id: 'smoke-on-this-day', year: 2019, startDate: d, endDate: d }
+})()
+
 // 每個案例都要碰到真實資料的分支，不能只 render 空狀態
 export const CASES = [
   ['Hero', <Hero events={events} onSelect={noop} onYearJump={noop} />],
   ['MonthlyDigest', <MonthlyDigest events={events} onSelect={noop} />],
   ['Highlights', <Highlights events={events} onSelect={noop} />],
-  ['OnThisDay', <OnThisDay events={events} onSelect={noop} />],
+  // 「歷史上的今天」只在今天前後 12 天內有過往場次時才 render；一年裡有好幾段空窗
+  // （九月上旬就是），所以塞一場往年同月同日的進去，讓它每天都走到有資料的分支
+  ['OnThisDay', <OnThisDay events={[...events, onThisDayFixture]} onSelect={noop} />],
   ['FilterPanel(bar)', <FilterPanel events={events} filters={filters} onChange={noop} onReset={noop} resultCount={events.length} />],
   // 篩選抽屜要單獨測 —— 它只在點「全部篩選」之後才 render，
   // 所以 FilterPanel 過了不代表它會過。抽成獨立檔案時常數沒跟著搬，

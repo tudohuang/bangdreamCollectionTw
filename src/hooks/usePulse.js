@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, startTransition } from 'react'
 import { SHEET_ROSTER_CSV_URL, SHEET_PULSE_CSV_URL } from '../config.js'
 import { parseRosterCsv, parsePulseCsv } from '../utils/parsePulse.js'
 
@@ -40,7 +40,8 @@ export function usePulse() {
         if (!r.length) throw new Error('empty roster')
         if (!alive) return
         const ts = Date.now()
-        setRoster(r); setPulse(p); setSource('sheet'); setUpdatedAt(ts)
+        // 同 useEvents：背景更新走 transition，不搶剛畫好的首屏
+        startTransition(() => { setRoster(r); setPulse(p); setSource('sheet'); setUpdatedAt(ts) })
         try { localStorage.setItem(CACHE_KEY, JSON.stringify({ v: CACHE_VERSION, roster: r, pulse: p, ts })) } catch {}
       })
       .catch((e) => {

@@ -67,7 +67,7 @@ export default function OnThisDay({ events, onSelect }) {
         style={{ '--band': m.glow }}>
         {cover && (
           <div className="hidden sm:block w-40 shrink-0 overflow-hidden relative">
-            <Img src={cover} className="w-full h-full object-cover group-hover:scale-105 motion-reduce:transform-none" />
+            <Img src={cover} event={e} sizes="160px" className="w-full h-full object-cover group-hover:scale-105 motion-reduce:transform-none" />
             <span className="absolute inset-y-0 right-0 w-1" style={{ background: m.color }} />
           </div>
         )}

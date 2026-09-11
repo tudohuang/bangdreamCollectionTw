@@ -338,7 +338,7 @@ function EventRow({ e, attended, onSelect, onToggleAttended }) {
         <div className="relative w-16 h-16 sm:w-20 sm:h-16 shrink-0 rounded overflow-hidden grid place-items-center"
           style={{ background: cover ? undefined : `rgba(${m.glow},0.12)` }}>
           {cover
-            ? <Img src={cover} className="w-full h-full object-cover group-hover:scale-105 motion-reduce:transform-none" />
+            ? <Img src={cover} event={e} sizes="80px" className="w-full h-full object-cover group-hover:scale-105 motion-reduce:transform-none" />
             : <span className="text-lg" style={{ color: m.color }}><Icon n={isPersonal(e) ? 'user' : m.icon} /></span>}
         </div>
         <div className="min-w-0 flex-1">

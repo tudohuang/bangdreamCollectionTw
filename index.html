@@ -28,7 +28,9 @@
     <meta name="twitter:description" content="2018–2026 年間 BanG Dream! 相關聲優、樂團、LIVE、FMT、快閃店、簽名會、上映會等來台活動。" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Outfit:wght@500;600;700;800&family=LXGW+WenKai+TC:wght@400;700&display=swap" rel="stylesheet" />
+    <!-- 字型的 <link> 不寫在這裡：由 App 在第一個畫面畫出來之後才掛上去（src/utils/webfonts.js）。
+         直接掛 stylesheet 的話，200 KB 的字型 CSS 加 1.2 MB 字型檔全都會擋在首屏前面，
+         慢速 4G 下 FCP 十秒起跳。這兩條 preconnect 留著，等要載的時候連線已經接好 -->
     <!-- Google Search Console 的所有權驗證。刪掉會讓資源失去驗證，之後就看不到收錄狀況 -->
     <meta name="google-site-verification" content="qvWSHhzF_ugTmcsJmDcK0q0Cy3l1FF87npY5icrwkjI" />
 

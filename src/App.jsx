@@ -30,6 +30,7 @@ import { urgentEvents } from './utils/urgency.js'
 import { saveIcs } from './utils/ics.js'
 import { getAttended, saveAttended } from './utils/attended.js'
 import { tap, done } from './utils/haptics.js'
+import { loadWebFonts } from './utils/webfonts.js'
 import {
   DEFAULT_FILTERS, applyFiltersDetailed, orderEvents,
   filtersToParams, paramsToFilters, buildAppliedChips,
@@ -127,6 +128,9 @@ export default function App() {
     if (i === -1) return { prevId: null, nextId: null }
     return { prevId: filtered[i - 1]?.id || null, nextId: filtered[i + 1]?.id || null }
   }, [detailId, filtered])
+
+  // 字型等第一個畫面畫出來再載，原因寫在 utils/webfonts.js
+  useEffect(() => { loadWebFonts() }, [])
 
   useEffect(() => {
     document.documentElement.classList.toggle('urgent-mode', urgent.length > 0)
@@ -322,9 +326,18 @@ export default function App() {
       <ScrollProgress />
       <PullToRefresh onRefresh={retry} />
 
-      <a href="#wall"
+      {/* 跳轉鍵不能靠 href 的 hash：這站的 hash 就是路由，#wall／#main 都會被當成「回首頁」。
+         所以自己接：擋掉預設行為，直接把焦點放到 <main>（每一頁都有）再捲過去 */}
+      <a href="#main"
+        onClick={(ev) => {
+          ev.preventDefault()
+          const el = document.getElementById('main')
+          if (!el) return
+          el.focus({ preventScroll: true })
+          el.scrollIntoView({ block: 'start' })
+        }}
         className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:rounded-full focus:bg-bloom-indigo focus:text-white focus:text-[14px]">
-        跳到活動圖鑑
+        跳到主要內容
       </a>
 
       <header ref={headerRef} className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-dream-line/70 dark:bg-[#0b0a24]/75 dark:border-white/10">
@@ -374,7 +387,7 @@ export default function App() {
         <UrgentBar events={urgent} onSelect={openDetail} />
       </header>
 
-      <main key={viewKey} className="view-enter relative z-10 max-w-6xl xl:max-w-[1400px] 2xl:max-w-[1560px] w-full mx-auto px-4 sm:px-8 pt-8 sm:pt-10 pb-28 sm:pb-24 flex-1">
+      <main id="main" tabIndex={-1} key={viewKey} className="outline-none view-enter relative z-10 max-w-6xl xl:max-w-[1400px] 2xl:max-w-[1560px] w-full mx-auto px-4 sm:px-8 pt-8 sm:pt-10 pb-28 sm:pb-24 flex-1">
         {profile ? (
           <ProfileRoute
             profile={profile}

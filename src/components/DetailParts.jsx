@@ -90,7 +90,7 @@ export function RelatedStrip({ items, color, onNavigate }) {
             className="snap-start shrink-0 w-[168px] text-left rounded-xl border border-dream-line dark:border-white/10 overflow-hidden hover:border-bloom-violet transition-colors group/rel">
             <span className="relative block w-full aspect-[3/2] overflow-hidden bg-dream-line/40">
               {c
-                ? <Img src={c}
+                ? <Img src={c} event={o} sizes="168px"
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover/rel:scale-105 motion-reduce:transform-none" />
                 : <span aria-hidden className="absolute inset-0 grid place-items-center font-display font-extrabold text-[22px]"
                     style={{ background: `rgba(${m.glow},0.14)`, color: m.color }}>

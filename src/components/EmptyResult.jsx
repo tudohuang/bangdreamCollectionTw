@@ -38,7 +38,7 @@ export default function EmptyResult({ onReset, suggestions = [], onSelect, searc
                     className="w-full text-left rounded-xl border border-dream-line dark:border-white/10 overflow-hidden hover:border-bloom-violet transition-colors group">
                     <span className="relative block w-full aspect-[3/2] bg-dream-line/40 overflow-hidden">
                       {cover
-                        ? <Img src={cover} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 motion-reduce:transform-none" />
+                        ? <Img src={cover} event={e} sizes="(max-width: 639px) 100vw, 320px" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 motion-reduce:transform-none" />
                         : <span aria-hidden className="absolute inset-0 grid place-items-center text-[20px]"
                             style={{ background: `rgba(${m.glow},0.14)`, color: m.color }}>
                             <Icon n={isPersonal(e) ? 'user' : m.icon} />

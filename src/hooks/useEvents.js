@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, startTransition } from 'react'
 import bundled from '../data/events.json' with { type: 'json' }
 import { SHEET_CSV_URL } from '../config.js'
 import { parseCsvToEvents, mergeWithBundled, reconcileStableIds, sheetHasIdColumn } from '../utils/parseEvents.js'
@@ -43,7 +43,9 @@ export function useEvents() {
         const merged = mergeWithBundled(keyed, bundled)
         const ts = Date.now()
         if (!isAlive()) return
-        setEvents(merged); setSource('sheet'); setUpdatedAt(ts)
+        // 背景更新不急：包成 transition，React 會切成小段慢慢換，不會卡住剛畫好的首屏。
+        // 整棵樹沒有 memo，一次 setEvents 等於全站重畫，手機上是一格 200 ms 起跳的長任務。
+        startTransition(() => { setEvents(merged); setSource('sheet'); setUpdatedAt(ts) })
         try { localStorage.setItem(CACHE_KEY, JSON.stringify({ v: CACHE_VERSION, events: merged, ts })) } catch {}
       })
       .catch((e) => {
