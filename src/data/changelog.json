@@ -1,5 +1,27 @@
 [
   {
+    "date": "2026-09-08",
+    "added": [
+      {
+        "id": 60,
+        "number": 60,
+        "title": "IEGP Special音樂祭 in Taipei",
+        "startDate": "2026-10-10"
+      }
+    ],
+    "changed": [
+      {
+        "id": 58,
+        "number": 58,
+        "title": "伊藤美来 10th Anniversary Live Tour「39rpm」",
+        "startDate": "2026-11-28",
+        "fields": [
+          "場地"
+        ]
+      }
+    ]
+  },
+  {
     "date": "2026-08-31",
     "added": [],
     "changed": [

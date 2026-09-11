@@ -8,6 +8,7 @@ import { OWNER_NOTE } from '../config.js'
 import { JustAnnounced } from './JustAnnounced.jsx'
 import { songIndex } from '../utils/songs.js'
 import Icon from './Icon.jsx'
+import Cover from './Cover.jsx'
 import SubscribeCalendar from './SubscribeCalendar.jsx'
 import ResumeLine from './ResumeLine.jsx'
 import NewSince from './NewSince.jsx'
@@ -74,38 +75,42 @@ function YearSnapshot({ events, onYearJump }) {
   if (!s.count) return null
 
   const rows = [
-    ['活動紀錄', `${s.count} 筆`],
-    ['推估場次', `${s.sessions} 場`],
-    ['出演者', `${s.people} 人`],
-    ['還沒發生', `${s.ahead} 場`],
+    ['活動紀錄', s.count, '筆'],
+    ['推估場次', s.sessions, '場'],
+    ['出演者', s.people, '人'],
+    ['還沒發生', s.ahead, '場'],
   ]
 
+  // 排成一列四格，高度跟旁邊的票根一樣；「看今年全部」收進標題列右邊
   return (
-    <div className="glass p-5 sm:p-6 h-full w-full min-w-0 flex flex-col">
-      <div className="flex items-baseline gap-2">
-        <span className="font-display font-extrabold text-[26px] leading-none text-gradient tabular-nums">{year}</span>
-        <span className="text-[14px] font-medium text-dream-sub">到目前為止</span>
+    <div className="glass p-5 h-full w-full min-w-0 flex flex-col justify-between gap-4">
+      <div className="flex items-baseline justify-between gap-2">
+        <span className="flex items-baseline gap-2">
+          <span className="font-display font-extrabold text-[26px] leading-none text-gradient tabular-nums">{year}</span>
+          <span className="text-[14px] font-medium text-dream-sub">到目前為止</span>
+        </span>
+        <button onClick={() => onYearJump && onYearJump(year)}
+          className="shrink-0 inline-flex items-center gap-1 text-[14px] font-semibold text-bloom-indigo hover:underline">
+          看今年全部 <Icon n="arrow-right" className="text-[10px]" />
+        </button>
       </div>
 
-      <dl className="mt-4 flex-1 space-y-2">
-        {rows.map(([k, v]) => (
-          <div key={k} className="flex items-baseline justify-between gap-3 text-[14px]">
-            <dt className="text-dream-sub">{k}</dt>
-            <dd className="font-round font-bold text-dream-ink tabular-nums">{v}</dd>
+      <dl className="grid grid-cols-4 gap-2">
+        {rows.map(([k, n, unit]) => (
+          <div key={k} className="min-w-0">
+            <dd className="font-display font-bold text-[22px] leading-none text-dream-ink tabular-nums">
+              {n}<span className="ml-0.5 text-[14px] font-medium text-dream-sub">{unit}</span>
+            </dd>
+            <dt className="mt-1.5 text-[14px] text-dream-faint truncate">{k}</dt>
           </div>
         ))}
       </dl>
-
-      <button onClick={() => onYearJump && onYearJump(year)}
-        className="mt-4 w-full inline-flex items-center justify-center gap-1.5 rounded-full border border-dream-line py-2 text-[14px] font-medium text-dream-sub hover:text-dream-ink hover:border-bloom-sky transition-colors dark:border-white/15">
-        看今年全部 <Icon n="arrow-right" className="text-[11px]" />
-      </button>
     </div>
   )
 }
 
-// 票根式倒數卡：左邊撕票區倒數，右邊場次資訊。下面接「再來還有誰」。
-function TicketCountdown({ events, onSelect }) {
+// 票根式倒數卡：左邊是這場的海報，中間撕票區倒數，右邊場次資訊。下面接「再來還有誰」。
+function TicketCountdown({ events, onSelect, aside }) {
   const hl = useMemo(() => pickHighlight(events), [events])
   const queue = useMemo(() => {
     const today = todayStr()
@@ -126,17 +131,23 @@ function TicketCountdown({ events, onSelect }) {
     : 'REPLAY'
   const unit = upcoming && status !== 'ongoing' && d > 0 ? '天後開演' : ''
 
-  // 這個框會撐滿欄高，所以要放得夠多才不會留一大塊空白。
-  // 6 筆是量出來的：桌機那一欄剛好放得下，再多會被截斷。
-  const rest = queue.filter(x => x.id !== e.id).slice(0, 6)
+  // 「再來還有」現在是整排四欄，八筆剛好兩列
+  const rest = queue.filter(x => x.id !== e.id).slice(0, 8)
 
   return (
-    <div className="w-full min-w-0 flex flex-col gap-3">
+    <div className="w-full min-w-0 flex flex-col gap-4">
+    <div className="grid lg:grid-cols-12 gap-4 items-stretch">
     <button onClick={() => onSelect?.(e.id)}
-      className={`event-card group w-full text-left flex items-stretch ${urgent ? 'urgent-card' : ''}`}
+      className={`event-card group w-full text-left flex items-stretch lg:col-span-8 ${urgent ? 'urgent-card' : ''}`}
       style={{ '--band': m.glow }}>
+      {/* 海報：票面左邊那塊印刷圖，跟活動卡用同一套封面檔 */}
+      <div className="hidden sm:block relative shrink-0 w-40 lg:w-52 overflow-hidden">
+        <Cover event={e} size="sm" sizes="208px" priority
+          className="absolute inset-0 w-full h-full transition-transform duration-500 ease-out group-hover:scale-[1.04] motion-reduce:transform-none" />
+        <span aria-hidden className="absolute inset-y-0 right-0 w-[3px]" style={{ background: accent }} />
+      </div>
       {/* 撕票區 */}
-      <div className="relative shrink-0 w-32 sm:w-40 grid place-items-center px-3 py-6 border-r border-dashed border-dream-line dark:border-white/20">
+      <div className="relative shrink-0 w-32 sm:w-36 grid place-items-center px-3 py-6 border-r border-dashed border-dream-line dark:border-white/20">
         <span aria-hidden className="absolute -right-2 -top-2.5 w-4 h-4 rounded-full bg-dream-bg border border-dream-line dark:border-white/15" />
         <span aria-hidden className="absolute -right-2 -bottom-2.5 w-4 h-4 rounded-full bg-dream-bg border border-dream-line dark:border-white/15" />
         <div className="text-center">
@@ -162,7 +173,7 @@ function TicketCountdown({ events, onSelect }) {
             <Icon n={isPersonal(e) ? 'user' : m.icon} className="text-[10px]" />
             {isPersonal(e) ? '個人來台' : m.name}
           </div>
-          <div className="font-display font-bold text-[16px] sm:text-[16px] text-dream-ink line-clamp-2 group-hover:text-bloom-violet transition-colors">
+          <div className="font-display font-bold text-[16px] sm:text-[18px] text-dream-ink line-clamp-2 group-hover:text-bloom-violet transition-colors">
             {e.title}
           </div>
           <div className="text-[14px] text-dream-sub mt-1.5 flex items-center gap-1.5 flex-wrap">
@@ -175,19 +186,21 @@ function TicketCountdown({ events, onSelect }) {
         <Icon n="chevron-right" className="shrink-0 text-dream-faint group-hover:text-bloom-violet transition-colors" />
       </div>
     </button>
+    {aside && <div className="lg:col-span-4 flex min-w-0">{aside}</div>}
+    </div>
 
     {/* 再來還有誰 —— 「最近公布」講的是新消息，這裡講的是即將發生 */}
     {rest.length > 0 && (
-      <div className="glass px-4 py-3 flex-1">
+      <div className="glass px-4 py-3">
         <div className="flex items-baseline justify-between gap-2 mb-1.5">
           <span className="text-[14px] font-bold text-dream-faint">再來還有</span>
         </div>
-        <ul className="space-y-1">
+        <ul className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-1">
           {rest.map(x => {
             const xm = primaryMeta(x)
             const left = daysUntil(x.startDate)
             return (
-              <li key={x.id}>
+              <li key={x.id} className="min-w-0">
                 <button onClick={() => onSelect?.(x.id)}
                   className="group w-full flex items-baseline gap-2.5 text-left text-[14px]">
                   <span className="shrink-0 w-11 text-right font-round font-bold tabular-nums" style={{ color: xm.color }}>
@@ -236,16 +249,15 @@ export default function Hero({ events, onSelect, onYearJump }) {
         </div>
       </div>
 
-      {/* 第一屏：最近公布 / 下一場 / 今年快照 */}
-      <div className="mt-6 sm:mt-8 grid lg:grid-cols-12 gap-4 items-stretch">
-        <div className="lg:col-span-5 flex min-w-0">
-          <JustAnnounced events={events} onSelect={onSelect} />
+      {/* 第一屏。桌機：票根（帶海報）佔三分之二、今年快照在右，「最近公布」攤成一排封面在下面；
+          手機：「最近公布」仍然排最前面 —— 這站常被偷襲，第一個問題永遠是「最近還有誰」 */}
+      <div className="mt-6 sm:mt-8 flex flex-col gap-6 sm:gap-8">
+        <div className="order-2 lg:order-1 min-w-0">
+          <TicketCountdown events={events} onSelect={onSelect}
+            aside={<YearSnapshot events={events} onYearJump={onYearJump} />} />
         </div>
-        <div className="lg:col-span-4 flex min-w-0">
-          <TicketCountdown events={events} onSelect={onSelect} />
-        </div>
-        <div className="lg:col-span-3 flex min-w-0">
-          <YearSnapshot events={events} onYearJump={onYearJump} />
+        <div className="order-1 lg:order-2 min-w-0">
+          <JustAnnounced events={events} onSelect={onSelect} variant="strip" />
         </div>
       </div>
 

@@ -161,6 +161,60 @@ export function parseCsvToEvents(text) {
   })
 }
 
+// Sheet 有沒有「ID」欄。沒有的時候永久鍵只能退回編號，插列就會整批位移 ——
+// 那種情況交給 reconcileStableIds 用標題把舊的永久鍵接回來。
+export function sheetHasIdColumn(text) {
+  const header = (parseCSV(text)[0] || []).map(h => h.trim())
+  return header.includes('ID') || header.includes('id')
+}
+
+// 比對用的標題：全半形統一、去空白、不分大小寫
+const titleKey = (s) => String(s || '').normalize('NFKC').replace(/\s+/g, '').toLowerCase()
+
+// 把內建資料的永久鍵接到 Sheet 的列上。
+//
+// 為什麼需要：Sheet 沒有 ID 欄時，永久鍵＝編號＝列數。2026-09 在第 54 列插了一場，
+// 後面每一場都往後推一號，而本機封面檔、心得檔、打卡紀錄全綁舊的永久鍵，
+// 結果 #55 顯示 #54 的封面、#58 顯示 #59 的。這一步用「標題＋日期」找回
+// 同一場活動原本的永久鍵，插列、重排都不會再錯位。
+//
+// 規則：
+//   1. Sheet 有 ID 欄 → 完全尊重 Sheet，不做任何事
+//   2. 標題＋開始日期完全相同 → 沿用內建的 stableId
+//   3. 只有標題相同、而且內建裡只有一場叫這個名字 → 也沿用（日期被改過的情況）
+//   4. 對不到的（新公布的場次）→ 接在最大的永久鍵後面，照列的順序編下去
+// 每一個內建的永久鍵只會被認領一次，兩場同名不同日的活動不會互相搶。
+export function reconcileStableIds(sheetEvents, bundled, { hasIdColumn = false } = {}) {
+  if (hasIdColumn || !bundled?.length) return sheetEvents
+
+  const byTitleDate = new Map()
+  const byTitle = new Map()
+  for (const b of bundled) {
+    const t = titleKey(b.title)
+    if (!t) continue
+    byTitleDate.set(`${t}|${b.startDate || ''}`, b)
+    byTitle.set(t, byTitle.has(t) ? null : b)     // 同名兩場以上 → null，不能只靠標題認
+  }
+
+  const claimed = new Set()
+  let next = Math.max(0, ...bundled.map(b => Number(b.stableId ?? b.number) || 0))
+  const idOf = (sid) => `evt-${String(sid).padStart(3, '0')}`
+
+  return sheetEvents.map(e => {
+    const t = titleKey(e.title)
+    let hit = byTitleDate.get(`${t}|${e.startDate || ''}`) || byTitle.get(t) || null
+    if (hit && claimed.has(hit.stableId ?? hit.number)) hit = null
+    let stableId
+    if (hit) {
+      stableId = hit.stableId ?? hit.number
+      claimed.add(stableId)
+    } else {
+      stableId = ++next
+    }
+    return stableId === e.stableId ? e : { ...e, stableId, id: idOf(stableId) }
+  })
+}
+
 // 這些欄位「以 JSON / 手動為準」，即時抓 Sheet 時用內建資料補回來，避免被洗掉
 const MANUAL_FIELDS = ['venue', 'city', 'description', 'impression', 'oneLine', 'photos', 'sources', 'notes', 'cover', 'ticketUrl', 'organizer',
   'setlist', 'price', 'goods', 'keyVisual', 'series', 'soldOut', 'programme']

@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import bundled from '../data/events.json' with { type: 'json' }
 import { SHEET_CSV_URL } from '../config.js'
-import { parseCsvToEvents, mergeWithBundled } from '../utils/parseEvents.js'
+import { parseCsvToEvents, mergeWithBundled, reconcileStableIds, sheetHasIdColumn } from '../utils/parseEvents.js'
 
 const CACHE_KEY = 'bdtw-events-cache'
-const CACHE_VERSION = 3          // 解析邏輯改了就 +1（Sheet 加欄免動：extras 走背景更新自動補上）
+const CACHE_VERSION = 4          // 解析邏輯改了就 +1（Sheet 加欄免動：extras 走背景更新自動補上）
 const CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000  // 7 天，超過視為過期
 
 function readCache() {
@@ -38,7 +38,9 @@ export function useEvents() {
       .then(text => {
         const parsed = parseCsvToEvents(text)
         if (!parsed.length) throw new Error('empty sheet')
-        const merged = mergeWithBundled(parsed, bundled)
+        // Sheet 沒有 ID 欄時，先用標題把內建的永久鍵接回來，封面／心得／打卡才對得到同一場
+        const keyed = reconcileStableIds(parsed, bundled, { hasIdColumn: sheetHasIdColumn(text) })
+        const merged = mergeWithBundled(keyed, bundled)
         const ts = Date.now()
         if (!isAlive()) return
         setEvents(merged); setSource('sheet'); setUpdatedAt(ts)

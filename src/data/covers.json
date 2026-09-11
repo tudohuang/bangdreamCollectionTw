@@ -95,6 +95,12 @@
     "ratio": 1.905,
     "source": "https://assets.kktix.io/upload_images/187607/1200-630_large.jpg"
   },
+  "019": {
+    "w": 2100,
+    "h": 1484,
+    "ratio": 1.415,
+    "source": "https://www.fanhealth.com.tw/uploads/article/img1717212012-2924271.jpg"
+  },
   "020": {
     "w": 1061,
     "h": 1500,
@@ -303,12 +309,36 @@
     "w": 1414,
     "h": 2000,
     "ratio": 0.707,
-    "source": "https://scontent-tpe5-1.cdninstagram.com/v/t51.82787-15/778381296_18082202591448654_2361746055322304616_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=109&ig_cache_key=Mzk2OTIzMzEwMTIwNTUzMzIwMQ%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTQxNC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=xAWL7rVUFiMQ7kNvwGr3tFg&_nc_oc=AdqpbQDSIq3EAGSyn6QRxsDnx38araPFBsbx6aDvnDpBQnpQ2sB1DZxfgYE9TmC4Dcc&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe5-1.cdninstagram.com&_nc_gid=i49QwzToWRIhP1ZcSeKrrw&_nc_ss=7a22e&oh=00_AQGfoXB5RxJlOviLQ2dInF8_5i8Qq2XO-UClauVqD4V3Vw&oe=6A8F9135"
+    "source": "covers-manual/055"
+  },
+  "056": {
+    "w": 2072,
+    "h": 2933,
+    "ratio": 0.706,
+    "source": "https://assets.kktix.io/organization_resource_files/32182/79565/0814%E5%B7%A5%E8%97%A4%E6%99%B4%E9%A6%99%E4%B8%BB%E8%A6%96%E8%A6%BA%E6%B5%B7%E5%A0%B1-new_%E5%B7%A5%E4%BD%9C%E5%8D%80%E5%9F%9F_1_%E8%A4%87%E6%9C%AC_20.jpg"
+  },
+  "057": {
+    "w": 1080,
+    "h": 1350,
+    "ratio": 0.8,
+    "source": "https://p2.bahamut.com.tw/B/2KU/42/3e75ae1a5a688aa52411b6cbc21zxrq5.PNG"
   },
   "058": {
     "w": 1080,
     "h": 1350,
     "ratio": 0.8,
     "source": "https://static.timable.com/image_c3823a8c-7e3d-42d2-b9ae-70989e01af65.webp"
+  },
+  "059": {
+    "w": 1080,
+    "h": 1350,
+    "ratio": 0.8,
+    "source": "https://p2.bahamut.com.tw/B/2KU/27/995c488f85153f19c16eaad05d1zx7v5.JPG"
+  },
+  "060": {
+    "w": 1350,
+    "h": 1688,
+    "ratio": 0.8,
+    "source": "https://scontent-tpe1-1.cdninstagram.com/v/t51.82787-15/799308254_18093546962291622_4277134783388984699_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=101&ig_cache_key=Mzk4MDg1NzUwNDYwNzg2OTkxNw%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTM1MC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=eD6a0LwrKqgQ7kNvwGEi-j-&_nc_oc=Ado2TsMqS4es4cpmOStvxJo_FzModTwJHCRiiXpZxmUlk9LaSd1yuv_02IIQAL8DSmw&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-tpe1-1.cdninstagram.com&_nc_gid=WSI_Dhy70vn7OCfS_tATkw&_nc_ss=7a22e&oh=00_AQJZpwbCaMs_cqKepubqpWSIy88VsexXcpAzQBNt1IOHsA&oe=6AA46FBE"
   }
 }

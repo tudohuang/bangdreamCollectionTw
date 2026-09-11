@@ -11,7 +11,9 @@
 // 檔名綁「永久鍵」而不是編號 —— 編號可以重排，檔案不能跟著錯位。
 //
 // 原始圖快取在 .cache/covers/，重跑不會重抓。加 --force 可以強制重抓。
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs'
+// 快取檔名綁「ID＋網址」：同一個 ID 換了封面網址就會重抓，不會把舊圖當新圖用。
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, renameSync } from 'node:fs'
+import { createHash } from 'node:crypto'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import sharp from 'sharp'
@@ -35,6 +37,18 @@ mkdirSync(CACHE, { recursive: true })
 
 const events = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'events.json'), 'utf8'))
 const keyOf = (e) => e.stableId ?? e.number
+// 上一次的 manifest：舊制快取檔（只有 ID 的）要靠它知道當時抓的是哪個網址
+const prevManifest = existsSync(MANIFEST) ? JSON.parse(readFileSync(MANIFEST, 'utf8')) : {}
+const urlHash = (url) => createHash('sha1').update(String(url)).digest('hex').slice(0, 10)
+
+// 快取檔路徑。舊制 <ID>.bin 只在「當時的網址就是現在這條」時才升格成新制檔名，
+// 否則視為沒快取 —— 那張圖是別的網址抓來的，不能拿來當這一場的封面。
+function cachePath(id, url) {
+  const fresh = join(CACHE, `${id}-${urlHash(url)}.bin`)
+  const legacy = join(CACHE, `${id}.bin`)
+  if (!existsSync(fresh) && existsSync(legacy) && prevManifest[id]?.source === url) renameSync(legacy, fresh)
+  return fresh
+}
 
 // 有些圖床擋沒有 UA 的請求，帶一個正常的
 const HEADERS = {
@@ -106,7 +120,7 @@ console.log(`封面 ${withCover.length} 張，開始處理…\n`)
 
 for (const e of withCover) {
   const id = String(keyOf(e)).padStart(3, '0')
-  const cacheFile = join(CACHE, `${id}.bin`)
+  const cacheFile = cachePath(id, e.cover)
   try {
     const manual = manualFile(id)
     let buf

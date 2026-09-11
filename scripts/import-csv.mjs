@@ -10,7 +10,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
-import { parseCsvToEvents } from '../src/utils/parseEvents.js'
+import { parseCsvToEvents, reconcileStableIds, sheetHasIdColumn } from '../src/utils/parseEvents.js'
 import { diffEvents, appendEntry } from './changelog.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -38,7 +38,8 @@ if (existsSync(OUT_PATH)) {
   } catch { /* 壞掉就重建 */ }
 }
 
-const parsed = parseCsvToEvents(raw)
+// Sheet 沒有 ID 欄時，用標題把既有 JSON 的永久鍵接回來 —— 中間插一列不會讓後面整批換鍵
+const parsed = reconcileStableIds(parseCsvToEvents(raw), [...prevById.values()], { hasIdColumn: sheetHasIdColumn(raw) })
 const pick = (a, b) => (a ? a : (b || ''))
 const pickArr = (a, b) => (a && a.length ? a : (b || []))
 const events = parsed.map(e => {
