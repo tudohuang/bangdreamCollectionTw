@@ -6,7 +6,6 @@ import { coverSrc, coverSources, coverSrcSet } from '../utils/cover.js'
 import { eventStatus, countdownLabel, weekday, STATUS_LABEL } from '../utils/datetime.js'
 import { eventContext, typeTags } from '../utils/context.js'
 import { addToCalendar } from '../utils/ics.js'
-import { downloadShareImage } from '../utils/shareImage.js'
 import { isUrgent, URGENT_LABEL } from '../utils/urgency.js'
 import { organizersOf } from '../utils/organizers.js'
 import { COORD_KEYS, LAT_KEYS, LNG_KEYS } from '../utils/geo.js'
@@ -24,6 +23,7 @@ import ArchiveSection from './ArchiveSection.jsx'
 import { eventPlateRows } from './eventPlateRows.jsx'
 import MissingLine from './MissingLine.jsx'
 import Chronicle from './Chronicle.jsx'
+import ShareImageEditor from './ShareImageEditor.jsx'
 import {
   PhotoCredit, Punch, OverBtn, Stat,
   NeighborBtn, RelatedStrip, RelatedList, Section,
@@ -33,6 +33,8 @@ import {
 export default function EventDetail({ event, allEvents = [], attended, onToggleAttended, onClose, prevId, nextId, onNavigate, milestones = [], pulse = [], sheetRoster = [] }) {
   const [toast, setToast] = useState('')
   const [lightbox, setLightbox] = useState(null)
+  // 存成圖片的預覽（先調照片位置再下載）
+  const [shareImageOpen, setShareImageOpen] = useState(false)
   const [swipeX, setSwipeX] = useState(0)
   const [coverOk, setCoverOk] = useState(true)
   const panelRef = useRef(null)
@@ -40,6 +42,12 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
   const personal = isPersonal(event)
   const isAttended = attended?.has(event.id)
   const ctx = useMemo(() => eventContext(event, allEvents), [event, allEvents])
+  // 印在票根存根上的那幾行；包成 memo，預覽才不會每次 render 都重畫
+  const shareExtra = useMemo(() => ({
+    attended: isAttended,
+    bandNth: ctx.bandNth, bandTotal: ctx.bandTotal,
+    index: ctx.index, total: ctx.total,
+  }), [isAttended, ctx])
   // 誰飾演誰。以名冊為準，名冊沒有的人才用活動表推（見 utils/derive.js）
   const castRoster = useMemo(() => personBandMap(allEvents, sheetRoster), [allEvents, sheetRoster])
   // 這一場在它的系列裡是第幾次（Bushiroad EXPO 的第 4 次）。不屬於任何系列就是 null。
@@ -537,11 +545,7 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
             <Icon n="clipboard" /> <span className="hidden sm:inline">摘要</span>
           </button>
           <button className="pill !h-11 sm:!h-auto !px-4 !py-2 !text-[14px]" aria-label="存成圖" title="存成圖"
-            onClick={() => downloadShareImage(event, meta, personal, {
-              attended: isAttended,
-              bandNth: ctx.bandNth, bandTotal: ctx.bandTotal,
-              index: ctx.index, total: ctx.total,
-            })}><Icon n="star" /> <span className="hidden sm:inline">存成圖</span></button>
+            onClick={() => setShareImageOpen(true)}><Icon n="star" /> <span className="hidden sm:inline">存成圖</span></button>
           <span className="ml-auto self-center text-[14px] text-dream-faint hidden sm:inline">← → 切換 · Esc 關閉</span>
           <span className="ml-auto self-center text-[14px] text-dream-faint sm:hidden">左右滑切換 · 左緣滑回</span>
         </div>
@@ -551,6 +555,11 @@ export default function EventDetail({ event, allEvents = [], attended, onToggleA
         <div className="pointer-events-none fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] inline-flex items-center gap-2 rounded-full bg-dream-ink text-white text-[14px] font-medium px-4 py-2">
           <Icon n="circle-check" className="text-bloom-pink" />{toast}
         </div>
+      )}
+
+      {shareImageOpen && (
+        <ShareImageEditor event={event} meta={meta} personal={personal}
+          extra={shareExtra} onClose={() => setShareImageOpen(false)} />
       )}
 
       {lightbox && (

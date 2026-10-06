@@ -33,6 +33,7 @@ const WANTED = [
   ['sun', 'faSun'], ['clock', 'faClock'], ['house', 'faHouse'],
   ['chart-simple', 'faChartSimple'], ['sliders', 'faSliders'], ['tag', 'faTag'],
   ['triangle-exclamation', 'faTriangleExclamation'],
+  ['hand', 'faHand'], ['download', 'faDownload'],
 ]
 // 線框版（regular）在另一個套件裡
 const WANTED_REGULAR = [['calendar', 'faCalendar'], ['clipboard', 'faClipboard']]

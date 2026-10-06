@@ -106,15 +106,36 @@ export function loadCover(url) {
     .then(img => img || (/^https?:/.test(url) ? attempt(proxied) : null))
 }
 
-// object-cover：把圖鋪滿一塊矩形，超出的裁掉
-export function drawCover(x, img, px, py, pw, ph) {
-  const scale = Math.max(pw / img.width, ph / img.height)
-  const dw = img.width * scale, dh = img.height * scale
+// object-cover：把圖鋪滿一塊矩形，超出的裁掉。
+//
+// crop 決定裁哪裡：fx / fy 是「框的正中央要對準圖上的哪一點」（0–1），zoom ≥ 1 再放大。
+// 不給就是置中。對準點太靠邊時會被擋住，框裡永遠不會露出空白。
+export function drawCover(x, img, px, py, pw, ph, crop) {
+  const g = coverGeometry(img, pw, ph, crop)
   x.save()
   x.beginPath(); x.rect(px, py, pw, ph); x.clip()
-  x.drawImage(img, px + (pw - dw) / 2, py + (ph - dh) / 2, dw, dh)
+  x.drawImage(img, px + g.ox, py + g.oy, g.dw, g.dh)
   x.restore()
 }
+
+function coverGeometry(img, pw, ph, crop) {
+  const zoom = Math.max(1, crop?.zoom ?? 1)
+  const scale = Math.max(pw / img.width, ph / img.height) * zoom
+  const dw = img.width * scale, dh = img.height * scale
+  const at = (d, p, f) => Math.min(0, Math.max(p - d, p / 2 - f * d))
+  return { dw, dh, ox: at(dw, pw, crop?.fx ?? 0.5), oy: at(dh, ph, crop?.fy ?? 0.5) }
+}
+
+// 拖曳：把照片往 (dx, dy) 方向推，回傳新的 crop。
+// 先算出實際畫的位置再換回焦點，拖過頭時焦點不會一直累積，往回拖馬上有反應。
+export function panCrop(img, pw, ph, crop, dx, dy) {
+  const g = coverGeometry(img, pw, ph, crop)
+  const back = (o, d, p) => (p / 2 - Math.min(0, Math.max(p - d, o))) / d
+  return { ...crop, fx: back(g.ox + dx, g.dw, pw), fy: back(g.oy + dy, g.dh, ph) }
+}
+
+// 沒調過時的預設：直式海報的臉通常在上三分之一，置中會剛好切到身體
+export const defaultCrop = (img) => ({ fx: 0.5, fy: img && img.height > img.width ? 0.3 : 0.5, zoom: 1 })
 
 // 蓋在圖上的橡皮章
 export function drawStamp(x, cx, cy, r, text = '我去過') {

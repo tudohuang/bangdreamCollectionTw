@@ -8,12 +8,18 @@ import {
   drawBarcode, loadCover, drawCover, drawStamp, downloadCanvas,
 } from './canvas.js'
 
-// extra: { attended, bandNth, bandTotal, index, total } — 有就印在存根上，沒有也能跑
-export async function downloadShareImage(event, meta, personal, extra = {}) {
-  const W = 1200, H = 630
+// 產圖分三步：載入（字型＋封面，只做一次）→ 畫（可重畫，預覽拖曳照片時每次都重畫）→ 下載。
+export async function prepareShareImage(event) {
   await ensureFonts()
+  return { cover: await loadCover(coverSrc(event, 'lg')) }
+}
 
-  const cover = await loadCover(coverSrc(event, 'lg'))
+// extra: { attended, bandNth, bandTotal, index, total } — 有就印在存根上，沒有也能跑
+// crop: 照片裁哪裡（見 canvas.js 的 drawCover）
+// 回傳畫好的 canvas，以及照片在圖上的位置（預覽要知道使用者是不是按在照片上）
+export function renderShareImage(event, meta, personal, extra = {}, cover = null, crop) {
+  const W = 1200, H = 630
+  let photo = null
   const c = document.createElement('canvas')
   c.width = W; c.height = H
   const x = c.getContext('2d')
@@ -144,7 +150,8 @@ export async function downloadShareImage(event, meta, personal, extra = {}) {
     x.save()
     roundRect(x, P.x, P.y, P.w, P.h, 5); x.clip()
     if (cover) {
-      drawCover(x, cover, P.x, P.y, P.w, P.h)
+      drawCover(x, cover, P.x, P.y, P.w, P.h, crop)
+      photo = P
     } else {
       const g = x.createLinearGradient(P.x, P.y, P.x + P.w, P.y + P.h)
       g.addColorStop(0, meta.color)
@@ -208,5 +215,13 @@ export async function downloadShareImage(event, meta, personal, extra = {}) {
   x.fillText('BANGDREAM.TW COLLECTION', sx, T.y + T.h - 40)
   x.restore()
 
-  downloadCanvas(c, `${event.id}.png`)
+  return { canvas: c, photo }
+}
+
+export const shareImageName = (event) => `${event.id}.png`
+
+// 不經預覽直接下載
+export async function downloadShareImage(event, meta, personal, extra = {}) {
+  const { cover } = await prepareShareImage(event)
+  downloadCanvas(renderShareImage(event, meta, personal, extra, cover).canvas, shareImageName(event))
 }
