@@ -10,13 +10,14 @@ import { writeFileSync, mkdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { Resvg } from '@resvg/resvg-js'
-import { faMusic } from '@fortawesome/free-solid-svg-icons'
+import { logoSvg } from '../src/brand.js'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const OUT = join(ROOT, 'public', 'splash')
 mkdirSync(OUT, { recursive: true })
 
-const [glyphW, glyphH, , , glyphPath] = faMusic.icon
+// 站徽（src/brand.js）是 64×64 的 SVG，抽出內容放進置中、縮放過的 <g>
+const LOGO_INNER = logoSvg({ id: 'splash' }).replace(/^<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '')
 
 // [寬, 高, 裝置像素比]。同一組尺寸要出直向與橫向兩張。
 const DEVICES = [
@@ -31,25 +32,14 @@ const DEVICES = [
   [768, 1024, 2], // iPad
 ]
 
-// 啟動畫面刻意做得跟站上的第一屏一樣：同一組漸層、同一顆音符。
-// 目的是「點開的瞬間看起來已經在站上了」，不是放一張 logo。
+// 啟動畫面刻意做得跟站上一樣：同一個站徽置中在底色上，
+// 點開的瞬間看起來就已經在站上了。
 const svg = (w, h, dark) => {
   const bg = dark ? '#07071a' : '#fdfaff'
   const size = Math.min(w, h) * 0.22
-  const scale = size / Math.max(glyphW, glyphH)
-  const dx = (w - glyphW * scale) / 2
-  const dy = (h - glyphH * scale) / 2
-  const r = size * 0.28
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ec4899"/>
-      <stop offset="1" stop-color="#8b5cf6"/>
-    </linearGradient>
-  </defs>
   <rect width="${w}" height="${h}" fill="${bg}"/>
-  <rect x="${(w - size) / 2}" y="${(h - size) / 2}" width="${size}" height="${size}" rx="${r}" fill="url(#g)"/>
-  <path transform="translate(${dx} ${dy}) scale(${scale})" d="${glyphPath}" fill="#fff" opacity="0.96"/>
+  <g transform="translate(${(w - size) / 2} ${(h - size) / 2}) scale(${size / 64})">${LOGO_INNER}</g>
 </svg>`
 }
 

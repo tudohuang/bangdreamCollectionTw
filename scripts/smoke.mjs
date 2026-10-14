@@ -24,6 +24,11 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import events from './src/data/events.json'
 
 import Hero from './src/components/Hero.jsx'
+import ThisMonth from './src/components/ThisMonth.jsx'
+import ArchivePage from './src/components/ArchivePage.jsx'
+import AppHeader from './src/components/AppHeader.jsx'
+import MonthCalendar from './src/components/MonthCalendar.jsx'
+import MemoryWall from './src/components/MemoryWall.jsx'
 import MonthlyDigest from './src/components/MonthlyDigest.jsx'
 import Highlights from './src/components/Highlights.jsx'
 import OnThisDay from './src/components/OnThisDay.jsx'
@@ -154,6 +159,15 @@ const onThisDayFixture = (() => {
 
 // 每個案例都要碰到真實資料的分支，不能只 render 空狀態
 export const CASES = [
+  ['ThisMonth', <ThisMonth events={events} onSelect={noop} onBrowse={noop} />],
+  ['ArchivePage(列表)', <ArchivePage events={events} filtered={events} filters={{ ...filters, view: 'list' }} onChange={noop} onReset={noop} onSelect={noop} attended={attended} onToggleAttended={noop} milestones={milestones} />],
+  ['ArchivePage(封面)', <ArchivePage events={events} filtered={events} filters={{ ...filters, view: 'cards' }} onChange={noop} onReset={noop} onSelect={noop} attended={attended} onToggleAttended={noop} milestones={milestones} />],
+  ['ArchivePage(空)', <ArchivePage events={events} filtered={[]} filters={{ ...filters, search: 'zzz' }} onChange={noop} onReset={noop} onSelect={noop} attended={attended} onToggleAttended={noop} milestones={milestones} />],
+  ['MonthCalendar', <MonthCalendar ym="2026-04" events={events.filter(e => (e.startDate || '').startsWith('2026-04'))} today="2026-04-15" onSelect={noop} />],
+  ['MonthCalendar(空月)', <MonthCalendar ym="2021-06" events={[]} today="2026-04-15" onSelect={noop} />],
+  ['MemoryWall', <MemoryWall events={events} today="2026-10-14" onSelect={noop} />],
+  ['MemoryWall(沒有過去)', <MemoryWall events={events} today="2000-01-01" onSelect={noop} />, { mayBeEmpty: true }],
+  ['AppHeader', <AppHeader tabs={[['home', '本月', 'calendar-days']]} page="home" onGo={noop} search="" onSearch={noop} onMe={noop} onToggleDark={noop} />],
   ['Hero', <Hero events={events} onSelect={noop} onYearJump={noop} />],
   ['MonthlyDigest', <MonthlyDigest events={events} onSelect={noop} />],
   ['Highlights', <Highlights events={events} onSelect={noop} />],

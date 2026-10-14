@@ -3,37 +3,29 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, lazy, Suspense }
 import { useEvents } from './hooks/useEvents.js'
 import { usePulse } from './hooks/usePulse.js'
 import { useSongMeta } from './hooks/useSongMeta.js'
-import { useMediaQuery } from './hooks/useMediaQuery.js'
 
 // 首頁與圖鑑一定會用到的直接進主包，其餘按頁面切開
-import Hero from './components/Hero.jsx'
-import MonthlyDigest from './components/MonthlyDigest.jsx'
-import Highlights from './components/Highlights.jsx'
-import OnThisDay from './components/OnThisDay.jsx'
-import Primer from './components/Primer.jsx'
-import FilterPanel from './components/FilterPanel.jsx'
-import EventWall from './components/EventWall.jsx'
-import ResultBar from './components/ResultBar.jsx'
+import ThisMonth from './components/ThisMonth.jsx'
+import ArchivePage from './components/ArchivePage.jsx'
+import AppHeader from './components/AppHeader.jsx'
 import UrgentBar from './components/UrgentBar.jsx'
 import Reveal from './components/Reveal.jsx'
 import Footer from './components/Footer.jsx'
 import Icon from './components/Icon.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import ProfileRoute from './components/ProfileRoute.jsx'
-import { PageFallback, ScrollProgress, FloatingDock, BottomNav, MobileAppBar, PullToRefresh, InstallHint, DataStatus, Analytics } from './components/Chrome.jsx'
+import { PageFallback, BottomNav, PullToRefresh, DataStatus, Analytics } from './components/Chrome.jsx'
 
 import { readHash, writeHash } from './utils/url.js'
-import { todayStr, daysUntil } from './utils/datetime.js'
 import { milestoneMap } from './utils/milestones.js'
 import { rememberSeen } from './utils/lastSeen.js'
 import { urgentEvents } from './utils/urgency.js'
-import { saveIcs } from './utils/ics.js'
 import { getAttended, saveAttended } from './utils/attended.js'
 import { tap, done } from './utils/haptics.js'
 import { loadWebFonts } from './utils/webfonts.js'
 import {
   DEFAULT_FILTERS, applyFiltersDetailed, orderEvents,
-  filtersToParams, paramsToFilters, buildAppliedChips,
+  filtersToParams, paramsToFilters,
 } from './utils/filters.js'
 
 const EventDetail = lazy(() => import('./components/EventDetail.jsx'))
@@ -48,24 +40,15 @@ const YearWall = lazy(() => import('./components/YearWall.jsx'))
 const YearTimeline = lazy(() => import('./components/YearTimeline.jsx'))
 const ChangeLogSection = lazy(() => import('./components/ChangeLogSection.jsx'))
 const Contribute = lazy(() => import('./components/Contribute.jsx'))
-const CommandPalette = lazy(() => import('./components/CommandPalette.jsx'))
 
-// 六個分頁，各自只負責一件事：
-// 首頁＝現在、活動＝歷史、人物＝人、統計＝故事、我的＝個人化、Labs＝實驗。
+// 主導覽只有四個分頁，各自只負責一件事：
+//   本月＝現在有什麼、資料庫＝查與考古、索引＝人／團／場館、統計＝整體輪廓。
+// 「我的」在頁首的圖示；歌曲、Labs 從頁尾進（網址都還在，舊連結照樣打得開）。
 const PAGE_TABS = [
-  ['home', '首頁', 'house'],
-  ['collection', '活動', 'grid'],
-  ['people', '人物', 'microphone'],
+  ['home', '本月', 'calendar-days'],
+  ['collection', '資料庫', 'table'],
+  ['people', '索引', 'users'],
   ['stats', '統計', 'chart-simple'],
-  ['me', '我的', 'circle-check'],
-  ['labs', 'Labs', 'wand-magic-sparkles'],
-]
-// 桌機頁首放得下第七格，歌曲才不會只能從統計頁摸進去；
-// 手機底部列維持六格 —— 第七格會讓每一格都窄到按不準。
-const DESKTOP_TABS = [
-  ...PAGE_TABS.slice(0, 4),
-  ['songs', '歌曲', 'music'],
-  ...PAGE_TABS.slice(4),
 ]
 const SIMPLE_PAGES = ['people', 'stats', 'me', 'labs', 'songs']
 // 舊連結（#/pulse）還在外面流通，靜靜導到 Labs
@@ -86,14 +69,12 @@ export default function App() {
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const [detailId, setDetailId] = useState(null)
   const [profile, setProfile] = useState(null)          // { kind: 'person' | 'band', value }
-  const [paletteOpen, setPaletteOpen] = useState(false)
+  // 頁首的搜尋框（⌘K 與 / 都跳到這裡）
+  const searchRef = useRef(null)
   const [attended, setAttended] = useState(getAttended)
   const [dark, setDark] = useState(() =>
     typeof document !== 'undefined' && document.documentElement.classList.contains('dark'))
   const headerRef = useRef(null)
-
-  // 1024–1280 這段螢幕夠寬，橫條卻會拉得很長，所以側欄提前到 lg 就出現
-  const wideLayout = useMediaQuery('(min-width: 1024px)')
 
   const urgent = useMemo(() => urgentEvents(events), [events])
   // detailed 會告訴我們這批結果是不是靠錯字容錯撈回來的 ——
@@ -106,21 +87,9 @@ export default function App() {
     [result, filters.order])
   // 里程碑要對全部場次算，用篩選後的算會得到假的名次
   const milestones = useMemo(() => milestoneMap(events), [events])
-  const appliedChips = useMemo(() => buildAppliedChips(filters), [filters])
   const detailEvent = useMemo(
     () => (detailId ? events.find(e => e.id === detailId) : null),
     [detailId, events])
-
-  // 篩不到東西時拿來推薦：離今天最近的三場
-  const nearest = useMemo(() => {
-    const today = todayStr()
-    return events
-      .filter(e => e.startDate)
-      .map(e => ({ event: e, distance: Math.abs(daysUntil(e.startDate, today) ?? Infinity) }))
-      .sort((a, b) => a.distance - b.distance)
-      .slice(0, 3)
-      .map(o => o.event)
-  }, [events])
 
   // 詳情浮層的 ← → 是在目前的篩選結果裡移動
   const neighbors = useMemo(() => {
@@ -188,9 +157,10 @@ export default function App() {
 
   useEffect(() => {
     const onKey = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || '')
+      if (((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') || (e.key === '/' && !typing)) {
         e.preventDefault()
-        setPaletteOpen(open => !open)
+        searchRef.current?.focus()
       }
     }
     window.addEventListener('keydown', onKey)
@@ -317,13 +287,33 @@ export default function App() {
     history.pushState(null, '', '#/collection')
   }
 
-  const openRandom = () => {
-    if (events.length) openDetail(events[Math.floor(Math.random() * events.length)].id)
+  // 頁首搜尋：在哪一頁打字都直接帶到資料庫，條件從乾淨的開始
+  const searchFromHeader = (q) => {
+    if (page === 'collection' && !profile) return updateFilters({ search: q })
+    pushedOverlay.current = false
+    setProfile(null)
+    setPage('collection')
+    const next = { ...DEFAULT_FILTERS, search: q }
+    setFilters(next)
+    writeHash('collection', { params: filtersToParams(next) })
+    scrollMem.current.set('collection', 0)
   }
+
+  // 從本月頁跳到資料庫，帶著一組條件（例如「只看即將舉行」）
+  const browse = (patch = {}) => {
+    pushedOverlay.current = false
+    setProfile(null)
+    setPage('collection')
+    const next = { ...DEFAULT_FILTERS, ...patch }
+    setFilters(next)
+    writeHash('collection', { params: filtersToParams(next) })
+    scrollMem.current.set('collection', 0)
+    scrollToTop()
+  }
+
 
   return (
     <div className="relative min-h-screen flex flex-col overflow-x-clip">
-      <ScrollProgress />
       <PullToRefresh onRefresh={retry} />
 
       {/* 跳轉鍵不能靠 href 的 hash：這站的 hash 就是路由，#wall／#main 都會被當成「回首頁」。
@@ -341,48 +331,20 @@ export default function App() {
       </a>
 
       <header ref={headerRef} className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-dream-line/70 dark:bg-[#0b0a24]/75 dark:border-white/10">
-        <MobileAppBar
-          title={profile ? profile.value : (PAGE_TABS.find(([p]) => p === page)?.[1] || '邦邦來台圖鑑')}
+        <AppHeader
+          tabs={PAGE_TABS}
+          page={page}
+          title={profile ? profile.value : ''}
+          onGo={goPage}
           onBack={profile ? closeProfile : null}
-          onSearch={() => setPaletteOpen(true)}
-          onToggleDark={toggleDark}
+          search={page === 'collection' && !profile ? filters.search : ''}
+          onSearch={searchFromHeader}
+          inputRef={searchRef}
+          meOn={page === 'me' && !profile}
+          onMe={() => goPage('me')}
           dark={dark}
+          onToggleDark={toggleDark}
         />
-        <div className="hidden sm:flex max-w-6xl xl:max-w-[1400px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-8 h-14 items-center justify-between gap-3">
-          <a href="#/" onClick={(e) => { e.preventDefault(); goPage('home') }} className="flex items-center gap-2.5 group shrink-0">
-            <span className="grid place-items-center w-8 h-8 rounded-lg bg-gradient-to-br from-bloom-rose to-bloom-indigo text-white text-[14px] shadow-sm dark:shadow-[0_0_14px_-2px_rgba(217,70,239,0.6)]">
-              <Icon n="music" />
-            </span>
-            <span className="font-display font-bold text-[16px] text-dream-ink group-hover:text-bloom-indigo transition-colors hidden min-[380px]:block">
-              邦邦來台圖鑑
-            </span>
-          </a>
-
-          <nav className="flex items-center gap-1 sm:gap-1.5 text-[14px] min-w-0 flex-1 sm:flex-none justify-end">
-            <div className="hidden sm:flex items-center gap-0.5">
-              {DESKTOP_TABS.map(([p, label, icon]) => (
-                <button key={p} onClick={() => goPage(p)}
-                  className={`shrink-0 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-medium transition-colors ${
-                    page === p && !profile
-                      ? 'bg-bloom-indigo text-white shadow-sm'
-                      : 'text-dream-sub hover:text-dream-ink hover:bg-dream-line/60 dark:hover:bg-white/10'}`}>
-                  <Icon n={icon} className="text-[11px] hidden sm:inline" />
-                  {label}
-                </button>
-              ))}
-            </div>
-            {/* 分頁移到底部之後，手機頁首空出一整條 —— 搜尋直接攤開成主要入口 */}
-            <button onClick={() => setPaletteOpen(true)} aria-label="快速搜尋"
-              className="inline-flex items-center gap-2 h-9 flex-1 sm:flex-none px-3.5 sm:px-3.5 rounded-full border border-dream-line bg-white/60 text-dream-sub hover:text-dream-ink hover:border-bloom-sky hover:bg-white transition-colors dark:bg-white/[.06] dark:border-white/15 dark:hover:bg-white/10">
-              <Icon n="magnifying-glass" className="text-[12px] shrink-0" />
-              <span className="sm:hidden truncate text-[14px]">搜尋聲優、樂團、活動</span>
-              <kbd className="hidden sm:inline text-[14px] text-dream-faint font-sans">⌘K</kbd>
-            </button>
-            <button onClick={toggleDark} aria-label="切換夜場模式" title={dark ? '切回淺色' : '夜場模式'} className="icon-btn">
-              <Icon n={dark ? 'sun' : 'moon'} />
-            </button>
-          </nav>
-        </div>
         <DataStatus source={source} updatedAt={updatedAt} onRetry={retry} />
         <UrgentBar events={urgent} onSelect={openDetail} />
       </header>
@@ -402,49 +364,20 @@ export default function App() {
           />
 
         ) : page === 'collection' ? (
-          <section id="wall" className="scroll-mt-[var(--sticky-top)]">
-            <ErrorBoundary>
-              <div className="lg:grid lg:grid-cols-[254px_minmax(0,1fr)] xl:grid-cols-[268px_minmax(0,1fr)] lg:gap-6 xl:gap-8 lg:items-start">
-                <div className="lg:sticky lg:top-[calc(var(--sticky-top)+16px)]">
-                  <FilterPanel
-                    events={events}
-                    filters={filters}
-                    onChange={updateFilters}
-                    onReset={resetFilters}
-                    resultCount={filtered.length}
-                    variant={wideLayout ? 'sidebar' : 'bar'}
-                    onExportIcs={() => saveIcs(filtered, 'bangdream-tw.ics')}
-                  />
-                </div>
-
-                {/* 有摘要條時，卡牆裡的年份站牌要再往下讓一條 */}
-                <div className="min-w-0"
-                  style={{ '--wall-top': appliedChips.length ? 'calc(var(--sticky-top) + 56px)' : 'var(--sticky-top)' }}>
-                  <ResultBar
-                    filters={filters}
-                    onChange={updateFilters}
-                    onReset={resetFilters}
-                    count={filtered.length}
-                    total={events.length}
-                    fuzzy={result.fuzzy}
-                  />
-                  <EventWall
-                    events={filtered}
-                    allEvents={events}
-                    milestones={milestones}
-                    view={filters.view}
-                    attended={attended}
-                    onToggleAttended={toggleAttended}
-                    onSelect={openDetail}
-                    onReset={resetFilters}
-                    groupByYear={filters.order.startsWith('date')}
-                    suggestions={nearest}
-                    search={filters.search}
-                  />
-                </div>
-              </div>
-            </ErrorBoundary>
-          </section>
+          <ErrorBoundary>
+            <ArchivePage
+              events={events}
+              filtered={filtered}
+              fuzzy={result.fuzzy}
+              filters={filters}
+              onChange={updateFilters}
+              onReset={resetFilters}
+              onSelect={openDetail}
+              attended={attended}
+              onToggleAttended={toggleAttended}
+              milestones={milestones}
+            />
+          </ErrorBoundary>
 
         ) : page === 'people' ? (
           <ErrorBoundary><Suspense fallback={<PageFallback h={520} />}>
@@ -480,29 +413,14 @@ export default function App() {
 
         ) : (
           <>
-            <Hero events={events} onSelect={openDetail} onYearJump={jumpToYear} />
-            <Primer />
-            <ErrorBoundary><MonthlyDigest events={events} onSelect={openDetail} /></ErrorBoundary>
-            <Reveal><ErrorBoundary><OnThisDay events={events} onSelect={openDetail} /></ErrorBoundary></Reveal>
-            <Reveal><ErrorBoundary><Highlights events={events} onSelect={openDetail} /></ErrorBoundary></Reveal>
+            <ErrorBoundary><ThisMonth events={events} onSelect={openDetail} onBrowse={browse} /></ErrorBoundary>
           </>
         )}
       </main>
 
       <Footer source={source} updatedAt={updatedAt} onRetry={retry} />
-      <InstallHint attendedCount={attended.size} />
       <BottomNav tabs={PAGE_TABS} page={profile ? null : page} onGo={goPage} />
-      <FloatingDock onRandom={openRandom} />
       <Analytics />
-
-      <Suspense fallback={null}>
-        <CommandPalette
-          open={paletteOpen}
-          onClose={() => setPaletteOpen(false)}
-          events={events}
-          onSelectEvent={openDetail}
-        />
-      </Suspense>
 
       {detailEvent && (
         <Suspense fallback={null}>

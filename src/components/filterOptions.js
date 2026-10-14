@@ -18,8 +18,8 @@ export const ORDERS = [
 ]
 
 export const VIEWS = [
-  ['卡片', 'cards', 'grid'],
-  ['時間軸', 'timeline', 'bars-staggered'],
+  ['列表', 'list', 'bars-staggered'],
+  ['封面', 'cards', 'images'],
   ['總表', 'table', 'table'],
 ]
 

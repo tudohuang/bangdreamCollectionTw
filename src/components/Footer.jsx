@@ -1,4 +1,5 @@
 import Icon from './Icon.jsx'
+import Logo from './Logo.jsx'
 import { REPORT_URL } from '../config.js'
 
 function sourceText(source, updatedAt) {
@@ -10,7 +11,8 @@ function sourceText(source, updatedAt) {
   return ''
 }
 
-const NAV = [['#/collection', '活動'], ['#/people', '人物'], ['#/stats', '統計'], ['#/me', '我的'], ['#/labs', 'Labs']]
+// 主導覽只有四格，其餘入口都在這裡；手機也要看得到，不然歌曲與 Labs 就沒有路進去
+const NAV = [['#/songs', '歌曲'], ['#/me', '我的收藏'], ['#/labs', 'Labs']]
 
 export default function Footer({ source = 'bundled', updatedAt, onRetry }) {
   const txt = sourceText(source, updatedAt)
@@ -20,13 +22,13 @@ export default function Footer({ source = 'bundled', updatedAt, onRetry }) {
         <div className="glass-soft px-6 sm:px-8 py-5 sm:py-7">
           <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center justify-between">
             <div className="hidden sm:flex items-center gap-3">
-              <span className="grid place-items-center w-9 h-9 rounded-lg bg-gradient-to-br from-bloom-rose to-bloom-indigo text-white text-[14px] shadow-sm dark:shadow-[0_0_14px_-2px_rgba(217,70,239,0.6)]"><Icon n="music" /></span>
+              <Logo size={36} />
               <div>
                 <div className="font-display font-bold text-[16px] text-dream-ink">邦邦來台圖鑑</div>
                 <div className="text-[14px] text-dream-faint">Taiwan BanG Dream! Collection</div>
               </div>
             </div>
-            <nav className="hidden sm:flex items-center gap-1 text-[14px] text-dream-sub">
+            <nav className="flex flex-wrap items-center gap-1 text-[14px] text-dream-sub">
               {NAV.map(([href, label]) => (
                 <a key={href} href={href}
                   className="rounded-full px-3 py-1.5 hover:text-dream-ink hover:bg-dream-line/60 transition-colors dark:hover:bg-white/10">

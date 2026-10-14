@@ -17,11 +17,11 @@ export const DEFAULT_FILTERS = {
   urgent: 'all',       // all | yes
   timeframe: 'all',    // all | upcoming | past | thisYear | thisMonth
   search: '',
-  view: 'cards',       // cards | timeline | table
-  order: 'date-asc',   // date-asc | date-desc | attendance | number
+  view: 'list',        // list | cards | timeline | table
+  order: 'date-desc',  // date-desc | date-asc | attendance | number（預設新的在上面）
 }
 
-export const VIEW_SET = ['cards', 'timeline', 'table']
+export const VIEW_SET = ['list', 'cards', 'timeline', 'table']
 export const MULTI_KEYS = ['groups', 'people', 'characters', 'types', 'venues', 'cities']
 const SINGLE_KEYS = ['year', 'category', 'fullBand', 'attended', 'photos', 'urgent', 'timeframe', 'search', 'view', 'order']
 
@@ -90,7 +90,7 @@ export function paramsToFilters(params) {
   for (const k of MULTI_KEYS) if (params[k]) f[k] = params[k].split(',').filter(Boolean)
   for (const k of SINGLE_KEYS) if (params[k] != null) f[k] = params[k]
   // 舊網址的 gallery / year / calendar 檢視已經合併掉了
-  if (f.view && !VIEW_SET.includes(f.view)) f.view = 'cards'
+  if (f.view && !VIEW_SET.includes(f.view)) f.view = 'list'
   return f
 }
 

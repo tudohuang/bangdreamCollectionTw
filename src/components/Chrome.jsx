@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import Icon from './Icon.jsx'
+import Logo from './Logo.jsx'
 import { tap, done } from '../utils/haptics.js'
 import { isStandalone, isIOSSafari } from '../utils/platform.js'
 import { countVisit, shouldInvite, snooze } from '../utils/install.js'
@@ -89,9 +90,7 @@ const CardShell = ({ children }) => (
 )
 
 const CardIcon = () => (
-  <span className="grid place-items-center w-9 h-9 shrink-0 rounded-xl bg-gradient-to-br from-bloom-rose to-bloom-indigo text-white">
-    <Icon n="music" className="text-[13px]" />
-  </span>
+  <Logo size={36} className="shrink-0" />
 )
 
 const CloseX = ({ onClose }) => (
@@ -242,9 +241,7 @@ export function MobileAppBar({ title, onBack, onSearch, onToggleDark, dark }) {
           <span className="text-[16px]">返回</span>
         </button>
       ) : (
-        <span className="shrink-0 grid place-items-center w-9 h-9 ml-1.5 rounded-lg bg-gradient-to-br from-bloom-rose to-bloom-indigo text-white text-[14px]">
-          <Icon n="music" />
-        </span>
+        <Logo size={36} className="shrink-0 ml-1.5" />
       )}
 
       <span aria-hidden={!scrolled}
@@ -272,7 +269,7 @@ export function BottomNav({ tabs, page, onGo }) {
     <nav aria-label="主導覽"
       className="sm:hidden fixed bottom-0 inset-x-0 z-40 border-t border-dream-line bg-white/92 backdrop-blur-md dark:bg-[#0b0a24]/92 dark:border-white/10"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
-      <ul className="grid grid-cols-6">
+      <ul className="grid" style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))` }}>
         {tabs.map(([key, label, icon]) => {
           const on = page === key
           return (
