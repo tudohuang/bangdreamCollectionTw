@@ -1,9 +1,9 @@
 // URL hash state — 不需要 react-router 就能分享網址
-// 頁面：#/ ｜ #/collection?year=2026&type=FMT ｜ #/people ｜ #/stats ｜ #/me ｜ #/labs
+// 頁面：#/ ｜ #/collection?year=2026&type=FMT ｜ #/people ｜ #/stats ｜ #/me ｜ #/labs ｜ #/links
 // 內容：#/event/evt-034 ｜ #/person/愛美 ｜ #/band/Roselia ｜ #/org/宝島制作委員会 ｜ #/venue/世貿一館
 // 舊網址相容：#/filter?… → collection ｜ #/year/2026 → collection?year=2026 ｜ #/pulse → labs
 
-const PAGES = new Set(['collection', 'people', 'stats', 'me', 'labs', 'pulse', 'songs'])
+const PAGES = new Set(['collection', 'people', 'stats', 'me', 'labs', 'pulse', 'songs', 'links'])
 
 export function readHash() {
   const raw = (window.location.hash || '').replace(/^#\/?/, '')

@@ -4,8 +4,8 @@ import Logo from './Logo.jsx'
 
 // 頁首：搜尋是主角。
 // 以前搜尋是一顆按鈕、按了才跳出另一個面板；現在直接是輸入框，打字就到資料庫即時篩。
-// 桌機一排：站名｜分頁｜搜尋｜我的・深色。手機兩排：站名（或返回）＋我的・深色／搜尋；分頁在底部。
-export default function AppHeader({ tabs, page, title, onGo, onBack, search, onSearch, inputRef, meOn, onMe, dark, onToggleDark }) {
+// 桌機一排：站名｜分頁｜搜尋｜我的・好站・深色。手機兩排：站名（或返回）＋我的・好站・深色／搜尋；分頁在底部。
+export default function AppHeader({ tabs, page, title, onGo, onBack, search, onSearch, inputRef, meOn, onMe, linksOn, onLinks, dark, onToggleDark }) {
   // 搜尋框桌機、手機各一個（版面不同），⌘K 與 / 要聚焦的是「現在看得到的那一個」
   const fields = useRef([])
   useEffect(() => {
@@ -34,6 +34,10 @@ export default function AppHeader({ tabs, page, title, onGo, onBack, search, onS
       <button onClick={onMe} aria-label="我的收藏" title="我的收藏"
         className={`icon-btn ${meOn ? '!text-bloom-indigo' : ''}`}>
         <Icon n="circle-check" />
+      </button>
+      <button onClick={onLinks} aria-label="好站連結" title="好站連結"
+        className={`icon-btn ${linksOn ? '!text-bloom-indigo' : ''}`}>
+        <Icon n="link" />
       </button>
       <button onClick={onToggleDark} aria-label="切換深色模式" title={dark ? '切回淺色' : '深色模式'} className="icon-btn">
         <Icon n={dark ? 'sun' : 'moon'} />

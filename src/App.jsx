@@ -33,6 +33,7 @@ const PeoplePage = lazy(() => import('./components/PeoplePage.jsx'))
 const LabsPage = lazy(() => import('./components/LabsPage.jsx'))
 const MePage = lazy(() => import('./components/MePage.jsx'))
 const SongsPage = lazy(() => import('./components/SongsPage.jsx'))
+const FriendsPage = lazy(() => import('./components/FriendsPage.jsx'))
 const StatsPanel = lazy(() => import('./components/StatsPanel.jsx'))
 const VenueMap = lazy(() => import('./components/VenueMap.jsx'))
 const OtherHalf = lazy(() => import('./components/OtherHalf.jsx'))
@@ -43,14 +44,14 @@ const Contribute = lazy(() => import('./components/Contribute.jsx'))
 
 // 主導覽只有四個分頁，各自只負責一件事：
 //   本月＝現在有什麼、資料庫＝查與考古、索引＝人／團／場館、統計＝整體輪廓。
-// 「我的」在頁首的圖示；歌曲、Labs 從頁尾進（網址都還在，舊連結照樣打得開）。
+// 「我的」在頁首的圖示；歌曲、Labs、好站連結從頁尾進（網址都還在，舊連結照樣打得開）。
 const PAGE_TABS = [
   ['home', '本月', 'calendar-days'],
   ['collection', '資料庫', 'table'],
   ['people', '索引', 'users'],
   ['stats', '統計', 'chart-simple'],
 ]
-const SIMPLE_PAGES = ['people', 'stats', 'me', 'labs', 'songs']
+const SIMPLE_PAGES = ['people', 'stats', 'me', 'labs', 'songs', 'links']
 // 舊連結（#/pulse）還在外面流通，靜靜導到 Labs
 const PAGE_ALIAS = { pulse: 'labs' }
 // 統計頁的區塊，由上而下：結論與圖表 → 年度時間軸 → 場館 → 只來過一次 → 封面牆 → 更新日誌 → 投稿
@@ -342,6 +343,8 @@ export default function App() {
           inputRef={searchRef}
           meOn={page === 'me' && !profile}
           onMe={() => goPage('me')}
+          linksOn={page === 'links' && !profile}
+          onLinks={() => goPage('links')}
           dark={dark}
           onToggleDark={toggleDark}
         />
@@ -402,6 +405,11 @@ export default function App() {
         ) : page === 'songs' ? (
           <ErrorBoundary><Suspense fallback={<PageFallback h={520} />}>
             <SongsPage events={events} songMeta={songMeta} onClose={() => goPage('stats')} />
+          </Suspense></ErrorBoundary>
+
+        ) : page === 'links' ? (
+          <ErrorBoundary><Suspense fallback={<PageFallback h={420} />}>
+            <FriendsPage />
           </Suspense></ErrorBoundary>
 
         ) : page === 'me' ? (

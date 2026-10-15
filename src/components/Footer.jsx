@@ -11,8 +11,8 @@ function sourceText(source, updatedAt) {
   return ''
 }
 
-// 主導覽只有四格，其餘入口都在這裡；手機也要看得到，不然歌曲與 Labs 就沒有路進去
-const NAV = [['#/songs', '歌曲'], ['#/me', '我的收藏'], ['#/labs', 'Labs']]
+// 主導覽只有四格，其餘入口都在這裡；手機也要看得到，不然歌曲、Labs、好站連結就沒有路進去
+const NAV = [['#/songs', '歌曲'], ['#/me', '我的收藏'], ['#/labs', 'Labs'], ['#/links', '好站連結']]
 
 export default function Footer({ source = 'bundled', updatedAt, onRetry }) {
   const txt = sourceText(source, updatedAt)
