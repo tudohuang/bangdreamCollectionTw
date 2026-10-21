@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { splitByProximity, roughKm } from '../utils/geo.js'
-import { tourStops, tourBands, tourSummary, stopFact, venuePillars, circleRing, bearingBetween, streetViewUrl } from '../utils/tour.js'
+import { tourStops, tourBands, tourYears, tourSummary, stopFact, venuePillars, circleRing, bearingBetween, streetViewUrl } from '../utils/tour.js'
 import { useMediaQuery } from '../hooks/useMediaQuery.js'
 import { photoUrl, coverOf } from '../utils/media.js'
 import { coverSrc } from '../utils/cover.js'
@@ -129,9 +129,14 @@ export default function VenueTour({ events, attended, onSelectEvent }) {
   // band：'' 全部｜團的 key｜'mine' 只飛自己標過「我有去」的
   const [band, setBand] = useState('')
   const mineCount = useMemo(() => attended?.size ? tourStops(events, { only: attended }).length : 0, [events, attended])
-  const stops = useMemo(() => band === 'mine'
-    ? tourStops(events, { only: attended })
-    : tourStops(events, { band }), [events, band, attended])
+  const [year, setYear] = useState('')
+  const byBand = useMemo(() => band === 'mine'
+    ? { only: attended }
+    : { band }, [band, attended])
+  // 年份只列這個團（或足跡）真的有場次的年份；換團後原本選的年沒有了就回到全部
+  const years = useMemo(() => tourYears(tourStops(events, byBand)), [events, byBand])
+  useEffect(() => { if (year && !years.includes(year)) setYear('') }, [years, year])
+  const stops = useMemo(() => tourStops(events, { ...byBand, year }), [events, byBand, year])
   const pillars = useMemo(() => venuePillars(stops), [stops])
   const summary = useMemo(() => tourSummary(stops), [stops])
   const photos = useMemo(() => stops.map(stopPhotos), [stops])
@@ -150,7 +155,7 @@ export default function VenueTour({ events, attended, onSelectEvent }) {
   const near = useNearViewport(boxRef)
 
   // 換團就從頭飛
-  useEffect(() => { setAt(0); setPlaying(false); setDone(false) }, [band])
+  useEffect(() => { setAt(0); setPlaying(false); setDone(false) }, [band, year])
 
   // 建地圖。換深淺色整張重建 —— 比逐層改色簡單，也不會漏
   useEffect(() => {
@@ -380,6 +385,13 @@ export default function VenueTour({ events, attended, onSelectEvent }) {
         </div>
       )}
 
+      {years.length > 1 && (
+        <div className="flex gap-2 overflow-x-auto scrollbar-none -mx-1 px-1 pb-1">
+          <BandChip active={!year} onClick={() => setYear('')} label="每一年" />
+          {years.map(y => <BandChip key={y} active={year === y} onClick={() => setYear(y)} label={y} />)}
+        </div>
+      )}
+
       {/* 手機：資訊卡放在地圖下面，地圖才看得到；桌機：浮在地圖左下 */}
       <div ref={wrapRef} className="tour-wrap relative rounded-2xl overflow-hidden border border-dream-line bg-dream-bg dark:border-white/10">
         <div className="tour-map relative bg-dream-line/30 h-[58vh] min-h-[360px] sm:h-[68vh] sm:min-h-[440px] max-h-[720px]">
@@ -403,10 +415,10 @@ export default function VenueTour({ events, attended, onSelectEvent }) {
         {ready && done && summary && (
           <div className="p-4 border-t border-dream-line dark:border-white/10 sm:border sm:absolute sm:left-3 sm:bottom-3 sm:w-[400px] sm:rounded-2xl sm:bg-white sm:dark:bg-[#141233]">
             <div className="font-display font-bold text-[19px] text-dream-ink">
-              {band === 'mine' ? '你的足跡飛完了' : '飛完了'}
+              {year ? `${year} ` : ''}{band === 'mine' ? '你的足跡飛完了' : '飛完了'}
             </div>
             <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-              {[['場館', summary.venues], ['公里', summary.km], ['年', summary.years]].map(([l, n]) => (
+              {[['場館', summary.venues], ['公里', summary.km], year ? ['場次', summary.events] : ['年', summary.years]].map(([l, n]) => (
                 <div key={l} className="rounded-xl bg-dream-line/40 dark:bg-white/[.06] py-2.5">
                   <div className="font-display font-bold text-[24px] leading-none text-dream-ink tabular-nums">{n}</div>
                   <div className="mt-1 text-[14px] text-dream-sub">{l}</div>

@@ -21,12 +21,13 @@ const playedBy = (e, band) => (e.relatedGroups || []).some(g =>
 
 // 一站 = 同一個場館「連續」的場次。隔了別的場館再回來，就是新的一站 ——
 // 路線要照實畫出來回跑，不能把兩次世貿合成一次。
-export function tourStops(events = [], { band = '', only = null } = {}) {
+export function tourStops(events = [], { band = '', only = null, year = '' } = {}) {
   const coords = coordsByVenue(events)
   const list = events
     .filter(e => e.startDate && coords.has(venueKey(e.venue)))
     .filter(e => !band || playedBy(e, band))
     .filter(e => !only || only.has(e.id))
+    .filter(e => !year || String(e.startDate).startsWith(String(year)))
     .slice()
     .sort((a, b) => String(a.startDate).localeCompare(String(b.startDate)) || (a.number || 0) - (b.number || 0))
 
@@ -107,6 +108,13 @@ export function tourSummary(stops = []) {
     years: y1 - y0 + 1,
     top: top.n > 1 ? top : null,
   }
+}
+
+// 年份篩選用：這條路線（已套用團／足跡）有哪些年份，新的在前
+export function tourYears(stops = []) {
+  const ys = new Set()
+  for (const s of stops) for (const e of s.events) ys.add(String(e.startDate).slice(0, 4))
+  return [...ys].filter(y => /^\d{4}$/.test(y)).sort((a, b) => b.localeCompare(a))
 }
 
 // 篩選用：有座標的場次裡出現過哪些團，場次多的在前

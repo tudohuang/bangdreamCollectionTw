@@ -1,7 +1,7 @@
 // 場館巡禮的路線。飛錯站、合錯站，畫面會照樣很漂亮地騙人，所以規則要有測試。
 import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
-import { tourStops, tourBands, tourSummary, stopFact, venuePillars, circleRing, bearingBetween, streetViewUrl } from '../src/utils/tour.js'
+import { tourStops, tourBands, tourYears, tourSummary, stopFact, venuePillars, circleRing, bearingBetween, streetViewUrl } from '../src/utils/tour.js'
 
 const ev = (id, startDate, venue, groups = ['Roselia'], coords = '') =>
   ({ id, startDate, endDate: startDate, venue, relatedGroups: groups, extras: coords ? { 座標: coords } : {} })
@@ -106,4 +106,16 @@ describe('每站一句話與結算', () => {
     assert.deepEqual(mine.flatMap(x => x.events.map(e => e.id)), ['1', '3'])
     assert.equal(mine.length, 1, '收藏的兩場都在世貿，中間沒去別處，併成一站')
   })
+})
+
+test('只飛某一年；年份清單新的在前', () => {
+  const evs = [
+    ev('1', '2023-01-01', '台北世貿一館', ['MyGO!!!!!'], TP),
+    ev('2', '2024-05-01', '南港展覽館一館', ['Roselia'], NG),
+    ev('3', '2024-08-01', '台北世貿一館', ['MyGO!!!!!']),
+  ]
+  assert.deepEqual(tourStops(evs, { year: '2024' }).flatMap(s => s.events.map(e => e.id)), ['2', '3'])
+  assert.deepEqual(tourStops(evs, { year: '2024', band: 'mygo' }).flatMap(s => s.events.map(e => e.id)), ['3'])
+  assert.deepEqual(tourYears(tourStops(evs)), ['2024', '2023'])
+  assert.deepEqual(tourYears(tourStops(evs, { band: 'roselia' })), ['2024'])
 })
