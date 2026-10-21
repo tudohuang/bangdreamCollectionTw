@@ -1,4 +1,5 @@
 import PulsePage from './PulsePage.jsx'
+import VenueTour from './VenueTour.jsx'
 import Icon from './Icon.jsx'
 
 // Labs：好玩但不保證準的東西都放這裡。
@@ -17,6 +18,15 @@ export default function LabsPage(props) {
       </div>
 
       <PulsePage {...props} />
+
+      <div className="mt-8">
+        <div className="eyebrow"><Icon n="location-dot" className="text-[10px]" /> 3D</div>
+        <h2 className="section-h mt-1.5">場館巡禮</h2>
+        <p className="mt-2 text-[15px] text-dream-sub max-w-2xl leading-relaxed">
+          照時間順序，從第一場一路飛到最近一場。光柱越高，那個場館辦過越多場。
+        </p>
+      </div>
+      <VenueTour events={props.events} attended={props.attended} onSelectEvent={props.onSelectEvent} />
     </section>
   )
 }

@@ -87,6 +87,8 @@ function devToolsInDev() {
 export default defineConfig({
   plugins: [react(), pagesFunctionsInDev(), devToolsInDev()],
   base: './',
+  // 場館巡禮的 maplibre worker 是 ES module（裡面還 import 共用程式），打包成 es 才吃得下
+  worker: { format: 'es' },
   build: {
     rollupOptions: {
       output: {

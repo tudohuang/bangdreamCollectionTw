@@ -335,7 +335,7 @@ const result = await build({
   jsx: 'automatic',
   write: false,
   logLevel: 'silent',
-  loader: { '.jsx': 'jsx', '.js': 'jsx' },
+  loader: { '.jsx': 'jsx', '.js': 'jsx', '.css': 'empty' },
   // react 系列保持 external：react-dom/server 是 CJS 且會 require('stream')，
   // 打包進來會在 ESM 裡爆掉。交給 Node 自己解析就好。
   external: ['react', 'react-dom', 'react-dom/server', 'react/jsx-runtime'],

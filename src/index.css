@@ -809,3 +809,36 @@ button, [role="button"], nav {
   @keyframes sheetUp { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: none; } }
 }
 @media (prefers-reduced-motion: reduce) { .sheet-panel { animation: none; } }
+
+/* 場館巡禮：目前這站頭上的場館名牌，顏色跟著那一站的團 */
+.tour-pin {
+  --pin: #f472b6;
+  max-width: 220px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--pin);
+  color: #fff;
+  font: 600 15px/1.2 "Noto Sans TC", system-ui, sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 6px 18px -6px var(--pin);
+  pointer-events: none;
+  display: block;
+  transform-origin: 50% 100%;
+}
+/* 到站：名牌從地面彈起來 */
+.tour-pin.pop { animation: pinPop .5s cubic-bezier(.3, 1.6, .5, 1) both; }
+@keyframes pinPop { from { opacity: 0; transform: translateY(10px) scale(.6); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .tour-pin.pop { animation: none; } }
+.dark .maplibregl-ctrl-group { background: #1a1740; }
+.dark .maplibregl-ctrl-group button + button { border-top-color: rgba(255, 255, 255, .12); }
+.dark .maplibregl-ctrl button .maplibregl-ctrl-icon { filter: invert(1); }
+.tour-wrap:fullscreen { display: flex; flex-direction: column; border-radius: 0; }
+.tour-wrap:fullscreen .tour-map { flex: 1; height: auto; max-height: none; }
+
+/* 場館巡禮：到站時照片像拍立得一樣甩進來 */
+.tour-photo .polaroid { transform: rotate(-2.5deg); }
+.tour-photo-in { animation: photoIn .55s cubic-bezier(.25, 1.4, .5, 1) both; }
+@keyframes photoIn { from { opacity: 0; transform: translateY(-14px) rotate(-9deg) scale(.85); } to { opacity: 1; transform: rotate(-2.5deg); } }
+@media (prefers-reduced-motion: reduce) { .tour-photo-in { animation: none; } }
